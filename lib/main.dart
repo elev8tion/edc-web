@@ -1,4 +1,5 @@
 import 'package:everyday_christian/components/offline_indicator.dart';
+import 'package:everyday_christian/core/config/env_validator.dart';
 import 'package:everyday_christian/core/navigation/app_routes.dart';
 import 'package:everyday_christian/core/navigation/navigation_service.dart';
 import 'package:everyday_christian/core/providers/app_providers.dart';
@@ -50,6 +51,10 @@ Future<void> main() async {
   // Load environment variables from .env file (skip on web if file doesn't exist)
   try {
     await dotenv.load(fileName: ".env");
+
+    // Validate environment configuration (security check)
+    // This will throw EnvValidationException if any issues are found
+    EnvValidator.validate();
   } catch (e) {
     // .env file not found - continue without it (web deployment)
     if (kIsWeb) {

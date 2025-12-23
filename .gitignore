@@ -48,8 +48,24 @@ docs/
 .env
 .env.*
 !.env.example
+
+# Security-sensitive files
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+key.properties
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
+
+# Database files with potentially sensitive data
 assets/asset_bible.db
 everyday_christian.db
+*.db
+*.sqlite
+*.sqlite3
 
 # Local Netlify folder
 .netlify
