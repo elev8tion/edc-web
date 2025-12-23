@@ -1,0 +1,32 @@
+[
+  {
+    "id": "plan_gospel_john",
+    "title": "Gospel of John in 21 Days",
+    "description": "Experience Jesus through John's Gospel - the most theological account of Christ's life, teachings, and identity as the Son of God.",
+    "duration": "21 days",
+    "category": "gospels",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "10-15 min",
+    "totalReadings": 21
+  },
+  {
+    "id": "plan_proverbs_month",
+    "title": "Proverbs - A Chapter a Day",
+    "description": "Gain practical wisdom for daily living with one chapter of Proverbs each day. Perfect for building a habit of seeking godly wisdom.",
+    "duration": "31 days",
+    "category": "proverbs",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "5-10 min",
+    "totalReadings": 31
+  },
+  {
+    "id": "plan_psalms_prayer",
+    "title": "Psalms for Prayer",
+    "description": "Let the Psalms guide your prayer life. Read 5 psalms each day and learn to express your heart to God through worship, lament, and praise.",
+    "duration": "30 days",
+    "category": "psalms",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 30
+  }
+]

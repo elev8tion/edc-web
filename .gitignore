@@ -1,0 +1,61 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Additional exclusions
+.claude/
+edc/
+quantum_mcp_ids/
+docs/
+
+# Environment variables - NEVER COMMIT!
+.env
+.env.*
+!.env.example
+assets/asset_bible.db
+everyday_christian.db
+
+# Local Netlify folder
+.netlify
+
+# Screenshots - Keep only organized versions
+assets/screenshots/iphone*/
+assets/screenshots/simulator_screenshot_*.png
+assets/legal/screenshots/
+key.properties

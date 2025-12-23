@@ -1,0 +1,532 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "testament": "Old Testament",
+      "englishName": "Genesis",
+      "spanishName": "Génesis",
+      "abbreviation": "Ge",
+      "chapters": 50
+    },
+    {
+      "id": 2,
+      "testament": "Old Testament",
+      "englishName": "Exodus",
+      "spanishName": "Éxodo",
+      "abbreviation": "Ex",
+      "chapters": 40
+    },
+    {
+      "id": 3,
+      "testament": "Old Testament",
+      "englishName": "Leviticus",
+      "spanishName": "Levítico",
+      "abbreviation": "Le",
+      "chapters": 27
+    },
+    {
+      "id": 4,
+      "testament": "Old Testament",
+      "englishName": "Numbers",
+      "spanishName": "Números",
+      "abbreviation": "Nu",
+      "chapters": 36
+    },
+    {
+      "id": 5,
+      "testament": "Old Testament",
+      "englishName": "Deuteronomy",
+      "spanishName": "Deuteronomio",
+      "abbreviation": "De",
+      "chapters": 34
+    },
+    {
+      "id": 6,
+      "testament": "Old Testament",
+      "englishName": "Joshua",
+      "spanishName": "Josué",
+      "abbreviation": "Jo",
+      "chapters": 24
+    },
+    {
+      "id": 7,
+      "testament": "Old Testament",
+      "englishName": "Judges",
+      "spanishName": "Jueces",
+      "abbreviation": "Jg",
+      "chapters": 21
+    },
+    {
+      "id": 8,
+      "testament": "Old Testament",
+      "englishName": "Ruth",
+      "spanishName": "Rut",
+      "abbreviation": "Ru",
+      "chapters": 4
+    },
+    {
+      "id": 9,
+      "testament": "Old Testament",
+      "englishName": "1 Samuel",
+      "spanishName": "1 Samuel",
+      "abbreviation": "1S",
+      "chapters": 31
+    },
+    {
+      "id": 10,
+      "testament": "Old Testament",
+      "englishName": "2 Samuel",
+      "spanishName": "2 Samuel",
+      "abbreviation": "2S",
+      "chapters": 24
+    },
+    {
+      "id": 11,
+      "testament": "Old Testament",
+      "englishName": "1 Kings",
+      "spanishName": "1 Reyes",
+      "abbreviation": "1K",
+      "chapters": 22
+    },
+    {
+      "id": 12,
+      "testament": "Old Testament",
+      "englishName": "2 Kings",
+      "spanishName": "2 Reyes",
+      "abbreviation": "2K",
+      "chapters": 25
+    },
+    {
+      "id": 13,
+      "testament": "Old Testament",
+      "englishName": "1 Chronicles",
+      "spanishName": "1 Crónicas",
+      "abbreviation": "1C",
+      "chapters": 29
+    },
+    {
+      "id": 14,
+      "testament": "Old Testament",
+      "englishName": "2 Chronicles",
+      "spanishName": "2 Crónicas",
+      "abbreviation": "2C",
+      "chapters": 36
+    },
+    {
+      "id": 15,
+      "testament": "Old Testament",
+      "englishName": "Ezra",
+      "spanishName": "Esdras",
+      "abbreviation": "Ez",
+      "chapters": 10
+    },
+    {
+      "id": 16,
+      "testament": "Old Testament",
+      "englishName": "Nehemiah",
+      "spanishName": "Nehemías",
+      "abbreviation": "Ne",
+      "chapters": 13
+    },
+    {
+      "id": 17,
+      "testament": "Old Testament",
+      "englishName": "Esther",
+      "spanishName": "Ester",
+      "abbreviation": "Es",
+      "chapters": 10
+    },
+    {
+      "id": 18,
+      "testament": "Old Testament",
+      "englishName": "Job",
+      "spanishName": "Job",
+      "abbreviation": "Jb",
+      "chapters": 42
+    },
+    {
+      "id": 19,
+      "testament": "Old Testament",
+      "englishName": "Psalms",
+      "spanishName": "Salmos",
+      "abbreviation": "Ps",
+      "chapters": 150
+    },
+    {
+      "id": 20,
+      "testament": "Old Testament",
+      "englishName": "Proverbs",
+      "spanishName": "Proverbios",
+      "abbreviation": "Pr",
+      "chapters": 31
+    },
+    {
+      "id": 21,
+      "testament": "Old Testament",
+      "englishName": "Ecclesiastes",
+      "spanishName": "Eclesiastés",
+      "abbreviation": "Ec",
+      "chapters": 12
+    },
+    {
+      "id": 22,
+      "testament": "Old Testament",
+      "englishName": "Song of Solomon",
+      "spanishName": "Cantares",
+      "abbreviation": "So",
+      "chapters": 8
+    },
+    {
+      "id": 23,
+      "testament": "Old Testament",
+      "englishName": "Isaiah",
+      "spanishName": "Isaías",
+      "abbreviation": "Is",
+      "chapters": 66
+    },
+    {
+      "id": 24,
+      "testament": "Old Testament",
+      "englishName": "Jeremiah",
+      "spanishName": "Jeremías",
+      "abbreviation": "Je",
+      "chapters": 52
+    },
+    {
+      "id": 25,
+      "testament": "Old Testament",
+      "englishName": "Lamentations",
+      "spanishName": "Lamentaciones",
+      "abbreviation": "La",
+      "chapters": 5
+    },
+    {
+      "id": 26,
+      "testament": "Old Testament",
+      "englishName": "Ezekiel",
+      "spanishName": "Ezequiel",
+      "abbreviation": "Ek",
+      "chapters": 48
+    },
+    {
+      "id": 27,
+      "testament": "Old Testament",
+      "englishName": "Daniel",
+      "spanishName": "Daniel",
+      "abbreviation": "Da",
+      "chapters": 12
+    },
+    {
+      "id": 28,
+      "testament": "Old Testament",
+      "englishName": "Hosea",
+      "spanishName": "Oseas",
+      "abbreviation": "Ho",
+      "chapters": 14
+    },
+    {
+      "id": 29,
+      "testament": "Old Testament",
+      "englishName": "Joel",
+      "spanishName": "Joel",
+      "abbreviation": "Jl",
+      "chapters": 3
+    },
+    {
+      "id": 30,
+      "testament": "Old Testament",
+      "englishName": "Amos",
+      "spanishName": "Amós",
+      "abbreviation": "Am",
+      "chapters": 9
+    },
+    {
+      "id": 31,
+      "testament": "Old Testament",
+      "englishName": "Obadiah",
+      "spanishName": "Abdías",
+      "abbreviation": "Ob",
+      "chapters": 1
+    },
+    {
+      "id": 32,
+      "testament": "Old Testament",
+      "englishName": "Jonah",
+      "spanishName": "Jonás",
+      "abbreviation": "Jn",
+      "chapters": 4
+    },
+    {
+      "id": 33,
+      "testament": "Old Testament",
+      "englishName": "Micah",
+      "spanishName": "Miqueas",
+      "abbreviation": "Mi",
+      "chapters": 7
+    },
+    {
+      "id": 34,
+      "testament": "Old Testament",
+      "englishName": "Nahum",
+      "spanishName": "Nahúm",
+      "abbreviation": "Na",
+      "chapters": 3
+    },
+    {
+      "id": 35,
+      "testament": "Old Testament",
+      "englishName": "Habakkuk",
+      "spanishName": "Habacuc",
+      "abbreviation": "Hb",
+      "chapters": 3
+    },
+    {
+      "id": 36,
+      "testament": "Old Testament",
+      "englishName": "Zephaniah",
+      "spanishName": "Sofonías",
+      "abbreviation": "Zp",
+      "chapters": 3
+    },
+    {
+      "id": 37,
+      "testament": "Old Testament",
+      "englishName": "Haggai",
+      "spanishName": "Hageo",
+      "abbreviation": "Hg",
+      "chapters": 2
+    },
+    {
+      "id": 38,
+      "testament": "Old Testament",
+      "englishName": "Zechariah",
+      "spanishName": "Zacarías",
+      "abbreviation": "Zc",
+      "chapters": 14
+    },
+    {
+      "id": 39,
+      "testament": "Old Testament",
+      "englishName": "Malachi",
+      "spanishName": "Malaquías",
+      "abbreviation": "Ml",
+      "chapters": 4
+    },
+    {
+      "id": 40,
+      "testament": "New Testament",
+      "englishName": "Matthew",
+      "spanishName": "Mateo",
+      "abbreviation": "Mt",
+      "chapters": 28
+    },
+    {
+      "id": 41,
+      "testament": "New Testament",
+      "englishName": "Mark",
+      "spanishName": "Marcos",
+      "abbreviation": "Mk",
+      "chapters": 16
+    },
+    {
+      "id": 42,
+      "testament": "New Testament",
+      "englishName": "Luke",
+      "spanishName": "Lucas",
+      "abbreviation": "Lk",
+      "chapters": 24
+    },
+    {
+      "id": 43,
+      "testament": "New Testament",
+      "englishName": "John",
+      "spanishName": "Juan",
+      "abbreviation": "Jh",
+      "chapters": 21
+    },
+    {
+      "id": 44,
+      "testament": "New Testament",
+      "englishName": "Acts",
+      "spanishName": "Hechos",
+      "abbreviation": "Ac",
+      "chapters": 28
+    },
+    {
+      "id": 45,
+      "testament": "New Testament",
+      "englishName": "Romans",
+      "spanishName": "Romanos",
+      "abbreviation": "Ro",
+      "chapters": 16
+    },
+    {
+      "id": 46,
+      "testament": "New Testament",
+      "englishName": "1 Corinthians",
+      "spanishName": "1 Corintios",
+      "abbreviation": "1Co",
+      "chapters": 16
+    },
+    {
+      "id": 47,
+      "testament": "New Testament",
+      "englishName": "2 Corinthians",
+      "spanishName": "2 Corintios",
+      "abbreviation": "2Co",
+      "chapters": 13
+    },
+    {
+      "id": 48,
+      "testament": "New Testament",
+      "englishName": "Galatians",
+      "spanishName": "Gálatas",
+      "abbreviation": "Ga",
+      "chapters": 6
+    },
+    {
+      "id": 49,
+      "testament": "New Testament",
+      "englishName": "Ephesians",
+      "spanishName": "Efesios",
+      "abbreviation": "Ep",
+      "chapters": 6
+    },
+    {
+      "id": 50,
+      "testament": "New Testament",
+      "englishName": "Philippians",
+      "spanishName": "Filipenses",
+      "abbreviation": "Ph",
+      "chapters": 4
+    },
+    {
+      "id": 51,
+      "testament": "New Testament",
+      "englishName": "Colossians",
+      "spanishName": "Colosenses",
+      "abbreviation": "Co",
+      "chapters": 4
+    },
+    {
+      "id": 52,
+      "testament": "New Testament",
+      "englishName": "1 Thessalonians",
+      "spanishName": "1 Tesalonicenses",
+      "abbreviation": "1Th",
+      "chapters": 5
+    },
+    {
+      "id": 53,
+      "testament": "New Testament",
+      "englishName": "2 Thessalonians",
+      "spanishName": "2 Tesalonicenses",
+      "abbreviation": "2Th",
+      "chapters": 3
+    },
+    {
+      "id": 54,
+      "testament": "New Testament",
+      "englishName": "1 Timothy",
+      "spanishName": "1 Timoteo",
+      "abbreviation": "1Ti",
+      "chapters": 6
+    },
+    {
+      "id": 55,
+      "testament": "New Testament",
+      "englishName": "2 Timothy",
+      "spanishName": "2 Timoteo",
+      "abbreviation": "2Ti",
+      "chapters": 4
+    },
+    {
+      "id": 56,
+      "testament": "New Testament",
+      "englishName": "Titus",
+      "spanishName": "Tito",
+      "abbreviation": "Ti",
+      "chapters": 3
+    },
+    {
+      "id": 57,
+      "testament": "New Testament",
+      "englishName": "Philemon",
+      "spanishName": "Filemón",
+      "abbreviation": "Pm",
+      "chapters": 1
+    },
+    {
+      "id": 58,
+      "testament": "New Testament",
+      "englishName": "Hebrews",
+      "spanishName": "Hebreos",
+      "abbreviation": "He",
+      "chapters": 13
+    },
+    {
+      "id": 59,
+      "testament": "New Testament",
+      "englishName": "James",
+      "spanishName": "Santiago",
+      "abbreviation": "Ja",
+      "chapters": 5
+    },
+    {
+      "id": 60,
+      "testament": "New Testament",
+      "englishName": "1 Peter",
+      "spanishName": "1 Pedro",
+      "abbreviation": "1P",
+      "chapters": 5
+    },
+    {
+      "id": 61,
+      "testament": "New Testament",
+      "englishName": "2 Peter",
+      "spanishName": "2 Pedro",
+      "abbreviation": "2P",
+      "chapters": 3
+    },
+    {
+      "id": 62,
+      "testament": "New Testament",
+      "englishName": "1 John",
+      "spanishName": "1 Juan",
+      "abbreviation": "1J",
+      "chapters": 5
+    },
+    {
+      "id": 63,
+      "testament": "New Testament",
+      "englishName": "2 John",
+      "spanishName": "2 Juan",
+      "abbreviation": "2J",
+      "chapters": 1
+    },
+    {
+      "id": 64,
+      "testament": "New Testament",
+      "englishName": "3 John",
+      "spanishName": "3 Juan",
+      "abbreviation": "3J",
+      "chapters": 1
+    },
+    {
+      "id": 65,
+      "testament": "New Testament",
+      "englishName": "Jude",
+      "spanishName": "Judas",
+      "abbreviation": "Ju",
+      "chapters": 1
+    },
+    {
+      "id": 66,
+      "testament": "New Testament",
+      "englishName": "Revelation",
+      "spanishName": "Apocalipsis",
+      "abbreviation": "Re",
+      "chapters": 22
+    }
+  ]
+}

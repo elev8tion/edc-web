@@ -1,0 +1,32 @@
+[
+  {
+    "id": "plan_gospel_john",
+    "title": "El Evangelio de Juan en 21 Días",
+    "description": "Experimenta a Jesús a través del Evangelio de Juan - el relato más teológico de la vida, enseñanzas e identidad de Cristo como el Hijo de Dios.",
+    "duration": "21 días",
+    "category": "gospels",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "10-15 min",
+    "totalReadings": 21
+  },
+  {
+    "id": "plan_proverbs_month",
+    "title": "Proverbios - Un Capítulo al Día",
+    "description": "Obtén sabiduría práctica para la vida diaria con un capítulo de Proverbios cada día. Perfecto para construir el hábito de buscar la sabiduría divina.",
+    "duration": "31 días",
+    "category": "proverbs",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "5-10 min",
+    "totalReadings": 31
+  },
+  {
+    "id": "plan_psalms_prayer",
+    "title": "Salmos Para la Oración",
+    "description": "Deja que los Salmos guíen tu vida de oración. Lee 5 salmos cada día y aprende a expresar tu corazón a Dios a través de la adoración, el lamento y la alabanza.",
+    "duration": "30 días",
+    "category": "psalms",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 30
+  }
+]

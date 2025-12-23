@@ -1,0 +1,62 @@
+[
+  {
+    "id": "plan_new_testament",
+    "title": "New Testament in 90 Days",
+    "description": "Read through the entire New Testament in just 90 days. Perfect for understanding the life of Jesus and the early church.",
+    "duration": "90 days",
+    "category": "newTestament",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 90
+  },
+  {
+    "id": "plan_psalms_proverbs",
+    "title": "Wisdom Literature",
+    "description": "Journey through the five wisdom books: Job, Psalms, Proverbs, Ecclesiastes, and Song of Solomon. Discover timeless insights for living wisely and worshiping deeply.",
+    "duration": "60 days",
+    "category": "wisdom",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 60
+  },
+  {
+    "id": "plan_gospels",
+    "title": "Life of Jesus (4 Gospels)",
+    "description": "Journey through the life, teachings, death, and resurrection of Jesus Christ through all four Gospel accounts.",
+    "duration": "40 days",
+    "category": "gospels",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 40
+  },
+  {
+    "id": "plan_one_year_bible",
+    "title": "One Year Bible Reading",
+    "description": "Read the entire Bible in one year with a balanced mix of Old Testament, New Testament, Psalms, and Proverbs daily.",
+    "duration": "365 days",
+    "category": "completeBible",
+    "difficulty": "challenging",
+    "estimatedTimePerDay": "20-30 min",
+    "totalReadings": 365
+  },
+  {
+    "id": "plan_paul_letters",
+    "title": "Paul's Letters",
+    "description": "Study all of Paul's epistles to understand his theology, church teachings, and practical Christian living.",
+    "duration": "45 days",
+    "category": "epistles",
+    "difficulty": "intermediate",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 45
+  },
+  {
+    "id": "plan_pentateuch",
+    "title": "Books of Moses (Pentateuch)",
+    "description": "Discover God's covenant with His people through Genesis, Exodus, Leviticus, Numbers, and Deuteronomy.",
+    "duration": "75 days",
+    "category": "oldTestament",
+    "difficulty": "intermediate",
+    "estimatedTimePerDay": "20-25 min",
+    "totalReadings": 75
+  }
+]

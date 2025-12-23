@@ -1,0 +1,39 @@
+# Netlify configuration for Everyday Christian PWA
+[build]
+  command = "flutter build web --release --no-tree-shake-icons"
+  publish = "build/web"
+
+# Headers for JavaScript and WASM files - MUST come first
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Headers for assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# General headers for all files
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+
+# Redirect only HTML routes to index.html for PWA routing
+# Don't redirect static files (js, wasm, css, images, etc.)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false  # Don't redirect if file exists

@@ -1,0 +1,866 @@
+{
+  "services": [
+    {
+      "name": "PrayerService",
+      "file": "lib/core/services/prayer_service.dart",
+      "class": "PrayerService",
+      "purpose": "Manages prayer requests CRUD operations and prayer-based achievements",
+      "lines": 333,
+      "tables": {
+        "prayer_requests": {
+          "operations": ["query", "insert", "update", "delete"],
+          "methods": [
+            "getActivePrayers",
+            "getAnsweredPrayers",
+            "getAllPrayers",
+            "getPrayersByCategory",
+            "addPrayer",
+            "updatePrayer",
+            "deletePrayer",
+            "markPrayerAnswered",
+            "getPrayerCount",
+            "getAnsweredPrayerCount",
+            "exportPrayerJournal"
+          ]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [215, 221],
+        "transactions": false,
+        "joins": false,
+        "complex_where": true,
+        "where_lines": [28, 32, 54, 58, 79, 97]
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": ["AchievementService", "PrayerStreakService"],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "MEDIUM",
+      "notes": "Calls achievement service to track prayer streaks (7+ days) and total prayers (50+)"
+    },
+    {
+      "name": "CategoryService",
+      "file": "lib/core/services/category_service.dart",
+      "class": "CategoryService",
+      "purpose": "Manages prayer category CRUD and category statistics",
+      "lines": 302,
+      "tables": {
+        "prayer_categories": {
+          "operations": ["query", "insert", "update", "delete"],
+          "methods": [
+            "getActiveCategories",
+            "getAllCategories",
+            "getCategoryById",
+            "getCategoryByName",
+            "createCategory",
+            "updateCategory",
+            "deleteCategory",
+            "toggleCategoryActive",
+            "reorderCategories",
+            "getCategoryStatistics",
+            "getAllCategoryStatistics",
+            "getCategoryUsageCount",
+            "resetToDefaults",
+            "getCustomCategoryCount",
+            "isCategoryNameAvailable"
+          ]
+        },
+        "prayer_requests": {
+          "operations": ["query"],
+          "methods": ["deleteCategory", "getCategoryStatistics"]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [78, 206, 213, 220, 262, 288],
+        "transactions": true,
+        "transaction_lines": [181],
+        "joins": false,
+        "complex_where": true,
+        "where_lines": [16, 39, 54, 79, 138, 166, 189]
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": [],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "MEDIUM",
+      "notes": "Uses transaction for reordering categories; validates category name uniqueness"
+    },
+    {
+      "name": "ReadingPlanService",
+      "file": "lib/core/services/reading_plan_service.dart",
+      "class": "ReadingPlanService",
+      "purpose": "Manages reading plans and daily readings CRUD",
+      "lines": 180,
+      "tables": {
+        "reading_plans": {
+          "operations": ["query", "insert", "update"],
+          "methods": [
+            "getAllPlans",
+            "getActivePlans",
+            "getCurrentPlan",
+            "startPlan",
+            "stopPlan",
+            "updateProgress"
+          ]
+        },
+        "daily_readings": {
+          "operations": ["query", "insert", "update"],
+          "methods": [
+            "getTodaysReadings",
+            "getReadingsForPlan",
+            "markReadingCompleted"
+          ]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [123],
+        "transactions": false,
+        "joins": false,
+        "complex_where": true,
+        "where_lines": [19, 36, 48, 55, 69, 82, 97]
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": [],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "MEDIUM",
+      "notes": "Manages both reading plans and daily readings; updates plan progress on marking complete"
+    },
+    {
+      "name": "DevotionalService",
+      "file": "lib/core/services/devotional_service.dart",
+      "class": "DevotionalService",
+      "purpose": "Manages devotional content and completion status",
+      "lines": 148,
+      "tables": {
+        "devotionals": {
+          "operations": ["query", "update"],
+          "methods": [
+            "getAllDevotionals",
+            "getTodaysDevotional",
+            "getCompletedDevotionals",
+            "markDevotionalCompleted",
+            "markDevotionalIncomplete",
+            "toggleActionStepCompleted",
+            "getCompletedCount",
+            "getCurrentStreak"
+          ]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [87],
+        "transactions": false,
+        "joins": false,
+        "complex_where": true,
+        "where_lines": [25, 40, 49, 55, 62, 75]
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": [],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "LOW",
+      "notes": "Simple CRUD operations on devotionals; calculates streaks in-memory"
+    },
+    {
+      "name": "AchievementService",
+      "file": "lib/core/services/achievement_service.dart",
+      "class": "AchievementService",
+      "purpose": "Records and tracks achievement completions across multiple domains",
+      "lines": 276,
+      "tables": {
+        "achievement_completions": {
+          "operations": ["query", "insert", "delete"],
+          "methods": [
+            "getCompletionCount",
+            "getCompletionHistory",
+            "recordCompletion",
+            "getTotalAchievementsEarned",
+            "checkAllSharesAchievement",
+            "clearAllCompletions"
+          ]
+        },
+        "shared_chats": {
+          "operations": ["delete"],
+          "methods": ["resetAchievementCounter"]
+        },
+        "shared_verses": {
+          "operations": ["query"],
+          "methods": ["checkAllSharesAchievement"]
+        },
+        "shared_devotionals": {
+          "operations": ["query"],
+          "methods": ["checkAllSharesAchievement"]
+        },
+        "shared_prayers": {
+          "operations": ["query"],
+          "methods": ["checkAllSharesAchievement"]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [218, 237, 238, 239, 240],
+        "transactions": false,
+        "joins": false,
+        "complex_where": true,
+        "where_lines": [68, 91, 199]
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": [],
+        "platform_specific": false
+      },
+      "testing_priority": "MEDIUM",
+      "migration_complexity": "MEDIUM",
+      "notes": "Cross-table achievement tracking; queries multiple shared_* tables for Disciple achievement"
+    },
+    {
+      "name": "BibleLoaderService",
+      "file": "lib/core/services/bible_loader_service.dart",
+      "class": "BibleLoaderService",
+      "purpose": "Loads Bible data from asset databases and attaches to main database",
+      "lines": 261,
+      "tables": {
+        "bible_verses": {
+          "operations": ["insert"],
+          "methods": ["_copyEnglishBible", "_copySpanishBible", "isBibleLoaded"]
+        },
+        "daily_verse_schedule": {
+          "operations": ["insert"],
+          "methods": ["_copyEnglishBible", "_copySpanishBible"]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [56, 60, 75, 117, 121, 137],
+        "transactions": false,
+        "joins": true,
+        "join_details": "Joins asset_db_en.verses with bible_verses using book/chapter/verse; Joins asset_db_es with daily_verse_schedule",
+        "complex_where": true,
+        "asset_database": true,
+        "asset_db_operations": ["ATTACH DATABASE asset_db_en", "ATTACH DATABASE asset_db_es", "DETACH DATABASE"]
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": [],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "HIGH",
+      "notes": "Critical: Loads Bible data from asset databases (bible.db, spanish_bible_rvr1909.db); Uses DATABASE ATTACH/DETACH; Complex joins for verse mapping; Handles English/Spanish translation mapping with CASE statement"
+    },
+    {
+      "name": "PrayerStreakService",
+      "file": "lib/core/services/prayer_streak_service.dart",
+      "class": "PrayerStreakService",
+      "purpose": "Tracks and calculates prayer streaks and activity patterns",
+      "lines": 240,
+      "tables": {
+        "prayer_streak_activity": {
+          "operations": ["query", "insert", "delete"],
+          "methods": [
+            "recordPrayerActivity",
+            "getCurrentStreak",
+            "getLongestStreak",
+            "hasPrayedToday",
+            "getAllActivityDates",
+            "getTotalDaysPrayed",
+            "clearAllStreakData"
+          ]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [183],
+        "transactions": false,
+        "joins": false,
+        "complex_where": true,
+        "where_lines": [30, 148]
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": [],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "LOW",
+      "notes": "Uses YYYYMMDD integer format for dates; In-memory streak calculation; One entry per day"
+    },
+    {
+      "name": "DevotionalProgressService",
+      "file": "lib/core/services/devotional_progress_service.dart",
+      "class": "DevotionalProgressService",
+      "purpose": "Tracks devotional completion progress and achievements",
+      "lines": 304,
+      "tables": {
+        "devotionals": {
+          "operations": ["query", "update"],
+          "methods": [
+            "markAsComplete",
+            "markAsIncomplete",
+            "getCompletionStatus",
+            "getTotalCompleted",
+            "getCompletedDevotionals",
+            "getAllDevotionals",
+            "getTodaysDevotional",
+            "getMostRecentAvailableDevotional"
+          ]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [46, 113, 217],
+        "transactions": false,
+        "joins": false,
+        "complex_where": true,
+        "where_lines": [22, 49, 126, 226, 250, 269]
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": ["AchievementService"],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "MEDIUM",
+      "notes": "Tracks Daily Bread achievement (30 devotionals per month); Calculates devotional streaks; Handles month boundary calculations"
+    },
+    {
+      "name": "ReadingPlanProgressService",
+      "file": "lib/core/services/reading_plan_progress_service.dart",
+      "class": "ReadingPlanProgressService",
+      "purpose": "Tracks reading plan progress with advanced analytics and streaks",
+      "lines": 640,
+      "tables": {
+        "daily_readings": {
+          "operations": ["query", "update", "delete"],
+          "methods": [
+            "markDayComplete",
+            "markDayIncomplete",
+            "getProgressPercentage",
+            "getCompletedReadings",
+            "getIncompleteReadings",
+            "getTodaysReadings",
+            "getStreak",
+            "getCalendarHeatmapData",
+            "getMissedDays",
+            "getWeeklyCompletionRate"
+          ]
+        },
+        "reading_plans": {
+          "operations": ["query", "update"],
+          "methods": [
+            "resetPlan",
+            "getProgressPercentage",
+            "getCurrentDay",
+            "getCompletionStats",
+            "getEstimatedCompletionDate"
+          ]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [92, 101, 123, 334, 340, 475, 485, 518, 557, 602],
+        "transactions": false,
+        "joins": false,
+        "complex_where": true,
+        "where_lines": [27, 33, 38, 40, 59, 70, 93, 102, 173, 188, 211, 239, 300, 336, 378, 437, 447]
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": ["AchievementService", "ReadingPlanGenerator"],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "HIGH",
+      "notes": "Most complex service; Tracks Deep Diver achievement (5 plans completed); Complex heatmap calculations; Estimated completion date logic; Generates readings via ReadingPlanGenerator"
+    },
+    {
+      "name": "NotificationService",
+      "file": "lib/core/services/notification_service.dart",
+      "class": "NotificationService",
+      "purpose": "Manages local notifications for devotionals, verses, prayers, and reading reminders",
+      "lines": 337,
+      "tables": {},
+      "query_patterns": {
+        "raw_sql": false,
+        "transactions": false,
+        "joins": false
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": true,
+        "other_services": [
+          "DevotionalProgressService",
+          "UnifiedVerseService",
+          "PrayerService",
+          "ReadingPlanService"
+        ],
+        "platform_specific": true,
+        "platform_details": "iOS (DarwinNotificationDetails) and Android (AndroidNotificationDetails) platform-specific code"
+      },
+      "testing_priority": "MEDIUM",
+      "migration_complexity": "LOW",
+      "notes": "Queries database indirectly via dependent services; Platform-specific notification channels; Timezone-aware scheduling"
+    },
+    {
+      "name": "AppLockoutService",
+      "file": "lib/core/services/app_lockout_service.dart",
+      "class": "AppLockoutService",
+      "purpose": "Handles app lockout after failed authentication attempts using device PIN/biometric",
+      "lines": 243,
+      "tables": {},
+      "query_patterns": {
+        "raw_sql": false,
+        "transactions": false,
+        "joins": false
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": false,
+        "other_services": [],
+        "platform_specific": true,
+        "platform_details": "Uses local_auth plugin for iOS/Android biometric and PIN authentication"
+      },
+      "testing_priority": "MEDIUM",
+      "migration_complexity": "LOW",
+      "notes": "Uses SharedPreferences only (no database); Max 3 attempts, 30-minute lockout; Device PIN fallback support"
+    },
+    {
+      "name": "SubscriptionService",
+      "file": "lib/core/services/subscription_service.dart",
+      "class": "SubscriptionService",
+      "purpose": "Manages subscription state, trial period, and message limits for premium features",
+      "lines": 987,
+      "tables": {},
+      "query_patterns": {
+        "raw_sql": false,
+        "transactions": false,
+        "joins": false
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": false,
+        "other_services": [],
+        "platform_specific": true,
+        "platform_details": "iOS/Android in-app purchase via in_app_purchase plugin; Keychain (iOS) and KeyStore (Android) for trial abuse prevention"
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "LOW",
+      "notes": "Trial: 3 days OR 15 messages total; Premium: 150 messages/month; Uses SharedPreferences + secure storage for privacy-first design; Survives app uninstall via Keychain/KeyStore"
+    },
+    {
+      "name": "UnifiedVerseService",
+      "file": "lib/services/unified_verse_service.dart",
+      "class": "UnifiedVerseService",
+      "purpose": "Manages Bible verses with FTS5 search, favorites, and themes",
+      "lines": 585,
+      "tables": {
+        "bible_verses": {
+          "operations": ["query"],
+          "methods": [
+            "searchVerses",
+            "_fallbackSearch",
+            "searchByTheme",
+            "getAllVerses",
+            "getVerseByReference",
+            "getVersesForSituation",
+            "getDailyVerse",
+            "searchVerses"
+          ]
+        },
+        "bible_verses_fts": {
+          "operations": ["query"],
+          "methods": ["searchVerses"]
+        },
+        "favorite_verses": {
+          "operations": ["query", "insert", "update", "delete"],
+          "methods": [
+            "getFavoriteVerses",
+            "getFavoriteVerseCount",
+            "addToFavorites",
+            "removeFromFavorites",
+            "clearFavoriteVerses",
+            "toggleFavorite",
+            "isVerseFavorite",
+            "_getFavoriteVerseIds",
+            "updateFavorite"
+          ]
+        },
+        "shared_verses": {
+          "operations": ["query", "insert", "delete"],
+          "methods": [
+            "recordSharedVerse",
+            "deleteSharedVerse",
+            "clearSharedVerses",
+            "getSharedVerses",
+            "getSharedVerseCount"
+          ]
+        },
+        "verse_preferences": {
+          "operations": ["insert"],
+          "methods": [
+            "updatePreferredThemes",
+            "updateAvoidRecentDays",
+            "updatePreferredVersion"
+          ]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [31, 63, 95, 124, 132, 250, 261, 529, 530],
+        "transactions": false,
+        "joins": true,
+        "join_details": "Joins bible_verses_fts with bible_verses using rowid; Joins bible_verses with favorite_verses",
+        "complex_where": true,
+        "fts5_search": true,
+        "fts5_lines": [31, 38, 41, 250, 254]
+      },
+      "dependencies": {
+        "uses_database_helper": true,
+        "uses_database_service": false,
+        "other_services": ["AchievementService"],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "HIGH",
+      "notes": "Critical: Uses FTS5 full-text search with ranking and randomization (10-second timeout); Fallback LIKE search; Tracks Curator achievement (100 saved verses); Theme-based verse selection with situation mapping"
+    },
+    {
+      "name": "ConversationService",
+      "file": "lib/services/conversation_service.dart",
+      "class": "ConversationService",
+      "purpose": "Manages chat conversations, sessions, and messages with schema repair",
+      "lines": 484,
+      "tables": {
+        "chat_messages": {
+          "operations": ["query", "insert", "delete"],
+          "methods": [
+            "saveMessage",
+            "saveMessages",
+            "getMessages",
+            "getRecentMessages",
+            "deleteMessage",
+            "getMessageCount",
+            "searchMessages",
+            "exportConversation"
+          ]
+        },
+        "chat_sessions": {
+          "operations": ["query", "insert", "update", "delete"],
+          "methods": [
+            "_verifyChatSessionsSchema",
+            "createSession",
+            "getSessions",
+            "getLastActiveSession",
+            "sessionExists",
+            "updateSessionTitle",
+            "archiveSession",
+            "deleteSession",
+            "clearOldConversations",
+            "_updateSessionLastMessage"
+          ]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [16, 46, 350, 463],
+        "transactions": true,
+        "transaction_lines": [90, 306],
+        "joins": false,
+        "complex_where": true,
+        "where_lines": [46, 119, 195, 219, 245, 265, 285, 308, 333, 351, 405, 463]
+      },
+      "dependencies": {
+        "uses_database_helper": true,
+        "uses_database_service": false,
+        "other_services": [],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "MEDIUM",
+      "notes": "Schema repair on initialization (adds missing columns dynamically); Transactions for multi-table operations; Exports conversations as text; Clears old conversations by age"
+    },
+    {
+      "name": "BibleChapterService",
+      "file": "lib/services/bible_chapter_service.dart",
+      "class": "BibleChapterService",
+      "purpose": "Fetches Bible chapters and verses with FTS search and reading tracking",
+      "lines": 321,
+      "tables": {
+        "bible_verses": {
+          "operations": ["query"],
+          "methods": [
+            "getChapterVerses",
+            "getChapterRange",
+            "getChapterCount",
+            "getAllBooks",
+            "chapterExists",
+            "getVersesByReference",
+            "searchVerses"
+          ]
+        },
+        "bible_verses_fts": {
+          "operations": ["query"],
+          "methods": ["searchVerses"]
+        },
+        "daily_readings": {
+          "operations": ["update", "query"],
+          "methods": ["markReadingComplete", "isReadingComplete"]
+        },
+        "reading_plans": {
+          "operations": ["update"],
+          "methods": ["markReadingComplete"]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": true,
+        "raw_sql_lines": [86, 103, 213, 250],
+        "transactions": false,
+        "joins": true,
+        "join_details": "Joins bible_verses_fts with bible_verses; Complex CASE statement for book ordering (English/Spanish)",
+        "complex_where": true,
+        "where_lines": [19, 49, 89, 106, 193]
+      },
+      "dependencies": {
+        "uses_database_helper": true,
+        "uses_database_service": false,
+        "other_services": [],
+        "platform_specific": false
+      },
+      "testing_priority": "HIGH",
+      "migration_complexity": "MEDIUM",
+      "notes": "Complex CASE statement for biblical book ordering; FTS5 search for verses; Updates reading plan progress via nested updates"
+    },
+    {
+      "name": "DailyVerseService",
+      "file": "lib/services/daily_verse_service.dart",
+      "class": "DailyVerseService",
+      "purpose": "Manages daily verse of the day with caching and widget updates",
+      "lines": 197,
+      "tables": {
+        "bible_verses": {
+          "operations": ["query"],
+          "methods": ["getDailyVerse", "refreshDailyVerse"]
+        }
+      },
+      "query_patterns": {
+        "raw_sql": false,
+        "transactions": false,
+        "joins": false
+      },
+      "dependencies": {
+        "uses_database_helper": true,
+        "uses_database_service": false,
+        "other_services": ["WidgetService"],
+        "platform_specific": true,
+        "platform_details": "iOS widget updates via WidgetService (Home Widget plugin)"
+      },
+      "testing_priority": "MEDIUM",
+      "migration_complexity": "LOW",
+      "notes": "Uses SharedPreferences for daily verse caching; Singleton pattern; Updates widget on verse change; Handles timezone-aware day boundaries"
+    },
+    {
+      "name": "WidgetService",
+      "file": "lib/services/widget_service.dart",
+      "class": "WidgetService",
+      "purpose": "Manages iOS Home Screen Widget updates for daily verse",
+      "lines": 151,
+      "tables": {},
+      "query_patterns": {
+        "raw_sql": false,
+        "transactions": false,
+        "joins": false
+      },
+      "dependencies": {
+        "uses_database_helper": false,
+        "uses_database_service": false,
+        "other_services": [],
+        "platform_specific": true,
+        "platform_details": "iOS-only; Uses home_widget package and App Groups (group.com.edcfaith.shared)"
+      },
+      "testing_priority": "LOW",
+      "migration_complexity": "LOW",
+      "notes": "iOS-only service; Manages widget data via App Groups shared UserDefaults; Singleton pattern; Handles deep linking from widget taps"
+    }
+  ],
+  "database_schema_summary": {
+    "core_tables": [
+      "prayer_requests",
+      "prayer_categories",
+      "prayer_streak_activity",
+      "reading_plans",
+      "daily_readings",
+      "devotionals",
+      "achievement_completions",
+      "bible_verses",
+      "bible_verses_fts",
+      "daily_verse_schedule",
+      "chat_messages",
+      "chat_sessions",
+      "favorite_verses",
+      "shared_verses",
+      "shared_chats",
+      "shared_devotionals",
+      "shared_prayers",
+      "verse_preferences"
+    ],
+    "tables_by_usage_count": {
+      "bible_verses": ["UnifiedVerseService", "BibleChapterService", "DailyVerseService"],
+      "prayer_requests": ["PrayerService", "CategoryService"],
+      "daily_readings": ["ReadingPlanService", "ReadingPlanProgressService", "BibleChapterService"],
+      "achievement_completions": ["AchievementService", "PrayerService", "DevotionalProgressService", "ReadingPlanProgressService", "UnifiedVerseService"],
+      "chat_messages": ["ConversationService"],
+      "chat_sessions": ["ConversationService"]
+    }
+  },
+  "asset_databases": [
+    {
+      "name": "bible.db",
+      "location": "assets/bible.db",
+      "tables": ["verses", "daily_verse_schedule"],
+      "description": "English Bible (WEB translation) - loaded by BibleLoaderService"
+    },
+    {
+      "name": "spanish_bible_rvr1909.db",
+      "location": "assets/spanish_bible_rvr1909.db",
+      "tables": ["verses", "daily_verse_schedule"],
+      "description": "Spanish Bible (RVR1909 translation) - loaded by BibleLoaderService"
+    }
+  ],
+  "critical_operations": {
+    "transactions": [
+      {
+        "service": "CategoryService",
+        "operation": "reorderCategories",
+        "tables": ["prayer_categories"],
+        "purpose": "Atomically update all category display_order values"
+      },
+      {
+        "service": "ConversationService",
+        "operation": "saveMessages",
+        "tables": ["chat_messages"],
+        "purpose": "Batch insert multiple messages atomically"
+      },
+      {
+        "service": "ConversationService",
+        "operation": "deleteSession",
+        "tables": ["chat_messages", "chat_sessions"],
+        "purpose": "Delete session and all its messages atomically"
+      }
+    ],
+    "raw_sql_queries": [
+      {
+        "service": "BibleLoaderService",
+        "operation": "Load English Bible",
+        "query": "ATTACH DATABASE; INSERT OR REPLACE INTO bible_verses; INSERT OR REPLACE INTO daily_verse_schedule",
+        "complexity": "HIGH",
+        "notes": "Uses ATTACH/DETACH with JOIN and CASE statement for English/Spanish mapping"
+      },
+      {
+        "service": "UnifiedVerseService",
+        "operation": "FTS5 search",
+        "query": "SELECT FROM bible_verses_fts JOIN bible_verses",
+        "complexity": "HIGH",
+        "notes": "Full-text search with ranking, randomization, and 10-second timeout"
+      },
+      {
+        "service": "AchievementService",
+        "operation": "checkAllSharesAchievement",
+        "query": "SELECT COUNT(*) FROM shared_chats/verses/devotionals/prayers (parallel)",
+        "complexity": "MEDIUM",
+        "notes": "Multiple parallel raw queries to count all share types"
+      }
+    ],
+    "fts5_operations": [
+      {
+        "service": "UnifiedVerseService",
+        "table": "bible_verses_fts",
+        "operations": ["searchVerses", "_fallbackSearch"],
+        "timeout": "10 seconds"
+      },
+      {
+        "service": "BibleChapterService",
+        "table": "bible_verses_fts",
+        "operations": ["searchVerses"]
+      }
+    ]
+  },
+  "migration_roadmap": {
+    "phase_1_high_priority": [
+      "PrayerService - Core prayer CRUD",
+      "CategoryService - Category management",
+      "DevotionalService - Devotional tracking",
+      "UnifiedVerseService - Verse search and favorites",
+      "ConversationService - Chat persistence"
+    ],
+    "phase_2_medium_priority": [
+      "ReadingPlanService - Reading plan CRUD",
+      "ReadingPlanProgressService - Complex progress tracking",
+      "BibleChapterService - Chapter verse fetching",
+      "AchievementService - Achievement tracking"
+    ],
+    "phase_3_low_priority": [
+      "NotificationService - No direct database, depends on above",
+      "AppLockoutService - No database, uses SharedPreferences",
+      "SubscriptionService - No database, uses SharedPreferences + secure storage",
+      "DailyVerseService - Uses SharedPreferences caching",
+      "WidgetService - iOS-only, no database"
+    ],
+    "phase_4_asset_migration": [
+      "BibleLoaderService - Complex asset database operations with ATTACH/DETACH"
+    ]
+  },
+  "testing_strategy": {
+    "unit_test_focus": [
+      "PrayerService - CRUD operations with various category filters",
+      "CategoryService - Validation (unique names, reordering, statistics)",
+      "AchievementService - Multi-table aggregation queries",
+      "UnifiedVerseService - FTS search and fallback behavior"
+    ],
+    "integration_test_focus": [
+      "ReadingPlanProgressService - Complex nested updates across tables",
+      "ConversationService - Transaction handling and schema repair",
+      "BibleLoaderService - Asset database attachment and data migration"
+    ],
+    "mock_data_requirements": {
+      "bible_verses": "10,000+ verses across multiple books",
+      "prayer_requests": "Various states (answered, active, by category)",
+      "chat_messages": "Sessions with multiple message types",
+      "reading_plans": "Multiple completion states with progress tracking"
+    }
+  },
+  "summary": {
+    "total_services": 17,
+    "database_services": 15,
+    "non_database_services": 2,
+    "services_with_transactions": 2,
+    "services_with_raw_sql": 9,
+    "services_with_fts_search": 2,
+    "services_with_asset_databases": 1,
+    "services_with_complex_joins": 3,
+    "total_tables_queried": 18,
+    "most_queried_table": "bible_verses (used by 5+ services)",
+    "highest_migration_complexity": "BibleLoaderService (asset database operations)",
+    "highest_testing_priority": "PrayerService, CategoryService, ReadingPlanProgressService"
+  }
+}

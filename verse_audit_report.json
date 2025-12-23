@@ -1,0 +1,5751 @@
+{
+  "total_files": 14,
+  "total_verses": 848,
+  "total_matches": 591,
+  "total_mismatches": 0,
+  "total_errors": 257,
+  "files": [
+    {
+      "file": "batch_01_november_2025.json",
+      "devotionals_count": 28,
+      "verses_checked": 56,
+      "matches": 29,
+      "mismatches": 0,
+      "errors": 27,
+      "details": [
+        {
+          "devotional_id": "dev_001",
+          "field": "openingScripture",
+          "reference": "Salmos 107:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_001",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 107:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_002",
+          "field": "openingScripture",
+          "reference": "Santiago 1:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_002",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 1:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_003",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 4:4-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque todo lo que Dios crió es bueno, y nada hay que desechar, tomándose con hacimiento de gracias:..."
+        },
+        {
+          "devotional_id": "dev_003",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 4:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_004",
+          "field": "openingScripture",
+          "reference": "Salmos 103:2-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Bendice, alma mía á Jehová, y no olvides ninguno de sus beneficios. El es quien perdona todas tus in..."
+        },
+        {
+          "devotional_id": "dev_004",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 103:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_005",
+          "field": "openingScripture",
+          "reference": "Salmos 66:16-20",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Venid, oid todos los que teméis á Dios, y contaré lo que ha hecho á mi alma. A él clamé con mi boca,..."
+        },
+        {
+          "devotional_id": "dev_005",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 66:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_006",
+          "field": "openingScripture",
+          "reference": "Salmos 34:1-3",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": " BENDECIRÉ á Jehová en todo tiempo; su alabanza será siempre en mi boca. En Jehová se gloriará mi al..."
+        },
+        {
+          "devotional_id": "dev_006",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 34:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_007",
+          "field": "openingScripture",
+          "reference": "Salmos 100:4-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Entrad por sus puertas con reconocimiento, por sus atrios con alabanza: alabadle, bendecid su nombre..."
+        },
+        {
+          "devotional_id": "dev_007",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 100:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_008",
+          "field": "openingScripture",
+          "reference": "Filipenses 4:4-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Gozaos en el Señor siempre: otra vez digo: Que os gocéis. Vuestra modestia sea conocida de todos los..."
+        },
+        {
+          "devotional_id": "dev_008",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 4:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_009",
+          "field": "openingScripture",
+          "reference": "Juan 15:13-15",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Nadie tiene mayor amor que este, que ponga alguno su vida por sus amigos. Vosotros sois mis amigos, ..."
+        },
+        {
+          "devotional_id": "dev_009",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 15:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_010",
+          "field": "openingScripture",
+          "reference": "Romanos 12:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "ASÍ que, hermanos, os ruego por las misericordias de Dios, que presentéis vuestros cuerpos en sacrif..."
+        },
+        {
+          "devotional_id": "dev_010",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 12:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_011",
+          "field": "openingScripture",
+          "reference": "Salmos 34:8-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Gustad, y ved que es bueno Jehová: dichoso el hombre que confiará en él. Temed á Jehová, vosotros su..."
+        },
+        {
+          "devotional_id": "dev_011",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 34:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_012",
+          "field": "openingScripture",
+          "reference": "Lamentaciones 3:22-24",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_012",
+          "field": "keyVerseSpotlight",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_013",
+          "field": "openingScripture",
+          "reference": "Efesios 2:8-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios: No por obras, p..."
+        },
+        {
+          "devotional_id": "dev_013",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 2:8-9",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios: No por obras, p..."
+        },
+        {
+          "devotional_id": "dev_014",
+          "field": "openingScripture",
+          "reference": "Salmos 136:1-3",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "ALABAD á Jehová, porque es bueno; porque para siempre es su misericordia. Alabad al Dios de los dios..."
+        },
+        {
+          "devotional_id": "dev_014",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 136:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_015",
+          "field": "openingScripture",
+          "reference": "1 Juan 4:9-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En esto se mostró el amor de Dios para con nosotros, en que Dios envió á su Hijo unigénito al mundo,..."
+        },
+        {
+          "devotional_id": "dev_015",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Juan 4:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En esto se mostró el amor de Dios para con nosotros, en que Dios envió á su Hijo unigénito al mundo,..."
+        },
+        {
+          "devotional_id": "dev_016",
+          "field": "openingScripture",
+          "reference": "Salmos 95:1-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "VENID, celebremos alegremente á Jehová: cantemos con júbilo á la roca de nuestra salud. Lleguemos an..."
+        },
+        {
+          "devotional_id": "dev_016",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 95:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "VENID, celebremos alegremente á Jehová: cantemos con júbilo á la roca de nuestra salud. Lleguemos an..."
+        },
+        {
+          "devotional_id": "dev_017",
+          "field": "openingScripture",
+          "reference": "Salmos 107:2-3",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Díganlo los redimidos de Jehová, los que ha redimido del poder del enemigo, Y los ha congregado de l..."
+        },
+        {
+          "devotional_id": "dev_017",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 107:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_018",
+          "field": "openingScripture",
+          "reference": "Mateo 28:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_018",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 28:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_019",
+          "field": "openingScripture",
+          "reference": "2 Pedro 1:3-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Como todas las cosas que pertenecen á la vida y á la piedad nos sean dadas de su divina potencia, po..."
+        },
+        {
+          "devotional_id": "dev_019",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Pedro 1:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_020",
+          "field": "openingScripture",
+          "reference": "Salmos 116:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "AMO á Jehová, pues ha oído mi voz y mis súplicas. Porque ha inclinado á mí su oído, invocaréle por t..."
+        },
+        {
+          "devotional_id": "dev_020",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 116:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "AMO á Jehová, pues ha oído mi voz y mis súplicas. Porque ha inclinado á mí su oído, invocaréle por t..."
+        },
+        {
+          "devotional_id": "dev_021",
+          "field": "openingScripture",
+          "reference": "Salmos 127:3-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "He aquí, heredad de Jehová son los hijos: cosa de estima el fruto del vientre. Como saetas en mano d..."
+        },
+        {
+          "devotional_id": "dev_021",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 127:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_022",
+          "field": "openingScripture",
+          "reference": "Proverbios 17:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_022",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 17:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_023",
+          "field": "openingScripture",
+          "reference": "1 Tesalonicenses 1:2-3",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Damos siempre gracias á Dios por todos vosotros, haciendo memoria de vosotros en nuestras oraciones;..."
+        },
+        {
+          "devotional_id": "dev_023",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Tesalonicenses 1:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_024",
+          "field": "openingScripture",
+          "reference": "3 Juan 1:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_024",
+          "field": "keyVerseSpotlight",
+          "reference": "3 Juan 1:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_025",
+          "field": "openingScripture",
+          "reference": "Mateo 6:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_025",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_026",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 6:6-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Empero grande granjería es la piedad con contentamiento. Porque nada hemos traído á este mundo, y si..."
+        },
+        {
+          "devotional_id": "dev_026",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 6:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_027",
+          "field": "openingScripture",
+          "reference": "Salmos 77:11-12",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Acordaréme de las obras de JAH: sí, haré yo memoria de tus maravillas antiguas. Y meditaré en todas ..."
+        },
+        {
+          "devotional_id": "dev_027",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 77:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_028",
+          "field": "openingScripture",
+          "reference": "Colosenses 3:15-17",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y la paz de Dios gobierne en vuestros corazones, á la cual asimismo sois llamados en un cuerpo; y se..."
+        },
+        {
+          "devotional_id": "dev_028",
+          "field": "keyVerseSpotlight",
+          "reference": "Colosenses 3:17",
+          "status": "match"
+        }
+      ]
+    },
+    {
+      "file": "batch_02_december_2025.json",
+      "devotionals_count": 31,
+      "verses_checked": 62,
+      "matches": 25,
+      "mismatches": 0,
+      "errors": 37,
+      "details": [
+        {
+          "devotional_id": "dev_029",
+          "field": "openingScripture",
+          "reference": "Romanos 15:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_029",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 15:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_030",
+          "field": "openingScripture",
+          "reference": "Salmos 27:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hubiera yo desmayado, si no creyese que tengo de ver la bondad de Jehová en la tierra de los vivient..."
+        },
+        {
+          "devotional_id": "dev_030",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 27:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_031",
+          "field": "openingScripture",
+          "reference": "Tito 2:11-13",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque la gracia de Dios que trae salvación á todos los hombres, se manifestó, Enseñándonos que, ren..."
+        },
+        {
+          "devotional_id": "dev_031",
+          "field": "keyVerseSpotlight",
+          "reference": "Tito 2:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_032",
+          "field": "openingScripture",
+          "reference": "Isaías 9:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque un niño nos es nacido, hijo nos es dado; y el principado sobre su hombro: y llamaráse su nomb..."
+        },
+        {
+          "devotional_id": "dev_032",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 9:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_033",
+          "field": "openingScripture",
+          "reference": "Isaías 7:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_033",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 7:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_034",
+          "field": "openingScripture",
+          "reference": "Mateo 1:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Todo esto aconteció para que se cumpliese lo que fué dicho por el Señor, por el profeta que dijo: He..."
+        },
+        {
+          "devotional_id": "dev_034",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 1:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_035",
+          "field": "openingScripture",
+          "reference": "Juan 1:14-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y aquel Verbo fué hecho carne, y habitó entre nosotros (y vimos su gloria, gloria como del unigénito..."
+        },
+        {
+          "devotional_id": "dev_035",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 1:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_036",
+          "field": "openingScripture",
+          "reference": "Isaías 9:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque un niño nos es nacido, hijo nos es dado; y el principado sobre su hombro: y llamaráse su nomb..."
+        },
+        {
+          "devotional_id": "dev_036",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 9:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_037",
+          "field": "openingScripture",
+          "reference": "Lucas 2:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y repentinamente fué con el ángel una multitud de los ejércitos celestiales, que alababan á Dios, y ..."
+        },
+        {
+          "devotional_id": "dev_037",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_038",
+          "field": "openingScripture",
+          "reference": "Lucas 3:3-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y él vino por toda la tierra al rededor del Jordán predicando el bautismo del arrepentimiento para l..."
+        },
+        {
+          "devotional_id": "dev_038",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 3:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_039",
+          "field": "openingScripture",
+          "reference": "Filipenses 2:5-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Haya, pues, en vosotros este sentir que hubo también en Cristo Jesús: El cual, siendo en forma de Di..."
+        },
+        {
+          "devotional_id": "dev_039",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 2:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "El cual, siendo en forma de Dios, no tuvo por usurpación ser igual á Dios: Sin embargo, se anonadó á..."
+        },
+        {
+          "devotional_id": "dev_040",
+          "field": "openingScripture",
+          "reference": "Lucas 1:26-38",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y al sexto mes, el ángel Gabriel fué enviado de Dios á una ciudad de Galilea, llamada Nazaret, A una..."
+        },
+        {
+          "devotional_id": "dev_040",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 1:38",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_041",
+          "field": "openingScripture",
+          "reference": "Mateo 1:18-24",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y el nacimiento de Jesucristo fué así: Que siendo María su madre desposada con José, antes que se ju..."
+        },
+        {
+          "devotional_id": "dev_041",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 1:24",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_042",
+          "field": "openingScripture",
+          "reference": "Miqueas 5:2-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas tú, Beth-lehem Ephrata, pequeña para ser en los millares de Judá, de ti me saldrá el que será Se..."
+        },
+        {
+          "devotional_id": "dev_042",
+          "field": "keyVerseSpotlight",
+          "reference": "Miqueas 5:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_043",
+          "field": "openingScripture",
+          "reference": "Lucas 2:8-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y había pastores en la misma tierra, que velaban y guardaban las vigilias de la noche sobre su ganad..."
+        },
+        {
+          "devotional_id": "dev_043",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_044",
+          "field": "openingScripture",
+          "reference": "Lucas 2:10-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas el ángel les dijo: No temáis; porque he aquí os doy nuevas de gran gozo, que será para todo el p..."
+        },
+        {
+          "devotional_id": "dev_044",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:10-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas el ángel les dijo: No temáis; porque he aquí os doy nuevas de gran gozo, que será para todo el p..."
+        },
+        {
+          "devotional_id": "dev_045",
+          "field": "openingScripture",
+          "reference": "Lucas 2:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y repentinamente fué con el ángel una multitud de los ejércitos celestiales, que alababan á Dios, y ..."
+        },
+        {
+          "devotional_id": "dev_045",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y repentinamente fué con el ángel una multitud de los ejércitos celestiales, que alababan á Dios, y ..."
+        },
+        {
+          "devotional_id": "dev_046",
+          "field": "openingScripture",
+          "reference": "Lucas 2:15-20",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y aconteció que como los ángeles se fueron de ellos al cielo, los pastores dijeron los unos á los ot..."
+        },
+        {
+          "devotional_id": "dev_046",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:17-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y viéndolo, hicieron notorio lo que les había sido dicho del niño. Y todos los que oyeron, se maravi..."
+        },
+        {
+          "devotional_id": "dev_047",
+          "field": "openingScripture",
+          "reference": "Lucas 2:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y aconteció que estando ellos allí, se cumplieron los días en que ella había de parir. Y parió á su ..."
+        },
+        {
+          "devotional_id": "dev_047",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_048",
+          "field": "openingScripture",
+          "reference": "Mateo 2:9-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y ellos, habiendo oído al rey, se fueron: y he aquí la estrella que habían visto en el oriente, iba ..."
+        },
+        {
+          "devotional_id": "dev_048",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 2:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_049",
+          "field": "openingScripture",
+          "reference": "Mateo 2:1-2, 9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y COMO fué nacido Jesús en Bethlehem de Judea en días del rey Herodes, he aquí unos magos vinieron d..."
+        },
+        {
+          "devotional_id": "dev_049",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 2:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y ellos, habiendo oído al rey, se fueron: y he aquí la estrella que habían visto en el oriente, iba ..."
+        },
+        {
+          "devotional_id": "dev_050",
+          "field": "openingScripture",
+          "reference": "2 Corintios 9:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_050",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 9:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_051",
+          "field": "openingScripture",
+          "reference": "Juan 3:16-17",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque de tal manera amó Dios al mundo, que ha dado á su Hijo unigénito, para que todo aquel que en ..."
+        },
+        {
+          "devotional_id": "dev_051",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 3:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_052",
+          "field": "openingScripture",
+          "reference": "Lucas 2:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y aconteció que estando ellos allí, se cumplieron los días en que ella había de parir. Y parió á su ..."
+        },
+        {
+          "devotional_id": "dev_052",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y aconteció que estando ellos allí, se cumplieron los días en que ella había de parir. Y parió á su ..."
+        },
+        {
+          "devotional_id": "dev_053",
+          "field": "openingScripture",
+          "reference": "Lucas 2:10-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas el ángel les dijo: No temáis; porque he aquí os doy nuevas de gran gozo, que será para todo el p..."
+        },
+        {
+          "devotional_id": "dev_053",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_054",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 1:15-17",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Palabra fiel y digna de ser recibida de todos: que Cristo Jesús vino al mundo para salvar á los peca..."
+        },
+        {
+          "devotional_id": "dev_054",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 1:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_055",
+          "field": "openingScripture",
+          "reference": "Juan 1:4-5, 9",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En él estaba la vida, y la vida era la luz de los hombres. Y la luz en las tinieblas resplandece; ma..."
+        },
+        {
+          "devotional_id": "dev_055",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 1:4-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En él estaba la vida, y la vida era la luz de los hombres. Y la luz en las tinieblas resplandece; ma..."
+        },
+        {
+          "devotional_id": "dev_056",
+          "field": "openingScripture",
+          "reference": "Tito 2:11-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque la gracia de Dios que trae salvación á todos los hombres, se manifestó, Enseñándonos que, ren..."
+        },
+        {
+          "devotional_id": "dev_056",
+          "field": "keyVerseSpotlight",
+          "reference": "Tito 2:11-13",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque la gracia de Dios que trae salvación á todos los hombres, se manifestó, Enseñándonos que, ren..."
+        },
+        {
+          "devotional_id": "dev_057",
+          "field": "openingScripture",
+          "reference": "Salmos 90:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_057",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 90:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_058",
+          "field": "openingScripture",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_058",
+          "field": "keyVerseSpotlight",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_059",
+          "field": "openingScripture",
+          "reference": "Filipenses 3:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hermanos, yo mismo no hago cuenta de haberlo ya alcanzado; pero una cosa hago: olvidando ciertamente..."
+        },
+        {
+          "devotional_id": "dev_059",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 3:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hermanos, yo mismo no hago cuenta de haberlo ya alcanzado; pero una cosa hago: olvidando ciertamente..."
+        }
+      ]
+    },
+    {
+      "file": "batch_03_january_2026.json",
+      "devotionals_count": 31,
+      "verses_checked": 62,
+      "matches": 36,
+      "mismatches": 0,
+      "errors": 26,
+      "details": [
+        {
+          "devotional_id": "dev_060",
+          "field": "openingScripture",
+          "reference": "2 Corintios 5:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_060",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 5:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_061",
+          "field": "openingScripture",
+          "reference": "Jeremías 29:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_061",
+          "field": "keyVerseSpotlight",
+          "reference": "Jeremías 29:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_062",
+          "field": "openingScripture",
+          "reference": "Proverbios 3:5-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Fíate de Jehová de todo tu corazón, y no estribes en tu prudencia. Reconócelo en todos tus caminos, ..."
+        },
+        {
+          "devotional_id": "dev_062",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 3:5-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Fíate de Jehová de todo tu corazón, y no estribes en tu prudencia. Reconócelo en todos tus caminos, ..."
+        },
+        {
+          "devotional_id": "dev_063",
+          "field": "openingScripture",
+          "reference": "Mateo 6:33",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_063",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:33",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_064",
+          "field": "openingScripture",
+          "reference": "Romanos 12:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "ASÍ que, hermanos, os ruego por las misericordias de Dios, que presentéis vuestros cuerpos en sacrif..."
+        },
+        {
+          "devotional_id": "dev_064",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 12:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "ASÍ que, hermanos, os ruego por las misericordias de Dios, que presentéis vuestros cuerpos en sacrif..."
+        },
+        {
+          "devotional_id": "dev_065",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 4:7-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas las fábulas profanas y de viejas desecha, y ejercítate para la piedad. Porque el ejercicio corpo..."
+        },
+        {
+          "devotional_id": "dev_065",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 4:7-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas las fábulas profanas y de viejas desecha, y ejercítate para la piedad. Porque el ejercicio corpo..."
+        },
+        {
+          "devotional_id": "dev_066",
+          "field": "openingScripture",
+          "reference": "Mateo 11:28-30",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Venid á mí todos los que estáis trabajados y cargados, que yo os haré descansar. Llevad mi yugo sobr..."
+        },
+        {
+          "devotional_id": "dev_066",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 11:28-30",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Venid á mí todos los que estáis trabajados y cargados, que yo os haré descansar. Llevad mi yugo sobr..."
+        },
+        {
+          "devotional_id": "dev_067",
+          "field": "openingScripture",
+          "reference": "Efesios 1:3-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Bendito el Dios y Padre del Señor nuestro Jesucristo, el cual nos bendijo con toda bendición espirit..."
+        },
+        {
+          "devotional_id": "dev_067",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 1:3-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Bendito el Dios y Padre del Señor nuestro Jesucristo, el cual nos bendijo con toda bendición espirit..."
+        },
+        {
+          "devotional_id": "dev_068",
+          "field": "openingScripture",
+          "reference": "Hebreos 11:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_068",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 11:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_069",
+          "field": "openingScripture",
+          "reference": "Hebreos 6:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_069",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 6:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_070",
+          "field": "openingScripture",
+          "reference": "1 Tesalonicenses 5:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_070",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Tesalonicenses 5:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_071",
+          "field": "openingScripture",
+          "reference": "Salmos 32:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_071",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 32:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_072",
+          "field": "openingScripture",
+          "reference": "1 Tesalonicenses 5:16-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Estad siempre gozosos. Orad sin cesar. Dad gracias en todo; porque esta es la voluntad de Dios para ..."
+        },
+        {
+          "devotional_id": "dev_072",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Tesalonicenses 5:16-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Estad siempre gozosos. Orad sin cesar. Dad gracias en todo; porque esta es la voluntad de Dios para ..."
+        },
+        {
+          "devotional_id": "dev_073",
+          "field": "openingScripture",
+          "reference": "Salmos 100",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "[Salmos 100 no encontrado en la base de datos]"
+        },
+        {
+          "devotional_id": "dev_073",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 100",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "[Salmos 100 no encontrado en la base de datos]"
+        },
+        {
+          "devotional_id": "dev_074",
+          "field": "openingScripture",
+          "reference": "Juan 14:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_074",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 14:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_075",
+          "field": "openingScripture",
+          "reference": "2 Corintios 12:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_075",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 12:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_076",
+          "field": "openingScripture",
+          "reference": "Josué 1:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_076",
+          "field": "keyVerseSpotlight",
+          "reference": "Josué 1:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_077",
+          "field": "openingScripture",
+          "reference": "Isaías 40:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_077",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 40:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_078",
+          "field": "openingScripture",
+          "reference": "Filipenses 4:11-13",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "No lo digo en razón de indigencia, pues he aprendido á contentarme con lo que tengo. Sé estar humill..."
+        },
+        {
+          "devotional_id": "dev_078",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 4:11-13",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "No lo digo en razón de indigencia, pues he aprendido á contentarme con lo que tengo. Sé estar humill..."
+        },
+        {
+          "devotional_id": "dev_079",
+          "field": "openingScripture",
+          "reference": "Mateo 25:14-30",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque el reino de los cielos es como un hombre que partiéndose lejos llamó á sus siervos, y les ent..."
+        },
+        {
+          "devotional_id": "dev_079",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 25:14-30",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque el reino de los cielos es como un hombre que partiéndose lejos llamó á sus siervos, y les ent..."
+        },
+        {
+          "devotional_id": "dev_080",
+          "field": "openingScripture",
+          "reference": "1 Juan 1:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_080",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Juan 1:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_081",
+          "field": "openingScripture",
+          "reference": "1 Pedro 5:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_081",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Pedro 5:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_082",
+          "field": "openingScripture",
+          "reference": "Filipenses 4:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por nada estéis afanosos; sino sean notorias vuestras peticiones delante de Dios en toda oración y r..."
+        },
+        {
+          "devotional_id": "dev_082",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 4:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por nada estéis afanosos; sino sean notorias vuestras peticiones delante de Dios en toda oración y r..."
+        },
+        {
+          "devotional_id": "dev_083",
+          "field": "openingScripture",
+          "reference": "Salmos 16:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_083",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 16:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_084",
+          "field": "openingScripture",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_084",
+          "field": "keyVerseSpotlight",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_085",
+          "field": "openingScripture",
+          "reference": "Efesios 4:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_085",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 4:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_086",
+          "field": "openingScripture",
+          "reference": "Santiago 1:2-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hermanos míos, tened por sumo gozo cuando cayereis en diversas tentaciones; Sabiendo que la prueba d..."
+        },
+        {
+          "devotional_id": "dev_086",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 1:2-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hermanos míos, tened por sumo gozo cuando cayereis en diversas tentaciones; Sabiendo que la prueba d..."
+        },
+        {
+          "devotional_id": "dev_087",
+          "field": "openingScripture",
+          "reference": "Santiago 1:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_087",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 1:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_088",
+          "field": "openingScripture",
+          "reference": "Romanos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_088",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_089",
+          "field": "openingScripture",
+          "reference": "Hebreos 10:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_089",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 10:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_090",
+          "field": "openingScripture",
+          "reference": "Salmos 77:11-12",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Acordaréme de las obras de JAH: sí, haré yo memoria de tus maravillas antiguas. Y meditaré en todas ..."
+        },
+        {
+          "devotional_id": "dev_090",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 77:11-12",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Acordaréme de las obras de JAH: sí, haré yo memoria de tus maravillas antiguas. Y meditaré en todas ..."
+        }
+      ]
+    },
+    {
+      "file": "batch_04_february_2026.json",
+      "devotionals_count": 28,
+      "verses_checked": 56,
+      "matches": 40,
+      "mismatches": 0,
+      "errors": 16,
+      "details": [
+        {
+          "devotional_id": "dev_091",
+          "field": "openingScripture",
+          "reference": "1 Juan 4:7-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Carísimos, amémonos unos á otros; porque el amor es de Dios. Cualquiera que ama, es nacido de Dios, ..."
+        },
+        {
+          "devotional_id": "dev_091",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Juan 4:7-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Carísimos, amémonos unos á otros; porque el amor es de Dios. Cualquiera que ama, es nacido de Dios, ..."
+        },
+        {
+          "devotional_id": "dev_092",
+          "field": "openingScripture",
+          "reference": "1 Corintios 13:4-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "La caridad es sufrida, es benigna; la caridad no tiene envidia, la caridad no hace sinrazón, no se e..."
+        },
+        {
+          "devotional_id": "dev_092",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 13:4-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "La caridad es sufrida, es benigna; la caridad no tiene envidia, la caridad no hace sinrazón, no se e..."
+        },
+        {
+          "devotional_id": "dev_093",
+          "field": "openingScripture",
+          "reference": "Efesios 4:32",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_093",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 4:32",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_094",
+          "field": "openingScripture",
+          "reference": "Proverbios 4:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_094",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 4:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_095",
+          "field": "openingScripture",
+          "reference": "Efesios 5:25-28",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Maridos, amad á vuestras mujeres, así como Cristo amó á la iglesia, y se entregó á sí mismo por ella..."
+        },
+        {
+          "devotional_id": "dev_095",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 5:25-28",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Maridos, amad á vuestras mujeres, así como Cristo amó á la iglesia, y se entregó á sí mismo por ella..."
+        },
+        {
+          "devotional_id": "dev_096",
+          "field": "openingScripture",
+          "reference": "1 Corintios 7:7-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Quisiera más bien que todos los hombres fuesen como yo: empero cada uno tiene su propio don de Dios;..."
+        },
+        {
+          "devotional_id": "dev_096",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 7:7-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Quisiera más bien que todos los hombres fuesen como yo: empero cada uno tiene su propio don de Dios;..."
+        },
+        {
+          "devotional_id": "dev_097",
+          "field": "openingScripture",
+          "reference": "Proverbios 17:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_097",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 17:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_098",
+          "field": "openingScripture",
+          "reference": "Mateo 18:15-17",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por tanto, si tu hermano pecare contra ti, ve, y redargúyele entre ti y él solo: si te oyere, has ga..."
+        },
+        {
+          "devotional_id": "dev_098",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 18:15-17",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por tanto, si tu hermano pecare contra ti, ve, y redargúyele entre ti y él solo: si te oyere, has ga..."
+        },
+        {
+          "devotional_id": "dev_099",
+          "field": "openingScripture",
+          "reference": "Colosenses 3:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_099",
+          "field": "keyVerseSpotlight",
+          "reference": "Colosenses 3:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_100",
+          "field": "openingScripture",
+          "reference": "Colosenses 3:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_100",
+          "field": "keyVerseSpotlight",
+          "reference": "Colosenses 3:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_101",
+          "field": "openingScripture",
+          "reference": "Efesios 4:32",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_101",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 4:32",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_102",
+          "field": "openingScripture",
+          "reference": "Efesios 4:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_102",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 4:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_103",
+          "field": "openingScripture",
+          "reference": "Filipenses 2:3-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Nada hagáis por contienda ó por vanagloria; antes bien en humildad, estimándoos inferiores los unos ..."
+        },
+        {
+          "devotional_id": "dev_103",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 2:3-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Nada hagáis por contienda ó por vanagloria; antes bien en humildad, estimándoos inferiores los unos ..."
+        },
+        {
+          "devotional_id": "dev_104",
+          "field": "openingScripture",
+          "reference": "Juan 15:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_104",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 15:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_105",
+          "field": "openingScripture",
+          "reference": "Efesios 4:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_105",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 4:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_106",
+          "field": "openingScripture",
+          "reference": "Santiago 1:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_106",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 1:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_107",
+          "field": "openingScripture",
+          "reference": "1 Tesalonicenses 5:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_107",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Tesalonicenses 5:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_108",
+          "field": "openingScripture",
+          "reference": "Gálatas 5:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_108",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 5:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_109",
+          "field": "openingScripture",
+          "reference": "Hebreos 10:24-25",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y considerémonos los unos á los otros para provocarnos al amor y á las buenas obras; No dejando nues..."
+        },
+        {
+          "devotional_id": "dev_109",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 10:24-25",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y considerémonos los unos á los otros para provocarnos al amor y á las buenas obras; No dejando nues..."
+        },
+        {
+          "devotional_id": "dev_110",
+          "field": "openingScripture",
+          "reference": "2 Corintios 5:18-19",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y todo esto es de Dios, el cual nos reconcilió á sí por Cristo; y nos dió el ministerio de la reconc..."
+        },
+        {
+          "devotional_id": "dev_110",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 5:18-19",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y todo esto es de Dios, el cual nos reconcilió á sí por Cristo; y nos dió el ministerio de la reconc..."
+        },
+        {
+          "devotional_id": "dev_111",
+          "field": "openingScripture",
+          "reference": "Romanos 15:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_111",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 15:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_112",
+          "field": "openingScripture",
+          "reference": "Proverbios 3:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_112",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 3:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_113",
+          "field": "openingScripture",
+          "reference": "Salmos 147:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_113",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 147:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_114",
+          "field": "openingScripture",
+          "reference": "Salmos 68:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_114",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 68:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_115",
+          "field": "openingScripture",
+          "reference": "1 Pedro 2:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_115",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Pedro 2:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_116",
+          "field": "openingScripture",
+          "reference": "Santiago 4:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_116",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 4:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_117",
+          "field": "openingScripture",
+          "reference": "Salmos 51:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_117",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 51:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_118",
+          "field": "openingScripture",
+          "reference": "Proverbios 4:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_118",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 4:23",
+          "status": "match"
+        }
+      ]
+    },
+    {
+      "file": "batch_05_march_2026.json",
+      "devotionals_count": 31,
+      "verses_checked": 62,
+      "matches": 36,
+      "mismatches": 0,
+      "errors": 26,
+      "details": [
+        {
+          "devotional_id": "dev_119",
+          "field": "openingScripture",
+          "reference": "2 Pedro 3:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_119",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Pedro 3:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_120",
+          "field": "openingScripture",
+          "reference": "Salmos 119:105",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_120",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 119:105",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_121",
+          "field": "openingScripture",
+          "reference": "Lucas 11:1-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y ACONTECIÓ que estando él orando en un lugar, como acabó, uno de sus discípulos le dijo: Señor, ens..."
+        },
+        {
+          "devotional_id": "dev_121",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 11:1-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y ACONTECIÓ que estando él orando en un lugar, como acabó, uno de sus discípulos le dijo: Señor, ens..."
+        },
+        {
+          "devotional_id": "dev_122",
+          "field": "openingScripture",
+          "reference": "Mateo 6:16-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y cuando ayunáis, no seáis como los hipócritas, austeros; porque ellos demudan sus rostros para pare..."
+        },
+        {
+          "devotional_id": "dev_122",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:16-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y cuando ayunáis, no seáis como los hipócritas, austeros; porque ellos demudan sus rostros para pare..."
+        },
+        {
+          "devotional_id": "dev_123",
+          "field": "openingScripture",
+          "reference": "Juan 4:23-24",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas la hora viene, y ahora es, cuando los verdaderos adoradores adorarán al Padre en espíritu y en v..."
+        },
+        {
+          "devotional_id": "dev_123",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 4:23-24",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas la hora viene, y ahora es, cuando los verdaderos adoradores adorarán al Padre en espíritu y en v..."
+        },
+        {
+          "devotional_id": "dev_124",
+          "field": "openingScripture",
+          "reference": "Salmos 1:2-3",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Antes en la ley de Jehová está su delicia, y en su ley medita de día y de noche. Y será como el árbo..."
+        },
+        {
+          "devotional_id": "dev_124",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 1:2-3",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Antes en la ley de Jehová está su delicia, y en su ley medita de día y de noche. Y será como el árbo..."
+        },
+        {
+          "devotional_id": "dev_125",
+          "field": "openingScripture",
+          "reference": "Marcos 1:35",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_125",
+          "field": "keyVerseSpotlight",
+          "reference": "Marcos 1:35",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_126",
+          "field": "openingScripture",
+          "reference": "Lucas 9:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_126",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 9:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_127",
+          "field": "openingScripture",
+          "reference": "1 Samuel 15:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_127",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Samuel 15:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_128",
+          "field": "openingScripture",
+          "reference": "2 Corintios 5:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_128",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 5:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_129",
+          "field": "openingScripture",
+          "reference": "Proverbios 3:5-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Fíate de Jehová de todo tu corazón, y no estribes en tu prudencia. Reconócelo en todos tus caminos, ..."
+        },
+        {
+          "devotional_id": "dev_129",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 3:5-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Fíate de Jehová de todo tu corazón, y no estribes en tu prudencia. Reconócelo en todos tus caminos, ..."
+        },
+        {
+          "devotional_id": "dev_130",
+          "field": "openingScripture",
+          "reference": "Santiago 4:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_130",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 4:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_131",
+          "field": "openingScripture",
+          "reference": "Filipenses 2:3-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Nada hagáis por contienda ó por vanagloria; antes bien en humildad, estimándoos inferiores los unos ..."
+        },
+        {
+          "devotional_id": "dev_131",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 2:3-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Nada hagáis por contienda ó por vanagloria; antes bien en humildad, estimándoos inferiores los unos ..."
+        },
+        {
+          "devotional_id": "dev_132",
+          "field": "openingScripture",
+          "reference": "Hechos 3:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_132",
+          "field": "keyVerseSpotlight",
+          "reference": "Hechos 3:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_133",
+          "field": "openingScripture",
+          "reference": "1 Pedro 1:15-16",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Sino como aquel que os ha llamado es santo, sed también vosotros santos en toda conversación: Porque..."
+        },
+        {
+          "devotional_id": "dev_133",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Pedro 1:15-16",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Sino como aquel que os ha llamado es santo, sed también vosotros santos en toda conversación: Porque..."
+        },
+        {
+          "devotional_id": "dev_134",
+          "field": "openingScripture",
+          "reference": "Mateo 5:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_134",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 5:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_135",
+          "field": "openingScripture",
+          "reference": "Romanos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_135",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_136",
+          "field": "openingScripture",
+          "reference": "Efesios 6:10-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por lo demás, hermanos míos, confortaos en el Señor, y en la potencia de su fortaleza. Vestíos de to..."
+        },
+        {
+          "devotional_id": "dev_136",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 6:10-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por lo demás, hermanos míos, confortaos en el Señor, y en la potencia de su fortaleza. Vestíos de to..."
+        },
+        {
+          "devotional_id": "dev_137",
+          "field": "openingScripture",
+          "reference": "Filipenses 1:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y esto ruego, que vuestro amor abunde aun más y más en ciencia y en todo conocimiento, Para que disc..."
+        },
+        {
+          "devotional_id": "dev_137",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 1:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y esto ruego, que vuestro amor abunde aun más y más en ciencia y en todo conocimiento, Para que disc..."
+        },
+        {
+          "devotional_id": "dev_138",
+          "field": "openingScripture",
+          "reference": "Proverbios 2:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_138",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 2:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_139",
+          "field": "openingScripture",
+          "reference": "Gálatas 5:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas el fruto del Espíritu es: caridad, gozo, paz, tolerancia, benignidad, bondad, fe, Mansedumbre, t..."
+        },
+        {
+          "devotional_id": "dev_139",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 5:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas el fruto del Espíritu es: caridad, gozo, paz, tolerancia, benignidad, bondad, fe, Mansedumbre, t..."
+        },
+        {
+          "devotional_id": "dev_140",
+          "field": "openingScripture",
+          "reference": "1 Corintios 9:27",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_140",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 9:27",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_141",
+          "field": "openingScripture",
+          "reference": "Hebreos 12:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "POR tanto nosotros también, teniendo en derredor nuestro una tan grande nube de testigos, dejando to..."
+        },
+        {
+          "devotional_id": "dev_141",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 12:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "POR tanto nosotros también, teniendo en derredor nuestro una tan grande nube de testigos, dejando to..."
+        },
+        {
+          "devotional_id": "dev_142",
+          "field": "openingScripture",
+          "reference": "2 Pedro 1:5-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Vosotros también, poniendo toda diligencia por esto mismo, mostrad en vuestra fe virtud, y en la vir..."
+        },
+        {
+          "devotional_id": "dev_142",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Pedro 1:5-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Vosotros también, poniendo toda diligencia por esto mismo, mostrad en vuestra fe virtud, y en la vir..."
+        },
+        {
+          "devotional_id": "dev_143",
+          "field": "openingScripture",
+          "reference": "Proverbios 10:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_143",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 10:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_144",
+          "field": "openingScripture",
+          "reference": "Salmos 51:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_144",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 51:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_145",
+          "field": "openingScripture",
+          "reference": "Isaías 40:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_145",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 40:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_146",
+          "field": "openingScripture",
+          "reference": "Juan 15:4-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Estad en mí, y yo en vosotros. Como el pámpano no puede llevar fruto de sí mismo, si no estuviere en..."
+        },
+        {
+          "devotional_id": "dev_146",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 15:4-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Estad en mí, y yo en vosotros. Como el pámpano no puede llevar fruto de sí mismo, si no estuviere en..."
+        },
+        {
+          "devotional_id": "dev_147",
+          "field": "openingScripture",
+          "reference": "Juan 15:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_147",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 15:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_148",
+          "field": "openingScripture",
+          "reference": "Efesios 5:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_148",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 5:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_149",
+          "field": "openingScripture",
+          "reference": "Santiago 4:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_149",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 4:8",
+          "status": "match"
+        }
+      ]
+    },
+    {
+      "file": "batch_06_april_2026.json",
+      "devotionals_count": 30,
+      "verses_checked": 60,
+      "matches": 36,
+      "mismatches": 0,
+      "errors": 24,
+      "details": [
+        {
+          "devotional_id": "dev_150",
+          "field": "openingScripture",
+          "reference": "Juan 3:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_150",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 3:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_151",
+          "field": "openingScripture",
+          "reference": "Efesios 1:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_151",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 1:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_152",
+          "field": "openingScripture",
+          "reference": "Colosenses 1:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Que nos ha librado de la potestad de las tinieblas, y trasladado al reino de su amado Hijo; En el cu..."
+        },
+        {
+          "devotional_id": "dev_152",
+          "field": "keyVerseSpotlight",
+          "reference": "Colosenses 1:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Que nos ha librado de la potestad de las tinieblas, y trasladado al reino de su amado Hijo; En el cu..."
+        },
+        {
+          "devotional_id": "dev_153",
+          "field": "openingScripture",
+          "reference": "Efesios 2:8-9",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios: No por obras, p..."
+        },
+        {
+          "devotional_id": "dev_153",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 2:8-9",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios: No por obras, p..."
+        },
+        {
+          "devotional_id": "dev_154",
+          "field": "openingScripture",
+          "reference": "Romanos 6:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_154",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 6:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_155",
+          "field": "openingScripture",
+          "reference": "Romanos 5:10-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque si siendo enemigos, fuimos reconciliados con Dios por la muerte de su Hijo, mucho más, estand..."
+        },
+        {
+          "devotional_id": "dev_155",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 5:10-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque si siendo enemigos, fuimos reconciliados con Dios por la muerte de su Hijo, mucho más, estand..."
+        },
+        {
+          "devotional_id": "dev_156",
+          "field": "openingScripture",
+          "reference": "Romanos 5:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_156",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 5:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_157",
+          "field": "openingScripture",
+          "reference": "Gálatas 5:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_157",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 5:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_158",
+          "field": "openingScripture",
+          "reference": "2 Corintios 5:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_158",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 5:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_159",
+          "field": "openingScripture",
+          "reference": "2 Corintios 5:18-19",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y todo esto es de Dios, el cual nos reconcilió á sí por Cristo; y nos dió el ministerio de la reconc..."
+        },
+        {
+          "devotional_id": "dev_159",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 5:18-19",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y todo esto es de Dios, el cual nos reconcilió á sí por Cristo; y nos dió el ministerio de la reconc..."
+        },
+        {
+          "devotional_id": "dev_160",
+          "field": "openingScripture",
+          "reference": "Romanos 5:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_160",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 5:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_161",
+          "field": "openingScripture",
+          "reference": "Gálatas 4:4-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas venido el cumplimiento del tiempo, Dios envió su Hijo, hecho de mujer, hecho súbdito á la ley, P..."
+        },
+        {
+          "devotional_id": "dev_161",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 4:4-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas venido el cumplimiento del tiempo, Dios envió su Hijo, hecho de mujer, hecho súbdito á la ley, P..."
+        },
+        {
+          "devotional_id": "dev_162",
+          "field": "openingScripture",
+          "reference": "Isaías 53:3-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Despreciado y desechado entre los hombres, varón de dolores, experimentado en quebranto: y como que ..."
+        },
+        {
+          "devotional_id": "dev_162",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 53:3-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Despreciado y desechado entre los hombres, varón de dolores, experimentado en quebranto: y como que ..."
+        },
+        {
+          "devotional_id": "dev_163",
+          "field": "openingScripture",
+          "reference": "1 Corintios 1:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_163",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 1:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_164",
+          "field": "openingScripture",
+          "reference": "1 Juan 1:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_164",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Juan 1:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_165",
+          "field": "openingScripture",
+          "reference": "1 Corintios 15:55-57",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "¿Dónde está, oh muerte, tu aguijón? ¿dónde, oh sepulcro, tu victoria? Ya que el aguijón de la muerte..."
+        },
+        {
+          "devotional_id": "dev_165",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 15:55-57",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "¿Dónde está, oh muerte, tu aguijón? ¿dónde, oh sepulcro, tu victoria? Ya que el aguijón de la muerte..."
+        },
+        {
+          "devotional_id": "dev_166",
+          "field": "openingScripture",
+          "reference": "Mateo 28:5-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y respondiendo el ángel, dijo á las mujeres: No temáis vosotras; porque yo sé que buscáis á Jesús, q..."
+        },
+        {
+          "devotional_id": "dev_166",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 28:5-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y respondiendo el ángel, dijo á las mujeres: No temáis vosotras; porque yo sé que buscáis á Jesús, q..."
+        },
+        {
+          "devotional_id": "dev_167",
+          "field": "openingScripture",
+          "reference": "Efesios 1:19-20",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y cuál aquella supereminente grandeza de su poder para con nosotros los que creemos, por la operació..."
+        },
+        {
+          "devotional_id": "dev_167",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 1:19-20",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y cuál aquella supereminente grandeza de su poder para con nosotros los que creemos, por la operació..."
+        },
+        {
+          "devotional_id": "dev_168",
+          "field": "openingScripture",
+          "reference": "1 Pedro 1:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_168",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Pedro 1:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_169",
+          "field": "openingScripture",
+          "reference": "Lucas 24:1-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y EL primer día de la semana, muy de mañana, vinieron al sepulcro, trayendo las drogas aromáticas qu..."
+        },
+        {
+          "devotional_id": "dev_169",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 24:1-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y EL primer día de la semana, muy de mañana, vinieron al sepulcro, trayendo las drogas aromáticas qu..."
+        },
+        {
+          "devotional_id": "dev_170",
+          "field": "openingScripture",
+          "reference": "Romanos 6:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_170",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 6:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_171",
+          "field": "openingScripture",
+          "reference": "Filipenses 3:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_171",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 3:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_172",
+          "field": "openingScripture",
+          "reference": "1 Corintios 15:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_172",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 15:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_173",
+          "field": "openingScripture",
+          "reference": "Juan 11:25-26",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Dícele Jesús: Yo soy la resurrección y la vida: el que cree en mí, aunque esté muerto, vivirá. Y tod..."
+        },
+        {
+          "devotional_id": "dev_173",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 11:25-26",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Dícele Jesús: Yo soy la resurrección y la vida: el que cree en mí, aunque esté muerto, vivirá. Y tod..."
+        },
+        {
+          "devotional_id": "dev_174",
+          "field": "openingScripture",
+          "reference": "1 Juan 5:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_174",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Juan 5:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_175",
+          "field": "openingScripture",
+          "reference": "Colosenses 1:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_175",
+          "field": "keyVerseSpotlight",
+          "reference": "Colosenses 1:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_176",
+          "field": "openingScripture",
+          "reference": "Salmo 16:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_176",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmo 16:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_177",
+          "field": "openingScripture",
+          "reference": "Hechos 1:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_177",
+          "field": "keyVerseSpotlight",
+          "reference": "Hechos 1:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_178",
+          "field": "openingScripture",
+          "reference": "Isaías 43:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_178",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 43:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_179",
+          "field": "openingScripture",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_179",
+          "field": "keyVerseSpotlight",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        }
+      ]
+    },
+    {
+      "file": "batch_07_may_2026.json",
+      "devotionals_count": 31,
+      "verses_checked": 62,
+      "matches": 50,
+      "mismatches": 0,
+      "errors": 12,
+      "details": [
+        {
+          "devotional_id": "dev_180",
+          "field": "openingScripture",
+          "reference": "2 Corintios 5:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_180",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 5:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_181",
+          "field": "openingScripture",
+          "reference": "Salmos 139:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque tú poseiste mis riñones; cubrísteme en el vientre de mi madre. Te alabaré; porque formidables..."
+        },
+        {
+          "devotional_id": "dev_181",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 139:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque tú poseiste mis riñones; cubrísteme en el vientre de mi madre. Te alabaré; porque formidables..."
+        },
+        {
+          "devotional_id": "dev_182",
+          "field": "openingScripture",
+          "reference": "Efesios 2:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_182",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 2:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_183",
+          "field": "openingScripture",
+          "reference": "1 Pedro 2:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_183",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Pedro 2:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_184",
+          "field": "openingScripture",
+          "reference": "1 Pedro 4:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_184",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Pedro 4:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_185",
+          "field": "openingScripture",
+          "reference": "Salmos 139:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_185",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 139:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_186",
+          "field": "openingScripture",
+          "reference": "Gálatas 6:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_186",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 6:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_187",
+          "field": "openingScripture",
+          "reference": "Gálatas 1:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_187",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 1:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_188",
+          "field": "openingScripture",
+          "reference": "Romanos 15:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_188",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 15:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_189",
+          "field": "openingScripture",
+          "reference": "1 Pedro 2:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_189",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Pedro 2:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_190",
+          "field": "openingScripture",
+          "reference": "1 Juan 3:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_190",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Juan 3:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_191",
+          "field": "openingScripture",
+          "reference": "Proverbios 31:28",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_191",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 31:28",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_192",
+          "field": "openingScripture",
+          "reference": "Mateo 10:29-31",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "¿No se venden dos pajarillos por un cuarto? Con todo, ni uno de ellos cae á tierra sin vuestro Padre..."
+        },
+        {
+          "devotional_id": "dev_192",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 10:29-31",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "¿No se venden dos pajarillos por un cuarto? Con todo, ni uno de ellos cae á tierra sin vuestro Padre..."
+        },
+        {
+          "devotional_id": "dev_193",
+          "field": "openingScripture",
+          "reference": "Romanos 8:28",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_193",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 8:28",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_194",
+          "field": "openingScripture",
+          "reference": "Jeremías 1:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_194",
+          "field": "keyVerseSpotlight",
+          "reference": "Jeremías 1:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_195",
+          "field": "openingScripture",
+          "reference": "Mateo 28:19-20",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por tanto, id, y doctrinad á todos los Gentiles, bautizándolos en el nombre del Padre, y del Hijo, y..."
+        },
+        {
+          "devotional_id": "dev_195",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 28:19-20",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por tanto, id, y doctrinad á todos los Gentiles, bautizándolos en el nombre del Padre, y del Hijo, y..."
+        },
+        {
+          "devotional_id": "dev_196",
+          "field": "openingScripture",
+          "reference": "2 Corintios 5:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_196",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 5:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_197",
+          "field": "openingScripture",
+          "reference": "Mateo 5:13-16",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Vosotros sois la sal de la tierra: y si la sal se desvaneciere ¿con qué será salada? no vale más par..."
+        },
+        {
+          "devotional_id": "dev_197",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 5:13-16",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Vosotros sois la sal de la tierra: y si la sal se desvaneciere ¿con qué será salada? no vale más par..."
+        },
+        {
+          "devotional_id": "dev_198",
+          "field": "openingScripture",
+          "reference": "Proverbios 13:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_198",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 13:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_199",
+          "field": "openingScripture",
+          "reference": "Juan 15:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_199",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 15:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_200",
+          "field": "openingScripture",
+          "reference": "Lucas 16:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_200",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 16:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_201",
+          "field": "openingScripture",
+          "reference": "Colosenses 3:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_201",
+          "field": "keyVerseSpotlight",
+          "reference": "Colosenses 3:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_202",
+          "field": "openingScripture",
+          "reference": "Proverbios 12:24",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_202",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 12:24",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_203",
+          "field": "openingScripture",
+          "reference": "Romanos 12:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_203",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 12:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_204",
+          "field": "openingScripture",
+          "reference": "Isaías 6:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_204",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 6:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_205",
+          "field": "openingScripture",
+          "reference": "Salmos 40:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_205",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 40:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_206",
+          "field": "openingScripture",
+          "reference": "Hebreos 13:20-21",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y el Dios de paz que sacó de los muertos á nuestro Señor Jesucristo, el gran pastor de las ovejas, p..."
+        },
+        {
+          "devotional_id": "dev_206",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 13:20-21",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y el Dios de paz que sacó de los muertos á nuestro Señor Jesucristo, el gran pastor de las ovejas, p..."
+        },
+        {
+          "devotional_id": "dev_207",
+          "field": "openingScripture",
+          "reference": "Filipenses 4:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_207",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 4:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_208",
+          "field": "openingScripture",
+          "reference": "Hechos 4:29-31",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y ahora, Señor, mira sus amenazas, y da á tus siervos que con toda confianza hablen tu palabra; Que ..."
+        },
+        {
+          "devotional_id": "dev_208",
+          "field": "keyVerseSpotlight",
+          "reference": "Hechos 4:29-31",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y ahora, Señor, mira sus amenazas, y da á tus siervos que con toda confianza hablen tu palabra; Que ..."
+        },
+        {
+          "devotional_id": "dev_209",
+          "field": "openingScripture",
+          "reference": "Efesios 3:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_209",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 3:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_210",
+          "field": "openingScripture",
+          "reference": "Marcos 16:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_210",
+          "field": "keyVerseSpotlight",
+          "reference": "Marcos 16:15",
+          "status": "match"
+        }
+      ]
+    },
+    {
+      "file": "batch_08_june_2026.json",
+      "devotionals_count": 30,
+      "verses_checked": 60,
+      "matches": 40,
+      "mismatches": 0,
+      "errors": 20,
+      "details": [
+        {
+          "devotional_id": "dev_211",
+          "field": "openingScripture",
+          "reference": "Nehemías 8:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_211",
+          "field": "keyVerseSpotlight",
+          "reference": "Nehemías 8:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_212",
+          "field": "openingScripture",
+          "reference": "Mateo 11:28-30",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Venid á mí todos los que estáis trabajados y cargados, que yo os haré descansar. Llevad mi yugo sobr..."
+        },
+        {
+          "devotional_id": "dev_212",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 11:28-30",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Venid á mí todos los que estáis trabajados y cargados, que yo os haré descansar. Llevad mi yugo sobr..."
+        },
+        {
+          "devotional_id": "dev_213",
+          "field": "openingScripture",
+          "reference": "Éxodo 20:8-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Acordarte has del día del reposo, para santificarlo: Seis días trabajarás, y harás toda tu obra; Mas..."
+        },
+        {
+          "devotional_id": "dev_213",
+          "field": "keyVerseSpotlight",
+          "reference": "Éxodo 20:8-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Acordarte has del día del reposo, para santificarlo: Seis días trabajarás, y harás toda tu obra; Mas..."
+        },
+        {
+          "devotional_id": "dev_214",
+          "field": "openingScripture",
+          "reference": "Isaías 26:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_214",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 26:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_215",
+          "field": "openingScripture",
+          "reference": "Filipenses 4:11-13",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "No lo digo en razón de indigencia, pues he aprendido á contentarme con lo que tengo. Sé estar humill..."
+        },
+        {
+          "devotional_id": "dev_215",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 4:11-13",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "No lo digo en razón de indigencia, pues he aprendido á contentarme con lo que tengo. Sé estar humill..."
+        },
+        {
+          "devotional_id": "dev_216",
+          "field": "openingScripture",
+          "reference": "Salmos 37:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_216",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 37:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_217",
+          "field": "openingScripture",
+          "reference": "Salmos 100",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "[Texto del verso Salmos 100 no encontrado]"
+        },
+        {
+          "devotional_id": "dev_217",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 100",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "[Texto del verso Salmos 100 no encontrado]"
+        },
+        {
+          "devotional_id": "dev_218",
+          "field": "openingScripture",
+          "reference": "Salmos 107:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_218",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 107:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_219",
+          "field": "openingScripture",
+          "reference": "Salmos 34:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_219",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 34:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_220",
+          "field": "openingScripture",
+          "reference": "Salmos 95:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_220",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 95:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_221",
+          "field": "openingScripture",
+          "reference": "Salmos 19:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_221",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 19:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_222",
+          "field": "openingScripture",
+          "reference": "Salmos 27:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_222",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 27:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_223",
+          "field": "openingScripture",
+          "reference": "Mateo 18:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_223",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 18:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_224",
+          "field": "openingScripture",
+          "reference": "Salmos 46:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_224",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 46:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_225",
+          "field": "openingScripture",
+          "reference": "Proverbios 20:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_225",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 20:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_226",
+          "field": "openingScripture",
+          "reference": "Eclesiastés 3:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_226",
+          "field": "keyVerseSpotlight",
+          "reference": "Eclesiastés 3:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_227",
+          "field": "openingScripture",
+          "reference": "Proverbios 17:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_227",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 17:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_228",
+          "field": "openingScripture",
+          "reference": "Hechos 3:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_228",
+          "field": "keyVerseSpotlight",
+          "reference": "Hechos 3:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_229",
+          "field": "openingScripture",
+          "reference": "Isaías 40:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_229",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 40:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_230",
+          "field": "openingScripture",
+          "reference": "Juan 10:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_230",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 10:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_231",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 6:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_231",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 6:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_232",
+          "field": "openingScripture",
+          "reference": "Mateo 6:26-28",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mirad las aves del cielo, que no siembran, ni siegan, ni allegan en alfolíes; y vuestro Padre celest..."
+        },
+        {
+          "devotional_id": "dev_232",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:26-28",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mirad las aves del cielo, que no siembran, ni siegan, ni allegan en alfolíes; y vuestro Padre celest..."
+        },
+        {
+          "devotional_id": "dev_233",
+          "field": "openingScripture",
+          "reference": "Salmos 8:3-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Cuando veo tus cielos, obra de tus dedos, la luna y las estrellas que tú formaste: Digo: ¿Qué es el ..."
+        },
+        {
+          "devotional_id": "dev_233",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 8:3-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Cuando veo tus cielos, obra de tus dedos, la luna y las estrellas que tú formaste: Digo: ¿Qué es el ..."
+        },
+        {
+          "devotional_id": "dev_234",
+          "field": "openingScripture",
+          "reference": "Gálatas 5:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_234",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 5:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_235",
+          "field": "openingScripture",
+          "reference": "Proverbios 3:5-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Fíate de Jehová de todo tu corazón, y no estribes en tu prudencia. Reconócelo en todos tus caminos, ..."
+        },
+        {
+          "devotional_id": "dev_235",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 3:5-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Fíate de Jehová de todo tu corazón, y no estribes en tu prudencia. Reconócelo en todos tus caminos, ..."
+        },
+        {
+          "devotional_id": "dev_236",
+          "field": "openingScripture",
+          "reference": "Eclesiastés 3:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_236",
+          "field": "keyVerseSpotlight",
+          "reference": "Eclesiastés 3:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_237",
+          "field": "openingScripture",
+          "reference": "Eclesiastés 5:18-19",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "He aquí pues el bien que yo he visto: Que lo bueno es comer y beber, y gozar uno del bien de todo su..."
+        },
+        {
+          "devotional_id": "dev_237",
+          "field": "keyVerseSpotlight",
+          "reference": "Eclesiastés 5:18-19",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "He aquí pues el bien que yo he visto: Que lo bueno es comer y beber, y gozar uno del bien de todo su..."
+        },
+        {
+          "devotional_id": "dev_238",
+          "field": "openingScripture",
+          "reference": "Marcos 6:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_238",
+          "field": "keyVerseSpotlight",
+          "reference": "Marcos 6:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_239",
+          "field": "openingScripture",
+          "reference": "Eclesiastés 4:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mejores son dos que uno; porque tienen mejor paga de su trabajo. Porque si cayeren, el uno levantará..."
+        },
+        {
+          "devotional_id": "dev_239",
+          "field": "keyVerseSpotlight",
+          "reference": "Eclesiastés 4:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mejores son dos que uno; porque tienen mejor paga de su trabajo. Porque si cayeren, el uno levantará..."
+        },
+        {
+          "devotional_id": "dev_240",
+          "field": "openingScripture",
+          "reference": "Deuteronomio 6:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y estas palabras que yo te mando hoy, estarán sobre tu corazón: Y las repetirás á tus hijos, y habla..."
+        },
+        {
+          "devotional_id": "dev_240",
+          "field": "keyVerseSpotlight",
+          "reference": "Deuteronomio 6:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y estas palabras que yo te mando hoy, estarán sobre tu corazón: Y las repetirás á tus hijos, y habla..."
+        }
+      ]
+    },
+    {
+      "file": "batch_09_july_2026.json",
+      "devotionals_count": 31,
+      "verses_checked": 62,
+      "matches": 46,
+      "mismatches": 0,
+      "errors": 16,
+      "details": [
+        {
+          "devotional_id": "dev_241",
+          "field": "openingScripture",
+          "reference": "Gálatas 5:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_241",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 5:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_242",
+          "field": "openingScripture",
+          "reference": "Romanos 6:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Sabiendo esto, que nuestro viejo hombre juntamente fué crucificado con él, para que el cuerpo del pe..."
+        },
+        {
+          "devotional_id": "dev_242",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 6:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Sabiendo esto, que nuestro viejo hombre juntamente fué crucificado con él, para que el cuerpo del pe..."
+        },
+        {
+          "devotional_id": "dev_243",
+          "field": "openingScripture",
+          "reference": "2 Corintios 3:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_243",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 3:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_244",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 2:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "AMONESTO pues, ante todas cosas, que se hagan rogativas, oraciones, peticiones, hacimientos de graci..."
+        },
+        {
+          "devotional_id": "dev_244",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 2:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "AMONESTO pues, ante todas cosas, que se hagan rogativas, oraciones, peticiones, hacimientos de graci..."
+        },
+        {
+          "devotional_id": "dev_245",
+          "field": "openingScripture",
+          "reference": "Isaías 61:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_245",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 61:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_246",
+          "field": "openingScripture",
+          "reference": "Salmos 34:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_246",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 34:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_247",
+          "field": "openingScripture",
+          "reference": "1 Corintios 6:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_247",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 6:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_248",
+          "field": "openingScripture",
+          "reference": "Romanos 6:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_248",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 6:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_249",
+          "field": "openingScripture",
+          "reference": "Juan 8:32",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_249",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 8:32",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_250",
+          "field": "openingScripture",
+          "reference": "Colosenses 2:16-17",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por tanto, nadie os juzgue en comida, ó en bebida, ó en parte de día de fiesta, ó de nueva luna, ó d..."
+        },
+        {
+          "devotional_id": "dev_250",
+          "field": "keyVerseSpotlight",
+          "reference": "Colosenses 2:16-17",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por tanto, nadie os juzgue en comida, ó en bebida, ó en parte de día de fiesta, ó de nueva luna, ó d..."
+        },
+        {
+          "devotional_id": "dev_251",
+          "field": "openingScripture",
+          "reference": "Romanos 6:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_251",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 6:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_252",
+          "field": "openingScripture",
+          "reference": "Filipenses 3:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hermanos, yo mismo no hago cuenta de haberlo ya alcanzado; pero una cosa hago: olvidando ciertamente..."
+        },
+        {
+          "devotional_id": "dev_252",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 3:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hermanos, yo mismo no hago cuenta de haberlo ya alcanzado; pero una cosa hago: olvidando ciertamente..."
+        },
+        {
+          "devotional_id": "dev_253",
+          "field": "openingScripture",
+          "reference": "Romanos 8:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_253",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 8:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_254",
+          "field": "openingScripture",
+          "reference": "Romanos 10:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_254",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 10:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_255",
+          "field": "openingScripture",
+          "reference": "2 Timoteo 1:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_255",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Timoteo 1:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_256",
+          "field": "openingScripture",
+          "reference": "Mateo 6:34",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_256",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:34",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_257",
+          "field": "openingScripture",
+          "reference": "Proverbios 16:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_257",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 16:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_258",
+          "field": "openingScripture",
+          "reference": "2 Corintios 12:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_258",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 12:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_259",
+          "field": "openingScripture",
+          "reference": "Efesios 2:8-9",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios: No por obras, p..."
+        },
+        {
+          "devotional_id": "dev_259",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 2:8-9",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios: No por obras, p..."
+        },
+        {
+          "devotional_id": "dev_260",
+          "field": "openingScripture",
+          "reference": "Gálatas 1:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_260",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 1:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_261",
+          "field": "openingScripture",
+          "reference": "Proverbios 29:25",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_261",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 29:25",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_262",
+          "field": "openingScripture",
+          "reference": "2 Corintios 10:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_262",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 10:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_263",
+          "field": "openingScripture",
+          "reference": "Efesios 1:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En el cual esperasteis también vosotros en oyendo la palabra de verdad, el evangelio de vuestra salu..."
+        },
+        {
+          "devotional_id": "dev_263",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 1:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En el cual esperasteis también vosotros en oyendo la palabra de verdad, el evangelio de vuestra salu..."
+        },
+        {
+          "devotional_id": "dev_264",
+          "field": "openingScripture",
+          "reference": "Santiago 1:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_264",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 1:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_265",
+          "field": "openingScripture",
+          "reference": "Efesios 4:31-32",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Toda amargura, y enojo, é ira, y voces, y maledicencia sea quitada de vosotros, y toda malicia: Ante..."
+        },
+        {
+          "devotional_id": "dev_265",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 4:31-32",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Toda amargura, y enojo, é ira, y voces, y maledicencia sea quitada de vosotros, y toda malicia: Ante..."
+        },
+        {
+          "devotional_id": "dev_266",
+          "field": "openingScripture",
+          "reference": "Hebreos 12:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_266",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 12:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_267",
+          "field": "openingScripture",
+          "reference": "Romanos 12:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_267",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 12:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_268",
+          "field": "openingScripture",
+          "reference": "Efesios 4:26-27",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Airaos, y no pequéis; no se ponga el sol sobre vuestro enojo; Ni deis lugar al diablo."
+        },
+        {
+          "devotional_id": "dev_268",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 4:26-27",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Airaos, y no pequéis; no se ponga el sol sobre vuestro enojo; Ni deis lugar al diablo."
+        },
+        {
+          "devotional_id": "dev_269",
+          "field": "openingScripture",
+          "reference": "Hebreos 12:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_269",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 12:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_270",
+          "field": "openingScripture",
+          "reference": "Gálatas 5:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_270",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 5:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_271",
+          "field": "openingScripture",
+          "reference": "Salmos 118:24",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_271",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 118:24",
+          "status": "match"
+        }
+      ]
+    },
+    {
+      "file": "batch_10_august_2026.json",
+      "devotionals_count": 31,
+      "verses_checked": 62,
+      "matches": 46,
+      "mismatches": 0,
+      "errors": 16,
+      "details": [
+        {
+          "devotional_id": "dev_272",
+          "field": "openingScripture",
+          "reference": "2 Corintios 12:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y me ha dicho: Bástate mi gracia; porque mi potencia en la flaqueza se perfecciona. Por tanto, de bu..."
+        },
+        {
+          "devotional_id": "dev_272",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 12:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y me ha dicho: Bástate mi gracia; porque mi potencia en la flaqueza se perfecciona. Por tanto, de bu..."
+        },
+        {
+          "devotional_id": "dev_273",
+          "field": "openingScripture",
+          "reference": "Filipenses 3:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_273",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 3:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_274",
+          "field": "openingScripture",
+          "reference": "Hebreos 12:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_274",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 12:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_275",
+          "field": "openingScripture",
+          "reference": "Santiago 1:2-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hermanos míos, tened por sumo gozo cuando cayereis en diversas tentaciones; Sabiendo que la prueba d..."
+        },
+        {
+          "devotional_id": "dev_275",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 1:2-4",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hermanos míos, tened por sumo gozo cuando cayereis en diversas tentaciones; Sabiendo que la prueba d..."
+        },
+        {
+          "devotional_id": "dev_276",
+          "field": "openingScripture",
+          "reference": "1 Pedro 1:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En lo cual vosotros os alegráis, estando al presente un poco de tiempo afligidos en diversas tentaci..."
+        },
+        {
+          "devotional_id": "dev_276",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Pedro 1:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En lo cual vosotros os alegráis, estando al presente un poco de tiempo afligidos en diversas tentaci..."
+        },
+        {
+          "devotional_id": "dev_277",
+          "field": "openingScripture",
+          "reference": "Malaquías 3:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_277",
+          "field": "keyVerseSpotlight",
+          "reference": "Malaquías 3:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_278",
+          "field": "openingScripture",
+          "reference": "Romanos 5:3-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y no sólo esto, mas aun nos gloriamos en las tribulaciones, sabiendo que la tribulación produce paci..."
+        },
+        {
+          "devotional_id": "dev_278",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 5:3-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y no sólo esto, mas aun nos gloriamos en las tribulaciones, sabiendo que la tribulación produce paci..."
+        },
+        {
+          "devotional_id": "dev_279",
+          "field": "openingScripture",
+          "reference": "Proverbios 24:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_279",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 24:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_280",
+          "field": "openingScripture",
+          "reference": "Josué 1:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_280",
+          "field": "keyVerseSpotlight",
+          "reference": "Josué 1:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_281",
+          "field": "openingScripture",
+          "reference": "Salmos 27:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_281",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 27:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_282",
+          "field": "openingScripture",
+          "reference": "Efesios 6:10-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por lo demás, hermanos míos, confortaos en el Señor, y en la potencia de su fortaleza. Vestíos de to..."
+        },
+        {
+          "devotional_id": "dev_282",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 6:10-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por lo demás, hermanos míos, confortaos en el Señor, y en la potencia de su fortaleza. Vestíos de to..."
+        },
+        {
+          "devotional_id": "dev_283",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 6:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_283",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 6:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_284",
+          "field": "openingScripture",
+          "reference": "1 Corintios 15:57",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_284",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 15:57",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_285",
+          "field": "openingScripture",
+          "reference": "Romanos 8:37",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_285",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 8:37",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_286",
+          "field": "openingScripture",
+          "reference": "Mateo 17:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_286",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 17:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_287",
+          "field": "openingScripture",
+          "reference": "Marcos 11:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_287",
+          "field": "keyVerseSpotlight",
+          "reference": "Marcos 11:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_288",
+          "field": "openingScripture",
+          "reference": "1 Samuel 17:45",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_288",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Samuel 17:45",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_289",
+          "field": "openingScripture",
+          "reference": "Isaías 50:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_289",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 50:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_290",
+          "field": "openingScripture",
+          "reference": "Gálatas 6:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_290",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 6:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_291",
+          "field": "openingScripture",
+          "reference": "2 Timoteo 4:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_291",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Timoteo 4:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_292",
+          "field": "openingScripture",
+          "reference": "Hebreos 12:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "POR tanto nosotros también, teniendo en derredor nuestro una tan grande nube de testigos, dejando to..."
+        },
+        {
+          "devotional_id": "dev_292",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 12:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "POR tanto nosotros también, teniendo en derredor nuestro una tan grande nube de testigos, dejando to..."
+        },
+        {
+          "devotional_id": "dev_293",
+          "field": "openingScripture",
+          "reference": "Isaías 40:29-31",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "El da esfuerzo al cansado, y multiplica las fuerzas al que no tiene ningunas. Los mancebos se fatiga..."
+        },
+        {
+          "devotional_id": "dev_293",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 40:29-31",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "El da esfuerzo al cansado, y multiplica las fuerzas al que no tiene ningunas. Los mancebos se fatiga..."
+        },
+        {
+          "devotional_id": "dev_294",
+          "field": "openingScripture",
+          "reference": "Isaías 40:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_294",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 40:31",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_295",
+          "field": "openingScripture",
+          "reference": "Efesios 3:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_295",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 3:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_296",
+          "field": "openingScripture",
+          "reference": "2 Corintios 12:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_296",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 12:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_297",
+          "field": "openingScripture",
+          "reference": "Salmos 121:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": " ALZARÉ mis ojos á los montes, de donde vendrá mi socorro. Mi socorro viene de Jehová, que hizo los ..."
+        },
+        {
+          "devotional_id": "dev_297",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 121:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": " ALZARÉ mis ojos á los montes, de donde vendrá mi socorro. Mi socorro viene de Jehová, que hizo los ..."
+        },
+        {
+          "devotional_id": "dev_298",
+          "field": "openingScripture",
+          "reference": "Salmos 46:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_298",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 46:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_299",
+          "field": "openingScripture",
+          "reference": "Salmos 18:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_299",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 18:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_300",
+          "field": "openingScripture",
+          "reference": "Salmos 28:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_300",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 28:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_301",
+          "field": "openingScripture",
+          "reference": "Salmos 91:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_301",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 91:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_302",
+          "field": "openingScripture",
+          "reference": "1 Corintios 16:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_302",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 16:13",
+          "status": "match"
+        }
+      ]
+    },
+    {
+      "file": "batch_11_september_2026.json",
+      "devotionals_count": 30,
+      "verses_checked": 60,
+      "matches": 50,
+      "mismatches": 0,
+      "errors": 10,
+      "details": [
+        {
+          "devotional_id": "dev_303",
+          "field": "openingScripture",
+          "reference": "Santiago 1:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_303",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 1:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_304",
+          "field": "openingScripture",
+          "reference": "2 Pedro 3:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_304",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Pedro 3:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_305",
+          "field": "openingScripture",
+          "reference": "Proverbios 4:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_305",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 4:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_306",
+          "field": "openingScripture",
+          "reference": "Filipenses 1:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y esto ruego, que vuestro amor abunde aun más y más en ciencia y en todo conocimiento, Para que disc..."
+        },
+        {
+          "devotional_id": "dev_306",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 1:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_307",
+          "field": "openingScripture",
+          "reference": "Juan 14:26",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_307",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 14:26",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_308",
+          "field": "openingScripture",
+          "reference": "2 Timoteo 2:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_308",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Timoteo 2:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_309",
+          "field": "openingScripture",
+          "reference": "Proverbios 9:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_309",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 9:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_310",
+          "field": "openingScripture",
+          "reference": "Salmos 32:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_310",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 32:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_311",
+          "field": "openingScripture",
+          "reference": "Proverbios 3:5-6",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Fíate de Jehová de todo tu corazón, y no estribes en tu prudencia. Reconócelo en todos tus caminos, ..."
+        },
+        {
+          "devotional_id": "dev_311",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 3:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_312",
+          "field": "openingScripture",
+          "reference": "Proverbios 15:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_312",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 15:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_313",
+          "field": "openingScripture",
+          "reference": "Proverbios 16:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_313",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 16:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_314",
+          "field": "openingScripture",
+          "reference": "Deuteronomio 30:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_314",
+          "field": "keyVerseSpotlight",
+          "reference": "Deuteronomio 30:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_315",
+          "field": "openingScripture",
+          "reference": "Romanos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_315",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_316",
+          "field": "openingScripture",
+          "reference": "3 Juan 1:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_316",
+          "field": "keyVerseSpotlight",
+          "reference": "3 Juan 1:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_317",
+          "field": "openingScripture",
+          "reference": "Proverbios 2:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_317",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 2:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_318",
+          "field": "openingScripture",
+          "reference": "Isaías 55:8-9",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque mis pensamientos no son vuestros pensamientos, ni vuestros caminos mis caminos, dijo Jehová. ..."
+        },
+        {
+          "devotional_id": "dev_318",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 55:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_319",
+          "field": "openingScripture",
+          "reference": "Mateo 6:33",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_319",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:33",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_320",
+          "field": "openingScripture",
+          "reference": "Hebreos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_320",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_321",
+          "field": "openingScripture",
+          "reference": "Proverbios 4:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_321",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 4:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_322",
+          "field": "openingScripture",
+          "reference": "1 Samuel 3:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_322",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Samuel 3:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_323",
+          "field": "openingScripture",
+          "reference": "Juan 14:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_323",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 14:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_324",
+          "field": "openingScripture",
+          "reference": "Santiago 1:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_324",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 1:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_325",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 4:7-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas las fábulas profanas y de viejas desecha, y ejercítate para la piedad. Porque el ejercicio corpo..."
+        },
+        {
+          "devotional_id": "dev_325",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 4:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_326",
+          "field": "openingScripture",
+          "reference": "2 Timoteo 3:16-17",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Toda Escritura es inspirada divinamente y útil para enseñar, para redargüir, para corregir, para ins..."
+        },
+        {
+          "devotional_id": "dev_326",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Timoteo 3:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_327",
+          "field": "openingScripture",
+          "reference": "Proverbios 3:11-12",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "No deseches, hijo mío, el castigo de Jehová; ni te fatigues de su corrección: Porque al que ama cast..."
+        },
+        {
+          "devotional_id": "dev_327",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 3:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_328",
+          "field": "openingScripture",
+          "reference": "2 Pedro 1:5-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Vosotros también, poniendo toda diligencia por esto mismo, mostrad en vuestra fe virtud, y en la vir..."
+        },
+        {
+          "devotional_id": "dev_328",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Pedro 1:5-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Vosotros también, poniendo toda diligencia por esto mismo, mostrad en vuestra fe virtud, y en la vir..."
+        },
+        {
+          "devotional_id": "dev_329",
+          "field": "openingScripture",
+          "reference": "Efesios 4:13-15",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hasta que todos lleguemos á la unidad de la fe y del conocimiento del Hijo de Dios, á un varón perfe..."
+        },
+        {
+          "devotional_id": "dev_329",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 4:14-15",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Que ya no seamos niños fluctuantes, y llevados por doquiera de todo viento de doctrina, por estratag..."
+        },
+        {
+          "devotional_id": "dev_330",
+          "field": "openingScripture",
+          "reference": "Romanos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_330",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 12:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_331",
+          "field": "openingScripture",
+          "reference": "Efesios 4:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_331",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 4:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_332",
+          "field": "openingScripture",
+          "reference": "1 Corintios 2:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_332",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 2:16",
+          "status": "match"
+        }
+      ]
+    },
+    {
+      "file": "batch_12_october_2026.json",
+      "devotionals_count": 31,
+      "verses_checked": 62,
+      "matches": 49,
+      "mismatches": 0,
+      "errors": 13,
+      "details": [
+        {
+          "devotional_id": "dev_333",
+          "field": "openingScripture",
+          "reference": "Gálatas 6:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_333",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 6:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_334",
+          "field": "openingScripture",
+          "reference": "Filipenses 4:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_334",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 4:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_335",
+          "field": "openingScripture",
+          "reference": "Juan 10:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_335",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 10:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_336",
+          "field": "openingScripture",
+          "reference": "1 Tesalonicenses 5:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_336",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Tesalonicenses 5:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_337",
+          "field": "openingScripture",
+          "reference": "Salmos 100:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_337",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 100:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_338",
+          "field": "openingScripture",
+          "reference": "Efesios 1:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_338",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 1:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_339",
+          "field": "openingScripture",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_339",
+          "field": "keyVerseSpotlight",
+          "reference": "Lamentaciones 3:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_340",
+          "field": "openingScripture",
+          "reference": "2 Corintios 9:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Esto empero digo: El que siembra escasamente, también segará escasamente; y el que siembra en bendic..."
+        },
+        {
+          "devotional_id": "dev_340",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 9:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_341",
+          "field": "openingScripture",
+          "reference": "Gálatas 6:7-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "No os engañéis: Dios no puede ser burlado: que todo lo que el hombre sembrare, eso también segará. P..."
+        },
+        {
+          "devotional_id": "dev_341",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 6:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_342",
+          "field": "openingScripture",
+          "reference": "Gálatas 6:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_342",
+          "field": "keyVerseSpotlight",
+          "reference": "Gálatas 6:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_343",
+          "field": "openingScripture",
+          "reference": "1 Corintios 4:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_343",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Corintios 4:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_344",
+          "field": "openingScripture",
+          "reference": "Lucas 16:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_344",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 16:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_345",
+          "field": "openingScripture",
+          "reference": "Hebreos 13:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_345",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 13:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_346",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 6:6-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Empero grande granjería es la piedad con contentamiento. Porque nada hemos traído á este mundo, y si..."
+        },
+        {
+          "devotional_id": "dev_346",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 6:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_347",
+          "field": "openingScripture",
+          "reference": "2 Corintios 12:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_347",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 12:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_348",
+          "field": "openingScripture",
+          "reference": "Mateo 6:25-26",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Por tanto os digo: No os congojéis por vuestra vida, qué habéis de comer, ó qué habéis de beber; ni ..."
+        },
+        {
+          "devotional_id": "dev_348",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:26",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_349",
+          "field": "openingScripture",
+          "reference": "Éxodo 16:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_349",
+          "field": "keyVerseSpotlight",
+          "reference": "Éxodo 16:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_350",
+          "field": "openingScripture",
+          "reference": "Mateo 6:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_350",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_351",
+          "field": "openingScripture",
+          "reference": "Malaquías 3:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_351",
+          "field": "keyVerseSpotlight",
+          "reference": "Malaquías 3:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_352",
+          "field": "openingScripture",
+          "reference": "Mateo 6:19-21",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "No os hagáis tesoros en la tierra, donde la polilla y el orín corrompe, y donde ladrones minan y hur..."
+        },
+        {
+          "devotional_id": "dev_352",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:21",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_353",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 6:18-19",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Que hagan bien, que sean ricos en buenas obras, dadivosos, que con facilidad comuniquen; Atesorando ..."
+        },
+        {
+          "devotional_id": "dev_353",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 6:19",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_354",
+          "field": "openingScripture",
+          "reference": "Proverbios 3:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Honra á Jehová de tu sustancia, y de las primicias de todos tus frutos; Y serán llenas tus trojes co..."
+        },
+        {
+          "devotional_id": "dev_354",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 3:9",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_355",
+          "field": "openingScripture",
+          "reference": "Malaquías 3:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_355",
+          "field": "keyVerseSpotlight",
+          "reference": "Malaquías 3:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_356",
+          "field": "openingScripture",
+          "reference": "2 Corintios 8:2-3",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Que en grande prueba de tribulación, la abundancia de su gozo y su profunda pobreza abundaron en riq..."
+        },
+        {
+          "devotional_id": "dev_356",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 8:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_357",
+          "field": "openingScripture",
+          "reference": "2 Corintios 9:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_357",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 9:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_358",
+          "field": "openingScripture",
+          "reference": "Proverbios 19:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_358",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 19:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_359",
+          "field": "openingScripture",
+          "reference": "1 Juan 3:17-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas el que tuviere bienes de este mundo, y viere á su hermano tener necesidad, y le cerrare sus entr..."
+        },
+        {
+          "devotional_id": "dev_359",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Juan 3:18",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_360",
+          "field": "openingScripture",
+          "reference": "Hechos 2:44-45",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y todos los que creían estaban juntos; y tenían todas las cosas comunes; Y vendían las posesiones, y..."
+        },
+        {
+          "devotional_id": "dev_360",
+          "field": "keyVerseSpotlight",
+          "reference": "Hechos 2:45",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_361",
+          "field": "openingScripture",
+          "reference": "Marcos 6:41-42",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y tomados los cinco panes y los dos peces, mirando al cielo, bendijo, y partió los panes, y dió á su..."
+        },
+        {
+          "devotional_id": "dev_361",
+          "field": "keyVerseSpotlight",
+          "reference": "Marcos 6:41",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_362",
+          "field": "openingScripture",
+          "reference": "Mateo 6:21",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_362",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:21",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_363",
+          "field": "openingScripture",
+          "reference": "Mateo 5:14-16",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Vosotros sois la luz del mundo: una ciudad asentada sobre un monte no se puede esconder. Ni se encie..."
+        },
+        {
+          "devotional_id": "dev_363",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 5:14",
+          "status": "match"
+        }
+      ]
+    },
+    {
+      "file": "batch_13_november_2026.json",
+      "devotionals_count": 30,
+      "verses_checked": 60,
+      "matches": 56,
+      "mismatches": 0,
+      "errors": 4,
+      "details": [
+        {
+          "devotional_id": "dev_364",
+          "field": "openingScripture",
+          "reference": "Hebreos 12:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_364",
+          "field": "keyVerseSpotlight",
+          "reference": "Hebreos 12:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_365",
+          "field": "openingScripture",
+          "reference": "Colosenses 3:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_365",
+          "field": "keyVerseSpotlight",
+          "reference": "Colosenses 3:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_366",
+          "field": "openingScripture",
+          "reference": "Salmos 107:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_366",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 107:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_367",
+          "field": "openingScripture",
+          "reference": "Santiago 1:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_367",
+          "field": "keyVerseSpotlight",
+          "reference": "Santiago 1:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_368",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 4:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_368",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 4:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_369",
+          "field": "openingScripture",
+          "reference": "Salmos 103:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_369",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 103:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_370",
+          "field": "openingScripture",
+          "reference": "Salmos 66:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_370",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 66:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_371",
+          "field": "openingScripture",
+          "reference": "Salmos 34:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_371",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 34:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_372",
+          "field": "openingScripture",
+          "reference": "Salmos 100:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_372",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 100:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_373",
+          "field": "openingScripture",
+          "reference": "Filipenses 4:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_373",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 4:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_374",
+          "field": "openingScripture",
+          "reference": "Juan 15:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_374",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 15:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_375",
+          "field": "openingScripture",
+          "reference": "Romanos 12:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_375",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 12:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_376",
+          "field": "openingScripture",
+          "reference": "Salmos 34:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_376",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 34:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_377",
+          "field": "openingScripture",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_377",
+          "field": "keyVerseSpotlight",
+          "reference": "Lamentaciones 3:22",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_378",
+          "field": "openingScripture",
+          "reference": "Efesios 2:8-9",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios: No por obras, p..."
+        },
+        {
+          "devotional_id": "dev_378",
+          "field": "keyVerseSpotlight",
+          "reference": "Efesios 2:8",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_379",
+          "field": "openingScripture",
+          "reference": "Salmos 136:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_379",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 136:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_380",
+          "field": "openingScripture",
+          "reference": "1 Juan 4:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En esto se mostró el amor de Dios para con nosotros, en que Dios envió á su Hijo unigénito al mundo,..."
+        },
+        {
+          "devotional_id": "dev_380",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Juan 4:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_381",
+          "field": "openingScripture",
+          "reference": "Salmos 95:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_381",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 95:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_382",
+          "field": "openingScripture",
+          "reference": "Salmos 107:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_382",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 107:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_383",
+          "field": "openingScripture",
+          "reference": "Mateo 28:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_383",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 28:20",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_384",
+          "field": "openingScripture",
+          "reference": "2 Pedro 1:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_384",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Pedro 1:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_385",
+          "field": "openingScripture",
+          "reference": "Salmos 116:1-2",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "AMO á Jehová, pues ha oído mi voz y mis súplicas. Porque ha inclinado á mí su oído, invocaréle por t..."
+        },
+        {
+          "devotional_id": "dev_385",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 116:1",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_386",
+          "field": "openingScripture",
+          "reference": "Salmos 127:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_386",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 127:3",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_387",
+          "field": "openingScripture",
+          "reference": "Proverbios 17:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_387",
+          "field": "keyVerseSpotlight",
+          "reference": "Proverbios 17:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_388",
+          "field": "openingScripture",
+          "reference": "1 Tesalonicenses 1:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_388",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Tesalonicenses 1:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_389",
+          "field": "openingScripture",
+          "reference": "3 Juan 1:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_389",
+          "field": "keyVerseSpotlight",
+          "reference": "3 Juan 1:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_390",
+          "field": "openingScripture",
+          "reference": "Mateo 6:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_390",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 6:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_391",
+          "field": "openingScripture",
+          "reference": "Salmos 95:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_391",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 95:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_392",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 6:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_392",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 6:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_393",
+          "field": "openingScripture",
+          "reference": "Salmos 77:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_393",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 77:11",
+          "status": "match"
+        }
+      ]
+    },
+    {
+      "file": "batch_14_december_2026.json",
+      "devotionals_count": 31,
+      "verses_checked": 62,
+      "matches": 52,
+      "mismatches": 0,
+      "errors": 10,
+      "details": [
+        {
+          "devotional_id": "dev_394",
+          "field": "openingScripture",
+          "reference": "Romanos 15:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_394",
+          "field": "keyVerseSpotlight",
+          "reference": "Romanos 15:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_395",
+          "field": "openingScripture",
+          "reference": "Salmos 27:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_395",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 27:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_396",
+          "field": "openingScripture",
+          "reference": "Tito 2:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_396",
+          "field": "keyVerseSpotlight",
+          "reference": "Tito 2:13",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_397",
+          "field": "openingScripture",
+          "reference": "Isaías 9:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_397",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 9:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_398",
+          "field": "openingScripture",
+          "reference": "Isaías 7:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_398",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 7:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_399",
+          "field": "openingScripture",
+          "reference": "Mateo 1:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_399",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 1:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_400",
+          "field": "openingScripture",
+          "reference": "Juan 1:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_400",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 1:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_401",
+          "field": "openingScripture",
+          "reference": "Isaías 9:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_401",
+          "field": "keyVerseSpotlight",
+          "reference": "Isaías 9:6",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_402",
+          "field": "openingScripture",
+          "reference": "Lucas 2:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_402",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_403",
+          "field": "openingScripture",
+          "reference": "Lucas 3:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_403",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 3:4",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_404",
+          "field": "openingScripture",
+          "reference": "Filipenses 2:6-8",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "El cual, siendo en forma de Dios, no tuvo por usurpación ser igual á Dios: Sin embargo, se anonadó á..."
+        },
+        {
+          "devotional_id": "dev_404",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 2:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_405",
+          "field": "openingScripture",
+          "reference": "Lucas 1:38",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_405",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 1:38",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_406",
+          "field": "openingScripture",
+          "reference": "Mateo 1:24",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_406",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 1:24",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_407",
+          "field": "openingScripture",
+          "reference": "Miqueas 5:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_407",
+          "field": "keyVerseSpotlight",
+          "reference": "Miqueas 5:2",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_408",
+          "field": "openingScripture",
+          "reference": "Lucas 2:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_408",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_409",
+          "field": "openingScripture",
+          "reference": "Lucas 2:10-11",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Mas el ángel les dijo: No temáis; porque he aquí os doy nuevas de gran gozo, que será para todo el p..."
+        },
+        {
+          "devotional_id": "dev_409",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_410",
+          "field": "openingScripture",
+          "reference": "Lucas 2:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y repentinamente fué con el ángel una multitud de los ejércitos celestiales, que alababan á Dios, y ..."
+        },
+        {
+          "devotional_id": "dev_410",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:14",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_411",
+          "field": "openingScripture",
+          "reference": "Lucas 2:15-18",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y aconteció que como los ángeles se fueron de ellos al cielo, los pastores dijeron los unos á los ot..."
+        },
+        {
+          "devotional_id": "dev_411",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:17",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_412",
+          "field": "openingScripture",
+          "reference": "Lucas 2:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_412",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_413",
+          "field": "openingScripture",
+          "reference": "Mateo 2:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_413",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 2:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_414",
+          "field": "openingScripture",
+          "reference": "Mateo 2:9-10",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y ellos, habiendo oído al rey, se fueron: y he aquí la estrella que habían visto en el oriente, iba ..."
+        },
+        {
+          "devotional_id": "dev_414",
+          "field": "keyVerseSpotlight",
+          "reference": "Mateo 2:10",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_415",
+          "field": "openingScripture",
+          "reference": "Juan 3:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_415",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 3:16",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_416",
+          "field": "openingScripture",
+          "reference": "2 Corintios 9:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_416",
+          "field": "keyVerseSpotlight",
+          "reference": "2 Corintios 9:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_417",
+          "field": "openingScripture",
+          "reference": "Lucas 2:6-7",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Y aconteció que estando ellos allí, se cumplieron los días en que ella había de parir. Y parió á su ..."
+        },
+        {
+          "devotional_id": "dev_417",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:7",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_418",
+          "field": "openingScripture",
+          "reference": "Lucas 2:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_418",
+          "field": "keyVerseSpotlight",
+          "reference": "Lucas 2:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_419",
+          "field": "openingScripture",
+          "reference": "1 Timoteo 1:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_419",
+          "field": "keyVerseSpotlight",
+          "reference": "1 Timoteo 1:15",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_420",
+          "field": "openingScripture",
+          "reference": "Juan 1:4-5",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "En él estaba la vida, y la vida era la luz de los hombres. Y la luz en las tinieblas resplandece; ma..."
+        },
+        {
+          "devotional_id": "dev_420",
+          "field": "keyVerseSpotlight",
+          "reference": "Juan 1:5",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_421",
+          "field": "openingScripture",
+          "reference": "Tito 2:11-13",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Porque la gracia de Dios que trae salvación á todos los hombres, se manifestó, Enseñándonos que, ren..."
+        },
+        {
+          "devotional_id": "dev_421",
+          "field": "keyVerseSpotlight",
+          "reference": "Tito 2:11",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_422",
+          "field": "openingScripture",
+          "reference": "Salmos 90:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_422",
+          "field": "keyVerseSpotlight",
+          "reference": "Salmos 90:12",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_423",
+          "field": "openingScripture",
+          "reference": "Lamentaciones 3:22-23",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Es por la misericordia de Jehová que no somos consumidos, porque nunca decayeron sus misericordias. ..."
+        },
+        {
+          "devotional_id": "dev_423",
+          "field": "keyVerseSpotlight",
+          "reference": "Lamentaciones 3:23",
+          "status": "match"
+        },
+        {
+          "devotional_id": "dev_424",
+          "field": "openingScripture",
+          "reference": "Filipenses 3:13-14",
+          "status": "error",
+          "error": "Could not parse reference",
+          "devotional_text": "Hermanos, yo mismo no hago cuenta de haberlo ya alcanzado; pero una cosa hago: olvidando ciertamente..."
+        },
+        {
+          "devotional_id": "dev_424",
+          "field": "keyVerseSpotlight",
+          "reference": "Filipenses 3:13",
+          "status": "match"
+        }
+      ]
+    }
+  ]
+}

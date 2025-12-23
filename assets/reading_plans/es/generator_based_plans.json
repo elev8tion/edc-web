@@ -1,0 +1,62 @@
+[
+  {
+    "id": "plan_new_testament",
+    "title": "Nuevo Testamento en 90 Días",
+    "description": "Lee todo el Nuevo Testamento en solo 90 días. Perfecto para entender la vida de Jesús y la iglesia primitiva.",
+    "duration": "90 días",
+    "category": "newTestament",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 90
+  },
+  {
+    "id": "plan_psalms_proverbs",
+    "title": "Literatura Sapiencial",
+    "description": "Recorre los cinco libros de sabiduría: Job, Salmos, Proverbios, Eclesiastés y Cantar de los Cantares. Descubre conocimientos atemporales para vivir sabiamente y adorar profundamente.",
+    "duration": "60 días",
+    "category": "wisdom",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 60
+  },
+  {
+    "id": "plan_gospels",
+    "title": "Vida de Jesús (4 Evangelios)",
+    "description": "Recorre la vida, enseñanzas, muerte y resurrección de Jesucristo a través de los cuatro relatos del Evangelio.",
+    "duration": "40 días",
+    "category": "gospels",
+    "difficulty": "beginner",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 40
+  },
+  {
+    "id": "plan_one_year_bible",
+    "title": "Lectura Bíblica de Un Año",
+    "description": "Lee toda la Biblia en un año con una mezcla equilibrada de Antiguo Testamento, Nuevo Testamento, Salmos y Proverbios diariamente.",
+    "duration": "365 días",
+    "category": "completeBible",
+    "difficulty": "challenging",
+    "estimatedTimePerDay": "20-30 min",
+    "totalReadings": 365
+  },
+  {
+    "id": "plan_paul_letters",
+    "title": "Cartas de Pablo",
+    "description": "Estudia todas las epístolas de Pablo para entender su teología, enseñanzas a la iglesia y la vida cristiana práctica.",
+    "duration": "45 días",
+    "category": "epistles",
+    "difficulty": "intermediate",
+    "estimatedTimePerDay": "15-20 min",
+    "totalReadings": 45
+  },
+  {
+    "id": "plan_pentateuch",
+    "title": "Libros de Moisés (Pentateuco)",
+    "description": "Descubre el pacto de Dios con Su pueblo a través de Génesis, Éxodo, Levítico, Números y Deuteronomio.",
+    "duration": "75 días",
+    "category": "oldTestament",
+    "difficulty": "intermediate",
+    "estimatedTimePerDay": "20-25 min",
+    "totalReadings": 75
+  }
+]

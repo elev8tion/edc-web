@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Commits - Last 24 Hours</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #30363d;
+        }
+
+        h1 {
+            color: #58a6ff;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: #161b22;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+
+        .stat-box strong {
+            color: #58a6ff;
+            font-size: 1.5em;
+        }
+
+        .filters {
+            background: #161b22;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #30363d;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .commit {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .commit:hover {
+            border-color: #58a6ff;
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.15);
+        }
+
+        .commit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            gap: 20px;
+        }
+
+        .commit-subject {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #58a6ff;
+            flex: 1;
+        }
+
+        .commit-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9em;
+            color: #8b949e;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .commit-hash {
+            font-family: 'Courier New', monospace;
+            background: #0d1117;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #f0883e;
+            cursor: pointer;
+        }
+
+        .commit-hash:hover {
+            background: #1c2128;
+        }
+
+        .commit-date {
+            color: #58a6ff;
+        }
+
+        .commit-body {
+            background: #0d1117;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            border-left: 3px solid #30363d;
+        }
+
+        .commit-files {
+            margin-top: 15px;
+        }
+
+        .files-header {
+            font-weight: 600;
+            color: #8b949e;
+            margin-bottom: 8px;
+        }
+
+        .file-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .file-item {
+            background: #0d1117;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #30363d;
+            color: #79c0ff;
+        }
+
+        .commit-stats {
+            background: #0d1117;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #8b949e;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .copy-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #2ea043;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #8b949e;
+            font-size: 1.2em;
+        }
+
+        .toggle-section {
+            cursor: pointer;
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #58a6ff;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .toggle-section:hover {
+            color: #79c0ff;
+        }
+
+        .collapsible {
+            display: none;
+        }
+
+        .collapsible.open {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗂️ Git Commits - Last 24 Hours</h1>
+            <p>Everyday Christian App Development</p>
+            <div class="stats">
+                <div class="stat-box">
+                    <strong id="totalCommits">0</strong> <span>Total Commits</span>
+                </div>
+                <div class="stat-box">
+                    <strong id="totalFiles">0</strong> <span>Files Changed</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="filters">
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search commits by subject, hash, or file name...">
+        </div>
+
+        <div id="commitsContainer"></div>
+        <div id="noResults" class="no-results" style="display:none;">No commits found</div>
+    </div>
+
+    <script>
+        let commitsData = [];
+
+        async function loadCommits() {
+            try {
+                const response = await fetch('commits.json');
+                commitsData = await response.json();
+                updateStats();
+                renderCommits(commitsData);
+            } catch (error) {
+                console.error('Error loading commits:', error);
+                document.getElementById('commitsContainer').innerHTML = '<div class="no-results">Error loading commits</div>';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalCommits').textContent = commitsData.length;
+            const allFiles = new Set();
+            commitsData.forEach(c => c.files.forEach(f => allFiles.add(f)));
+            document.getElementById('totalFiles').textContent = allFiles.size;
+        }
+
+        function renderCommits(commits) {
+            const container = document.getElementById('commitsContainer');
+            const noResults = document.getElementById('noResults');
+
+            if (commits.length === 0) {
+                container.innerHTML = '';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            noResults.style.display = 'none';
+            container.innerHTML = commits.map((commit, index) => `
+                <div class="commit">
+                    <div class="commit-header">
+                        <div class="commit-subject">${escapeHtml(commit.subject)}</div>
+                        <button class="copy-btn" onclick="copyHash('${commit.hash}')">Copy Hash</button>
+                    </div>
+
+                    <div class="commit-meta">
+                        <span class="commit-hash" onclick="copyHash('${commit.hash}')" title="Click to copy">${commit.short}</span>
+                        <span class="commit-date">📅 ${commit.date}</span>
+                        <span>👤 ${escapeHtml(commit.author)}</span>
+                        <span>📁 ${commit.files.length} files</span>
+                    </div>
+
+                    ${commit.body ? `
+                        <div class="toggle-section" onclick="toggleSection('body-${index}')">
+                            <span>▶</span> Message Details
+                        </div>
+                        <div class="commit-body collapsible" id="body-${index}">${escapeHtml(commit.body)}</div>
+                    ` : ''}
+
+                    ${commit.files.length > 0 ? `
+                        <div class="commit-files">
+                            <div class="toggle-section" onclick="toggleSection('files-${index}')">
+                                <span>▶</span> Changed Files (${commit.files.length})
+                            </div>
+                            <div class="file-list collapsible" id="files-${index}">
+                                ${commit.files.map(f => `<div class="file-item">${escapeHtml(f)}</div>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${commit.stats ? `
+                        <div class="toggle-section" onclick="toggleSection('stats-${index}')">
+                            <span>▶</span> Statistics
+                        </div>
+                        <div class="commit-stats collapsible" id="stats-${index}">${escapeHtml(commit.stats)}</div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function toggleSection(id) {
+            const element = document.getElementById(id);
+            const toggle = element.previousElementSibling.querySelector('span');
+            element.classList.toggle('open');
+            toggle.textContent = element.classList.contains('open') ? '▼' : '▶';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyHash(hash) {
+            navigator.clipboard.writeText(hash).then(() => {
+                alert('Hash copied: ' + hash);
+            });
+        }
+
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = commitsData.filter(commit =>
+                commit.subject.toLowerCase().includes(query) ||
+                commit.hash.toLowerCase().includes(query) ||
+                commit.short.toLowerCase().includes(query) ||
+                commit.body.toLowerCase().includes(query) ||
+                commit.files.some(f => f.toLowerCase().includes(query))
+            );
+            renderCommits(filtered);
+        });
+
+        loadCommits();
+    </script>
+</body>
+</html>

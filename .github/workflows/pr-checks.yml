@@ -1,0 +1,107 @@
+name: PR Quality Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  quality:
+    name: Code Quality & Style
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Format check
+        run: dart format --set-exit-if-changed lib test
+
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos
+
+      - name: Check for TODO comments
+        run: |
+          TODO_COUNT=$(grep -r "TODO" lib/ test/ | wc -l || echo "0")
+          echo "Found $TODO_COUNT TODO comments"
+          if [ "$TODO_COUNT" -gt 50 ]; then
+            echo "::warning::High number of TODO comments ($TODO_COUNT). Consider addressing some."
+          fi
+
+      - name: Check file sizes
+        run: |
+          find lib -name "*.dart" -size +1000k -exec echo "::warning file={}::Large file detected. Consider splitting." \;
+
+  test-coverage:
+    name: Test Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      - name: Generate coverage report
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lcov
+          lcov --summary coverage/lcov.info
+
+      - name: Check coverage threshold
+        run: |
+          COVERAGE=$(lcov --summary coverage/lcov.info 2>&1 | grep "lines" | grep -oP '\d+\.\d+(?=%)')
+          echo "Coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 50.0" | bc -l) )); then
+            echo "::warning::Coverage is below 50% ($COVERAGE%). Consider adding more tests."
+          fi
+
+  dependency-audit:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Check for outdated packages
+        run: flutter pub outdated || true
+
+      - name: Verify pubspec.lock exists
+        run: |
+          if [ ! -f pubspec.lock ]; then
+            echo "::error::pubspec.lock not found. Please commit it."
+            exit 1
+          fi

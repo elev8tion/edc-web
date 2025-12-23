@@ -1,0 +1,71 @@
+ 
+Where does this create a permanent record?
+1. Privacy Violation: Full Verse Text Storage
+  - Location: database_helper.dart:282-295 (shared_verses table)
+  - Issue: Stores complete verse text in text TEXT NOT NULL column
+  - Impact: Creates permanent record of what verses users shared, even after deleting content
+  - Violates: Your privacy-first architecture (no user tracking claim)
+
+
+
+Where does this create a permanent record?
+ 2. Privacy Violation: Prayer Content Storage
+  - Location: database_helper.dart:339-347 (shared_prayers table)
+  - Issue: Stores prayer titles and categories which could contain sensitive personal information
+  - Example: A user shares "Prayer for My Cancer Diagnosis - Health Category"
+  - Impact: Permanent record of sensitive health/personal information
+
+
+
+
+Who will you address this? Go into the code and see the correct implantation according to the codebase directly? 
+ 3. Broken Achievement Tracking
+  - Location: chat_share_service.dart:101
+  - Issue: Calls checkAllSharesAchievement() method that does not exist
+  - Impact: Achievement system will crash when user shares a chat
+
+
+
+
+Who will you address this? Go into the code and see the correct implantation according to the codebase directly? 
+ 4. Data Inconsistency: Cascade Deletions vs Achievement Tracking
+  - Location: All share tables have FOREIGN KEY ... ON DELETE CASCADE
+  - Issue: When user deletes a chat/verse/devotional/prayer, share records are auto-deleted
+  - Impact: Share count for achievements resets, user loses progress toward "Conversation Sharer"
+   achievement
+  - Example: User shares 9 items, deletes 1 chat session → share count drops to 8, achievement
+  never unlocks
+
+
+
+
+Who will you address this? Go into the code and see the correct implantation according to the codebase directly?
+  5. Share Inflation: No Deduplication
+  - Issue: User can share same chat/verse/prayer multiple times, each creates new record
+  - Impact: Share count for achievements can be gamed by sharing same item repeatedly
+  - Example: Share same verse 10 times → Achievement unlocks without sharing 10 different items
+
+
+This is a live link
+6. Dead URL in Share Text
+  - Location: chat_share_service.dart:68
+  - Issue: Includes https://everydaychristian.app which may not be live
+  - Impact: Users clicking link from shares get 404 error
+
+
+
+Map out to see if this was replaced by chat_share_service.dart. If so , as long as it is completely functional and completed keep chat_share_service.dart and delete ChatShareService 
+7. Unused Service
+  - Issue: ChatShareService exists but is never instantiated or used anywhere in codebase
+  - Impact: Dead code in production, achievement for chat shares will never unlock
+
+Remove risk
+  8. Emoji Encoding Risk
+  - Location: chat_share_service.dart:68 (prayer hands emoji)
+  - Issue: Could cause encoding issues on some platforms/email clients
+
+Not necessary we don’t need to know. Leave as is.
+  9. Inconsistent Share Channel Tracking
+  - Only shared_verses table has channel TEXT NOT NULL field (line 292)
+  - Other share tables don't track where item was shared (text, email, etc)
+  - Impact: Incomplete analytics if you ever want to see which sharing methods users prefer

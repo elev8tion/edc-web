@@ -1,0 +1,174 @@
+{
+  "verses": [
+    {
+      "id": 1,
+      "book": "Jeremiah",
+      "chapter": 29,
+      "verse": 11,
+      "text": "For I know the thoughts that I think toward you,” says the LORD, “ thoughts of peace, and not of evil, to give you hope and a future.",
+      "translation": "WEB",
+      "themes": [
+        "hope",
+        "future",
+        "guidance",
+        "trust"
+      ]
+    },
+    {
+      "id": 2,
+      "book": "Philippians",
+      "chapter": 4,
+      "verse": 13,
+      "text": "I can do all things through Christ who strengthens me.",
+      "translation": "WEB",
+      "themes": [
+        "strength",
+        "perseverance",
+        "faith",
+        "encouragement"
+      ]
+    },
+    {
+      "id": 3,
+      "book": "Isaiah",
+      "chapter": 41,
+      "verse": 10,
+      "text": "Don’t you be afraid, for I am with you.",
+      "translation": "WEB",
+      "themes": [
+        "comfort",
+        "fear",
+        "strength",
+        "presence"
+      ]
+    },
+    {
+      "id": 4,
+      "book": "Psalms",
+      "chapter": 23,
+      "verse": 1,
+      "text": "The LORD is my shepherd;",
+      "translation": "WEB",
+      "themes": [
+        "comfort",
+        "provision",
+        "trust",
+        "peace"
+      ]
+    },
+    {
+      "id": 5,
+      "book": "Romans",
+      "chapter": 8,
+      "verse": 28,
+      "text": "We know that all things work together for good for those who love God, for those who are called according to his purpose.",
+      "translation": "WEB",
+      "themes": [
+        "hope",
+        "purpose",
+        "trust",
+        "guidance"
+      ]
+    },
+    {
+      "id": 6,
+      "book": "Proverbs",
+      "chapter": 3,
+      "verse": 5,
+      "text": "Trust in the LORD with all your heart,",
+      "translation": "WEB",
+      "themes": [
+        "trust",
+        "wisdom",
+        "guidance",
+        "surrender"
+      ]
+    },
+    {
+      "id": 7,
+      "book": "Matthew",
+      "chapter": 11,
+      "verse": 28,
+      "text": "“Come to me, all you who labor and are heavily burdened, and I will give you rest.",
+      "translation": "WEB",
+      "themes": [
+        "rest",
+        "comfort",
+        "burden",
+        "invitation"
+      ]
+    },
+    {
+      "id": 8,
+      "book": "2 Corinthians",
+      "chapter": 12,
+      "verse": 9,
+      "text": "He has said to me, “My grace is sufficient for you, for my power is made perfect in weakness.” Most gladly therefore I will rather glory in my weaknesses, that the power of Christ may rest on me.",
+      "translation": "WEB",
+      "themes": [
+        "grace",
+        "weakness",
+        "strength",
+        "sufficiency"
+      ]
+    },
+    {
+      "id": 9,
+      "book": "Joshua",
+      "chapter": 1,
+      "verse": 9,
+      "text": "Haven’t I commanded you? Be strong and courageous. Don’t be afraid. Don’t be dismayed, for the LORD your God is with you wherever you go.”",
+      "translation": "WEB",
+      "themes": [
+        "courage",
+        "strength",
+        "presence",
+        "fear"
+      ]
+    },
+    {
+      "id": 10,
+      "book": "1 Peter",
+      "chapter": 5,
+      "verse": 7,
+      "text": "casting all your worries on him, because he cares for you.",
+      "translation": "WEB",
+      "themes": [
+        "anxiety",
+        "care",
+        "worry",
+        "trust"
+      ]
+    }
+  ],
+  "themes": {
+    "comfort": {
+      "description": "Verses for times of sadness, grief, or distress",
+      "color": "#87CEEB"
+    },
+    "strength": {
+      "description": "Verses for when you need courage and perseverance",
+      "color": "#FF6B6B"
+    },
+    "guidance": {
+      "description": "Verses for decision-making and direction",
+      "color": "#4ECDC4"
+    },
+    "hope": {
+      "description": "Verses for encouragement and future faith",
+      "color": "#45B7D1"
+    },
+    "trust": {
+      "description": "Verses about relying on God's faithfulness",
+      "color": "#96CEB4"
+    },
+    "peace": {
+      "description": "Verses for anxiety and restlessness",
+      "color": "#FECA57"
+    },
+    "gratitude": {
+      "description": "Verses for thanksgiving and appreciation",
+      "color": "#FF9FF3"
+    }
+  }
+}
