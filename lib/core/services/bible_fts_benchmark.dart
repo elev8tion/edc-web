@@ -26,7 +26,7 @@ class BenchmarkResult {
   @override
   String toString() {
     final status = passedThreshold ? '✅ PASS' : '❌ FAIL';
-    return '$status $name: ${durationMs}ms (${resultCount} results, threshold: ${thresholdMs}ms)';
+    return '$status $name: ${durationMs}ms ($resultCount results, threshold: ${thresholdMs}ms)';
   }
 }
 
@@ -49,7 +49,8 @@ class BibleFtsBenchmark {
   /// }
   /// ```
   Future<List<BenchmarkResult>> runAll() async {
-    debugPrint('🔍 [BibleFtsBenchmark] Running FTS performance benchmarks...\n');
+    debugPrint(
+        '🔍 [BibleFtsBenchmark] Running FTS performance benchmarks...\n');
 
     final results = <BenchmarkResult>[];
 
@@ -149,7 +150,8 @@ class BibleFtsBenchmark {
 
     final results = await _db.query(
       'bible_verses_fts',
-      where: "bible_verses_fts MATCH 'book:John AND language:en AND love AND God'",
+      where:
+          "bible_verses_fts MATCH 'book:John AND language:en AND love AND God'",
       limit: 100,
     );
 
@@ -296,7 +298,8 @@ class FtsBenchmarkReport {
     buffer.writeln();
     buffer.writeln('**Date:** ${timestamp.toIso8601String()}');
     buffer.writeln('**Total Duration:** ${totalDurationMs}ms');
-    buffer.writeln('**Pass Rate:** ${(passRate * 100).toStringAsFixed(1)}% ($passedCount/$failedCount)');
+    buffer.writeln(
+        '**Pass Rate:** ${(passRate * 100).toStringAsFixed(1)}% ($passedCount/$failedCount)');
     buffer.writeln();
 
     buffer.writeln('## Results');
@@ -317,7 +320,8 @@ class FtsBenchmarkReport {
       buffer.writeln('## Failed Benchmarks');
       buffer.writeln();
       for (final result in results.where((r) => !r.passedThreshold)) {
-        buffer.writeln('- **${result.name}**: ${result.durationMs}ms (threshold: ${result.thresholdMs}ms)');
+        buffer.writeln(
+            '- **${result.name}**: ${result.durationMs}ms (threshold: ${result.thresholdMs}ms)');
       }
       buffer.writeln();
     }
@@ -333,13 +337,15 @@ class FtsBenchmarkReport {
       'passed_count': passedCount,
       'failed_count': failedCount,
       'pass_rate': passRate,
-      'results': results.map((r) => {
-        'name': r.name,
-        'duration_ms': r.durationMs,
-        'result_count': r.resultCount,
-        'threshold_ms': r.thresholdMs,
-        'passed': r.passedThreshold,
-      }).toList(),
+      'results': results
+          .map((r) => {
+                'name': r.name,
+                'duration_ms': r.durationMs,
+                'result_count': r.resultCount,
+                'threshold_ms': r.thresholdMs,
+                'passed': r.passedThreshold,
+              })
+          .toList(),
     };
   }
 }

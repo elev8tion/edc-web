@@ -10,22 +10,20 @@ Future<void> shareImageWeb({
 }) async {
   try {
     // Try Web Share API first (if available and supports files)
-    if (html.window.navigator.share != null) {
-      try {
-        // Create a Blob from the image bytes
-        final blob = html.Blob([imageBytes], 'image/png');
-        final file = html.File([blob], filename, {'type': 'image/png'});
+    try {
+      // Create a Blob from the image bytes
+      final blob = html.Blob([imageBytes], 'image/png');
+      final file = html.File([blob], filename, {'type': 'image/png'});
 
-        // Try to share using Web Share API
-        await html.window.navigator.share({
-          'files': [file],
-          'text': text,
-        });
-        return;
-      } catch (e) {
-        // Web Share API failed or doesn't support files
-        // Fall through to download method
-      }
+      // Try to share using Web Share API
+      await html.window.navigator.share({
+        'files': [file],
+        'text': text,
+      });
+      return;
+    } catch (e) {
+      // Web Share API failed or doesn't support files
+      // Fall through to download method
     }
 
     // Fallback: Download the image

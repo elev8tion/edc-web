@@ -12,7 +12,6 @@ import '../core/widgets/app_initializer.dart';
 import '../core/services/preferences_service.dart';
 import '../core/providers/app_providers.dart';
 import '../hooks/animation_hooks.dart';
-import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
 
 class SplashScreen extends HookConsumerWidget {
@@ -137,105 +136,107 @@ class SplashScreen extends HookConsumerWidget {
               backgroundColor: Colors.transparent,
               child: SafeArea(
                 child: Center(
-                child: FadeTransition(
-                  opacity: AlwaysStoppedAnimation(fadeAnimation),
-                  child: ScaleTransition(
-                    scale: AlwaysStoppedAnimation(scaleAnimation),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Logo with FAB menu style
-                        Semantics(
-                          label: l10n.appLogo,
-                          image: true,
-                          child: GlassContainer(
-                            width: 200,
-                            height: 200,
-                            padding: const EdgeInsets.all(16.0),
-                            borderRadius: 40,
-                            blurStrength: 15.0,
-                            gradientColors: [
-                              Colors.white.withValues(alpha: 0.05),
-                              Colors.white.withValues(alpha: 0.02),
-                            ],
-                            border: Border.all(
-                              color: AppTheme.goldColor,
-                              width: 2.0,
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                Localizations.localeOf(context).languageCode == 'es'
-                                    ? 'assets/images/logo_spanish.png'
-                                    : 'assets/images/logo_cropped.png',
-                                width: 160,
-                                height: 160,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(
-                                    Icons.church,
-                                    color: Colors.white,
-                                    size: 100,
-                                  );
-                                },
+                  child: FadeTransition(
+                    opacity: AlwaysStoppedAnimation(fadeAnimation),
+                    child: ScaleTransition(
+                      scale: AlwaysStoppedAnimation(scaleAnimation),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Logo with FAB menu style
+                          Semantics(
+                            label: l10n.appLogo,
+                            image: true,
+                            child: GlassContainer(
+                              width: 200,
+                              height: 200,
+                              padding: const EdgeInsets.all(16.0),
+                              borderRadius: 40,
+                              blurStrength: 15.0,
+                              gradientColors: [
+                                Colors.white.withValues(alpha: 0.05),
+                                Colors.white.withValues(alpha: 0.02),
+                              ],
+                              border: Border.all(
+                                color: AppTheme.goldColor,
+                                width: 2.0,
+                              ),
+                              child: Center(
+                                child: Image.asset(
+                                  Localizations.localeOf(context)
+                                              .languageCode ==
+                                          'es'
+                                      ? 'assets/images/logo_spanish.png'
+                                      : 'assets/images/logo_cropped.png',
+                                  width: 160,
+                                  height: 160,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.church,
+                                      color: Colors.white,
+                                      size: 100,
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),
-                        ),
 
-                        32.sbh,
+                          32.sbh,
 
-                        // App name (clean, no card)
-                        Text(
-                          l10n.appName,
-                          style: TextStyle(
-                            fontSize: 26.fz,
-                            fontWeight: FontWeight.w300,
-                            letterSpacing: 8,
-                            color: AppTheme.goldColor,
-                          ),
-                        ),
-                        4.sbh,
-                        Text(
-                          l10n.appNameSecond,
-                          style: TextStyle(
-                            fontSize: 36.fz,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 4,
-                            color: AppColors.primaryText,
-                          ),
-                        ),
-
-                        80.sbh,
-
-                        // Simple loading indicator
-                        const SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppTheme.goldColor,
+                          // App name (clean, no card)
+                          Text(
+                            l10n.appName,
+                            style: TextStyle(
+                              fontSize: 26.fz,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 8,
+                              color: AppTheme.goldColor,
                             ),
-                            strokeWidth: 3,
                           ),
-                        ),
-
-                        AppSpacing.xxl.sbh,
-
-                        // Loading text (simplified)
-                        Text(
-                          l10n.loadingJourney,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16.fz,
-                            color: AppColors.secondaryText,
+                          4.sbh,
+                          Text(
+                            l10n.appNameSecond,
+                            style: TextStyle(
+                              fontSize: 36.fz,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 4,
+                              color: AppColors.primaryText,
+                            ),
                           ),
-                        ),
-                      ],
+
+                          80.sbh,
+
+                          // Simple loading indicator
+                          const SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppTheme.goldColor,
+                              ),
+                              strokeWidth: 3,
+                            ),
+                          ),
+
+                          AppSpacing.xxl.sbh,
+
+                          // Loading text (simplified)
+                          Text(
+                            l10n.loadingJourney,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16.fz,
+                              color: AppColors.secondaryText,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
             ),
 
             // Bottom branding

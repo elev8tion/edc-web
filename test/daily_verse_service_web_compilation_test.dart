@@ -58,7 +58,7 @@ void main() {
     });
 
     test('BibleVerse model serialization', () {
-      final verse = BibleVerse(
+      const verse = BibleVerse(
         text: 'For God so loved the world...',
         reference: 'John 3:16',
         book: 'John',

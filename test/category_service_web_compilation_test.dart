@@ -193,7 +193,7 @@ void main() {
     });
 
     test('CategoryStatistics model compilation', () {
-      final stats = CategoryStatistics(
+      const stats = CategoryStatistics(
         categoryId: 'cat1',
         categoryName: 'Test',
         totalPrayers: 100,

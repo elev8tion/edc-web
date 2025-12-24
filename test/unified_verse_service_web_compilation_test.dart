@@ -43,7 +43,7 @@ void main() {
     });
 
     test('BibleVerse model can be instantiated', () {
-      final verse = BibleVerse(
+      const verse = BibleVerse(
         id: 1,
         book: 'John',
         chapter: 3,
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('BibleVerse supports copyWith', () {
-      final verse = BibleVerse(
+      const verse = BibleVerse(
         id: 1,
         book: 'Psalms',
         chapter: 23,
@@ -116,7 +116,7 @@ void main() {
     });
 
     test('BibleVerse toMap serialization', () {
-      final verse = BibleVerse(
+      const verse = BibleVerse(
         id: 1,
         book: 'John',
         chapter: 3,
@@ -142,7 +142,7 @@ void main() {
     });
 
     test('BibleVerse handles nullable fields correctly', () {
-      final verse = BibleVerse(
+      const verse = BibleVerse(
         book: 'Matthew',
         chapter: 1,
         verseNumber: 1,
@@ -160,7 +160,7 @@ void main() {
     });
 
     test('BibleVerse handles Spanish translation', () {
-      final verse = BibleVerse(
+      const verse = BibleVerse(
         id: 1,
         book: 'Juan',
         chapter: 3,
@@ -180,7 +180,7 @@ void main() {
     });
 
     test('BibleVerse helper methods work correctly', () {
-      final verse = BibleVerse(
+      const verse = BibleVerse(
         book: 'John',
         chapter: 3,
         verseNumber: 16,
@@ -201,7 +201,7 @@ void main() {
     });
 
     test('BibleVerse length categorization', () {
-      final shortVerse = BibleVerse(
+      const shortVerse = BibleVerse(
         book: 'John',
         chapter: 11,
         verseNumber: 35,
@@ -212,11 +212,12 @@ void main() {
         category: 'general',
       );
 
-      final longVerse = BibleVerse(
+      const longVerse = BibleVerse(
         book: 'Esther',
         chapter: 8,
         verseNumber: 9,
-        text: 'Then the king\'s scribes were called at that time, in the third month, which is the month Sivan, on the twenty-third day of the month; and it was written according to all that Mordecai commanded to the Jews...',
+        text:
+            'Then the king\'s scribes were called at that time, in the third month, which is the month Sivan, on the twenty-third day of the month; and it was written according to all that Mordecai commanded to the Jews...',
         translation: 'WEB',
         reference: 'Esther 8:9',
         themes: [],
@@ -275,7 +276,7 @@ void main() {
     });
 
     test('VerseSearchResult model works', () {
-      final verse = BibleVerse(
+      const verse = BibleVerse(
         id: 1,
         book: 'John',
         chapter: 3,
@@ -287,7 +288,7 @@ void main() {
         category: 'gospel',
       );
 
-      final result = VerseSearchResult(
+      const result = VerseSearchResult(
         verse: verse,
         relevanceScore: 0.95,
         highlightedText: 'For God so <mark>loved</mark> the world...',
@@ -302,7 +303,7 @@ void main() {
     });
 
     test('VerseCollection predefined collections', () {
-      final collections = VerseCollection.predefinedCollections;
+      const collections = VerseCollection.predefinedCollections;
 
       expect(collections, isNotEmpty);
       expect(collections.length, greaterThanOrEqualTo(5));
@@ -387,7 +388,8 @@ void main() {
 
     test('FTS5 snippet syntax is valid', () {
       // Verify the snippet() function signature used in searchVerses
-      const snippetSyntax = "snippet(bible_verses_fts, 0, '<mark>', '</mark>', '...', 32)";
+      const snippetSyntax =
+          "snippet(bible_verses_fts, 0, '<mark>', '</mark>', '...', 32)";
 
       expect(snippetSyntax, contains('snippet'));
       expect(snippetSyntax, contains('bible_verses_fts'));
@@ -429,7 +431,7 @@ void main() {
 
     test('List<BibleVerse> structure', () {
       final verses = <BibleVerse>[
-        BibleVerse(
+        const BibleVerse(
           id: 1,
           book: 'John',
           chapter: 3,
@@ -440,7 +442,7 @@ void main() {
           themes: ['love'],
           category: 'gospel',
         ),
-        BibleVerse(
+        const BibleVerse(
           id: 2,
           book: 'Juan',
           chapter: 3,
@@ -469,7 +471,7 @@ void main() {
     });
 
     test('NULL vs empty array for themes', () {
-      final verseWithThemes = BibleVerse(
+      const verseWithThemes = BibleVerse(
         book: 'John',
         chapter: 3,
         verseNumber: 16,
@@ -480,7 +482,7 @@ void main() {
         category: 'gospel',
       );
 
-      final verseNoThemes = BibleVerse(
+      const verseNoThemes = BibleVerse(
         book: 'Matthew',
         chapter: 1,
         verseNumber: 1,
@@ -498,8 +500,8 @@ void main() {
 
     test('Boolean to int conversion for isFavorite', () {
       // SQL uses 0/1 for boolean, Dart uses true/false
-      final trueValue = true ? 1 : 0;
-      final falseValue = false ? 1 : 0;
+      const trueValue = true ? 1 : 0;
+      const falseValue = false ? 1 : 0;
 
       expect(trueValue, 1);
       expect(falseValue, 0);
@@ -520,11 +522,12 @@ void main() {
     });
 
     test('Spanish character handling (ñ, á, é, í, ó, ú)', () {
-      final spanishVerse = BibleVerse(
+      const spanishVerse = BibleVerse(
         book: 'Romanos',
         chapter: 8,
         verseNumber: 28,
-        text: 'Y sabemos que á los que á Dios aman, todas las cosas les ayudan á bien...',
+        text:
+            'Y sabemos que á los que á Dios aman, todas las cosas les ayudan á bien...',
         translation: 'RVR1909',
         reference: 'Romanos 8:28',
         themes: ['fe', 'esperanza'],
@@ -538,7 +541,7 @@ void main() {
 
   group('Bilingual Support Validation', () {
     test('English Bible translation (WEB)', () {
-      final englishVerse = BibleVerse(
+      const englishVerse = BibleVerse(
         id: 1,
         book: 'John',
         chapter: 3,
@@ -555,7 +558,7 @@ void main() {
     });
 
     test('Spanish Bible translation (RVR1909)', () {
-      final spanishVerse = BibleVerse(
+      const spanishVerse = BibleVerse(
         id: 1,
         book: 'Juan',
         chapter: 3,

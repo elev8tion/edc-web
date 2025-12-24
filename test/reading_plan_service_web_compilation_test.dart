@@ -102,7 +102,7 @@ void main() {
     });
 
     test('ReadingPlan JSON serialization', () {
-      final plan = ReadingPlan(
+      const plan = ReadingPlan(
         id: 'plan1',
         title: 'Test Plan',
         description: 'Description',
@@ -150,7 +150,7 @@ void main() {
     });
 
     test('ReadingPlan copyWith functionality', () {
-      final plan = ReadingPlan(
+      const plan = ReadingPlan(
         id: 'plan1',
         title: 'Original',
         description: 'Desc',

@@ -114,9 +114,9 @@ class _BibleLoadingScreenState extends State<BibleLoadingScreen> {
             if (_error != null) ...[
               const Icon(Icons.error, color: Colors.red, size: 48),
               const SizedBox(height: 20),
-              Text(
+              const Text(
                 'Error loading Bible data',
-                style: const TextStyle(fontSize: 20, color: Colors.red),
+                style: TextStyle(fontSize: 20, color: Colors.red),
               ),
               const SizedBox(height: 10),
               Text(_error!),
@@ -228,8 +228,10 @@ Future<void> getStatsExample() async {
   final stats = await loader.getLoadingStats();
 
   print('=== Bible Loading Statistics ===');
-  print('English verses: ${stats['english_verses']} / ${stats['english_expected']}');
-  print('Spanish verses: ${stats['spanish_verses']} / ${stats['spanish_expected']}');
+  print(
+      'English verses: ${stats['english_verses']} / ${stats['english_expected']}');
+  print(
+      'Spanish verses: ${stats['spanish_verses']} / ${stats['spanish_expected']}');
   print('Total verses: ${stats['total_verses']} / ${stats['expected_total']}');
   print('Is complete: ${stats['is_complete']}');
 
@@ -409,5 +411,6 @@ Future<void> performanceMonitoringExample() async {
 
   final stats = await loader.getLoadingStats();
   print('Verses loaded: ${stats['total_verses']}');
-  print('Average: ${stats['total_verses']! / totalTime.inSeconds} verses/second');
+  print(
+      'Average: ${stats['total_verses']! / totalTime.inSeconds} verses/second');
 }

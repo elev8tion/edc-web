@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
 
 // Conditional imports for platform-specific code
 import 'platform_share_helper_stub.dart'
@@ -48,9 +47,8 @@ class PlatformShareHelper {
 
   /// Show a message to user after sharing/downloading
   static void showShareSuccess(BuildContext context, {required bool isWeb}) {
-    final message = isWeb
-        ? 'Image downloaded successfully'
-        : 'Share sheet opened';
+    final message =
+        isWeb ? 'Image downloaded successfully' : 'Share sheet opened';
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

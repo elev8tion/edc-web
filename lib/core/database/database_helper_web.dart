@@ -17,7 +17,8 @@ import 'database_interface.dart';
 class DatabaseHelperImpl implements DatabaseInterface {
   // Singleton pattern
   DatabaseHelperImpl._privateConstructor();
-  static final DatabaseHelperImpl instance = DatabaseHelperImpl._privateConstructor();
+  static final DatabaseHelperImpl instance =
+      DatabaseHelperImpl._privateConstructor();
 
   static SqlJsDatabase? _database;
   static final AppLogger _logger = AppLogger.instance;
@@ -29,14 +30,16 @@ class DatabaseHelperImpl implements DatabaseInterface {
     try {
       if (_database != null) return _database!;
 
-      _logger.info('Initializing web database...', context: 'DatabaseHelperImpl');
+      _logger.info('Initializing web database...',
+          context: 'DatabaseHelperImpl');
 
       // Get sql.js database instance
       _database = await SqlJsHelper.database;
 
       // Check if database needs initialization
-      if (!await _isInitialized) {
-        _logger.info('First launch detected, initializing database...', context: 'DatabaseHelperImpl');
+      if (!_isInitialized) {
+        _logger.info('First launch detected, initializing database...',
+            context: 'DatabaseHelperImpl');
         await _initialize(_database!);
         _isInitialized = true;
       }
@@ -65,14 +68,17 @@ class DatabaseHelperImpl implements DatabaseInterface {
       // Check if already initialized
       final isInitialized = await _checkIfInitialized(db);
       if (isInitialized) {
-        _logger.info('Database already initialized', context: 'DatabaseHelperImpl');
+        _logger.info('Database already initialized',
+            context: 'DatabaseHelperImpl');
         return;
       }
 
-      _logger.info('Starting database initialization...', context: 'DatabaseHelperImpl');
+      _logger.info('Starting database initialization...',
+          context: 'DatabaseHelperImpl');
 
       // Step 1: Create schema (all 23 tables)
-      _logger.info('Creating database schema...', context: 'DatabaseHelperImpl');
+      _logger.info('Creating database schema...',
+          context: 'DatabaseHelperImpl');
       await _createSchema(db);
 
       // Step 2: Load Bible data
@@ -80,7 +86,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
       final loader = BibleDataLoaderWeb(db);
 
       await for (final progress in loader.loadBibleData()) {
-        debugPrint('📖 Bible loading progress: ${(progress * 100).toStringAsFixed(1)}%');
+        debugPrint(
+            '📖 Bible loading progress: ${(progress * 100).toStringAsFixed(1)}%');
       }
 
       // Step 3: Setup FTS indexes
@@ -88,7 +95,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
       final ftsSetup = BibleFtsSetupWeb(db);
       await ftsSetup.setupFts(
         onProgress: (progress) {
-          debugPrint('🔍 FTS setup progress: ${(progress * 100).toStringAsFixed(1)}%');
+          debugPrint(
+              '🔍 FTS setup progress: ${(progress * 100).toStringAsFixed(1)}%');
         },
       );
 
@@ -101,7 +109,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
       // Mark as initialized
       await _markAsInitialized(db);
 
-      _logger.info('Database initialization complete!', context: 'DatabaseHelperImpl');
+      _logger.info('Database initialization complete!',
+          context: 'DatabaseHelperImpl');
     } catch (e, stackTrace) {
       _logger.fatal(
         'Database initialization failed',
@@ -131,7 +140,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
       final result = await db.query('bible_verses', limit: 1);
       return result.isNotEmpty;
     } catch (e) {
-      _logger.warning('Error checking initialization status: $e', context: 'DatabaseHelperImpl');
+      _logger.warning('Error checking initialization status: $e',
+          context: 'DatabaseHelperImpl');
       return false;
     }
   }
@@ -144,7 +154,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         VALUES ('database_initialized', 'true', ?)
       ''', [DateTime.now().millisecondsSinceEpoch]);
     } catch (e) {
-      _logger.warning('Failed to mark as initialized: $e', context: 'DatabaseHelperImpl');
+      _logger.warning('Failed to mark as initialized: $e',
+          context: 'DatabaseHelperImpl');
     }
   }
 
@@ -173,9 +184,12 @@ class DatabaseHelperImpl implements DatabaseInterface {
       ''');
 
       // Bible verses indexes
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_bible_version ON bible_verses(version)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_bible_book_chapter ON bible_verses(book, chapter)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_bible_search ON bible_verses(book, chapter, verse)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_bible_version ON bible_verses(version)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_bible_book_chapter ON bible_verses(book, chapter)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_bible_search ON bible_verses(book, chapter, verse)');
 
       // Note: FTS table and triggers created by BibleFtsSetupWeb after data is loaded
 
@@ -220,7 +234,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_daily_verse_date ON daily_verse_history(shown_date DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_daily_verse_date ON daily_verse_history(shown_date DESC)');
 
       // Daily verse schedule
       await db.execute('''
@@ -235,7 +250,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_daily_verse_schedule_date_lang ON daily_verse_schedule(month, day, language)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_daily_verse_schedule_date_lang ON daily_verse_schedule(month, day, language)');
 
       // Verse bookmarks
       await db.execute('''
@@ -251,7 +267,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_bookmarks_created ON verse_bookmarks(created_at DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_bookmarks_created ON verse_bookmarks(created_at DESC)');
 
       // Verse preferences
       await db.execute('''
@@ -293,8 +310,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_chat_messages_session ON chat_messages(session_id)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_chat_messages_timestamp ON chat_messages(timestamp DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_chat_messages_session ON chat_messages(session_id)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_chat_messages_timestamp ON chat_messages(timestamp DESC)');
 
       await db.execute('''
         CREATE TABLE IF NOT EXISTS shared_chats (
@@ -304,8 +323,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_shared_chats_session ON shared_chats(session_id)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_shared_chats_timestamp ON shared_chats(shared_at DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_shared_chats_session ON shared_chats(session_id)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_shared_chats_timestamp ON shared_chats(shared_at DESC)');
 
       await db.execute('''
         CREATE TABLE IF NOT EXISTS shared_verses (
@@ -323,8 +344,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_shared_verses_verse ON shared_verses(verse_id)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_shared_verses_timestamp ON shared_verses(shared_at DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_shared_verses_verse ON shared_verses(verse_id)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_shared_verses_timestamp ON shared_verses(shared_at DESC)');
 
       await db.execute('''
         CREATE TABLE IF NOT EXISTS shared_devotionals (
@@ -334,8 +357,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_shared_devotionals_devotional ON shared_devotionals(devotional_id)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_shared_devotionals_timestamp ON shared_devotionals(shared_at DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_shared_devotionals_devotional ON shared_devotionals(devotional_id)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_shared_devotionals_timestamp ON shared_devotionals(shared_at DESC)');
 
       // ==================== PRAYER TABLES ====================
 
@@ -370,8 +395,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_shared_prayers_prayer ON shared_prayers(prayer_id)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_shared_prayers_timestamp ON shared_prayers(shared_at DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_shared_prayers_prayer ON shared_prayers(prayer_id)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_shared_prayers_timestamp ON shared_prayers(shared_at DESC)');
 
       await db.execute('''
         CREATE TABLE IF NOT EXISTS prayer_categories (
@@ -397,7 +424,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_prayer_activity_date ON prayer_streak_activity(activity_date)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_prayer_activity_date ON prayer_streak_activity(activity_date)');
 
       // ==================== DEVOTIONAL TABLES ====================
 
@@ -457,10 +485,14 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_reading_plans_started ON reading_plans(is_started)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_daily_readings_plan ON daily_readings(plan_id)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_daily_readings_completion ON daily_readings(plan_id, is_completed, completed_date)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_daily_readings_date ON daily_readings(plan_id, date)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_reading_plans_started ON reading_plans(is_started)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_daily_readings_plan ON daily_readings(plan_id)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_daily_readings_completion ON daily_readings(plan_id, is_completed, completed_date)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_daily_readings_date ON daily_readings(plan_id, date)');
 
       // ==================== USER SETTINGS ====================
 
@@ -485,7 +517,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_search_history ON search_history(created_at DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_search_history ON search_history(created_at DESC)');
 
       // ==================== ACHIEVEMENTS ====================
 
@@ -499,8 +532,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_achievement_completions_type ON achievement_completions(achievement_type)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_achievement_completions_timestamp ON achievement_completions(completed_at DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_achievement_completions_type ON achievement_completions(achievement_type)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_achievement_completions_timestamp ON achievement_completions(completed_at DESC)');
 
       // ==================== APP METADATA ====================
 
@@ -514,16 +549,26 @@ class DatabaseHelperImpl implements DatabaseInterface {
 
       // ==================== ADDITIONAL INDEXES ====================
 
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_favorite_verses_verse_id ON favorite_verses(verse_id)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_favorite_verses_date_added ON favorite_verses(date_added DESC)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_favorite_verses_category ON favorite_verses(category)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_daily_verses_verse_id ON daily_verses(verse_id)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_verse_bookmarks_verse_id ON verse_bookmarks(verse_id)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_prayer_requests_category ON prayer_requests(category)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_prayer_requests_status ON prayer_requests(status)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_prayer_requests_date_created ON prayer_requests(date_created DESC)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_chat_sessions_created ON chat_sessions(created_at DESC)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_prayer_categories_display_order ON prayer_categories(display_order)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_favorite_verses_verse_id ON favorite_verses(verse_id)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_favorite_verses_date_added ON favorite_verses(date_added DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_favorite_verses_category ON favorite_verses(category)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_daily_verses_verse_id ON daily_verses(verse_id)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_verse_bookmarks_verse_id ON verse_bookmarks(verse_id)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_prayer_requests_category ON prayer_requests(category)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_prayer_requests_status ON prayer_requests(status)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_prayer_requests_date_created ON prayer_requests(date_created DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_chat_sessions_created ON chat_sessions(created_at DESC)');
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_prayer_categories_display_order ON prayer_categories(display_order)');
 
       // ==================== TRIGGERS ====================
 
@@ -538,7 +583,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         END
       ''');
 
-      _logger.info('Database schema created successfully', context: 'DatabaseHelperImpl');
+      _logger.info('Database schema created successfully',
+          context: 'DatabaseHelperImpl');
     } catch (e, stackTrace) {
       _logger.fatal(
         'Failed to create database schema',
@@ -561,7 +607,11 @@ class DatabaseHelperImpl implements DatabaseInterface {
       {'key': 'first_launch', 'value': 'true', 'type': 'bool'},
       {'key': 'verse_streak_count', 'value': '0', 'type': 'int'},
       {'key': 'last_verse_date', 'value': '0', 'type': 'int'},
-      {'key': 'preferred_verse_themes', 'value': '["hope", "strength", "comfort"]', 'type': 'String'},
+      {
+        'key': 'preferred_verse_themes',
+        'value': '["hope", "strength", "comfort"]',
+        'type': 'String'
+      },
       {'key': 'chat_history_days', 'value': '30', 'type': 'int'},
       {'key': 'prayer_reminder_enabled', 'value': 'true', 'type': 'bool'},
       {'key': 'font_size_scale', 'value': '1.0', 'type': 'double'},

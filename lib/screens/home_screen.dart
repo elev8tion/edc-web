@@ -17,7 +17,6 @@ import '../core/navigation/navigation_service.dart';
 import '../core/services/preferences_service.dart';
 import '../core/services/subscription_service.dart';
 import '../components/trial_welcome_dialog.dart';
-import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
 import '../core/utils/simple_coach_mark.dart';
 
@@ -130,7 +129,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ).show(context);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,7 +146,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(
                   top: AppSpacing.xl,
-                  bottom: AppSpacing.xxxl, // Extra bottom padding for button visibility
+                  bottom: AppSpacing
+                      .xxxl, // Extra bottom padding for button visibility
                 ),
                 // Optimize scrolling performance
                 physics: const BouncingScrollPhysics(),
@@ -168,7 +167,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     _buildDailyVerse(),
                     const SizedBox(height: AppSpacing.xxl),
                     _buildStartChatButton(),
-                    const SizedBox(height: AppSpacing.xl), // Extra space at bottom
+                    const SizedBox(
+                        height: AppSpacing.xl), // Extra space at bottom
                   ],
                 ),
               ),
@@ -348,7 +348,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: ExcludeSemantics(
                   child: Icon(
                     icon,
-                    size: 20,  // Fixed size for consistent display in fixed container
+                    size:
+                        20, // Fixed size for consistent display in fixed container
                     color: AppColors.secondaryText,
                   ),
                 ),
@@ -369,17 +370,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               2.sbh,
               // Label text
               Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 9.fz,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white.withValues(alpha: 0.9),
-                    shadows: AppTheme.textShadowSubtle,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                label,
+                style: TextStyle(
+                  fontSize: 9.fz,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withValues(alpha: 0.9),
+                  shadows: AppTheme.textShadowSubtle,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
         ),
@@ -429,7 +430,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: ExcludeSemantics(
                 child: Icon(
                   icon,
-                  size: 20,  // Fixed size for consistent display in fixed container
+                  size:
+                      20, // Fixed size for consistent display in fixed container
                   color: AppColors.secondaryText,
                 ),
               ),
@@ -478,7 +480,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildMainFeatures() {
     final l10n = AppLocalizations.of(context);
-    final textSize = ref.watch(textSizeProvider); // Watch textSize to force rebuilds
+    final textSize =
+        ref.watch(textSizeProvider); // Watch textSize to force rebuilds
 
     // Calculate dynamic height using unified responsive scale
     final cardHeight = 160.s;
@@ -499,7 +502,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       if (_isNavigating) return;
                       _isNavigating = true;
-                      await NavigationService.pushNamedImmediate(AppRoutes.chat);
+                      await NavigationService.pushNamedImmediate(
+                          AppRoutes.chat);
                       Future.delayed(const Duration(milliseconds: 300), () {
                         if (mounted) setState(() => _isNavigating = false);
                       });
@@ -554,7 +558,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       if (_isNavigating) return;
                       _isNavigating = true;
-                      await NavigationService.pushNamedImmediate(AppRoutes.devotional);
+                      await NavigationService.pushNamedImmediate(
+                          AppRoutes.devotional);
                       Future.delayed(const Duration(milliseconds: 300), () {
                         if (mounted) setState(() => _isNavigating = false);
                       });
@@ -604,7 +609,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ],
             ),
-          ).animate().fadeIn(delay: 1000.ms).slideX(begin: -0.3, delay: 1000.ms),
+          )
+              .animate()
+              .fadeIn(delay: 1000.ms)
+              .slideX(begin: -0.3, delay: 1000.ms),
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             height: cardHeight,
@@ -618,7 +626,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       if (_isNavigating) return;
                       _isNavigating = true;
-                      await NavigationService.pushNamedImmediate(AppRoutes.prayerJournal);
+                      await NavigationService.pushNamedImmediate(
+                          AppRoutes.prayerJournal);
                       Future.delayed(const Duration(milliseconds: 300), () {
                         if (mounted) setState(() => _isNavigating = false);
                       });
@@ -673,7 +682,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () async {
                       if (_isNavigating) return;
                       _isNavigating = true;
-                      await NavigationService.pushNamedImmediate(AppRoutes.readingPlan);
+                      await NavigationService.pushNamedImmediate(
+                          AppRoutes.readingPlan);
                       Future.delayed(const Duration(milliseconds: 300), () {
                         if (mounted) setState(() => _isNavigating = false);
                       });
@@ -772,7 +782,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () async {
                     if (_isNavigating) return;
                     _isNavigating = true;
-                    await NavigationService.pushNamedImmediate(AppRoutes.bibleBrowser);
+                    await NavigationService.pushNamedImmediate(
+                        AppRoutes.bibleBrowser);
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted) setState(() => _isNavigating = false);
                     });
@@ -780,13 +791,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 const SizedBox(width: AppSpacing.lg),
                 _buildQuickActionCard(
-                  label: useShortLabel ? l10n.verseLibraryShort : l10n.verseLibrary,
+                  label: useShortLabel
+                      ? l10n.verseLibraryShort
+                      : l10n.verseLibrary,
                   icon: Icons.search,
                   color: Colors.blue,
                   onTap: () async {
                     if (_isNavigating) return;
                     _isNavigating = true;
-                    await NavigationService.pushNamedImmediate(AppRoutes.verseLibrary);
+                    await NavigationService.pushNamedImmediate(
+                        AppRoutes.verseLibrary);
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted) setState(() => _isNavigating = false);
                     });
@@ -800,7 +814,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () async {
                     if (_isNavigating) return;
                     _isNavigating = true;
-                    await NavigationService.pushNamedImmediate(AppRoutes.prayerJournal);
+                    await NavigationService.pushNamedImmediate(
+                        AppRoutes.prayerJournal);
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted) setState(() => _isNavigating = false);
                     });
@@ -814,7 +829,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () async {
                     if (_isNavigating) return;
                     _isNavigating = true;
-                    await NavigationService.pushNamedImmediate(AppRoutes.settings);
+                    await NavigationService.pushNamedImmediate(
+                        AppRoutes.settings);
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted) setState(() => _isNavigating = false);
                     });
@@ -828,7 +844,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () async {
                     if (_isNavigating) return;
                     _isNavigating = true;
-                    await NavigationService.pushNamedImmediate(AppRoutes.profile);
+                    await NavigationService.pushNamedImmediate(
+                        AppRoutes.profile);
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted) setState(() => _isNavigating = false);
                     });
@@ -892,19 +909,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Align(
                   alignment: Alignment.center,
                   child: AutoSizeText(
-                  label,
-                  style: TextStyle(
-                    fontSize: 11.fz,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white.withValues(alpha: 0.9),
-                    shadows: AppTheme.textShadowSubtle,
+                    label,
+                    style: TextStyle(
+                      fontSize: 11.fz,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      shadows: AppTheme.textShadowSubtle,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    minFontSize: 7,
+                    maxFontSize: 11,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  minFontSize: 7,
-                  maxFontSize: 11,
-                  overflow: TextOverflow.ellipsis,
-                ),
                 ),
               ),
             ],
@@ -917,7 +934,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildDailyVerse() {
     final l10n = AppLocalizations.of(context);
     final todaysVerseAsync = ref.watch(todaysVerseProvider);
-    final textSize = ref.watch(textSizeProvider); // Watch textSize to force rebuilds
+    final textSize =
+        ref.watch(textSizeProvider); // Watch textSize to force rebuilds
 
     return todaysVerseAsync.when(
       data: (verseData) {
@@ -1035,7 +1053,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildStartChatButton() {
     final l10n = AppLocalizations.of(context);
-    final textSize = ref.watch(textSizeProvider); // Watch textSize to force rebuilds
+    final textSize =
+        ref.watch(textSizeProvider); // Watch textSize to force rebuilds
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.s),
       key: ValueKey('start_chat_button_$textSize'),

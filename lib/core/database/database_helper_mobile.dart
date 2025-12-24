@@ -6,7 +6,6 @@ library database_helper_mobile;
 
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,7 +21,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
 
   // Singleton pattern
   DatabaseHelperImpl._privateConstructor();
-  static final DatabaseHelperImpl instance = DatabaseHelperImpl._privateConstructor();
+  static final DatabaseHelperImpl instance =
+      DatabaseHelperImpl._privateConstructor();
 
   static Database? _database;
   static final AppLogger _logger = AppLogger.instance;
@@ -68,7 +68,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         path = join(documentsDirectory.path, _databaseName);
       }
 
-      _logger.info('Initializing database at: $path', context: 'DatabaseHelperImpl');
+      _logger.info('Initializing database at: $path',
+          context: 'DatabaseHelperImpl');
 
       return await openDatabase(
         path,
@@ -94,7 +95,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
   /// Create all database tables
   Future<void> _onCreate(Database db, int version) async {
     try {
-      _logger.info('Creating database schema v$version', context: 'DatabaseHelperImpl');
+      _logger.info('Creating database schema v$version',
+          context: 'DatabaseHelperImpl');
 
       // ==================== BIBLE VERSES TABLES ====================
 
@@ -115,15 +117,19 @@ class DatabaseHelperImpl implements DatabaseInterface {
       ''');
 
       // Bible verses indexes
-      await db.execute('CREATE INDEX idx_bible_version ON bible_verses(version)');
-      await db.execute('CREATE INDEX idx_bible_book_chapter ON bible_verses(book, chapter)');
-      await db.execute('CREATE INDEX idx_bible_search ON bible_verses(book, chapter, verse)');
+      await db
+          .execute('CREATE INDEX idx_bible_version ON bible_verses(version)');
+      await db.execute(
+          'CREATE INDEX idx_bible_book_chapter ON bible_verses(book, chapter)');
+      await db.execute(
+          'CREATE INDEX idx_bible_search ON bible_verses(book, chapter, verse)');
 
       // Bible verses FTS - Platform-specific (FTS5 on iOS, FTS4 on Android)
       // FTS4 is used on Android because FTS5 is not available in system SQLite
       // Both versions support: MATCH operator, snippet(), rank, and rowid JOIN
       final ftsVersion = Platform.isIOS ? 'fts5' : 'fts4';
-      final contentRowid = Platform.isIOS ? ',\n          content_rowid=id' : '';
+      final contentRowid =
+          Platform.isIOS ? ',\n          content_rowid=id' : '';
 
       await db.execute('''
         CREATE VIRTUAL TABLE bible_verses_fts USING $ftsVersion(
@@ -198,7 +204,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_daily_verse_date ON daily_verse_history(shown_date DESC)');
+      await db.execute(
+          'CREATE INDEX idx_daily_verse_date ON daily_verse_history(shown_date DESC)');
 
       // Daily verse schedule (365-day calendar of verses)
       await db.execute('''
@@ -213,7 +220,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_daily_verse_schedule_date_lang ON daily_verse_schedule(month, day, language)');
+      await db.execute(
+          'CREATE INDEX idx_daily_verse_schedule_date_lang ON daily_verse_schedule(month, day, language)');
 
       // Verse bookmarks
       await db.execute('''
@@ -229,7 +237,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_bookmarks_created ON verse_bookmarks(created_at DESC)');
+      await db.execute(
+          'CREATE INDEX idx_bookmarks_created ON verse_bookmarks(created_at DESC)');
 
       // Verse preferences
       await db.execute('''
@@ -273,8 +282,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_chat_messages_session ON chat_messages(session_id)');
-      await db.execute('CREATE INDEX idx_chat_messages_timestamp ON chat_messages(timestamp DESC)');
+      await db.execute(
+          'CREATE INDEX idx_chat_messages_session ON chat_messages(session_id)');
+      await db.execute(
+          'CREATE INDEX idx_chat_messages_timestamp ON chat_messages(timestamp DESC)');
 
       // Shared chats tracking
       await db.execute('''
@@ -285,8 +296,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_shared_chats_session ON shared_chats(session_id)');
-      await db.execute('CREATE INDEX idx_shared_chats_timestamp ON shared_chats(shared_at DESC)');
+      await db.execute(
+          'CREATE INDEX idx_shared_chats_session ON shared_chats(session_id)');
+      await db.execute(
+          'CREATE INDEX idx_shared_chats_timestamp ON shared_chats(shared_at DESC)');
 
       // Shared verses tracking
       await db.execute('''
@@ -305,8 +318,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_shared_verses_verse ON shared_verses(verse_id)');
-      await db.execute('CREATE INDEX idx_shared_verses_timestamp ON shared_verses(shared_at DESC)');
+      await db.execute(
+          'CREATE INDEX idx_shared_verses_verse ON shared_verses(verse_id)');
+      await db.execute(
+          'CREATE INDEX idx_shared_verses_timestamp ON shared_verses(shared_at DESC)');
 
       // Shared devotionals tracking
       await db.execute('''
@@ -317,8 +332,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_shared_devotionals_devotional ON shared_devotionals(devotional_id)');
-      await db.execute('CREATE INDEX idx_shared_devotionals_timestamp ON shared_devotionals(shared_at DESC)');
+      await db.execute(
+          'CREATE INDEX idx_shared_devotionals_devotional ON shared_devotionals(devotional_id)');
+      await db.execute(
+          'CREATE INDEX idx_shared_devotionals_timestamp ON shared_devotionals(shared_at DESC)');
 
       // ==================== PRAYER TABLES ====================
 
@@ -355,8 +372,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_shared_prayers_prayer ON shared_prayers(prayer_id)');
-      await db.execute('CREATE INDEX idx_shared_prayers_timestamp ON shared_prayers(shared_at DESC)');
+      await db.execute(
+          'CREATE INDEX idx_shared_prayers_prayer ON shared_prayers(prayer_id)');
+      await db.execute(
+          'CREATE INDEX idx_shared_prayers_timestamp ON shared_prayers(shared_at DESC)');
 
       // Prayer categories
       await db.execute('''
@@ -384,7 +403,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_prayer_activity_date ON prayer_streak_activity(activity_date)');
+      await db.execute(
+          'CREATE INDEX idx_prayer_activity_date ON prayer_streak_activity(activity_date)');
 
       // ==================== DEVOTIONAL TABLES ====================
 
@@ -448,10 +468,14 @@ class DatabaseHelperImpl implements DatabaseInterface {
       ''');
 
       // Reading plan indexes for performance
-      await db.execute('CREATE INDEX idx_reading_plans_started ON reading_plans(is_started)');
-      await db.execute('CREATE INDEX idx_daily_readings_plan ON daily_readings(plan_id)');
-      await db.execute('CREATE INDEX idx_daily_readings_completion ON daily_readings(plan_id, is_completed, completed_date)');
-      await db.execute('CREATE INDEX idx_daily_readings_date ON daily_readings(plan_id, date)');
+      await db.execute(
+          'CREATE INDEX idx_reading_plans_started ON reading_plans(is_started)');
+      await db.execute(
+          'CREATE INDEX idx_daily_readings_plan ON daily_readings(plan_id)');
+      await db.execute(
+          'CREATE INDEX idx_daily_readings_completion ON daily_readings(plan_id, is_completed, completed_date)');
+      await db.execute(
+          'CREATE INDEX idx_daily_readings_date ON daily_readings(plan_id, date)');
 
       // ==================== USER SETTINGS ====================
 
@@ -478,7 +502,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_search_history ON search_history(created_at DESC)');
+      await db.execute(
+          'CREATE INDEX idx_search_history ON search_history(created_at DESC)');
 
       // ==================== ACHIEVEMENTS ====================
 
@@ -493,8 +518,10 @@ class DatabaseHelperImpl implements DatabaseInterface {
         )
       ''');
 
-      await db.execute('CREATE INDEX idx_achievement_completions_type ON achievement_completions(achievement_type)');
-      await db.execute('CREATE INDEX idx_achievement_completions_timestamp ON achievement_completions(completed_at DESC)');
+      await db.execute(
+          'CREATE INDEX idx_achievement_completions_type ON achievement_completions(achievement_type)');
+      await db.execute(
+          'CREATE INDEX idx_achievement_completions_timestamp ON achievement_completions(completed_at DESC)');
 
       // ==================== APP METADATA ====================
 
@@ -511,26 +538,36 @@ class DatabaseHelperImpl implements DatabaseInterface {
       // These indexes improve query performance for common operations
 
       // Favorite verses indexes
-      await db.execute('CREATE INDEX idx_favorite_verses_verse_id ON favorite_verses(verse_id)');
-      await db.execute('CREATE INDEX idx_favorite_verses_date_added ON favorite_verses(date_added DESC)');
-      await db.execute('CREATE INDEX idx_favorite_verses_category ON favorite_verses(category)');
+      await db.execute(
+          'CREATE INDEX idx_favorite_verses_verse_id ON favorite_verses(verse_id)');
+      await db.execute(
+          'CREATE INDEX idx_favorite_verses_date_added ON favorite_verses(date_added DESC)');
+      await db.execute(
+          'CREATE INDEX idx_favorite_verses_category ON favorite_verses(category)');
 
       // Daily verses index
-      await db.execute('CREATE INDEX idx_daily_verses_verse_id ON daily_verses(verse_id)');
+      await db.execute(
+          'CREATE INDEX idx_daily_verses_verse_id ON daily_verses(verse_id)');
 
       // Verse bookmarks index
-      await db.execute('CREATE INDEX idx_verse_bookmarks_verse_id ON verse_bookmarks(verse_id)');
+      await db.execute(
+          'CREATE INDEX idx_verse_bookmarks_verse_id ON verse_bookmarks(verse_id)');
 
       // Prayer requests indexes
-      await db.execute('CREATE INDEX idx_prayer_requests_category ON prayer_requests(category)');
-      await db.execute('CREATE INDEX idx_prayer_requests_status ON prayer_requests(status)');
-      await db.execute('CREATE INDEX idx_prayer_requests_date_created ON prayer_requests(date_created DESC)');
+      await db.execute(
+          'CREATE INDEX idx_prayer_requests_category ON prayer_requests(category)');
+      await db.execute(
+          'CREATE INDEX idx_prayer_requests_status ON prayer_requests(status)');
+      await db.execute(
+          'CREATE INDEX idx_prayer_requests_date_created ON prayer_requests(date_created DESC)');
 
       // Chat sessions index
-      await db.execute('CREATE INDEX idx_chat_sessions_created ON chat_sessions(created_at DESC)');
+      await db.execute(
+          'CREATE INDEX idx_chat_sessions_created ON chat_sessions(created_at DESC)');
 
       // Prayer categories index
-      await db.execute('CREATE INDEX idx_prayer_categories_display_order ON prayer_categories(display_order)');
+      await db.execute(
+          'CREATE INDEX idx_prayer_categories_display_order ON prayer_categories(display_order)');
 
       // ==================== TRIGGERS ====================
       // Auto-update timestamp trigger for verse_bookmarks
@@ -551,7 +588,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
       await _insertDefaultPrayerCategories(db);
       await _insertDefaultReadingPlans(db);
 
-      _logger.info('Database schema created successfully', context: 'DatabaseHelperImpl');
+      _logger.info('Database schema created successfully',
+          context: 'DatabaseHelperImpl');
     } catch (e, stackTrace) {
       _logger.fatal(
         'Failed to create database schema',
@@ -574,7 +612,8 @@ class DatabaseHelperImpl implements DatabaseInterface {
     // See database_helper.dart for complete implementation
     if (oldVersion < 2) {
       try {
-        await db.execute('ALTER TABLE prayer_categories RENAME COLUMN sort_order TO display_order');
+        await db.execute(
+            'ALTER TABLE prayer_categories RENAME COLUMN sort_order TO display_order');
         _logger.info('Successfully renamed sort_order to display_order');
       } catch (e) {
         _logger.error('Migration v1→v2 failed: $e');
@@ -618,7 +657,11 @@ class DatabaseHelperImpl implements DatabaseInterface {
       {'key': 'first_launch', 'value': 'true', 'type': 'bool'},
       {'key': 'verse_streak_count', 'value': '0', 'type': 'int'},
       {'key': 'last_verse_date', 'value': '0', 'type': 'int'},
-      {'key': 'preferred_verse_themes', 'value': '["hope", "strength", "comfort"]', 'type': 'String'},
+      {
+        'key': 'preferred_verse_themes',
+        'value': '["hope", "strength", "comfort"]',
+        'type': 'String'
+      },
       {'key': 'chat_history_days', 'value': '30', 'type': 'int'},
       {'key': 'prayer_reminder_enabled', 'value': 'true', 'type': 'bool'},
       {'key': 'font_size_scale', 'value': '1.0', 'type': 'double'},

@@ -38,10 +38,12 @@ class ChatShareService {
 
       // Capture the widget as an image
       // Reset text scale to 1.0 for consistent screenshots regardless of user's text size preference
-      final Uint8List imageBytes = await _screenshotController.captureFromWidget(
+      final Uint8List imageBytes =
+          await _screenshotController.captureFromWidget(
         MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            textScaler: const TextScaler.linear(1.0), // Always use 1.0 for screenshots
+            textScaler:
+                const TextScaler.linear(1.0), // Always use 1.0 for screenshots
           ),
           child: ChatShareWidget(
             messages: messageWidgets,
@@ -54,8 +56,10 @@ class ChatShareService {
       );
 
       // Share using platform-aware helper
-      final filename = 'edc_chat_share_${DateTime.now().millisecondsSinceEpoch}.png';
-      final shareText = 'Check out my conversation with Everyday Christian! 🙏\n\nGet personalized biblical guidance: https://everydaychristian.app';
+      final filename =
+          'edc_chat_share_${DateTime.now().millisecondsSinceEpoch}.png';
+      const shareText =
+          'Check out my conversation with Everyday Christian! 🙏\n\nGet personalized biblical guidance: https://everydaychristian.app';
 
       await PlatformShareHelper.shareImage(
         imageBytes: imageBytes,

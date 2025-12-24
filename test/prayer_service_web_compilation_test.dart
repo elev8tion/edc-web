@@ -116,8 +116,8 @@ void main() {
 
     test('Boolean serialization (for is_answered field)', () {
       // Verify boolean to int conversion
-      final trueValue = true ? 1 : 0;
-      final falseValue = false ? 1 : 0;
+      const trueValue = true ? 1 : 0;
+      const falseValue = false ? 1 : 0;
 
       expect(trueValue, 1);
       expect(falseValue, 0);
@@ -219,8 +219,8 @@ void main() {
 
     test('NULL vs empty string handling', () {
       // Verify NULL and empty string are handled correctly
-      final nullValue = null;
-      final emptyString = '';
+      const nullValue = null;
+      const emptyString = '';
 
       expect(nullValue, isNull);
       expect(emptyString, isNotNull);
