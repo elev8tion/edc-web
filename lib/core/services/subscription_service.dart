@@ -8,11 +8,14 @@
 /// Uses in_app_purchase for App Store/Play Store subscriptions
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Represents the current subscription state of the user
 enum SubscriptionStatus {
@@ -959,6 +962,143 @@ class SubscriptionService {
     debugPrint('📊 [SubscriptionService] Premium activated for testing');
   }
 
+  // ============================================================================
+  // ACTIVATION CODE VALIDATION
+  // ============================================================================
+
+  /// Activate subscription using activation code from Stripe purchase
+  /// Returns success status and message
+  Future<ActivationResult> activateWithCode(String code) async {
+    try {
+      debugPrint('🔑 [SubscriptionService] Validating activation code: $code');
+
+      // Generate device ID for tracking
+      final deviceId = await _getOrCreateDeviceId();
+
+      // Call Activepieces validation endpoint
+      final validationUrl = dotenv.get('ACTIVEPIECES_CODE_VALIDATION_URL',
+          fallback: '');
+
+      if (validationUrl.isEmpty) {
+        return ActivationResult(
+          success: false,
+          message:
+              'Activation service not configured. Please check your .env file.',
+        );
+      }
+
+      final response = await http.post(
+        Uri.parse(validationUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'code': code,
+          'deviceId': deviceId,
+        }),
+      ).timeout(Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body);
+
+        if (result['valid'] == true) {
+          // Activate subscription locally
+          await _activateSubscriptionFromCode(
+            tier: result['tier'],
+            subscriptionId: result['subscriptionId'],
+            customerId: result['customerId'],
+            expiresAt: DateTime.parse(result['expiresAt']),
+            activationCode: code,
+          );
+
+          debugPrint(
+              '✅ [SubscriptionService] Activation successful: ${result['tier']}');
+
+          return ActivationResult(
+            success: true,
+            message: 'Premium activated! Enjoy ${result['tier']} subscription.',
+            tier: result['tier'],
+          );
+        } else {
+          return ActivationResult(
+            success: false,
+            message: result['error'] ?? 'Invalid activation code',
+          );
+        }
+      } else {
+        return ActivationResult(
+          success: false,
+          message: 'Failed to validate code (${response.statusCode})',
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ [SubscriptionService] Activation error: $e');
+      return ActivationResult(
+        success: false,
+        message: 'Error validating code: ${e.toString()}',
+      );
+    }
+  }
+
+  /// Get or create unique device ID for activation tracking
+  Future<String> _getOrCreateDeviceId() async {
+    final prefs = await SharedPreferences.getInstance();
+    var deviceId = prefs.getString('device_id');
+
+    if (deviceId == null) {
+      // Generate new UUID
+      deviceId = DateTime.now().millisecondsSinceEpoch.toString() +
+          '_' +
+          DateTime.now().microsecondsSinceEpoch.toString().substring(7);
+      await prefs.setString('device_id', deviceId);
+      debugPrint('🆔 [SubscriptionService] Generated new device ID: $deviceId');
+    }
+
+    return deviceId;
+  }
+
+  /// Activate subscription from validated code
+  Future<void> _activateSubscriptionFromCode({
+    required String tier,
+    required String subscriptionId,
+    required String customerId,
+    required DateTime expiresAt,
+    required String activationCode,
+  }) async {
+    // Set premium active
+    await _prefs?.setBool(_keyPremiumActive, true);
+
+    // Set expiry date
+    await _prefs?.setString(_keyPremiumExpiryDate, expiresAt.toIso8601String());
+
+    // Set subscription details
+    await _prefs?.setString(_keyPurchasedProductId,
+        tier == 'yearly' ? premiumYearlyProductId : premiumMonthlyProductId);
+
+    // Store Stripe IDs
+    await _prefs?.setString('stripe_subscription_id', subscriptionId);
+    await _prefs?.setString('stripe_customer_id', customerId);
+
+    // Store activation code (for reference in settings)
+    await _prefs?.setString('activation_code', activationCode);
+
+    // Set auto-renew to true
+    await _prefs?.setBool(_keyAutoRenewStatus, true);
+
+    // Reset message counter
+    await _prefs?.setInt(_keyPremiumMessagesUsed, 0);
+    await _prefs?.setString(_keyPremiumLastResetDate,
+        DateTime.now().toIso8601String().substring(0, 7));
+
+    // Mark trial as completed (if applicable)
+    if (isInTrial) {
+      await _markTrialAsExpiredInKeychain();
+    }
+
+    debugPrint('✅ [SubscriptionService] Subscription activated: $tier');
+  }
+
+  /// Get stored activation code (if exists)
+  String? get activationCode => _prefs?.getString('activation_code');
+
   /// Get debug info
   Map<String, dynamic> get debugInfo {
     return {
@@ -985,4 +1125,17 @@ class SubscriptionService {
       'hasMonthlySubscription': hasMonthlySubscription,
     };
   }
+}
+
+/// Result of activation code validation
+class ActivationResult {
+  final bool success;
+  final String message;
+  final String? tier;
+
+  ActivationResult({
+    required this.success,
+    required this.message,
+    this.tier,
+  });
 }
