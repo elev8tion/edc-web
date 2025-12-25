@@ -1,0 +1,9 @@
+name = "customer-portal"
+main = "src/customer-portal.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+PWA_URL = "https://remarkable-capybara-1ec7f2.netlify.app"
+
+# Secrets (set via: wrangler secret put <NAME>)
+# STRIPE_API_KEY = "sk_test_..."
