@@ -107,13 +107,17 @@ export default {
         console.error('Failed to update Stripe invoice:', await stripeUpdateResponse.text());
       }
 
+      // Detect customer language from metadata or default to English
+      const locale = eventData.metadata?.locale || 'en';
+
       // Send activation email (using EmailIt API)
       if (env.EMAILIT_API_KEY) {
         await sendActivationEmail(
           customerEmail,
           activationCode,
           tier,
-          env.EMAILIT_API_KEY
+          env.EMAILIT_API_KEY,
+          locale
         );
       }
 
@@ -207,7 +211,19 @@ async function verifyStripeSignature(payload, signature, secret) {
   }
 }
 
-async function sendActivationEmail(to, code, tier, apiKey) {
+async function sendActivationEmail(to, code, tier, apiKey, locale = 'en') {
+  // Import Spanish templates dynamically
+  const { getSpanishActivationEmail } = await import('./email-templates-es.js');
+
+  const subject = locale === 'es'
+    ? 'Tu Código de Activación - Everyday Christian'
+    : 'Your Activation Code - Everyday Christian';
+
+  // Use Spanish template if locale is Spanish, otherwise use English (inline)
+  const htmlContent = locale === 'es'
+    ? getSpanishActivationEmail(code, tier)
+    : getEnglishActivationEmailHTML(code);
+
   try {
     const response = await fetch('https://api.emailit.com/v1/emails', {
       method: 'POST',
@@ -219,8 +235,21 @@ async function sendActivationEmail(to, code, tier, apiKey) {
         from: 'Everyday Christian <connect@everydaychristian.app>',
         to: to,
         reply_to: 'connect@everydaychristian.app',
-        subject: 'Your Activation Code - Everyday Christian',
-        html: `
+        subject: subject,
+        html: htmlContent
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Failed to send email:', await response.text());
+    }
+  } catch (error) {
+    console.error('Email error:', error);
+  }
+}
+
+function getEnglishActivationEmailHTML(code) {
+  return `
           <!DOCTYPE html>
           <html>
           <head>
