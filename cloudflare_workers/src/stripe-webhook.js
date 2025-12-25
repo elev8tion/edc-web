@@ -1,6 +1,7 @@
 /**
  * Stripe Webhook Handler - Worker 1
  * Generates activation codes and stores in NoCodeBackend
+ * WITH SIGNATURE VERIFICATION
  */
 
 export default {
@@ -11,8 +12,30 @@ export default {
     }
 
     try {
-      // Parse Stripe webhook event
-      const event = await request.json();
+      // Get raw body for signature verification
+      const rawBody = await request.text();
+
+      // Verify Stripe signature
+      const signature = request.headers.get('stripe-signature');
+      if (!signature) {
+        console.error('Missing Stripe signature header');
+        return new Response('Unauthorized', { status: 401 });
+      }
+
+      // Verify the webhook signature
+      const isValid = await verifyStripeSignature(
+        rawBody,
+        signature,
+        env.STRIPE_WEBHOOK_SECRET
+      );
+
+      if (!isValid) {
+        console.error('Invalid Stripe signature');
+        return new Response('Unauthorized', { status: 401 });
+      }
+
+      // Parse Stripe webhook event (after verification)
+      const event = JSON.parse(rawBody);
 
       // Only process invoice.payment_succeeded events
       if (event.type !== 'invoice.payment_succeeded') {
@@ -130,6 +153,58 @@ function generateRandomCode(length) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
+}
+
+/**
+ * Verify Stripe webhook signature using HMAC SHA256
+ * Prevents fake webhook attacks
+ */
+async function verifyStripeSignature(payload, signature, secret) {
+  try {
+    // Parse signature header
+    const signatureParts = signature.split(',').reduce((acc, part) => {
+      const [key, value] = part.split('=');
+      acc[key] = value;
+      return acc;
+    }, {});
+
+    const timestamp = signatureParts.t;
+    const providedSignature = signatureParts.v1;
+
+    if (!timestamp || !providedSignature) {
+      return false;
+    }
+
+    // Create signed payload
+    const signedPayload = `${timestamp}.${payload}`;
+
+    // Compute expected signature using Web Crypto API
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+
+    const signatureBuffer = await crypto.subtle.sign(
+      'HMAC',
+      key,
+      encoder.encode(signedPayload)
+    );
+
+    // Convert to hex string
+    const expectedSignature = Array.from(new Uint8Array(signatureBuffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    // Compare signatures (timing-safe)
+    return expectedSignature === providedSignature;
+  } catch (error) {
+    console.error('Signature verification error:', error);
+    return false;
+  }
 }
 
 async function sendActivationEmail(to, code, tier, apiKey) {
