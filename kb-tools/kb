@@ -1,0 +1,340 @@
+#!/bin/bash
+
+# Knowledge Base CLI Tool
+# Portable tool for creating and managing knowledge bases in any project
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(pwd)"
+KB_CONFIG="$PROJECT_ROOT/.kb-config.json"
+
+# Colors
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+log() { echo -e "${BLUE}[KB]${NC} $1"; }
+success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+error() { echo -e "${RED}[ERROR]${NC} $1"; }
+
+show_help() {
+    cat << EOF
+Knowledge Base CLI - Portable KB creation for any project
+
+Usage: kb <command> [options]
+
+Commands:
+    init <topic>              Initialize KB in current project
+    add <urls-file>           Download and process videos
+    build                     Build knowledge base from frames
+    query <search-term>       Search the knowledge base
+    serve                     Start KB query server (future)
+    status                    Show KB status
+    clean                     Clean up temporary files
+    export <format>           Export KB (json, markdown)
+
+Examples:
+    kb init "MyProject"                    # Initialize in current folder
+    kb add ./video-links.txt               # Add videos from file
+    kb build                               # Build searchable KB
+    kb query "authentication"              # Search the KB
+    kb status                              # Check what's indexed
+
+Configuration:
+    .kb-config.json          Project KB settings
+    ./kb-data/               KB storage directory
+    ./kb-frames/             Extracted frames
+
+EOF
+}
+
+init_kb() {
+    local topic="$1"
+
+    if [ -z "$topic" ]; then
+        error "Topic name required. Usage: kb init <topic>"
+        exit 1
+    fi
+
+    log "Initializing Knowledge Base: $topic"
+
+    # Create project structure
+    mkdir -p "$PROJECT_ROOT/kb-data"
+    mkdir -p "$PROJECT_ROOT/kb-frames"
+    mkdir -p "$PROJECT_ROOT/kb-downloads"
+
+    # Create config
+    cat > "$KB_CONFIG" << EOF
+{
+  "topic": "$topic",
+  "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "project_root": "$PROJECT_ROOT",
+  "kb_data": "$PROJECT_ROOT/kb-data",
+  "kb_frames": "$PROJECT_ROOT/kb-frames",
+  "kb_downloads": "$PROJECT_ROOT/kb-downloads",
+  "total_videos": 0,
+  "total_frames": 0,
+  "version": "1.0"
+}
+EOF
+
+    # Create .gitignore
+    cat > "$PROJECT_ROOT/.kb-gitignore" << 'EOF'
+# Knowledge Base files (large)
+kb-downloads/
+kb-frames/
+kb-data/*.db
+kb-data/search-index/
+
+# Keep structure and configs
+!kb-data/metadata.json
+!kb-data/README.md
+!.kb-config.json
+EOF
+
+    success "Knowledge Base '$topic' initialized!"
+    log "Project structure:"
+    log "  ./kb-data/        - Knowledge base storage"
+    log "  ./kb-frames/      - Extracted frames"
+    log "  ./kb-downloads/   - Temporary video storage"
+    log "  .kb-config.json   - Configuration"
+    log ""
+    log "Next steps:"
+    log "  1. Create a file with video URLs (one per line)"
+    log "  2. Run: kb add <urls-file>"
+    log "  3. Run: kb build"
+}
+
+add_videos() {
+    local urls_file="$1"
+
+    if [ ! -f "$KB_CONFIG" ]; then
+        error "KB not initialized. Run 'kb init <topic>' first."
+        exit 1
+    fi
+
+    if [ ! -f "$urls_file" ]; then
+        error "URLs file not found: $urls_file"
+        exit 1
+    fi
+
+    local topic=$(jq -r '.topic' "$KB_CONFIG")
+    log "Adding videos to KB: $topic"
+
+    # Copy processing script to project
+    cp "$SCRIPT_DIR/../process_nocodebackend_videos_lean.sh" "$PROJECT_ROOT/kb-process.sh"
+
+    # Modify script for this project
+    sed -i.bak "s|DOWNLOAD_DIR=.*|DOWNLOAD_DIR=\"$PROJECT_ROOT/kb-downloads\"|g" "$PROJECT_ROOT/kb-process.sh"
+    sed -i.bak "s|FRAMES_BASE_DIR=.*|FRAMES_BASE_DIR=\"$PROJECT_ROOT/kb-frames\"|g" "$PROJECT_ROOT/kb-process.sh"
+    sed -i.bak "s|NOCODEBACKEND_DIR=.*|KB_DIR=\"$PROJECT_ROOT/kb-frames/$topic\"|g" "$PROJECT_ROOT/kb-process.sh"
+    sed -i.bak "s|LINKS_FILE=.*|LINKS_FILE=\"$urls_file\"|g" "$PROJECT_ROOT/kb-process.sh"
+
+    chmod +x "$PROJECT_ROOT/kb-process.sh"
+    rm "$PROJECT_ROOT/kb-process.sh.bak"
+
+    log "Starting video processing..."
+    log "This may take a while depending on video count and length."
+    log ""
+
+    "$PROJECT_ROOT/kb-process.sh"
+
+    success "Videos processed successfully!"
+    log "Run 'kb build' to create the searchable knowledge base"
+}
+
+build_kb() {
+    if [ ! -f "$KB_CONFIG" ]; then
+        error "KB not initialized. Run 'kb init <topic>' first."
+        exit 1
+    fi
+
+    local topic=$(jq -r '.topic' "$KB_CONFIG")
+    local frames_dir="$PROJECT_ROOT/kb-frames/$topic"
+
+    if [ ! -d "$frames_dir" ]; then
+        error "No frames found. Run 'kb add <urls-file>' first."
+        exit 1
+    fi
+
+    log "Building knowledge base for: $topic"
+
+    # Copy and run KB builder
+    cp "$SCRIPT_DIR/../intelligent_kb_builder.py" "$PROJECT_ROOT/kb-builder.py"
+
+    python3 "$PROJECT_ROOT/kb-builder.py" "$topic" "$frames_dir"
+
+    # Move generated KB to project kb-data
+    if [ -d "$HOME/knowledge-bases/$topic" ]; then
+        rsync -av "$HOME/knowledge-bases/$topic/" "$PROJECT_ROOT/kb-data/"
+        rm -rf "$HOME/knowledge-bases/$topic"
+    fi
+
+    # Update config
+    local video_count=$(find "$frames_dir" -mindepth 1 -maxdepth 1 -type d | wc -l)
+    local frame_count=$(find "$frames_dir" -name "*.png" | wc -l)
+
+    jq ".total_videos = $video_count | .total_frames = $frame_count | .last_built = \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"" "$KB_CONFIG" > "${KB_CONFIG}.tmp"
+    mv "${KB_CONFIG}.tmp" "$KB_CONFIG"
+
+    success "Knowledge base built successfully!"
+    log "Location: $PROJECT_ROOT/kb-data/"
+    log "Videos: $video_count"
+    log "Frames: $frame_count"
+}
+
+query_kb() {
+    local search_term="$1"
+
+    if [ ! -f "$KB_CONFIG" ]; then
+        error "KB not initialized. Run 'kb init <topic>' first."
+        exit 1
+    fi
+
+    if [ -z "$search_term" ]; then
+        error "Search term required. Usage: kb query <search-term>"
+        exit 1
+    fi
+
+    local topic=$(jq -r '.topic' "$KB_CONFIG")
+    log "Searching KB: $topic for '$search_term'"
+    log ""
+
+    # Search in topics
+    if [ -d "$PROJECT_ROOT/kb-data/topics" ]; then
+        log "=== Topics ==="
+        grep -r -i "$search_term" "$PROJECT_ROOT/kb-data/topics/" 2>/dev/null | head -10 || echo "No matches in topics"
+        log ""
+    fi
+
+    # Search in master index
+    if [ -f "$PROJECT_ROOT/kb-data/search-index/master_index.json" ]; then
+        log "=== Videos ==="
+        jq -r ".videos[] | select(.name | contains(\"$search_term\")) | \"Video: \(.name) - \(.frame_count) frames\"" \
+            "$PROJECT_ROOT/kb-data/search-index/master_index.json" 2>/dev/null || echo "No matching videos"
+    fi
+}
+
+show_status() {
+    if [ ! -f "$KB_CONFIG" ]; then
+        warn "No KB initialized in this project."
+        log "Run 'kb init <topic>' to get started."
+        exit 0
+    fi
+
+    local topic=$(jq -r '.topic' "$KB_CONFIG")
+    local created=$(jq -r '.created_at' "$KB_CONFIG")
+    local videos=$(jq -r '.total_videos // 0' "$KB_CONFIG")
+    local frames=$(jq -r '.total_frames // 0' "$KB_CONFIG")
+
+    log "=== Knowledge Base Status ==="
+    log ""
+    log "Topic:         $topic"
+    log "Created:       $created"
+    log "Videos:        $videos"
+    log "Frames:        $frames"
+    log "Project Root:  $PROJECT_ROOT"
+    log ""
+
+    if [ -d "$PROJECT_ROOT/kb-data/topics" ]; then
+        local topic_count=$(ls -1 "$PROJECT_ROOT/kb-data/topics" 2>/dev/null | wc -l)
+        log "Topics:        $topic_count"
+        log "Topics available:"
+        ls -1 "$PROJECT_ROOT/kb-data/topics" 2>/dev/null | sed 's/^/  - /' || echo "  None"
+    fi
+
+    log ""
+    log "Data location: $PROJECT_ROOT/kb-data/"
+}
+
+clean_kb() {
+    if [ ! -f "$KB_CONFIG" ]; then
+        warn "No KB found in this project."
+        exit 0
+    fi
+
+    log "Cleaning temporary files..."
+
+    rm -f "$PROJECT_ROOT/kb-process.sh"
+    rm -f "$PROJECT_ROOT/kb-builder.py"
+    rm -rf "$PROJECT_ROOT/kb-downloads"
+
+    success "Cleanup complete!"
+    log "Knowledge base data preserved in kb-data/"
+}
+
+export_kb() {
+    local format="${1:-json}"
+
+    if [ ! -f "$KB_CONFIG" ]; then
+        error "KB not initialized."
+        exit 1
+    fi
+
+    local topic=$(jq -r '.topic' "$KB_CONFIG")
+    local export_file="$PROJECT_ROOT/${topic}_kb_export.${format}"
+
+    log "Exporting KB to $format..."
+
+    case "$format" in
+        json)
+            cp "$PROJECT_ROOT/kb-data/search-index/master_index.json" "$export_file"
+            ;;
+        markdown)
+            cat > "$export_file" << EOF
+# $topic Knowledge Base Export
+
+$(cat "$PROJECT_ROOT/kb-data/SEARCH_GUIDE.md" 2>/dev/null || echo "No search guide available")
+
+## Master Index
+
+\`\`\`json
+$(cat "$PROJECT_ROOT/kb-data/search-index/master_index.json" 2>/dev/null)
+\`\`\`
+EOF
+            ;;
+        *)
+            error "Unknown format: $format. Use 'json' or 'markdown'"
+            exit 1
+            ;;
+    esac
+
+    success "Exported to: $export_file"
+}
+
+# Main command router
+case "${1:-}" in
+    init)
+        init_kb "$2"
+        ;;
+    add)
+        add_videos "$2"
+        ;;
+    build)
+        build_kb
+        ;;
+    query)
+        query_kb "$2"
+        ;;
+    status)
+        show_status
+        ;;
+    clean)
+        clean_kb
+        ;;
+    export)
+        export_kb "$2"
+        ;;
+    help|--help|-h|"")
+        show_help
+        ;;
+    *)
+        error "Unknown command: $1"
+        show_help
+        exit 1
+        ;;
+esac

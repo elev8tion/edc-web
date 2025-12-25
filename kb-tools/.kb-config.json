@@ -1,0 +1,12 @@
+{
+  "topic": "NoCodeBackend",
+  "created_at": "2025-12-25T01:55:17Z",
+  "project_root": "/Users/kcdacre8tor/Desktop/kb-tools",
+  "kb_data": "/Users/kcdacre8tor/Desktop/kb-tools/kb-data",
+  "kb_frames": "/Users/kcdacre8tor/Desktop/kb-tools/kb-frames",
+  "total_videos": 16,
+  "total_frames": 1245,
+  "last_built": "2025-12-25T03:16:34Z",
+  "version": "1.0",
+  "description": "Pre-built knowledge base from 16 NoCodeBackend tutorial videos. Serves as both an example and a resource for Claude to reference when helping with NoCodeBackend projects."
+}

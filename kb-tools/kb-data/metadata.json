@@ -1,0 +1,17 @@
+{
+  "topic": "NoCodeBackend",
+  "created_at": "2025-12-25T03:16:34.938625",
+  "source_directory": "kb-frames/NoCodeBackend",
+  "total_videos": 16,
+  "total_frames": 1245,
+  "topics": [
+    "authentication",
+    "database",
+    "api-design",
+    "frontend",
+    "deployment",
+    "testing",
+    "configuration"
+  ],
+  "version": "2.0"
+}

@@ -1,0 +1,29 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API documentation for 36905_activation_codes",
+    "version": "1.0.0",
+    "description": "API documentation for 36905_activation_codes (includes trial_tracking table)"
+  },
+  "servers": [
+    {
+      "url": "https://openapi.nocodebackend.com"
+    }
+  ],
+  "trial_tracking_endpoints": {
+    "create": "POST /create/trial_tracking?Instance=36905_activation_codes",
+    "read_all": "GET /read/trial_tracking?Instance=36905_activation_codes",
+    "read_by_id": "GET /read/trial_tracking/{id}?Instance=36905_activation_codes",
+    "search": "POST /search/trial_tracking?Instance=36905_activation_codes",
+    "update": "PUT /update/trial_tracking/{id}?Instance=36905_activation_codes",
+    "delete": "DELETE /delete/trial_tracking/{id}?Instance=36905_activation_codes"
+  },
+  "trial_tracking_fields": {
+    "ip_hash": "string",
+    "fingerprint_hash": "string",
+    "trial_started_at": "datetime",
+    "status": "string",
+    "messages_used": "integer"
+  },
+  "note": "Missing optional fields: trial_expires_at, user_agent, timezone - can be added later if needed"
+}
