@@ -1,0 +1,51 @@
+name = "trial-validator"
+main = "src/trial-validator.js"
+compatibility_date = "2025-01-24"
+
+[vars]
+# NoCodeBackend API Configuration for Trial Tracking Table
+NOCODEBACKEND_TRIAL_API_KEY = "your_nocodebackend_api_key_here"
+NOCODEBACKEND_TRIAL_API_URL = "https://api.nocodebackend.com/api/YOUR_TRIAL_INSTANCE_ID"
+
+# ==============================================================================
+# SETUP INSTRUCTIONS
+# ==============================================================================
+#
+# 1. Create trial_tracking table in NoCodeBackend:
+#    - Follow instructions in NOCODEBACKEND_TRIAL_TABLE_SCHEMA.md
+#    - Create instance with fields: ip_hash, fingerprint_hash, trial_started_at,
+#      trial_expires_at, status, messages_used
+#    - Enable indexing on ip_hash and fingerprint_hash
+#
+# 2. Get your API credentials:
+#    - Log in to NoCodeBackend
+#    - Go to your trial_tracking instance
+#    - Copy the API URL (e.g., https://api.nocodebackend.com/api/12345)
+#    - Go to Settings → API Keys
+#    - Copy your API key
+#
+# 3. Copy this file:
+#    cp trial-validator-wrangler.toml.example trial-validator-wrangler.toml
+#
+# 4. Update trial-validator-wrangler.toml:
+#    - Replace "your_nocodebackend_api_key_here" with actual API key
+#    - Replace "YOUR_TRIAL_INSTANCE_ID" with actual instance ID
+#
+# 5. Deploy the Worker:
+#    wrangler deploy src/trial-validator.js --config trial-validator-wrangler.toml
+#
+# 6. Test the deployment:
+#    curl -X POST https://trial-validator.YOUR_SUBDOMAIN.workers.dev \
+#      -H "Content-Type: application/json" \
+#      -d '{"fingerprint":"test_fingerprint_123"}'
+#
+# ==============================================================================
+# SECURITY NOTES
+# ==============================================================================
+#
+# - NEVER commit trial-validator-wrangler.toml (it's in .gitignore)
+# - Keep your API key secret
+# - Rotate API key every 90 days
+# - Use different API keys for dev/staging/production if needed
+#
+# ==============================================================================

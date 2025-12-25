@@ -75,3 +75,7 @@ assets/screenshots/iphone*/
 assets/screenshots/simulator_screenshot_*.png
 assets/legal/screenshots/
 key.properties
+
+# Cloudflare Workers - NEVER COMMIT! Contains API keys
+cloudflare_workers/*wrangler.toml
+!cloudflare_workers/*wrangler.toml.example

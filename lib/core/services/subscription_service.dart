@@ -54,13 +54,16 @@ class SubscriptionService {
 
   // Product IDs (must match App Store Connect / Play Console)
   // NOTE: Updated for new free app to avoid conflicts with old paid app
-  static const String premiumYearlyProductId = 'everyday_christian_free_premium_yearly';
-  static const String premiumMonthlyProductId = 'everyday_christian_free_premium_monthly';
+  static const String premiumYearlyProductId =
+      'everyday_christian_free_premium_yearly';
+  static const String premiumMonthlyProductId =
+      'everyday_christian_free_premium_monthly';
 
   // Trial configuration
   static const int trialDurationDays = 3;
   static const int trialMessagesPerDay = 5;
-  static const int trialTotalMessages = trialDurationDays * trialMessagesPerDay; // 15
+  static const int trialTotalMessages =
+      trialDurationDays * trialMessagesPerDay; // 15
 
   // Premium configuration
   static const int premiumMessagesPerMonth = 150;
@@ -75,11 +78,14 @@ class SubscriptionService {
   static const String _keySubscriptionReceipt = 'subscription_receipt';
   // New keys for expiry tracking and trial abuse prevention
   static const String _keyPremiumExpiryDate = 'premium_expiry_date';
-  static const String _keyPremiumOriginalPurchaseDate = 'premium_original_purchase_date';
-  static const String _keyTrialEverUsed = 'trial_ever_used'; // ignore: unused_field
+  static const String _keyPremiumOriginalPurchaseDate =
+      'premium_original_purchase_date';
+  static const String _keyTrialEverUsed =
+      'trial_ever_used'; // ignore: unused_field
   static const String _keyAutoRenewStatus = 'auto_renew_status';
   static const String _keyAutoSubscribeAttempted = 'auto_subscribe_attempted';
-  static const String _keyPurchasedProductId = 'purchased_product_id'; // Track yearly vs monthly
+  static const String _keyPurchasedProductId =
+      'purchased_product_id'; // Track yearly vs monthly
 
   // Keychain/KeyStore keys (survives app uninstall for trial abuse prevention)
   static const String _keychainTrialEverUsed = 'trial_ever_used_keychain';
@@ -134,7 +140,8 @@ class SubscriptionService {
         await restorePurchases().timeout(
           const Duration(seconds: 5),
           onTimeout: () {
-            debugPrint('📊 [SubscriptionService] Restore purchases timed out (expected on simulator)');
+            debugPrint(
+                '📊 [SubscriptionService] Restore purchases timed out (expected on simulator)');
           },
         );
       } catch (e) {
@@ -160,28 +167,33 @@ class SubscriptionService {
 
         if (trialStartDate != null) {
           // User has a trial start date - verify if it's actually expired
-          final daysSinceStart = DateTime.now().difference(trialStartDate).inDays;
+          final daysSinceStart =
+              DateTime.now().difference(trialStartDate).inDays;
 
           if (daysSinceStart >= trialDurationDays) {
             // Trial period expired (3+ days), safe to block
             await _prefs?.setBool('trial_blocked', true);
-            debugPrint('📊 [SubscriptionService] Trial blocked - expired ($daysSinceStart days since start)');
+            debugPrint(
+                '📊 [SubscriptionService] Trial blocked - expired ($daysSinceStart days since start)');
           } else {
             // Trial still within valid 3-day window, don't block
             await _prefs?.setBool('trial_blocked', false);
-            debugPrint('📊 [SubscriptionService] Trial active - $daysSinceStart/$trialDurationDays days used');
+            debugPrint(
+                '📊 [SubscriptionService] Trial active - $daysSinceStart/$trialDurationDays days used');
           }
         } else {
           // No trial start date but Keychain says used before
           // This means trial was fully exhausted in the past, safe to block
           await _prefs?.setBool('trial_blocked', true);
-          debugPrint('📊 [SubscriptionService] Trial blocked - previously exhausted on this device');
+          debugPrint(
+              '📊 [SubscriptionService] Trial blocked - previously exhausted on this device');
         }
       } else {
         // Either first-time user OR paid subscriber - allow access
         await _prefs?.setBool('trial_blocked', false);
         if (isPremium) {
-          debugPrint('📊 [SubscriptionService] Premium subscriber - trial check bypassed');
+          debugPrint(
+              '📊 [SubscriptionService] Premium subscriber - trial check bypassed');
         }
       }
 
@@ -192,7 +204,8 @@ class SubscriptionService {
       _purchaseSubscription = _iap.purchaseStream.listen(
         _handlePurchaseUpdates,
         onDone: () => _purchaseSubscription?.cancel(),
-        onError: (error) => debugPrint('📊 [SubscriptionService] Purchase stream error: $error'),
+        onError: (error) => debugPrint(
+            '📊 [SubscriptionService] Purchase stream error: $error'),
       );
 
       // Initialize counters for first-time users (no trial start date = brand new)
@@ -200,8 +213,10 @@ class SubscriptionService {
       if (trialStartDate == null) {
         // Brand new user - initialize with 0 messages used
         await _prefs?.setInt(_keyTrialMessagesUsed, 0);
-        await _prefs?.setString(_keyTrialLastResetDate, DateTime.now().toIso8601String().substring(0, 10));
-        debugPrint('📊 [SubscriptionService] First-time user detected - initialized trial counters');
+        await _prefs?.setString(_keyTrialLastResetDate,
+            DateTime.now().toIso8601String().substring(0, 10));
+        debugPrint(
+            '📊 [SubscriptionService] First-time user detected - initialized trial counters');
       }
 
       // Reset message counters if needed
@@ -213,7 +228,8 @@ class SubscriptionService {
       _isInitialized = true;
       debugPrint('📊 [SubscriptionService] SubscriptionService initialized');
     } catch (e) {
-      debugPrint('📊 [SubscriptionService] Failed to initialize SubscriptionService: $e');
+      debugPrint(
+          '📊 [SubscriptionService] Failed to initialize SubscriptionService: $e');
       _isInitialized = true; // Still mark as initialized to prevent blocking
     }
   }
@@ -226,7 +242,8 @@ class SubscriptionService {
       );
 
       if (response.notFoundIDs.isNotEmpty) {
-        debugPrint('📊 [SubscriptionService] Products not found: ${response.notFoundIDs}');
+        debugPrint(
+            '📊 [SubscriptionService] Products not found: ${response.notFoundIDs}');
       }
 
       // Load yearly product
@@ -242,11 +259,13 @@ class SubscriptionService {
       );
 
       if (_premiumProductYearly != null) {
-        debugPrint('📊 [SubscriptionService] Loaded yearly product: ${_premiumProductYearly!.id} - ${_premiumProductYearly!.price}');
+        debugPrint(
+            '📊 [SubscriptionService] Loaded yearly product: ${_premiumProductYearly!.id} - ${_premiumProductYearly!.price}');
       }
 
       if (_premiumProductMonthly != null) {
-        debugPrint('📊 [SubscriptionService] Loaded monthly product: ${_premiumProductMonthly!.id} - ${_premiumProductMonthly!.price}');
+        debugPrint(
+            '📊 [SubscriptionService] Loaded monthly product: ${_premiumProductMonthly!.id} - ${_premiumProductMonthly!.price}');
       }
     } catch (e) {
       debugPrint('📊 [SubscriptionService] Failed to load products: $e');
@@ -310,7 +329,8 @@ class SubscriptionService {
   /// Get remaining trial messages (out of 15 total)
   int get trialMessagesRemaining {
     if (!isInTrial) return 0;
-    return (trialTotalMessages - trialMessagesUsed).clamp(0, trialTotalMessages);
+    return (trialTotalMessages - trialMessagesUsed)
+        .clamp(0, trialTotalMessages);
   }
 
   /// Start trial (called on first AI message)
@@ -319,11 +339,13 @@ class SubscriptionService {
 
     // Check if trial is blocked (already used before)
     if (isTrialBlocked) {
-      debugPrint('📊 [SubscriptionService] Cannot start trial - already used on this device');
+      debugPrint(
+          '📊 [SubscriptionService] Cannot start trial - already used on this device');
       return;
     }
 
-    await _prefs?.setString(_keyTrialStartDate, DateTime.now().toIso8601String());
+    await _prefs?.setString(
+        _keyTrialStartDate, DateTime.now().toIso8601String());
     await _prefs?.setInt(_keyTrialMessagesUsed, 0);
     // Note: No longer setting _keyTrialLastResetDate (no daily resets)
 
@@ -348,7 +370,8 @@ class SubscriptionService {
     if (expiryDate != null) {
       if (DateTime.now().isAfter(expiryDate)) {
         // Subscription expired - should trigger restorePurchases() on next app launch
-        debugPrint('📊 [SubscriptionService] Premium subscription expired on $expiryDate');
+        debugPrint(
+            '📊 [SubscriptionService] Premium subscription expired on $expiryDate');
         return false;
       }
     }
@@ -420,7 +443,8 @@ class SubscriptionService {
       if (daysSinceStart < trialDurationDays) return false; // Still in trial
 
       // Check if we've already attempted auto-subscribe
-      final autoSubscribeAttempted = _prefs?.getBool(_keyAutoSubscribeAttempted) ?? false;
+      final autoSubscribeAttempted =
+          _prefs?.getBool(_keyAutoSubscribeAttempted) ?? false;
       if (autoSubscribeAttempted) return false;
 
       // Check if user cancelled trial via App Store/Play Store
@@ -504,7 +528,8 @@ class SubscriptionService {
       final shouldSubscribe = await shouldAutoSubscribe();
 
       if (!shouldSubscribe) {
-        debugPrint('📊 [SubscriptionService] Auto-subscribe check: not applicable');
+        debugPrint(
+            '📊 [SubscriptionService] Auto-subscribe check: not applicable');
         return;
       }
 
@@ -534,7 +559,8 @@ class SubscriptionService {
     if (!isPremium) return 0;
 
     final lastResetDate = _prefs?.getString(_keyPremiumLastResetDate);
-    final thisMonth = DateTime.now().toIso8601String().substring(0, 7); // YYYY-MM
+    final thisMonth =
+        DateTime.now().toIso8601String().substring(0, 7); // YYYY-MM
 
     // If last reset was not this month, return 0
     if (lastResetDate != thisMonth) return 0;
@@ -545,7 +571,8 @@ class SubscriptionService {
   /// Get remaining premium messages this month
   int get premiumMessagesRemaining {
     if (!isPremium) return 0;
-    return (premiumMessagesPerMonth - premiumMessagesUsed).clamp(0, premiumMessagesPerMonth);
+    return (premiumMessagesPerMonth - premiumMessagesUsed)
+        .clamp(0, premiumMessagesPerMonth);
   }
 
   /// Get subscription receipt (for verification)
@@ -561,7 +588,8 @@ class SubscriptionService {
   bool get canSendMessage {
     // NOTE: Debug bypass DISABLED for testing Phase 1 subscription fixes
     // Ref: openspec/changes/subscription-state-management-fixes
-    debugPrint('📊 [SubscriptionService] canSendMessage check: kDebugMode=$kDebugMode, isPremium=$isPremium, isInTrial=$isInTrial, trialMessagesRemaining=$trialMessagesRemaining');
+    debugPrint(
+        '📊 [SubscriptionService] canSendMessage check: kDebugMode=$kDebugMode, isPremium=$isPremium, isInTrial=$isInTrial, trialMessagesRemaining=$trialMessagesRemaining');
 
     // DISABLED: Debug bypass prevents testing race conditions and state updates
     // if (kDebugMode) {
@@ -607,7 +635,8 @@ class SubscriptionService {
         final used = premiumMessagesUsed + 1;
         await _prefs?.setInt(_keyPremiumMessagesUsed, used);
         await _updatePremiumResetDate();
-        debugPrint('📊 [SubscriptionService] Premium message consumed ($used/$premiumMessagesPerMonth)');
+        debugPrint(
+            '📊 [SubscriptionService] Premium message consumed ($used/$premiumMessagesPerMonth)');
         return true;
       } else if (isInTrial) {
         // Start trial if not started
@@ -619,7 +648,8 @@ class SubscriptionService {
         final used = trialMessagesUsed + 1;
         await _prefs?.setInt(_keyTrialMessagesUsed, used);
         // No longer calling _updateTrialResetDate() - no daily resets
-        debugPrint('📊 [SubscriptionService] Trial message consumed ($used/$trialTotalMessages total)');
+        debugPrint(
+            '📊 [SubscriptionService] Trial message consumed ($used/$trialTotalMessages total)');
 
         // Check if trial just expired (message limit or time limit)
         await _checkAndMarkTrialExpiry();
@@ -687,7 +717,8 @@ class SubscriptionService {
       );
 
       await _iap.buyNonConsumable(purchaseParam: purchaseParam);
-      debugPrint('📊 [SubscriptionService] Purchase initiated for: ${productToPurchase.id}');
+      debugPrint(
+          '📊 [SubscriptionService] Purchase initiated for: ${productToPurchase.id}');
     } catch (e) {
       debugPrint('📊 [SubscriptionService] Purchase failed: $e');
       onPurchaseUpdate?.call(false, e.toString());
@@ -712,7 +743,8 @@ class SubscriptionService {
           purchase.status == PurchaseStatus.restored) {
         _verifyAndActivatePurchase(purchase);
       } else if (purchase.status == PurchaseStatus.error) {
-        debugPrint('📊 [SubscriptionService] Purchase error: ${purchase.error}');
+        debugPrint(
+            '📊 [SubscriptionService] Purchase error: ${purchase.error}');
         onPurchaseUpdate?.call(false, purchase.error?.message);
       }
 
@@ -749,31 +781,38 @@ class SubscriptionService {
         // - iOS: Decode base64, parse JSON, extract fields from receipt.in_app array
         // - Android: Decode JWT, parse claims
 
-        debugPrint('📊 [SubscriptionService] Receipt data saved (expiry extraction requires platform-specific implementation)');
+        debugPrint(
+            '📊 [SubscriptionService] Receipt data saved (expiry extraction requires platform-specific implementation)');
 
         // Calculate expiry based on subscription type (yearly vs monthly)
         final isYearly = productId == premiumYearlyProductId;
-        final expiryDuration = isYearly ? const Duration(days: 365) : const Duration(days: 30);
+        final expiryDuration =
+            isYearly ? const Duration(days: 365) : const Duration(days: 30);
         final expiryDate = DateTime.now().add(expiryDuration);
 
-        await _prefs?.setString(_keyPremiumExpiryDate, expiryDate.toIso8601String());
-        await _prefs?.setString(_keyPremiumOriginalPurchaseDate, DateTime.now().toIso8601String());
-        await _prefs?.setBool(_keyAutoRenewStatus, true); // Assume auto-renew unless receipt says otherwise
+        await _prefs?.setString(
+            _keyPremiumExpiryDate, expiryDate.toIso8601String());
+        await _prefs?.setString(
+            _keyPremiumOriginalPurchaseDate, DateTime.now().toIso8601String());
+        await _prefs?.setBool(_keyAutoRenewStatus,
+            true); // Assume auto-renew unless receipt says otherwise
 
-        debugPrint('📊 [SubscriptionService] Expiry set to ${isYearly ? "365 days (yearly)" : "30 days (monthly)"}');
+        debugPrint(
+            '📊 [SubscriptionService] Expiry set to ${isYearly ? "365 days (yearly)" : "30 days (monthly)"}');
 
         // Check if this was a trial purchase
         // This will be extracted from receipt once parsing is implemented
         // await _prefs?.setBool(_keyTrialEverUsed, wasTrialPurchase);
-
       } catch (receiptError) {
-        debugPrint('📊 [SubscriptionService] Receipt parsing skipped (will implement platform-specific logic): $receiptError');
+        debugPrint(
+            '📊 [SubscriptionService] Receipt parsing skipped (will implement platform-specific logic): $receiptError');
       }
 
       // Activate premium
       await _prefs?.setBool(_keyPremiumActive, true);
       await _prefs?.setInt(_keyPremiumMessagesUsed, 0);
-      await _prefs?.setString(_keyPremiumLastResetDate, DateTime.now().toIso8601String().substring(0, 7));
+      await _prefs?.setString(_keyPremiumLastResetDate,
+          DateTime.now().toIso8601String().substring(0, 7));
 
       debugPrint('📊 [SubscriptionService] Premium subscription activated');
       onPurchaseUpdate?.call(true, null);
@@ -820,7 +859,8 @@ class SubscriptionService {
         if (lastResetDate != thisMonth) {
           await _prefs?.setInt(_keyPremiumMessagesUsed, 0);
           await _prefs?.setString(_keyPremiumLastResetDate, thisMonth);
-          debugPrint('📊 [SubscriptionService] Premium messages reset for new month');
+          debugPrint(
+              '📊 [SubscriptionService] Premium messages reset for new month');
         }
       }
     } catch (e) {
@@ -860,7 +900,8 @@ class SubscriptionService {
       // Mark trial as expired in Keychain if limit reached
       if (shouldMark) {
         await markTrialAsUsed();
-        debugPrint('📊 [SubscriptionService] Trial expired and marked in Keychain ($reason)');
+        debugPrint(
+            '📊 [SubscriptionService] Trial expired and marked in Keychain ($reason)');
       }
     } catch (e) {
       debugPrint('📊 [SubscriptionService] Failed to check trial expiry: $e');
@@ -882,13 +923,16 @@ class SubscriptionService {
       final hasUsed = trialUsed == 'true';
 
       if (hasUsed) {
-        final markedDate = await _secureStorage.read(key: _keychainTrialMarkedDate);
-        debugPrint('📊 [SubscriptionService] Trial already used on this device (marked: $markedDate)');
+        final markedDate =
+            await _secureStorage.read(key: _keychainTrialMarkedDate);
+        debugPrint(
+            '📊 [SubscriptionService] Trial already used on this device (marked: $markedDate)');
       }
 
       return hasUsed;
     } catch (e) {
-      debugPrint('📊 [SubscriptionService] Error reading Keychain trial status: $e');
+      debugPrint(
+          '📊 [SubscriptionService] Error reading Keychain trial status: $e');
       // Fail open - don't block users if Keychain read fails
       return false;
     }
@@ -933,8 +977,10 @@ class SubscriptionService {
     await _prefs?.remove(_keyPremiumLastResetDate);
     await _prefs?.remove(_keySubscriptionReceipt);
     await _prefs?.remove('trial_blocked');
-    debugPrint('📊 [SubscriptionService] All subscription data cleared (SharedPreferences only)');
-    debugPrint('📊 [SubscriptionService] Note: Keychain trial marker persists - use clearKeychainForTesting() to reset');
+    debugPrint(
+        '📊 [SubscriptionService] All subscription data cleared (SharedPreferences only)');
+    debugPrint(
+        '📊 [SubscriptionService] Note: Keychain trial marker persists - use clearKeychainForTesting() to reset');
   }
 
   /// Clear Keychain trial marker (for testing only)
@@ -946,8 +992,10 @@ class SubscriptionService {
       await _secureStorage.delete(key: _keychainTrialEverUsed);
       await _secureStorage.delete(key: _keychainTrialMarkedDate);
       await _prefs?.setBool('trial_blocked', false);
-      debugPrint('📊 [SubscriptionService] Keychain trial marker cleared - trial can be used again');
-      debugPrint('⚠️  [SubscriptionService] WARNING: Only use this method for testing!');
+      debugPrint(
+          '📊 [SubscriptionService] Keychain trial marker cleared - trial can be used again');
+      debugPrint(
+          '⚠️  [SubscriptionService] WARNING: Only use this method for testing!');
     } catch (e) {
       debugPrint('📊 [SubscriptionService] Error clearing Keychain: $e');
     }
@@ -958,7 +1006,8 @@ class SubscriptionService {
   Future<void> activatePremiumForTesting() async {
     await _prefs?.setBool(_keyPremiumActive, true);
     await _prefs?.setInt(_keyPremiumMessagesUsed, 0);
-    await _prefs?.setString(_keyPremiumLastResetDate, DateTime.now().toIso8601String().substring(0, 7));
+    await _prefs?.setString(_keyPremiumLastResetDate,
+        DateTime.now().toIso8601String().substring(0, 7));
     debugPrint('📊 [SubscriptionService] Premium activated for testing');
   }
 
@@ -976,8 +1025,7 @@ class SubscriptionService {
       final deviceId = await _getOrCreateDeviceId();
 
       // Call Cloudflare Worker validation endpoint
-      final validationUrl = dotenv.get('CODE_VALIDATION_URL',
-          fallback: '');
+      final validationUrl = dotenv.get('CODE_VALIDATION_URL', fallback: '');
 
       if (validationUrl.isEmpty) {
         return ActivationResult(
@@ -987,14 +1035,16 @@ class SubscriptionService {
         );
       }
 
-      final response = await http.post(
-        Uri.parse(validationUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'code': code,
-          'deviceId': deviceId,
-        }),
-      ).timeout(Duration(seconds: 10));
+      final response = await http
+          .post(
+            Uri.parse(validationUrl),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'code': code,
+              'deviceId': deviceId,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
@@ -1045,9 +1095,8 @@ class SubscriptionService {
 
     if (deviceId == null) {
       // Generate new UUID
-      deviceId = DateTime.now().millisecondsSinceEpoch.toString() +
-          '_' +
-          DateTime.now().microsecondsSinceEpoch.toString().substring(7);
+      deviceId =
+          '${DateTime.now().millisecondsSinceEpoch}_${DateTime.now().microsecondsSinceEpoch.toString().substring(7)}';
       await prefs.setString('device_id', deviceId);
       debugPrint('🆔 [SubscriptionService] Generated new device ID: $deviceId');
     }

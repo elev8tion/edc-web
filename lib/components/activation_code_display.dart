@@ -30,7 +30,7 @@ class _ActivationCodeDisplayState extends State<ActivationCodeDisplay> {
     });
 
     // Reset after 2 seconds
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
           _copied = false;
@@ -40,7 +40,7 @@ class _ActivationCodeDisplayState extends State<ActivationCodeDisplay> {
 
     // Show snackbar
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('✅ Code copied to clipboard!'),
         duration: Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
@@ -66,11 +66,11 @@ class _ActivationCodeDisplayState extends State<ActivationCodeDisplay> {
           ),
         ),
 
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
 
         // Code display box
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(
             color: Colors.grey[100],
             borderRadius: BorderRadius.circular(12),
@@ -95,7 +95,7 @@ class _ActivationCodeDisplayState extends State<ActivationCodeDisplay> {
                 ),
               ),
 
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
 
               // Copy button
               Material(
@@ -105,7 +105,7 @@ class _ActivationCodeDisplayState extends State<ActivationCodeDisplay> {
                   onTap: _copyCode,
                   borderRadius: BorderRadius.circular(8),
                   child: Padding(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -114,10 +114,10 @@ class _ActivationCodeDisplayState extends State<ActivationCodeDisplay> {
                           color: Colors.white,
                           size: 20,
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
                           _copied ? 'Copied!' : 'Copy',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -132,11 +132,11 @@ class _ActivationCodeDisplayState extends State<ActivationCodeDisplay> {
         ),
 
         if (widget.showInstructions) ...[
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // Instructions
           Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.blue[50],
               borderRadius: BorderRadius.circular(8),
@@ -146,8 +146,9 @@ class _ActivationCodeDisplayState extends State<ActivationCodeDisplay> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.info_outline, color: Colors.blue, size: 18),
-                    SizedBox(width: 8),
+                    const Icon(Icons.info_outline,
+                        color: Colors.blue, size: 18),
+                    const SizedBox(width: 8),
                     Text(
                       'Save this code!',
                       style: TextStyle(
@@ -157,7 +158,7 @@ class _ActivationCodeDisplayState extends State<ActivationCodeDisplay> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   '💡 Copy and paste this code into your notes app.\n'
                   '📧 Also check your email receipt for a backup.',
@@ -193,7 +194,7 @@ class ActivationCodeCompact extends StatelessWidget {
   void _copyFullCode(BuildContext context) {
     Clipboard.setData(ClipboardData(text: code));
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('✅ Full code copied to clipboard!'),
         duration: Duration(seconds: 2),
       ),
@@ -204,16 +205,16 @@ class ActivationCodeCompact extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(Icons.vpn_key, color: Theme.of(context).primaryColor),
-      title: Text('Activation Code'),
+      title: const Text('Activation Code'),
       subtitle: Text(
         obfuscatedCode,
-        style: TextStyle(
+        style: const TextStyle(
           fontFamily: 'monospace',
           letterSpacing: 2,
         ),
       ),
       trailing: IconButton(
-        icon: Icon(Icons.copy),
+        icon: const Icon(Icons.copy),
         onPressed: () => _copyFullCode(context),
         tooltip: 'Copy full code',
       ),
@@ -221,7 +222,7 @@ class ActivationCodeCompact extends StatelessWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Your Activation Code'),
+            title: const Text('Your Activation Code'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -229,7 +230,7 @@ class ActivationCodeCompact extends StatelessWidget {
                   code: code,
                   showInstructions: false,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
                   'Keep this code safe. You\'ll need it to reinstall the app.',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
@@ -239,7 +240,7 @@ class ActivationCodeCompact extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Close'),
+                child: const Text('Close'),
               ),
             ],
           ),

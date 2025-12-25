@@ -64,7 +64,7 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
             SnackBar(
               content: Text('✅ ${result.message}'),
               backgroundColor: Colors.green,
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
             ),
           );
 
@@ -102,18 +102,18 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Activate Premium'),
+        title: const Text('Activate Premium'),
         centerTitle: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
 
                 // Icon
                 Icon(
@@ -122,7 +122,7 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
 
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 // Title
                 Text(
@@ -133,7 +133,7 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                   textAlign: TextAlign.center,
                 ),
 
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
 
                 // Description
                 Text(
@@ -144,7 +144,7 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                   textAlign: TextAlign.center,
                 ),
 
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
 
                 // Code input field
                 TextFormField(
@@ -155,16 +155,16 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    prefixIcon: Icon(Icons.confirmation_number),
+                    prefixIcon: const Icon(Icons.confirmation_number),
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.content_paste),
+                      icon: const Icon(Icons.content_paste),
                       onPressed: _pasteFromClipboard,
                       tooltip: 'Paste from clipboard',
                     ),
                   ),
                   textCapitalization: TextCapitalization.characters,
                   autocorrect: false,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     letterSpacing: 2,
                     fontWeight: FontWeight.bold,
@@ -175,7 +175,8 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                       return 'Please enter an activation code';
                     }
                     // Basic format validation: X-XXX-XXX
-                    final codePattern = RegExp(r'^[MTYA]-[A-Z0-9]{3}-[A-Z0-9]{3}$');
+                    final codePattern =
+                        RegExp(r'^[MTYA]-[A-Z0-9]{3}-[A-Z0-9]{3}$');
                     if (!codePattern.hasMatch(value.trim().toUpperCase())) {
                       return 'Invalid code format (should be like M-ABC-123)';
                     }
@@ -184,9 +185,9 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                 ),
 
                 if (_errorMessage != null) ...[
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.red[50],
                       borderRadius: BorderRadius.circular(8),
@@ -194,8 +195,8 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.error_outline, color: Colors.red),
-                        SizedBox(width: 8),
+                        const Icon(Icons.error_outline, color: Colors.red),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             _errorMessage!,
@@ -207,27 +208,28 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                   ),
                 ],
 
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
 
                 // Activate button
                 ElevatedButton(
                   onPressed: _isValidating ? null : _validateCode,
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: _isValidating
-                      ? SizedBox(
+                      ? const SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
-                      : Text(
+                      : const Text(
                           'Activate Premium',
                           style: TextStyle(
                             fontSize: 16,
@@ -236,11 +238,11 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                         ),
                 ),
 
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 // Help text
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
                     borderRadius: BorderRadius.circular(8),
@@ -250,8 +252,9 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.info_outline, color: Colors.blue, size: 20),
-                          SizedBox(width: 8),
+                          const Icon(Icons.info_outline,
+                              color: Colors.blue, size: 20),
+                          const SizedBox(width: 8),
                           Text(
                             'Code Format:',
                             style: TextStyle(
@@ -261,7 +264,7 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         '• Monthly: M-XXX-XXX\n'
                         '• Yearly: Y-XXX-XXX\n'
@@ -275,7 +278,7 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                   ),
                 ),
 
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Lost code help
                 TextButton(
@@ -283,8 +286,8 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text('Lost Your Code?'),
-                        content: Text(
+                        title: const Text('Lost Your Code?'),
+                        content: const Text(
                           'If you lost your activation code:\n\n'
                           '1. Check your email receipt from Stripe\n'
                           '2. Contact support: support@everydaychristian.com\n\n'
@@ -293,13 +296,13 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: Text('Got it'),
+                            child: const Text('Got it'),
                           ),
                         ],
                       ),
                     );
                   },
-                  child: Text('Lost your code?'),
+                  child: const Text('Lost your code?'),
                 ),
               ],
             ),
