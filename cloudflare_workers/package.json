@@ -1,0 +1,19 @@
+{
+  "name": "edc-activation-workers",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers for Everyday Christian activation code system",
+  "main": "index.js",
+  "scripts": {
+    "deploy:stripe": "wrangler deploy src/stripe-webhook.js --name stripe-webhook-handler",
+    "deploy:validation": "wrangler deploy src/code-validation.js --name code-validation-api",
+    "deploy:all": "npm run deploy:stripe && npm run deploy:validation",
+    "dev:stripe": "wrangler dev src/stripe-webhook.js",
+    "dev:validation": "wrangler dev src/code-validation.js"
+  },
+  "keywords": ["cloudflare", "workers", "stripe", "activation"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

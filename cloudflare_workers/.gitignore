@@ -1,0 +1,7 @@
+# Cloudflare Workers
+node_modules/
+.wrangler/
+wrangler.toml
+
+# Keep example file
+!wrangler.toml.example

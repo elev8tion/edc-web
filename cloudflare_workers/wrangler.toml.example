@@ -1,0 +1,15 @@
+name = "edc-workers"
+compatibility_date = "2024-01-01"
+
+[vars]
+NOCODEBACKEND_API_KEY = "your_nocodebackend_api_key_here"
+NOCODEBACKEND_API_URL = "https://api.nocodebackend.com/api/36905_activation_codes"
+STRIPE_API_KEY = "sk_test_your_stripe_api_key_here"
+EMAILIT_API_KEY = "em_your_emailit_api_key_here"
+MONTHLY_PRICE_ID = "price_your_monthly_price_id"
+YEARLY_PRICE_ID = "price_your_yearly_price_id"
+
+# To use this file:
+# 1. Copy this file to wrangler.toml
+# 2. Replace all placeholder values with your actual API keys
+# 3. Never commit wrangler.toml (it's in .gitignore)
