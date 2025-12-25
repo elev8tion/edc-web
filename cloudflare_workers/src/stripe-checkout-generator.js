@@ -53,7 +53,7 @@ export default {
         'branding_settings[logo][type]': 'file',
         'branding_settings[logo][file]': env.LOGO_FILE_ID,
         'branding_settings[display_name]': 'Everyday Christian',
-        'branding_settings[background_color]': '#0a0a0f',
+        'branding_settings[background_color]': '#2d1b69',
         'branding_settings[button_color]': '#FDB022',
         'branding_settings[border_style]': 'rounded',
 
