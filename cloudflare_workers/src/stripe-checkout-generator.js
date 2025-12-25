@@ -26,6 +26,7 @@ export default {
       // Parse query parameters
       const url = new URL(request.url);
       const plan = url.searchParams.get('plan'); // 'monthly' or 'yearly'
+      const locale = url.searchParams.get('locale') || 'en'; // 'en' or 'es'
 
       if (!plan || !['monthly', 'yearly'].includes(plan)) {
         return new Response(JSON.stringify({
@@ -39,6 +40,15 @@ export default {
       const priceId = plan === 'monthly'
         ? env.MONTHLY_PRICE_ID
         : env.YEARLY_PRICE_ID;
+
+      // Localized text
+      const isSpanish = locale === 'es';
+      const submitText = isSpanish
+        ? 'Comienza Tu Prueba Gratuita de 3 Días'
+        : 'Start Your 3-Day Free Trial';
+      const afterSubmitText = isSpanish
+        ? '¡Bienvenido a Everyday Christian Premium! Revisa tu correo para tu código de activación.'
+        : 'Welcome to Everyday Christian Premium! Check your email for your activation code.';
 
       // Create Stripe Checkout Session with branding
       const formData = new URLSearchParams({
@@ -57,9 +67,12 @@ export default {
         'branding_settings[button_color]': '#FDB022',
         'branding_settings[border_style]': 'rounded',
 
-        // Custom text
-        'custom_text[submit][message]': 'Start Your 3-Day Free Trial',
-        'custom_text[after_submit][message]': 'Welcome to Everyday Christian Premium! Check your email for your activation code.',
+        // Stripe UI locale (native Stripe translation)
+        'locale': locale,
+
+        // Custom text (localized)
+        'custom_text[submit][message]': submitText,
+        'custom_text[after_submit][message]': afterSubmitText,
 
         // Tax and compliance settings
         'automatic_tax[enabled]': 'true',
@@ -69,9 +82,10 @@ export default {
         'allow_promotion_codes': 'true',
         'billing_address_collection': 'required',
 
-        // Metadata
+        // Metadata (pass locale to webhook for email language)
         'metadata[plan]': plan,
-        'metadata[source]': 'landing_page'
+        'metadata[source]': 'landing_page',
+        'metadata[locale]': locale
       });
 
       const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
