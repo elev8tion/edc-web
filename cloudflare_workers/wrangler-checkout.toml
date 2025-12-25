@@ -7,7 +7,7 @@ PWA_URL = "https://remarkable-capybara-1ec7f2.netlify.app"
 LANDING_URL = "https://landing-edc.netlify.app"
 MONTHLY_PRICE_ID = "price_1SiCmTIDgcZhXc4U1I7oaBN3"
 YEARLY_PRICE_ID = "price_1SiCnMIDgcZhXc4UkpKVvoXu"
-LOGO_FILE_ID = "file_1SiEPjIDgcZhXc4UB2B6GOgD"
+LOGO_FILE_ID = "file_1SiEcaIDgcZhXc4UEiLAY7Gr"
 
 # Secrets (set via: wrangler secret put STRIPE_API_KEY)
 # STRIPE_API_KEY = "sk_test_..."
