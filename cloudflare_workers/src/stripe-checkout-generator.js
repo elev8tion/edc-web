@@ -61,9 +61,15 @@ export default {
         'custom_text[submit][message]': 'Start Your 3-Day Free Trial',
         'custom_text[after_submit][message]': 'Welcome to Everyday Christian Premium! Check your email for your activation code.',
 
-        // Other settings
+        // Tax and compliance settings
+        'automatic_tax[enabled]': 'true',
+        'tax_id_collection[enabled]': 'true',
+        'phone_number_collection[enabled]': 'true',
+        'consent_collection[terms_of_service]': 'required',
         'allow_promotion_codes': 'true',
-        'billing_address_collection': 'auto',
+        'billing_address_collection': 'required',
+
+        // Metadata
         'metadata[plan]': plan,
         'metadata[source]': 'landing_page'
       });
