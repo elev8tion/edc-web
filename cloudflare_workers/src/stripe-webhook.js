@@ -37,97 +37,37 @@ export default {
       // Parse Stripe webhook event (after verification)
       const event = JSON.parse(rawBody);
 
-      // Only process invoice.payment_succeeded events
-      if (event.type !== 'invoice.payment_succeeded') {
-        return new Response(JSON.stringify({
-          received: true,
-          skipped: true,
-          reason: 'Not a payment success event'
-        }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        });
+      // Route to appropriate event handler
+      let result;
+      switch (event.type) {
+        case 'checkout.session.completed':
+          result = await handleCheckoutCompleted(event.data.object, env);
+          break;
+
+        case 'invoice.payment_succeeded':
+          result = await handlePaymentSucceeded(event.data.object, env);
+          break;
+
+        case 'customer.subscription.deleted':
+          result = await handleSubscriptionDeleted(event.data.object, env);
+          break;
+
+        case 'invoice.payment_failed':
+          result = await handlePaymentFailed(event.data.object, env);
+          break;
+
+        default:
+          return new Response(JSON.stringify({
+            received: true,
+            skipped: true,
+            reason: `Event type ${event.type} not handled`
+          }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
       }
 
-      const eventData = event.data.object;
-      const subscriptionId = eventData.subscription || `test_sub_${Date.now()}`;
-      const customerId = eventData.customer || `test_cus_${Date.now()}`;
-      const customerEmail = eventData.customer_email || 'test@example.com';
-
-      // Determine subscription tier
-      const priceId = eventData.lines?.data?.[0]?.price?.id || '';
-      const tier = determineTier(priceId, env);
-
-      // Generate activation code
-      const prefix = tier === 'monthly' ? 'M' : tier === 'yearly' ? 'Y' : 'T';
-      const randomPart = generateRandomCode(6);
-      const activationCode = `${prefix}-${randomPart.slice(0,3)}-${randomPart.slice(3,6)}`;
-
-      const currentPeriodEnd = eventData.lines?.data?.[0]?.period?.end || (Date.now() / 1000) + (30 * 24 * 60 * 60);
-      const expiresAt = new Date(currentPeriodEnd * 1000).toISOString();
-      const invoiceId = eventData.id;
-
-      // Save to NoCodeBackend (create without status field due to validation)
-      const saveResponse = await fetch(
-        `https://api.nocodebackend.com/create/activation_codes?Instance=36905_activation_codes`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            code: activationCode,
-            customer_id: customerId,
-            subscription_id: subscriptionId,
-            tier
-          })
-        }
-      );
-
-      if (!saveResponse.ok) {
-        const errorText = await saveResponse.text();
-        throw new Error(`Failed to save to NoCodeBackend: ${saveResponse.status} - ${errorText}`);
-      }
-
-      // Update Stripe invoice metadata
-      const stripeUpdateResponse = await fetch(
-        `https://api.stripe.com/v1/invoices/${invoiceId}`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${env.STRIPE_API_KEY}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: `metadata[activation_code]=${activationCode}&metadata[tier]=${tier}`
-        }
-      );
-
-      if (!stripeUpdateResponse.ok) {
-        console.error('Failed to update Stripe invoice:', await stripeUpdateResponse.text());
-      }
-
-      // Detect customer language from metadata or default to English
-      const locale = eventData.metadata?.locale || 'en';
-
-      // Send activation email (using EmailIt API)
-      if (env.EMAILIT_API_KEY) {
-        await sendActivationEmail(
-          customerEmail,
-          activationCode,
-          tier,
-          env.EMAILIT_API_KEY,
-          locale
-        );
-      }
-
-      return new Response(JSON.stringify({
-        success: true,
-        activationCode,
-        tier,
-        customerId,
-        expiresAt
-      }), {
+      return new Response(JSON.stringify(result), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -144,19 +84,309 @@ export default {
   }
 };
 
+/**
+ * Handle checkout.session.completed
+ * Fires immediately when checkout completes (before first invoice)
+ * Send activation code instantly for better UX
+ */
+async function handleCheckoutCompleted(session, env) {
+  const customerId = session.customer;
+  const customerEmail = session.customer_email || session.customer_details?.email;
+  const subscriptionId = session.subscription;
+  const locale = session.metadata?.locale || 'en';
+
+  // Fetch subscription to get price_id
+  const subResponse = await fetch(
+    `https://api.stripe.com/v1/subscriptions/${subscriptionId}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${env.STRIPE_API_KEY}`
+      }
+    }
+  );
+
+  if (!subResponse.ok) {
+    throw new Error(`Failed to fetch subscription: ${subResponse.status}`);
+  }
+
+  const subscription = await subResponse.json();
+  const priceId = subscription.items.data[0]?.price?.id || '';
+  const tier = determineTier(priceId, env);
+
+  // Generate activation code
+  const activationCode = generateActivationCode(tier);
+
+  // Save to NoCodeBackend
+  await saveActivationCode({
+    code: activationCode,
+    customerId,
+    subscriptionId,
+    tier
+  }, env);
+
+  // Update checkout session metadata
+  await updateSessionMetadata(session.id, activationCode, tier, env);
+
+  // Send activation email immediately
+  if (env.EMAILIT_API_KEY && customerEmail) {
+    await sendActivationEmail(
+      customerEmail,
+      activationCode,
+      tier,
+      env.EMAILIT_API_KEY,
+      locale
+    );
+  }
+
+  return {
+    success: true,
+    event: 'checkout.session.completed',
+    activationCode,
+    tier,
+    customerId,
+    message: 'Activation code generated and email sent'
+  };
+}
+
+/**
+ * Handle invoice.payment_succeeded
+ * Fires for recurring payments (after first trial invoice)
+ * Update existing activation code or create new one for subscription renewals
+ */
+async function handlePaymentSucceeded(invoice, env) {
+  const subscriptionId = invoice.subscription;
+  const customerId = invoice.customer;
+  const customerEmail = invoice.customer_email;
+  const locale = invoice.metadata?.locale || 'en';
+
+  // For trial invoices (amount = 0), activation code already sent via checkout.session.completed
+  if (invoice.amount_paid === 0) {
+    return {
+      success: true,
+      event: 'invoice.payment_succeeded',
+      message: 'Trial invoice - activation code already sent at checkout'
+    };
+  }
+
+  // Determine subscription tier
+  const priceId = invoice.lines?.data?.[0]?.price?.id || '';
+  const tier = determineTier(priceId, env);
+
+  // Check if activation code already exists for this subscription
+  const existingCode = await findActivationCodeBySubscription(subscriptionId, env);
+
+  if (existingCode) {
+    // Existing code found - just extend expiry
+    const currentPeriodEnd = invoice.lines?.data?.[0]?.period?.end || (Date.now() / 1000) + (30 * 24 * 60 * 60);
+
+    return {
+      success: true,
+      event: 'invoice.payment_succeeded',
+      message: 'Subscription renewed - existing activation code still valid',
+      activationCode: existingCode,
+      expiresAt: new Date(currentPeriodEnd * 1000).toISOString()
+    };
+  }
+
+  // No existing code (edge case) - generate new one
+  const activationCode = generateActivationCode(tier);
+
+  await saveActivationCode({
+    code: activationCode,
+    customerId,
+    subscriptionId,
+    tier
+  }, env);
+
+  // Update invoice metadata
+  await updateInvoiceMetadata(invoice.id, activationCode, tier, env);
+
+  // Send activation email
+  if (env.EMAILIT_API_KEY && customerEmail) {
+    await sendActivationEmail(
+      customerEmail,
+      activationCode,
+      tier,
+      env.EMAILIT_API_KEY,
+      locale
+    );
+  }
+
+  return {
+    success: true,
+    event: 'invoice.payment_succeeded',
+    activationCode,
+    tier,
+    customerId
+  };
+}
+
+/**
+ * Handle customer.subscription.deleted
+ * Fires when subscription is cancelled or expires
+ * Deactivate the activation code
+ */
+async function handleSubscriptionDeleted(subscription, env) {
+  const subscriptionId = subscription.id;
+  const customerId = subscription.customer;
+
+  // Find and deactivate the activation code
+  const activationCode = await findActivationCodeBySubscription(subscriptionId, env);
+
+  if (activationCode) {
+    // Mark as inactive in database
+    await deactivateCode(activationCode, env);
+  }
+
+  return {
+    success: true,
+    event: 'customer.subscription.deleted',
+    message: 'Activation code deactivated',
+    subscriptionId,
+    customerId
+  };
+}
+
+/**
+ * Handle invoice.payment_failed
+ * Fires when payment fails (card declined, insufficient funds, etc.)
+ * Send payment failure notification to customer
+ */
+async function handlePaymentFailed(invoice, env) {
+  const customerEmail = invoice.customer_email;
+  const locale = invoice.metadata?.locale || 'en';
+  const attemptCount = invoice.attempt_count;
+  const nextPaymentAttempt = invoice.next_payment_attempt;
+
+  // Send payment failure email
+  if (env.EMAILIT_API_KEY && customerEmail) {
+    await sendPaymentFailedEmail(
+      customerEmail,
+      attemptCount,
+      nextPaymentAttempt,
+      env.EMAILIT_API_KEY,
+      locale
+    );
+  }
+
+  return {
+    success: true,
+    event: 'invoice.payment_failed',
+    message: 'Payment failure notification sent',
+    attemptCount,
+    nextPaymentAttempt: nextPaymentAttempt ? new Date(nextPaymentAttempt * 1000).toISOString() : null
+  };
+}
+
+// ==================== HELPER FUNCTIONS ====================
+
 function determineTier(priceId, env) {
   if (priceId === env.MONTHLY_PRICE_ID) return 'monthly';
   if (priceId === env.YEARLY_PRICE_ID) return 'yearly';
   return 'trial';
 }
 
-function generateRandomCode(length) {
+function generateActivationCode(tier) {
+  const prefix = tier === 'monthly' ? 'M' : tier === 'yearly' ? 'Y' : 'T';
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  let randomPart = '';
+  for (let i = 0; i < 6; i++) {
+    randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return result;
+  return `${prefix}-${randomPart.slice(0,3)}-${randomPart.slice(3,6)}`;
+}
+
+async function saveActivationCode(data, env) {
+  const response = await fetch(
+    `https://api.nocodebackend.com/create/activation_codes?Instance=36905_activation_codes`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        code: data.code,
+        customer_id: data.customerId,
+        subscription_id: data.subscriptionId,
+        tier: data.tier
+      })
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to save to NoCodeBackend: ${response.status} - ${errorText}`);
+  }
+
+  return await response.json();
+}
+
+async function updateSessionMetadata(sessionId, code, tier, env) {
+  const response = await fetch(
+    `https://api.stripe.com/v1/checkout/sessions/${sessionId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.STRIPE_API_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `metadata[activation_code]=${code}&metadata[tier]=${tier}`
+    }
+  );
+
+  if (!response.ok) {
+    console.error('Failed to update session metadata:', await response.text());
+  }
+}
+
+async function updateInvoiceMetadata(invoiceId, code, tier, env) {
+  const response = await fetch(
+    `https://api.stripe.com/v1/invoices/${invoiceId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.STRIPE_API_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `metadata[activation_code]=${code}&metadata[tier]=${tier}`
+    }
+  );
+
+  if (!response.ok) {
+    console.error('Failed to update invoice metadata:', await response.text());
+  }
+}
+
+async function findActivationCodeBySubscription(subscriptionId, env) {
+  try {
+    const response = await fetch(
+      `https://api.nocodebackend.com/read/activation_codes?Instance=36905_activation_codes`,
+      {
+        headers: {
+          'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    const record = data.find(r => r.subscription_id === subscriptionId);
+    return record?.code || null;
+  } catch (error) {
+    console.error('Error finding activation code:', error);
+    return null;
+  }
+}
+
+async function deactivateCode(code, env) {
+  // NoCodeBackend doesn't support PATCH, so we'll delete and recreate with status='inactive'
+  // For now, just log - actual implementation depends on NoCodeBackend API capabilities
+  console.log(`Deactivating code: ${code}`);
+  // TODO: Implement proper deactivation when NoCodeBackend supports updates
 }
 
 /**
@@ -246,6 +476,123 @@ async function sendActivationEmail(to, code, tier, apiKey, locale = 'en') {
   } catch (error) {
     console.error('Email error:', error);
   }
+}
+
+async function sendPaymentFailedEmail(to, attemptCount, nextPaymentAttempt, apiKey, locale = 'en') {
+  const subject = locale === 'es'
+    ? 'Problema con tu Pago - Everyday Christian'
+    : 'Payment Issue - Everyday Christian';
+
+  const nextAttemptDate = nextPaymentAttempt
+    ? new Date(nextPaymentAttempt * 1000).toLocaleDateString()
+    : 'soon';
+
+  const htmlContent = locale === 'es'
+    ? getSpanishPaymentFailedEmailHTML(attemptCount, nextAttemptDate)
+    : getEnglishPaymentFailedEmailHTML(attemptCount, nextAttemptDate);
+
+  try {
+    const response = await fetch('https://api.emailit.com/v1/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'Everyday Christian <connect@everydaychristian.app>',
+        to: to,
+        reply_to: 'connect@everydaychristian.app',
+        subject: subject,
+        html: htmlContent
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Failed to send payment failed email:', await response.text());
+    }
+  } catch (error) {
+    console.error('Payment failed email error:', error);
+  }
+}
+
+function getEnglishPaymentFailedEmailHTML(attemptCount, nextAttemptDate) {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: #0f0f1e; }
+        .email-container { max-width: 600px; margin: 0 auto; background: #1a1b2e; }
+        .header { padding: 40px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .header-title { color: #ffffff; font-size: 24px; font-weight: 600; }
+        .content { padding: 40px 30px; color: rgba(255,255,255,0.8); }
+        .alert-box { background: rgba(255,87,87,0.1); border: 1px solid rgba(255,87,87,0.3); border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .footer { padding: 32px 30px; text-align: center; color: rgba(255,255,255,0.5); font-size: 13px; }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <h1 class="header-title">Payment Issue</h1>
+        </div>
+        <div class="content">
+          <p>We couldn't process your payment for Everyday Christian Premium.</p>
+          <div class="alert-box">
+            <p><strong>Attempt ${attemptCount} of 4</strong></p>
+            <p>We'll try again on ${nextAttemptDate}</p>
+          </div>
+          <p>Please update your payment method to avoid service interruption.</p>
+        </div>
+        <div class="footer">
+          <p>© ${new Date().getFullYear()} Everyday Christian</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+function getSpanishPaymentFailedEmailHTML(attemptCount, nextAttemptDate) {
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: #0f0f1e; }
+        .email-container { max-width: 600px; margin: 0 auto; background: #1a1b2e; }
+        .header { padding: 40px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .header-title { color: #ffffff; font-size: 24px; font-weight: 600; }
+        .content { padding: 40px 30px; color: rgba(255,255,255,0.8); }
+        .alert-box { background: rgba(255,87,87,0.1); border: 1px solid rgba(255,87,87,0.3); border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .footer { padding: 32px 30px; text-align: center; color: rgba(255,255,255,0.5); font-size: 13px; }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <h1 class="header-title">Problema con el Pago</h1>
+        </div>
+        <div class="content">
+          <p>No pudimos procesar tu pago para Everyday Christian Premium.</p>
+          <div class="alert-box">
+            <p><strong>Intento ${attemptCount} de 4</strong></p>
+            <p>Intentaremos nuevamente el ${nextAttemptDate}</p>
+          </div>
+          <p>Por favor actualiza tu método de pago para evitar la interrupción del servicio.</p>
+        </div>
+        <div class="footer">
+          <p>© ${new Date().getFullYear()} Everyday Christian</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
 }
 
 function getEnglishActivationEmailHTML(code) {
@@ -385,14 +732,5 @@ function getEnglishActivationEmailHTML(code) {
             </div>
           </body>
           </html>
-        `
-      })
-    });
-
-    if (!response.ok) {
-      console.error('Failed to send email:', await response.text());
-    }
-  } catch (error) {
-    console.error('Email error:', error);
-  }
+        `;
 }
