@@ -95,6 +95,11 @@ async function handleCheckoutCompleted(session, env) {
   const subscriptionId = session.subscription;
   const locale = session.metadata?.locale || 'en';
 
+  // Validate subscription ID exists
+  if (!subscriptionId) {
+    throw new Error('No subscription ID found in checkout session');
+  }
+
   // Fetch subscription to get price_id
   const subResponse = await fetch(
     `https://api.stripe.com/v1/subscriptions/${subscriptionId}`,
