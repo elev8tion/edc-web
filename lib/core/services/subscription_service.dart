@@ -975,8 +975,8 @@ class SubscriptionService {
       // Generate device ID for tracking
       final deviceId = await _getOrCreateDeviceId();
 
-      // Call Activepieces validation endpoint
-      final validationUrl = dotenv.get('ACTIVEPIECES_CODE_VALIDATION_URL',
+      // Call Cloudflare Worker validation endpoint
+      final validationUrl = dotenv.get('CODE_VALIDATION_URL',
           fallback: '');
 
       if (validationUrl.isEmpty) {
