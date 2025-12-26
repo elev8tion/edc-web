@@ -97,16 +97,18 @@ class TtsService {
       await _tts.setSpeechRate(_speechRate); // CRITICAL: Apply loaded rate to engine
       developer.log('[TtsService] ✅ Speech rate applied successfully', name: 'TtsService');
 
-      // iOS-specific: Enable background audio
-      await _tts.setIosAudioCategory(
-        IosTextToSpeechAudioCategory.playback,
-        [
-          IosTextToSpeechAudioCategoryOptions.allowBluetooth,
-          IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
-          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
-        ],
-        IosTextToSpeechAudioMode.spokenAudio,
-      );
+      // iOS-specific: Enable background audio (skip on web - flutter_tts uses Platform.isIOS internally)
+      if (!kIsWeb) {
+        await _tts.setIosAudioCategory(
+          IosTextToSpeechAudioCategory.playback,
+          [
+            IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+            IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+            IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+          ],
+          IosTextToSpeechAudioMode.spokenAudio,
+        );
+      }
 
       // Set up completion handler
       _tts.setCompletionHandler(() {
