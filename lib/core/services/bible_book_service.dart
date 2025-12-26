@@ -84,7 +84,7 @@ class BibleBookService {
   /// Get books by language (returns localized names)
   Future<List<String>> getBookNames(String languageCode) async {
     final books = await getAllBooks();
-    return books.map((book) => book.getName(languageCode)).toList();
+    return List<String>.from(books.map((book) => book.getName(languageCode)));
   }
 
   /// Clear cache (useful for testing)

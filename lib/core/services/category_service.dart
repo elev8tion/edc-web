@@ -18,7 +18,7 @@ class CategoryService {
       orderBy: 'display_order ASC, name ASC',
     );
 
-    return maps.map((map) => PrayerCategoryExtension.fromMap(map)).toList();
+    return List<PrayerCategory>.from(maps.map((map) => PrayerCategoryExtension.fromMap(map)));
   }
 
   /// Get all categories (including inactive)
@@ -29,7 +29,7 @@ class CategoryService {
       orderBy: 'display_order ASC, name ASC',
     );
 
-    return maps.map((map) => PrayerCategoryExtension.fromMap(map)).toList();
+    return List<PrayerCategory>.from(maps.map((map) => PrayerCategoryExtension.fromMap(map)));
   }
 
   /// Get category by ID

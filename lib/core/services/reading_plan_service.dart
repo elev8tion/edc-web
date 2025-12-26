@@ -9,7 +9,7 @@ class ReadingPlanService {
   Future<List<ReadingPlan>> getAllPlans() async {
     final db = await _database.database;
     final maps = await db.query('reading_plans');
-    return maps.map((map) => _planFromMap(map)).toList();
+    return List<ReadingPlan>.from(maps.map((map) => _planFromMap(map)));
   }
 
   Future<List<ReadingPlan>> getActivePlans() async {
@@ -19,7 +19,7 @@ class ReadingPlanService {
       where: 'is_started = ?',
       whereArgs: [1],
     );
-    return maps.map((map) => _planFromMap(map)).toList();
+    return List<ReadingPlan>.from(maps.map((map) => _planFromMap(map)));
   }
 
   Future<ReadingPlan?> getCurrentPlan() async {
@@ -85,7 +85,7 @@ class ReadingPlanService {
         endOfDay.millisecondsSinceEpoch,
       ],
     );
-    return maps.map((map) => _readingFromMap(map)).toList();
+    return List<DailyReading>.from(maps.map((map) => _readingFromMap(map)));
   }
 
   Future<List<DailyReading>> getReadingsForPlan(String planId) async {
@@ -96,7 +96,7 @@ class ReadingPlanService {
       whereArgs: [planId],
       orderBy: 'date ASC',
     );
-    return maps.map((map) => _readingFromMap(map)).toList();
+    return List<DailyReading>.from(maps.map((map) => _readingFromMap(map)));
   }
 
   Future<void> markReadingCompleted(String readingId) async {

@@ -65,7 +65,7 @@ final verseContextProvider = FutureProvider.family<List<BibleVerse>, VerseRefere
         throw Exception('Verse not found: ${verseRef.toString()}');
       }
 
-      return results.map((map) => BibleVerse.fromMap(map)).toList();
+      return List<BibleVerse>.from(results.map((map) => BibleVerse.fromMap(map)));
     } catch (e) {
       throw Exception('Failed to load verse context: $e');
     }

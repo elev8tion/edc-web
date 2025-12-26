@@ -46,10 +46,10 @@ class UnifiedVerseService {
       // Get favorite verse IDs to mark them
       final favoriteIds = await _getFavoriteVerseIds();
 
-      return results.map((map) {
+      return List<BibleVerse>.from(results.map((map) {
         final isFavorite = favoriteIds.contains(map['id']);
         return BibleVerse.fromMap(map, isFavorite: isFavorite);
-      }).toList();
+      }));
     } catch (e) {
       // Fallback to LIKE search if FTS fails
       return _fallbackSearch(query, limit);
@@ -80,10 +80,10 @@ class UnifiedVerseService {
 
     final favoriteIds = await _getFavoriteVerseIds();
 
-    return results.map((map) {
+    return List<BibleVerse>.from(results.map((map) {
       final isFavorite = favoriteIds.contains(map['id']);
       return BibleVerse.fromMap(map, isFavorite: isFavorite);
-    }).toList();
+    }));
   }
 
   /// Search verses by theme
@@ -111,10 +111,10 @@ class UnifiedVerseService {
 
     final favoriteIds = await _getFavoriteVerseIds();
 
-    return results.map((map) {
+    return List<BibleVerse>.from(results.map((map) {
       final isFavorite = favoriteIds.contains(map['id']);
       return BibleVerse.fromMap(map, isFavorite: isFavorite);
-    }).toList();
+    }));
   }
 
   /// Get all verses (with pagination)
@@ -132,10 +132,10 @@ class UnifiedVerseService {
     final results = await database.rawQuery(query);
     final favoriteIds = await _getFavoriteVerseIds();
 
-    return results.map((map) {
+    return List<BibleVerse>.from(results.map((map) {
       final isFavorite = favoriteIds.contains(map['id']);
       return BibleVerse.fromMap(map, isFavorite: isFavorite);
-    }).toList();
+    }));
   }
 
   /// Get verse by exact reference (e.g., "John 3:16")
@@ -180,7 +180,7 @@ class UnifiedVerseService {
       limit: limit,
     );
 
-    return results.map(SharedVerseEntry.fromMap).toList();
+    return List<SharedVerseEntry>.from(results.map(SharedVerseEntry.fromMap));
   }
 
   /// Count of shared verses
@@ -256,7 +256,7 @@ class UnifiedVerseService {
       ORDER BY fv.date_added DESC
     ''');
 
-    return results.map((map) => BibleVerse.fromMap(map, isFavorite: true)).toList();
+    return List<BibleVerse>.from(results.map((map) => BibleVerse.fromMap(map, isFavorite: true)));
   }
 
   /// Count of favorite verses
@@ -489,10 +489,10 @@ class UnifiedVerseService {
 
     final favoriteIds = await _getFavoriteVerseIds();
 
-    return results.map((map) {
+    return List<BibleVerse>.from(results.map((map) {
       final isFavorite = favoriteIds.contains(map['id']);
       return BibleVerse.fromMap(map, isFavorite: isFavorite);
-    }).toList();
+    }));
   }
 
   /// Get random daily verse

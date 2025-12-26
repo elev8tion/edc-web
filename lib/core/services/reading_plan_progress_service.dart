@@ -175,7 +175,7 @@ class ReadingPlanProgressService {
         orderBy: 'completed_date DESC',
       );
 
-      return maps.map((map) => _readingFromMap(map)).toList();
+      return List<DailyReading>.from(maps.map((map) => _readingFromMap(map)));
     } catch (e) {
       throw Exception('Failed to get completed readings: $e');
     }
@@ -192,7 +192,7 @@ class ReadingPlanProgressService {
         orderBy: 'date ASC',
       );
 
-      return maps.map((map) => _readingFromMap(map)).toList();
+      return List<DailyReading>.from(maps.map((map) => _readingFromMap(map)));
     } catch (e) {
       throw Exception('Failed to get incomplete readings: $e');
     }
@@ -216,7 +216,7 @@ class ReadingPlanProgressService {
         ],
       );
 
-      return maps.map((map) => _readingFromMap(map)).toList();
+      return List<DailyReading>.from(maps.map((map) => _readingFromMap(map)));
     } catch (e) {
       throw Exception('Failed to get today\'s readings: $e');
     }

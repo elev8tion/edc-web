@@ -12,7 +12,7 @@ class DevotionalService {
       'devotionals',
       orderBy: 'date ASC',
     );
-    return maps.map((map) => _devotionalFromMap(map)).toList();
+    return List<Devotional>.from(maps.map((map) => _devotionalFromMap(map)));
   }
 
   Future<Devotional?> getTodaysDevotional() async {
@@ -41,7 +41,7 @@ class DevotionalService {
       whereArgs: [1],
       orderBy: 'completed_date DESC',
     );
-    return maps.map((map) => _devotionalFromMap(map)).toList();
+    return List<Devotional>.from(maps.map((map) => _devotionalFromMap(map)));
   }
 
   Future<void> markDevotionalCompleted(String id) async {

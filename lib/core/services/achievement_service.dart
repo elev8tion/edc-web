@@ -93,7 +93,7 @@ class AchievementService {
         orderBy: 'completed_at DESC',
       );
 
-      return results.map((map) => AchievementCompletion.fromMap(map)).toList();
+      return List<AchievementCompletion>.from(results.map((map) => AchievementCompletion.fromMap(map)));
     } catch (e) {
       developer.log('Failed to get completion history: $e', name: 'AchievementService');
       return [];

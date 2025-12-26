@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'dart:developer' as developer;
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/bible_verse.dart';
@@ -34,8 +34,13 @@ class TtsService {
 
   // Platform-specific speed presets
   // iOS uses 0.5 as normal (not 1.0!), Android uses 1.0
+  // Web uses Web Speech API with 1.0 as normal
   static List<double> get speedPresets {
-    if (Platform.isIOS) {
+    if (kIsWeb) {
+      return [0.75, 1.0, 1.25]; // Web Speech API uses 1.0 as normal
+    }
+    // For mobile platforms, check using defaultTargetPlatform
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
       return [0.375, 0.5, 0.625]; // 0.75x, 1.0x, 1.25x equivalents
     } else {
       return [0.75, 1.0, 1.25]; // Android normal values
@@ -293,7 +298,7 @@ class TtsService {
 
       dynamic selectedVoice;
 
-      if (Platform.isIOS) {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
         // Try to find voice from preferred list in order
         for (var preferredName in _preferredVoiceNames) {
           final matchingVoices = enUsVoices.where((voice) {
@@ -383,7 +388,7 @@ class TtsService {
 
       _speechRate = speedPresets[_currentSpeedIndex];
 
-      final platform = Platform.isIOS ? 'iOS' : 'Android';
+      final platform = kIsWeb ? 'Web' : (defaultTargetPlatform == TargetPlatform.iOS ? 'iOS' : 'Android');
       developer.log('[TtsService] Loaded speed preset for $platform: $_speechRate (index $_currentSpeedIndex, displays as $speedLabel)', name: 'TtsService');
     } catch (e) {
       developer.log('[TtsService] Error loading speech rate: $e', name: 'TtsService', error: e);

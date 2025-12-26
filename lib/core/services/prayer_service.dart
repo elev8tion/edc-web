@@ -41,7 +41,7 @@ class PrayerService {
         );
 
         _logger.debug('Retrieved ${maps.length} active prayers', context: 'PrayerService');
-        return maps.map((map) => _prayerRequestFromMap(map)).toList();
+        return List<PrayerRequest>.from(maps.map((map) => _prayerRequestFromMap(map)));
       },
       context: 'PrayerService.getActivePrayers',
       fallbackValue: <PrayerRequest>[],
@@ -66,7 +66,7 @@ class PrayerService {
       orderBy: 'date_answered DESC',
     );
 
-    return maps.map((map) => _prayerRequestFromMap(map)).toList();
+    return List<PrayerRequest>.from(maps.map((map) => _prayerRequestFromMap(map)));
   }
 
   Future<List<PrayerRequest>> getAllPrayers({String? categoryFilter}) async {
@@ -87,7 +87,7 @@ class PrayerService {
       orderBy: 'date_created DESC',
     );
 
-    return maps.map((map) => _prayerRequestFromMap(map)).toList();
+    return List<PrayerRequest>.from(maps.map((map) => _prayerRequestFromMap(map)));
   }
 
   Future<List<PrayerRequest>> getPrayersByCategory(String categoryName) async {
@@ -99,7 +99,7 @@ class PrayerService {
       orderBy: 'date_created DESC',
     );
 
-    return maps.map((map) => _prayerRequestFromMap(map)).toList();
+    return List<PrayerRequest>.from(maps.map((map) => _prayerRequestFromMap(map)));
   }
 
   Future<void> addPrayer(PrayerRequest prayer) async {

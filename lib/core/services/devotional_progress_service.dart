@@ -128,7 +128,7 @@ class DevotionalProgressService {
       orderBy: 'completed_date DESC',
     );
 
-    return maps.map((map) => _devotionalFromMap(map)).toList();
+    return List<Devotional>.from(maps.map((map) => _devotionalFromMap(map)));
   }
 
   /// Get current streak (consecutive days of completed devotionals)
@@ -236,7 +236,7 @@ class DevotionalProgressService {
       orderBy: 'date ASC',
     );
 
-    return maps.map((map) => _devotionalFromMap(map)).toList();
+    return List<Devotional>.from(maps.map((map) => _devotionalFromMap(map)));
   }
 
   /// Get today's devotional based on current date

@@ -121,7 +121,7 @@ class ConversationService {
         orderBy: 'timestamp ASC',
       );
 
-      return maps.map((map) => ChatMessage.fromMap(map)).toList();
+      return List<ChatMessage>.from(maps.map((map) => ChatMessage.fromMap(map)));
     } catch (e) {
       debugPrint('❌ Failed to get messages: $e');
       return [];
@@ -145,7 +145,7 @@ class ConversationService {
       );
 
       // Reverse to get chronological order
-      return maps.reversed.map((map) => ChatMessage.fromMap(map)).toList();
+      return List<ChatMessage>.from(maps.reversed.map((map) => ChatMessage.fromMap(map)));
     } catch (e) {
       debugPrint('❌ Failed to get recent messages: $e');
       return [];
@@ -409,7 +409,7 @@ class ConversationService {
         limit: 50,
       );
 
-      return maps.map((map) => ChatMessage.fromMap(map)).toList();
+      return List<ChatMessage>.from(maps.map((map) => ChatMessage.fromMap(map)));
     } catch (e) {
       debugPrint('❌ Failed to search messages: $e');
       return [];
