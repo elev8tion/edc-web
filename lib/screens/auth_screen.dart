@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import '../features/auth/services/auth_service.dart';
 import '../features/auth/widgets/auth_form.dart';
 import '../theme/app_theme.dart';
@@ -9,6 +8,7 @@ import '../components/animations/blur_fade.dart';
 import '../components/glass/static_liquid_glass_lens.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/navigation/app_routes.dart';
+import '../utils/responsive_utils.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../l10n/app_localizations.dart';
 
@@ -68,84 +68,79 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             key: _backgroundKey,
             child: const GradientBackground(),
           ),
-          AppWidthLimiter(
-            maxWidth: 600,
-            horizontalPadding: 0,
-            backgroundColor: Colors.transparent,
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(24.s),
-                child: Column(
-                  children: [
-                    AppSpacing.xl.sbh,
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: AppSpacing.xl),
 
-                    // Liquid glass logo section
-                    BlurFade(
-                      delay: const Duration(milliseconds: 100),
-                      isVisible: _showContent,
-                      child: Column(
-                        children: [
-                          StaticLiquidGlassLens(
-                            backgroundKey: _backgroundKey,
+                  // Liquid glass logo section
+                  BlurFade(
+                    delay: const Duration(milliseconds: 100),
+                    isVisible: _showContent,
+                    child: Column(
+                      children: [
+                        StaticLiquidGlassLens(
+                          backgroundKey: _backgroundKey,
+                          width: 200,
+                          height: 200,
+                          effectSize: 3.0,
+                          dispersionStrength: 0.3,
+                          blurIntensity: 0.05,
+                          child: Image.asset(
+                            'assets/images/logo_transparent.png',
                             width: 200,
                             height: 200,
-                            effectSize: 3.0,
-                            dispersionStrength: 0.3,
-                            blurIntensity: 0.05,
-                            child: Image.asset(
-                              'assets/images/logo_transparent.png',
-                              width: 200,
-                              height: 200,
-                              fit: BoxFit.contain,
-                            ),
+                            fit: BoxFit.contain,
                           ),
-                          AppSpacing.lg.sbh,
-                          Text(
-                            l10n.welcomeBack,
-                            style: TextStyle(
-                              fontSize: 28.fz,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryText,
-                            ),
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        Text(
+                          l10n.welcomeBack,
+                          style: TextStyle(
+                            fontSize: ResponsiveUtils.fontSize(context, 28, minSize: 24, maxSize: 32),
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryText,
                           ),
-                          AppSpacing.sm.sbh,
-                          Text(
-                            l10n.signInToContinue,
-                            style: TextStyle(
-                              fontSize: 16.fz,
-                              color: AppColors.secondaryText,
-                              height: 1.4,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          l10n.signInToContinue,
+                          style: TextStyle(
+                            fontSize: ResponsiveUtils.fontSize(context, 16, minSize: 14, maxSize: 18),
+                            color: AppColors.secondaryText,
+                            height: 1.4,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
-                      ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
+                  ),
 
-                    AppSpacing.xxl.sbh,
+                  const SizedBox(height: AppSpacing.xxl),
 
-                    // Auth form
-                    BlurFade(
-                      delay: const Duration(milliseconds: 300),
-                      isVisible: _showContent,
-                      child: const AuthForm(),
+                  // Auth form
+                  BlurFade(
+                    delay: const Duration(milliseconds: 300),
+                    isVisible: _showContent,
+                    child: const AuthForm(),
+                  ),
+
+                  const SizedBox(height: AppSpacing.xl),
+
+                  // Privacy note
+                  Text(
+                    l10n.privacyNote,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: ResponsiveUtils.fontSize(context, 12, minSize: 10, maxSize: 14),
+                      fontWeight: FontWeight.bold,
                     ),
-
-                    AppSpacing.xl.sbh,
-
-                    // Privacy note
-                    Text(
-                      l10n.privacyNote,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12.fz,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
           ),

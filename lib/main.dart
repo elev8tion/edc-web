@@ -21,7 +21,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:upgrader/upgrader.dart';
@@ -94,22 +93,27 @@ class MyApp extends ConsumerWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       locale: locale,
       builder: (context, child) {
-        return ResponsiveProvider(
-          config: const ResponsiveConfig(
-            designWidth: 375,  // iPhone base size
-            designHeight: 812,
-            minScale: 0.5,
-            maxScale: 3.0,
-            memoryProtectionThreshold: 1920.0,  // 4K protection
-            highResScaleFactor: 0.60,  // Reduces scaling by 40% on 4K
+        Widget content = MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(textSize),
           ),
-          child: MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(textSize),
-            ),
-            child: OfflineIndicator(child: child!),
-          ),
+          child: OfflineIndicator(child: child!),
         );
+
+        // Lock to mobile viewport on web for consistent experience
+        if (kIsWeb) {
+          return Container(
+            color: const Color(0xFF1a1a2e), // Dark background outside app
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 430), // iPhone 14 Pro Max
+                child: content,
+              ),
+            ),
+          );
+        }
+
+        return content;
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

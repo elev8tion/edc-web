@@ -40,7 +40,6 @@ dependencies:
   shimmer: ^3.0.0
   auto_size_text: ^3.0.0
   responsive_framework: ^1.5.1
-  flutter_scalify: ^2.1.0
 
   # AI & Machine Learning
   google_generative_ai: ^0.4.0

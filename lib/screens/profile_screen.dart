@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glassmorphic_fab_menu.dart';
@@ -211,80 +210,70 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         body: Center(child: Text(l10n.errorLoadingProfile(error.toString()))),
       ),
       data: (profileStats) => Scaffold(
-        body: AppWidthLimiter(
-          maxWidth: 1000,
-          horizontalPadding: 0,
-          backgroundColor: Colors.transparent,
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            child: Stack(
-              children: [
-                const GradientBackground(),
-                SafeArea(
-                  child: CustomScrollView(
-                    slivers: [
-                      _buildHeader(),
-                      SliverToBoxAdapter(
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: ResponsiveUtils.maxContentWidth(context),
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Stack(
+            children: [
+              const GradientBackground(),
+              SafeArea(
+                child: CustomScrollView(
+                  slivers: [
+                    _buildHeader(),
+                    SliverToBoxAdapter(
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: ResponsiveUtils.maxContentWidth(context),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              top:
+                                  80, // Account for pinned header height (70px) + spacing
+                              bottom: 24,
                             ),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: 16.s,
-                                right: 16.s,
-                                top:
-                                    80.s, // Account for pinned header height (70px) + spacing
-                                bottom: 24.s,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  AppSpacing.xl.sbh,
-                                  _buildAchievementsSection(
-                                    prayerStreak: profileStats.prayerStreak,
-                                    savedVerses: profileStats.savedVerses,
-                                    devotionalsCompleted:
-                                        profileStats.devotionalsCompleted,
-                                    readingPlansActive:
-                                        profileStats.readingPlansActive,
-                                    devotionalStreak:
-                                        profileStats.devotionalStreak,
-                                    totalPrayers: profileStats.totalPrayers,
-                                    sharedChats: profileStats.sharedChats,
-                                    discipleCompletionCount:
-                                        profileStats.discipleCompletionCount,
-                                  ),
-                                  AppSpacing.xxl.sbh,
-                                  _buildMenuSection(),
-                                  AppSpacing.xxl.sbh,
-                                ],
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: AppSpacing.xl),
+                                _buildAchievementsSection(
+                                  prayerStreak: profileStats.prayerStreak,
+                                  savedVerses: profileStats.savedVerses,
+                                  devotionalsCompleted:
+                                      profileStats.devotionalsCompleted,
+                                  readingPlansActive:
+                                      profileStats.readingPlansActive,
+                                  devotionalStreak:
+                                      profileStats.devotionalStreak,
+                                  totalPrayers: profileStats.totalPrayers,
+                                  sharedChats: profileStats.sharedChats,
+                                  discipleCompletionCount:
+                                      profileStats.discipleCompletionCount,
+                                ),
+                                const SizedBox(height: AppSpacing.xxl),
+                                _buildMenuSection(),
+                                const SizedBox(height: AppSpacing.xxl),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                // Pinned FAB
-                AppWidthLimiter(
-                  maxWidth: 1000,
-                  horizontalPadding: 0,
-                  backgroundColor: Colors.transparent,
-                  child: Positioned(
-                    top: MediaQuery.of(context).padding.top + AppSpacing.xl,
-                    left: AppSpacing.xl,
-                    child: const GlassmorphicFABMenu()
-                        .animate()
-                        .fadeIn(duration: AppAnimations.slow)
-                        .slideY(begin: -0.3),
-                  ),
-                ),
-              ],
-            ),
+              ),
+              // Pinned FAB
+              Positioned(
+                top: MediaQuery.of(context).padding.top + AppSpacing.xl,
+                left: AppSpacing.xl,
+                child: const GlassmorphicFABMenu()
+                    .animate()
+                    .fadeIn(duration: AppAnimations.slow)
+                    .slideY(begin: -0.3),
+              ),
+            ],
           ),
         ),
       ),
@@ -341,12 +330,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               ? FrostedGlassCard(
                                   key: const ValueKey('username_card'),
                                   borderRadius: 20,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 12.s, vertical: 6.s),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
                                   child: Text(
                                     userName,
                                     style: TextStyle(
-                                      fontSize: 16.fz,
+                                      fontSize: ResponsiveUtils.fontSize(
+                                          context, 16,
+                                          minSize: 14, maxSize: 18),
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.primaryText,
                                     ),
@@ -356,11 +347,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 )
                               : Container(
                                   key: const ValueKey('pencil_icon'),
-                                  padding: EdgeInsets.all(10.s),
+                                  padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: AppTheme.goldColor
                                         .withValues(alpha: 0.2),
-                                    borderRadius: 12.br,
+                                    borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color: AppTheme.goldColor
                                           .withValues(alpha: 0.3),
@@ -369,7 +360,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   ),
                                   child: Icon(
                                     Icons.edit_outlined,
-                                    size: 20.iz,
+                                    size: ResponsiveUtils.iconSize(context, 20),
                                     color: AppColors.primaryText,
                                   ),
                                 ),
@@ -544,13 +535,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Text(
           l10n.achievements,
           style: TextStyle(
-            fontSize: 18.fz,
+            fontSize:
+                ResponsiveUtils.fontSize(context, 18, minSize: 16, maxSize: 20),
             fontWeight: FontWeight.w700,
             color: AppColors.primaryText,
           ),
         ).animate().fadeIn(duration: AppAnimations.slow, delay: 200.ms),
 
-        12.sbh,
+        const SizedBox(height: 12),
 
         // Earned achievement badges (directly under title)
         _buildEarnedBadges()
@@ -578,7 +570,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _buildAchievementCard(Achievement achievement, int index) {
     Widget card = Container(
-      margin: EdgeInsets.only(bottom: 12.s),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: AppSpacing.cardPadding,
       decoration: const BoxDecoration(
         color: Colors.transparent,
@@ -606,7 +598,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             child: Icon(
               achievement.icon,
-              size: 24.iz,
+              size: ResponsiveUtils.iconSize(context, 24),
               color: achievement.isUnlocked
                   ? achievement.color
                   : Colors.white.withValues(alpha: 0.3),
@@ -626,7 +618,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       child: Text(
                         achievement.title,
                         style: TextStyle(
-                          fontSize: 16.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 16,
+                              minSize: 14, maxSize: 18),
                           fontWeight: FontWeight.w700,
                           color: achievement.isUnlocked
                               ? Colors.white
@@ -637,16 +630,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     if (achievement.isUnlocked)
                       Icon(
                         Icons.check_circle,
-                        size: 20.iz,
+                        size: ResponsiveUtils.iconSize(context, 20),
                         color: achievement.color,
                       ),
                   ],
                 ),
-                4.sbh,
+                const SizedBox(height: 4),
                 Text(
                   achievement.description,
                   style: TextStyle(
-                    fontSize: 12.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 12,
+                        minSize: 10, maxSize: 14),
                     color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
@@ -654,9 +648,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 // This allows tracking progress toward next badge level
                 if (achievement.progress != null &&
                     achievement.total != null) ...[
-                  AppSpacing.sm.sbh,
+                  const SizedBox(height: AppSpacing.sm),
                   ClipRRect(
-                    borderRadius: (AppRadius.xs / 2).br,
+                    borderRadius: BorderRadius.circular(AppRadius.xs / 2),
                     child: LinearProgressIndicator(
                       value: achievement.progress! / achievement.total!,
                       backgroundColor: Colors.white.withValues(alpha: 0.1),
@@ -664,7 +658,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       minHeight: 6,
                     ),
                   ),
-                  4.sbh,
+                  const SizedBox(height: 4),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -675,7 +669,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: Text(
                             '${achievement.progress}/${achievement.total}',
                             style: TextStyle(
-                              fontSize: 10.fz,
+                              fontSize: ResponsiveUtils.fontSize(context, 10,
+                                  minSize: 9, maxSize: 12),
                               color: AppColors.tertiaryText,
                             ),
                           ),
@@ -691,7 +686,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             child: Text(
                               'Level ${achievement.completionCount! + 1}',
                               style: TextStyle(
-                                fontSize: 10.fz,
+                                fontSize: ResponsiveUtils.fontSize(context, 10,
+                                    minSize: 9, maxSize: 12),
                                 color: achievement.color.withValues(alpha: 0.7),
                                 fontWeight: FontWeight.w600,
                               ),
@@ -728,14 +724,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Text(
           l10n.account,
           style: TextStyle(
-            fontSize: 18.fz,
+            fontSize:
+                ResponsiveUtils.fontSize(context, 18, minSize: 16, maxSize: 20),
             fontWeight: FontWeight.w700,
             color: AppColors.primaryText,
           ),
         ).animate().fadeIn(duration: AppAnimations.slow, delay: 400.ms),
         const SizedBox(height: AppSpacing.lg),
         FrostedGlassCard(
-          padding: EdgeInsets.all(AppSpacing.sm.s),
+          padding: const EdgeInsets.all(AppSpacing.sm),
           child: Column(
             children: [
               _buildMenuItem(
@@ -789,14 +786,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       leading: Icon(
         icon,
         color: isDestructive ? Colors.red : Colors.white.withValues(alpha: 0.9),
-        size: 22.iz,
+        size: ResponsiveUtils.iconSize(context, 22),
       ),
       title: Text(
         title,
         style: TextStyle(
           color: isDestructive ? Colors.red : Colors.white,
           fontWeight: FontWeight.w500,
-          fontSize: 15.fz,
+          fontSize:
+              ResponsiveUtils.fontSize(context, 15, minSize: 13, maxSize: 17),
         ),
       ),
       trailing: Icon(
@@ -804,7 +802,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         color: isDestructive
             ? Colors.red.withValues(alpha: 0.5)
             : Colors.white.withValues(alpha: 0.5),
-        size: 20.iz,
+        size: ResponsiveUtils.iconSize(context, 20),
       ),
       onTap: onTap,
     );
@@ -836,21 +834,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 Text(
                   l10n.editProfile,
                   style: TextStyle(
-                    fontSize: 20.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 20,
+                        minSize: 18, maxSize: 24),
                     fontWeight: FontWeight.w700,
                     color: AppColors.primaryText,
                   ),
                 ),
-                AppSpacing.xl.sbh,
+                const SizedBox(height: AppSpacing.xl),
                 Text(
                   l10n.name,
                   style: TextStyle(
-                    fontSize: 14.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 14,
+                        minSize: 12, maxSize: 16),
                     fontWeight: FontWeight.w600,
                     color: AppColors.primaryText,
                   ),
                 ),
-                AppSpacing.sm.sbh,
+                const SizedBox(height: AppSpacing.sm),
                 TextField(
                   controller: _nameController,
                   style: const TextStyle(color: Colors.white),
@@ -866,7 +866,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                   ),
                 ),
-                AppSpacing.xxl.sbh,
+                const SizedBox(height: AppSpacing.xxl),
                 Row(
                   children: [
                     Expanded(
@@ -876,7 +876,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         onPressed: () => NavigationService.pop(),
                       ),
                     ),
-                    AppSpacing.md.sbw,
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: GlassButton(
                         text: hasExistingName ? l10n.delete : l10n.save,
@@ -916,23 +916,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               Icon(
                 Icons.logout,
-                size: 48.iz,
+                size: ResponsiveUtils.iconSize(context, 48),
                 color: Colors.red,
               ),
-              AppSpacing.lg.sbh,
+              const SizedBox(height: AppSpacing.lg),
               Text(
                 l10n.signOutQuestion,
                 style: TextStyle(
-                  fontSize: 20.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 20,
+                      minSize: 18, maxSize: 24),
                   fontWeight: FontWeight.w700,
                   color: AppColors.primaryText,
                 ),
               ),
-              AppSpacing.md.sbh,
+              const SizedBox(height: AppSpacing.md),
               Text(
                 l10n.signOutConfirmation,
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                   color: AppColors.secondaryText,
                 ),
                 textAlign: TextAlign.center,

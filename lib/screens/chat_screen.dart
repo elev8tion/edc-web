@@ -27,7 +27,6 @@ import '../core/services/crisis_detection_service.dart';
 import '../core/services/content_filter_service.dart';
 import '../core/widgets/crisis_dialog.dart';
 import '../utils/responsive_utils.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import 'paywall_screen.dart';
 import '../components/message_limit_dialog.dart';
 import '../components/chat_screen_lockout_overlay.dart';
@@ -1503,78 +1502,72 @@ class ChatScreen extends HookConsumerWidget {
         child: Stack(
           children: [
             const GradientBackground(),
-            // Wrap content with AppWidthLimiter for desktop/web
-            AppWidthLimiter(
-              maxWidth: 900,  // Chat optimal at 900px
-              horizontalPadding: 0,  // Padding handled internally
-              backgroundColor: Colors.transparent,
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    // AI Service initialization status banner
-                    _buildAIStatusBanner(aiServiceState, l10n),
-                    // Connectivity status banner
-                    _buildConnectivityBanner(context, connectivityStatus, l10n),
-                    // CustomScrollView with pinned header and action buttons
-                    Expanded(
-                      child: CustomScrollView(
-                        controller: scrollController,
-                        slivers: [
-                          // Pinned FAB + action buttons row
-                          SliverPersistentHeader(
-                            pinned: true,
-                            delegate: ChatActionButtonsDelegate(
-                              height:
-                                  120.0, // Increased to accommodate full FAB menu (80px) + padding (20px top + 20px bottom)
-                              child: ChatActionButtons(
-                                onMorePressed: showChatOptions,
-                                onHistoryPressed: () => _showConversationHistory(
-                                    context,
-                                    messages,
-                                    sessionId,
-                                    conversationService,
-                                    l10n),
-                                onNewPressed: () => _startNewConversation(
-                                    context,
-                                    messages,
-                                    sessionId,
-                                    conversationService,
-                                    l10n),
-                                onReturnToReadingPressed: verseContext != null
-                                    ? () => _returnToReading(context)
-                                    : null,
-                              ),
+            SafeArea(
+              child: Column(
+                children: [
+                  // AI Service initialization status banner
+                  _buildAIStatusBanner(aiServiceState, l10n),
+                  // Connectivity status banner
+                  _buildConnectivityBanner(context, connectivityStatus, l10n),
+                  // CustomScrollView with pinned header and action buttons
+                  Expanded(
+                    child: CustomScrollView(
+                      controller: scrollController,
+                      slivers: [
+                        // Pinned FAB + action buttons row
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: ChatActionButtonsDelegate(
+                            height:
+                                120.0, // Increased to accommodate full FAB menu (80px) + padding (20px top + 20px bottom)
+                            child: ChatActionButtons(
+                              onMorePressed: showChatOptions,
+                              onHistoryPressed: () => _showConversationHistory(
+                                  context,
+                                  messages,
+                                  sessionId,
+                                  conversationService,
+                                  l10n),
+                              onNewPressed: () => _startNewConversation(
+                                  context,
+                                  messages,
+                                  sessionId,
+                                  conversationService,
+                                  l10n),
+                              onReturnToReadingPressed: verseContext != null
+                                  ? () => _returnToReading(context)
+                                  : null,
                             ),
                           ),
-                          // Verse context message (only shows if navigated from verse)
-                          if (verseContext != null)
-                            SliverToBoxAdapter(
-                              child: VerseContextMessage(
-                                  verseContext: verseContext!),
-                            ),
-                          // Messages list
-                          _buildMessagesSliver(
-                            context,
-                            messages.value,
-                            isTyping.value,
-                            isStreaming.value,
-                            isStreamingComplete.value,
-                            streamedText.value,
-                            regenerateResponse,
-                            shareMessageExchange,
-                            regeneratedMessageId.value,
-                            l10n,
+                        ),
+                        // Verse context message (only shows if navigated from verse)
+                        if (verseContext != null)
+                          SliverToBoxAdapter(
+                            child: VerseContextMessage(
+                                verseContext: verseContext!),
                           ),
-                          // Add spacing at bottom to prevent last message from being hidden by floating input
-                          const SliverToBoxAdapter(
-                            child: SizedBox(
-                                height: 80), // Space for floating input field
-                          ),
-                        ],
-                      ),
+                        // Messages list
+                        _buildMessagesSliver(
+                          context,
+                          messages.value,
+                          isTyping.value,
+                          isStreaming.value,
+                          isStreamingComplete.value,
+                          streamedText.value,
+                          regenerateResponse,
+                          shareMessageExchange,
+                          regeneratedMessageId.value,
+                          l10n,
+                        ),
+                        // Add spacing at bottom to prevent last message from being hidden by floating input
+                        const SliverToBoxAdapter(
+                          child: SizedBox(
+                              height: 80), // Space for floating input field
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             // Floating message input - positioned outside SafeArea
@@ -1582,13 +1575,8 @@ class ChatScreen extends HookConsumerWidget {
               bottom: 0,
               left: 0,
               right: 0,
-              child: AppWidthLimiter(
-                maxWidth: 900,
-                horizontalPadding: 0,
-                backgroundColor: Colors.transparent,
-                child: _buildMessageInput(
-                    context, messageController, canSend.value, sendMessage),
-              ),
+              child: _buildMessageInput(
+                  context, messageController, canSend.value, sendMessage),
             ),
             // Scroll to bottom button
             ScrollToBottom(
@@ -2119,18 +2107,18 @@ class ChatScreen extends HookConsumerWidget {
         return Container(
           color: Colors.transparent, // Fully transparent background
           padding: EdgeInsets.only(
-            left: 16.s,  // Using scalify
-            right: 16.s,
-            top: 16.s,
+            left: AppSpacing.md,
+            right: AppSpacing.md,
+            top: AppSpacing.md,
             bottom: bottomPadding > 0
-                ? bottomPadding + 8.s
-                : 16.s,
+                ? bottomPadding + AppSpacing.sm
+                : AppSpacing.md,
           ),
           child: Row(
             children: [
               Expanded(
                 child: ClipRRect(
-                  borderRadius: 28.br,  // .br returns BorderRadius directly
+                  borderRadius: BorderRadius.circular(AppRadius.xl + 1),
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
                     child: Container(
@@ -2141,7 +2129,7 @@ class ChatScreen extends HookConsumerWidget {
                             Colors.white.withValues(alpha: 0.1),
                           ],
                         ),
-                        borderRadius: 28.br,
+                        borderRadius: BorderRadius.circular(AppRadius.xl + 1),
                         border: Border.all(
                           color: AppTheme.goldColor,
                           width: 1.0,
@@ -2149,8 +2137,8 @@ class ChatScreen extends HookConsumerWidget {
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 8.s,  // Using scalify
-                            offset: Offset(0, 3.s),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
@@ -2158,20 +2146,22 @@ class ChatScreen extends HookConsumerWidget {
                         controller: messageController,
                         style: TextStyle(
                           color: AppColors.primaryText,
-                          fontSize: 15.fz,  // Using scalify - clean!
+                          fontSize: ResponsiveUtils.fontSize(context, 15,
+                              minSize: 13, maxSize: 17),
                         ),
                         decoration: InputDecoration(
                           hintText: l10n.scriptureChatHint,
                           hintStyle: TextStyle(
                             color: AppColors.tertiaryText,
-                            fontSize: 15.fz,  // Using scalify - clean!
+                            fontSize: ResponsiveUtils.fontSize(context, 15,
+                                minSize: 13, maxSize: 17),
                           ),
                           border: InputBorder.none,
                           filled: true,
                           fillColor: Colors.transparent,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 20.s,  // Using scalify
-                            vertical: 15.s,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 15,
                           ),
                         ),
                         minLines: 1,
@@ -2183,7 +2173,7 @@ class ChatScreen extends HookConsumerWidget {
                   ),
                 ),
               ),
-              16.sbw,  // Using scalify - super clean!
+              const SizedBox(width: AppSpacing.md),
               ProgressRingSendButton(
                 canSend: canSend,
                 onPressed: () => sendMessage(messageController.text),

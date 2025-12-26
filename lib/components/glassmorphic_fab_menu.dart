@@ -338,6 +338,7 @@ class _GlassmorphicFABMenuState extends State<GlassmorphicFABMenu>
               Container(
                 width: 32,
                 height: 32,
+                padding: const EdgeInsets.all(5), // Reduced from 6 to prevent overflow at high text scales
                 decoration: BoxDecoration(
                   color: option.color.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(AppRadius.xs + 2),
@@ -346,12 +347,10 @@ class _GlassmorphicFABMenuState extends State<GlassmorphicFABMenu>
                     width: 1,
                   ),
                 ),
-                child: Center(
-                  child: Icon(
-                    option.icon,
-                    size: 18,  // Fixed size for consistent centering across all screen sizes
-                    color: AppColors.secondaryText,
-                  ),
+                child: Icon(
+                  option.icon,
+                  size: ResponsiveUtils.iconSize(context, 18),
+                  color: AppColors.secondaryText,
                 ),
               ),
             ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_card.dart';
@@ -57,9 +56,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
           children: [
             const GradientBackground(),
             SafeArea(
-              child: AppWidthLimiter(
-                maxWidth: 1200,
-                child: Column(
+              child: Column(
                 children: [
                   _buildHeader(),
                   _buildTabBar(),
@@ -75,7 +72,6 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                     ),
                   ),
                 ],
-              ),
               ),
             ),
           ],
@@ -103,7 +99,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
           Colors.white.withValues(alpha: 0.05),
           Colors.white.withValues(alpha: 0.02),
         ],
-        padding: EdgeInsets.all(4.s),
+        padding: const EdgeInsets.all(4),
         enableNoise: true,
         enableLightSimulation: true,
         child: TabBar(
@@ -125,7 +121,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
           labelStyle: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize:
-                14.fz,
+                ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
           ),
           tabs: [
             Tab(text: l10n.todayTab),
@@ -171,7 +167,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
             ref.watch(planEstimatedCompletionDateProvider(currentPlan.id));
 
         return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 30.s, vertical: 20.s),
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -179,21 +175,23 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
               Text(
                 currentPlan.title,
                 style: TextStyle(
-                  fontSize: 24.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 24,
+                      minSize: 20, maxSize: 28),
                   fontWeight: FontWeight.w800,
                   color: AppColors.primaryText,
                 ),
               ).animate().fadeIn(duration: AppAnimations.slow),
-              8.sbh,
+              const SizedBox(height: 8),
               Text(
                 l10n.yourProgressAndStatistics,
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                   color: AppColors.secondaryText,
                 ),
               ).animate().fadeIn(
                   duration: AppAnimations.slow, delay: AppAnimations.fast),
-              AppSpacing.xxl.sbh,
+              const SizedBox(height: AppSpacing.xxl),
 
               // Statistics
               statsAsync.when(
@@ -217,26 +215,28 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                   );
                 },
               ),
-              AppSpacing.xxl.sbh,
+              const SizedBox(height: AppSpacing.xxl),
 
               // Calendar heatmap
               Text(
                 'Reading Activity',
                 style: TextStyle(
-                  fontSize: 20.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 20,
+                      minSize: 18, maxSize: 24),
                   fontWeight: FontWeight.w700,
                   color: AppColors.primaryText,
                 ),
               ).animate().fadeIn(duration: AppAnimations.slow, delay: 600.ms),
-              AppSpacing.md.sbh,
+              const SizedBox(height: AppSpacing.md),
               Text(
                 'Days with completed readings in the last 90 days',
                 style: TextStyle(
-                  fontSize: 12.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 12,
+                      minSize: 10, maxSize: 14),
                   color: AppColors.secondaryText,
                 ),
               ).animate().fadeIn(duration: AppAnimations.slow, delay: 700.ms),
-              AppSpacing.lg.sbh,
+              const SizedBox(height: AppSpacing.lg),
               heatmapAsync.when(
                 loading: () => const Center(
                   child: CircularProgressIndicator(
@@ -249,7 +249,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                     Text(l10n.errorWithMessage(error.toString())),
                 data: (heatmapData) {
                   return DarkGlassContainer(
-                    padding: EdgeInsets.all(AppSpacing.lg.s),
+                    padding: const EdgeInsets.all(AppSpacing.lg),
                     child: CalendarHeatmapWidget(
                       activityData: heatmapData,
                       columns: 13,
@@ -302,22 +302,23 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
           error: (error, stack) => _buildErrorState(error.toString()),
           data: (todaysReadings) {
             return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 30.s, vertical: 20.s),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildCurrentPlanCard(currentPlan),
-                  AppSpacing.xxl.sbh,
+                  const SizedBox(height: AppSpacing.xxl),
                   Text(
                     l10n.todaysReadings,
                     style: TextStyle(
-                      fontSize: 20.fz,
+                      fontSize: ResponsiveUtils.fontSize(context, 20,
+                          minSize: 18, maxSize: 24),
                       fontWeight: FontWeight.w700,
                       color: AppColors.primaryText,
                     ),
                   ).animate().fadeIn(
                       duration: AppAnimations.slow, delay: AppAnimations.slow),
-                  AppSpacing.lg.sbh,
+                  const SizedBox(height: AppSpacing.lg),
                   if (todaysReadings.isEmpty)
                     _buildEmptyReadingsMessage()
                   else
@@ -364,14 +365,14 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
 
         return ListView.builder(
           padding:
-              EdgeInsets.only(left: 50.s, right: 50.s, top: 20.s, bottom: 20.s),
+              const EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
           itemCount: activePlans.length + (activePlans.length == 1 ? 1 : 0),
           itemBuilder: (context, index) {
             // Show reading plan card(s)
             if (index < activePlans.length) {
               final plan = activePlans[index];
               return Padding(
-                padding: EdgeInsets.only(bottom: 16.s),
+                padding: const EdgeInsets.only(bottom: 16),
                 child: _buildPlanCard(plan, index, isActive: true)
                     .animate()
                     .fadeIn(
@@ -383,21 +384,22 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
 
             // Show info message BELOW the reading plan card when there's exactly 1 active plan
             return Padding(
-              padding: EdgeInsets.only(top: 8.s),
+              padding: const EdgeInsets.only(top: 8),
               child: Row(
                 children: [
                   Icon(
                     Icons.info_outline,
                     color: AppColors.secondaryText,
-                    size: 18.iz,
+                    size: ResponsiveUtils.iconSize(context, 18),
                   ),
-                  12.sbw,
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       l10n.onlyOnePlanActive,
                       style: TextStyle(
                         color: AppColors.secondaryText,
-                        fontSize: 13.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 13,
+                            minSize: 11, maxSize: 15),
                       ),
                     ),
                   ),
@@ -424,12 +426,12 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
       data: (allPlans) {
         return ListView.builder(
           padding:
-              EdgeInsets.only(left: 50.s, right: 50.s, top: 20.s, bottom: 20.s),
+              const EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
           itemCount: allPlans.length,
           itemBuilder: (context, index) {
             final plan = allPlans[index];
             return Padding(
-              padding: EdgeInsets.only(bottom: 16.s),
+              padding: const EdgeInsets.only(bottom: 16),
               child: _buildPlanCard(plan, index, isActive: false)
                   .animate()
                   .fadeIn(
@@ -465,16 +467,18 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                     Text(
                       plan.title,
                       style: TextStyle(
-                        fontSize: 18.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 18,
+                            minSize: 16, maxSize: 20),
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryText,
                       ),
                     ),
-                    4.sbh,
+                    const SizedBox(height: 4),
                     Text(
                       plan.category.getLocalizedName(context),
                       style: TextStyle(
-                        fontSize: 14.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 14,
+                            minSize: 12, maxSize: 16),
                         color: Colors.white.withValues(alpha: 0.9),
                         fontWeight: FontWeight.w500,
                       ),
@@ -484,7 +488,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
               ),
             ],
           ),
-          AppSpacing.lg.sbh,
+          const SizedBox(height: AppSpacing.lg),
           // Stats row - use Wrap for accessibility at large text scales
           Wrap(
             spacing: AppSpacing.lg,
@@ -495,14 +499,15 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                 children: [
                   Icon(
                     Icons.schedule,
-                    size: 16.iz,
+                    size: ResponsiveUtils.iconSize(context, 16),
                     color: Colors.white.withValues(alpha: 0.7),
                   ),
-                  6.sbw,
+                  const SizedBox(width: 6),
                   Text(
                     plan.estimatedTimePerDay,
                     style: TextStyle(
-                      fontSize: 14.fz,
+                      fontSize: ResponsiveUtils.fontSize(context, 14,
+                          minSize: 12, maxSize: 16),
                       color: AppColors.secondaryText,
                     ),
                   ),
@@ -514,14 +519,15 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                   children: [
                     Icon(
                       Icons.calendar_today,
-                      size: 16.iz,
+                      size: ResponsiveUtils.iconSize(context, 16),
                       color: Colors.white.withValues(alpha: 0.7),
                     ),
-                    6.sbw,
+                    const SizedBox(width: 6),
                     Text(
                       l10n.dayNumber(day),
                       style: TextStyle(
-                        fontSize: 14.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 14,
+                            minSize: 12, maxSize: 16),
                         color: AppColors.secondaryText,
                       ),
                     ),
@@ -537,10 +543,10 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                         children: [
                           Icon(
                             Icons.local_fire_department,
-                            size: 16.iz,
+                            size: ResponsiveUtils.iconSize(context, 16),
                             color: Colors.orange.withValues(alpha: 0.9),
                           ),
-                          4.sbw,
+                          const SizedBox(width: 4),
                           Text(
                             '$streak day${streak > 1 ? 's' : ''}',
                             style: TextStyle(
@@ -558,14 +564,15 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
               ),
             ],
           ),
-          AppSpacing.lg.sbh,
+          const SizedBox(height: AppSpacing.lg),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 l10n.progress,
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                   fontWeight: FontWeight.w600,
                   color: AppColors.primaryText,
                 ),
@@ -573,26 +580,28 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
               Text(
                 '${plan.completedReadings} / ${plan.totalReadings}',
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                   color: AppColors.secondaryText,
                 ),
               ),
             ],
           ),
-          AppSpacing.sm.sbh,
+          const SizedBox(height: AppSpacing.sm),
           LinearProgressIndicator(
             value: progress,
             backgroundColor: Colors.white.withValues(alpha: 0.2),
             valueColor:
                 const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
-            borderRadius: (AppRadius.xs / 2).br,
+            borderRadius: BorderRadius.circular(AppRadius.xs / 2),
           ),
-          AppSpacing.sm.sbh,
+          const SizedBox(height: AppSpacing.sm),
           progressAsync.when(
             data: (percentage) => Text(
               l10n.percentComplete(percentage.toStringAsFixed(1)),
               style: TextStyle(
-                fontSize: 12.fz,
+                fontSize: ResponsiveUtils.fontSize(context, 12,
+                    minSize: 10, maxSize: 14),
                 color: Colors.white.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w500,
               ),
@@ -612,7 +621,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
     final l10n = AppLocalizations.of(context);
 
     final readingCard = Container(
-      margin: EdgeInsets.only(bottom: 16.s),
+      margin: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(
         onTap: () => _openChapterReader(context, reading),
         child: DarkGlassContainer(
@@ -648,10 +657,10 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                 child: Icon(
                   isCompleted ? Icons.check_circle : Icons.book,
                   color: isCompleted ? Colors.green : AppTheme.primaryColor,
-                  size: 24.iz,
+                  size: ResponsiveUtils.iconSize(context, 24),
                 ),
               ),
-              AppSpacing.lg.sbw,
+              const SizedBox(width: AppSpacing.lg),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -659,36 +668,39 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                     Text(
                       reading.title,
                       style: TextStyle(
-                        fontSize: 16.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 16,
+                            minSize: 14, maxSize: 18),
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryText,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    4.sbh,
+                    const SizedBox(height: 4),
                     Text(
                       reading.description,
                       style: TextStyle(
-                        fontSize: 14.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 14,
+                            minSize: 12, maxSize: 16),
                         color: AppColors.secondaryText,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    AppSpacing.sm.sbh,
+                    const SizedBox(height: AppSpacing.sm),
                     Row(
                       children: [
                         Icon(
                           Icons.schedule,
-                          size: 14.iz,
+                          size: ResponsiveUtils.iconSize(context, 14),
                           color: AppColors.tertiaryText,
                         ),
-                        4.sbw,
+                        const SizedBox(width: 4),
                         Text(
                           reading.estimatedTime,
                           style: TextStyle(
-                            fontSize: 12.fz,
+                            fontSize: ResponsiveUtils.fontSize(context, 12,
+                                minSize: 10, maxSize: 14),
                             color: AppColors.tertiaryText,
                           ),
                           maxLines: 1,
@@ -702,7 +714,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
               GestureDetector(
                 onTap: () => _toggleReadingComplete(reading),
                 child: Container(
-                  padding: EdgeInsets.all(AppSpacing.sm.s),
+                  padding: const EdgeInsets.all(AppSpacing.sm),
                   decoration: BoxDecoration(
                     color: isCompleted
                         ? Colors.green.withValues(alpha: 0.2)
@@ -712,7 +724,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                   child: Icon(
                     isCompleted ? Icons.check : Icons.circle_outlined,
                     color: AppColors.primaryText,
-                    size: 20.iz,
+                    size: ResponsiveUtils.iconSize(context, 20),
                   ),
                 ),
               ),
@@ -748,18 +760,20 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                     Text(
                       plan.title,
                       style: TextStyle(
-                        fontSize: 18.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 18,
+                            minSize: 16, maxSize: 20),
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryText,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    4.sbh,
+                    const SizedBox(height: 4),
                     Text(
                       plan.category.getLocalizedName(context),
                       style: TextStyle(
-                        fontSize: 14.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 14,
+                            minSize: 12, maxSize: 16),
                         color: Colors.white.withValues(alpha: 0.9),
                         fontWeight: FontWeight.w500,
                       ),
@@ -771,16 +785,17 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
               ),
             ],
           ),
-          AppSpacing.md.sbh,
+          const SizedBox(height: AppSpacing.md),
           Text(
             plan.description,
             style: TextStyle(
-              fontSize: 14.fz,
+              fontSize: ResponsiveUtils.fontSize(context, 14,
+                  minSize: 12, maxSize: 16),
               color: Colors.white.withValues(alpha: 0.9),
               height: 1.4,
             ),
           ),
-          AppSpacing.lg.sbh,
+          const SizedBox(height: AppSpacing.lg),
           // Stats row - use Wrap for accessibility at large text scales
           Wrap(
             spacing: AppSpacing.lg,
@@ -791,7 +806,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
             ],
           ),
           if (plan.isStarted) ...[
-            AppSpacing.lg.sbh,
+            const SizedBox(height: AppSpacing.lg),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -814,17 +829,17 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                 ),
               ],
             ),
-            AppSpacing.sm.sbh,
+            const SizedBox(height: AppSpacing.sm),
             LinearProgressIndicator(
               value:
                   (plan.completedReadings / plan.totalReadings).clamp(0.0, 1.0),
               backgroundColor: Colors.white.withValues(alpha: 0.2),
               valueColor:
                   const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
-              borderRadius: (AppRadius.xs / 2).br,
+              borderRadius: BorderRadius.circular(AppRadius.xs / 2),
             ),
             if (progressPercentageAsync != null) ...[
-              AppSpacing.sm.sbh,
+              const SizedBox(height: AppSpacing.sm),
               progressPercentageAsync.when(
                 data: (percentage) => Text(
                   l10n.percentComplete(percentage.toStringAsFixed(1)),
@@ -840,7 +855,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
               ),
             ],
           ],
-          AppSpacing.lg.sbh,
+          const SizedBox(height: AppSpacing.lg),
           // Conditionally disable "Start Plan" button if viewing from Explore tab and another plan is active
           if (currentPlanAsync != null)
             currentPlanAsync.when(
@@ -890,7 +905,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                   ),
                 ),
                 if (plan.isStarted) ...[
-                  AppSpacing.md.sbw,
+                  const SizedBox(width: AppSpacing.md),
                   GestureDetector(
                     onTap: () => _showResetConfirmation(plan),
                     child: Container(
@@ -906,7 +921,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                       child: Icon(
                         Icons.restart_alt,
                         color: AppColors.primaryText,
-                        size: 20.iz,
+                        size: ResponsiveUtils.iconSize(context, 20),
                       ),
                     ),
                   ),
@@ -924,15 +939,16 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
       children: [
         Icon(
           icon,
-          size: 16.iz,
+          size: ResponsiveUtils.iconSize(context, 16),
           color: Colors.white.withValues(alpha: 0.7),
         ),
-        6.sbw,
+        const SizedBox(width: 6),
         Flexible(
           child: Text(
             text,
             style: TextStyle(
-              fontSize: 14.fz,
+              fontSize: ResponsiveUtils.fontSize(context, 14,
+                  minSize: 12, maxSize: 16),
               color: AppColors.secondaryText,
             ),
           ),
@@ -950,7 +966,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
   }) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(40.s),
+        padding: const EdgeInsets.all(40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -958,25 +974,26 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
               padding: AppSpacing.screenPaddingLarge,
               child: Icon(
                 icon,
-                size: 48.iz,
+                size: ResponsiveUtils.iconSize(context, 48),
                 color: AppColors.tertiaryText,
               ),
             )
                 .animate()
                 .fadeIn(duration: AppAnimations.slow)
                 .scale(begin: const Offset(0.8, 0.8)),
-            AppSpacing.xxl.sbh,
+            const SizedBox(height: AppSpacing.xxl),
             Text(
               title,
               style: TextStyle(
-                fontSize: 20.fz,
+                fontSize: ResponsiveUtils.fontSize(context, 20,
+                    minSize: 18, maxSize: 24),
                 fontWeight: FontWeight.w700,
                 color: AppColors.primaryText,
               ),
               textAlign: TextAlign.center,
             ).animate().fadeIn(
                 duration: AppAnimations.slow, delay: AppAnimations.fast),
-            AppSpacing.md.sbh,
+            const SizedBox(height: AppSpacing.md),
             Text(
               subtitle,
               style: TextStyle(
@@ -989,7 +1006,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
             ).animate().fadeIn(
                 duration: AppAnimations.slow, delay: AppAnimations.normal),
             if (action != null && actionText != null) ...[
-              AppSpacing.xxl.sbh,
+              const SizedBox(height: AppSpacing.xxl),
               GlassButton(
                 text: actionText,
                 onPressed: action,
@@ -1006,26 +1023,27 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
     final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(40.s),
+        padding: const EdgeInsets.all(40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline,
-              size: 48.iz,
+              size: ResponsiveUtils.iconSize(context, 48),
               color: Colors.red,
             ),
-            AppSpacing.lg.sbh,
+            const SizedBox(height: AppSpacing.lg),
             Text(
               l10n.oopsSomethingWrong,
               style: TextStyle(
-                fontSize: 20.fz,
+                fontSize: ResponsiveUtils.fontSize(context, 20,
+                    minSize: 18, maxSize: 24),
                 fontWeight: FontWeight.w700,
                 color: AppColors.primaryText,
               ),
               textAlign: TextAlign.center,
             ),
-            AppSpacing.sm.sbh,
+            const SizedBox(height: AppSpacing.sm),
             Text(
               error,
               style: TextStyle(
@@ -1048,23 +1066,25 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
         children: [
           Icon(
             Icons.celebration,
-            size: 48.iz,
+            size: ResponsiveUtils.iconSize(context, 48),
             color: AppColors.tertiaryText,
           ),
-          AppSpacing.lg.sbh,
+          const SizedBox(height: AppSpacing.lg),
           Text(
             l10n.allCaughtUp,
             style: TextStyle(
-              fontSize: 18.fz,
+              fontSize: ResponsiveUtils.fontSize(context, 18,
+                  minSize: 16, maxSize: 20),
               fontWeight: FontWeight.w700,
               color: AppColors.primaryText,
             ),
           ),
-          AppSpacing.sm.sbh,
+          const SizedBox(height: AppSpacing.sm),
           Text(
             l10n.noReadingsToday,
             style: TextStyle(
-              fontSize: 14.fz,
+              fontSize: ResponsiveUtils.fontSize(context, 14,
+                  minSize: 12, maxSize: 16),
               color: AppColors.secondaryText,
             ),
           ),
@@ -1241,30 +1261,32 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
             children: [
               Icon(
                 Icons.warning_amber_rounded,
-                size: 48.iz,
+                size: ResponsiveUtils.iconSize(context, 48),
                 color: Colors.orange,
               ),
-              AppSpacing.lg.sbh,
+              const SizedBox(height: AppSpacing.lg),
               Text(
                 l10n.resetReadingPlan,
                 style: TextStyle(
-                  fontSize: 20.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 20,
+                      minSize: 18, maxSize: 24),
                   fontWeight: FontWeight.w700,
                   color: AppColors.primaryText,
                 ),
               ),
-              AppSpacing.md.sbh,
+              const SizedBox(height: AppSpacing.md),
               Text(
                 l10n.resetPlanConfirmation(plan.title),
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                   color: AppColors.secondaryText,
                 ),
                 textAlign: TextAlign.center,
               ),
-              AppSpacing.lg.sbh,
+              const SizedBox(height: AppSpacing.lg),
               Container(
-                padding: EdgeInsets.all(12.s),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: AppRadius.mediumRadius,
@@ -1280,15 +1302,17 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                       '⚠️ This will permanently delete:',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 14.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 14,
+                            minSize: 12, maxSize: 16),
                         color: AppColors.primaryText,
                       ),
                     ),
-                    8.sbh,
+                    const SizedBox(height: 8),
                     Text(
                       '• ${plan.completedReadings} completed reading${plan.completedReadings != 1 ? 's' : ''}',
                       style: TextStyle(
-                        fontSize: 13.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 13,
+                            minSize: 11, maxSize: 15),
                         color: AppColors.secondaryText,
                       ),
                     ),
@@ -1296,31 +1320,34 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                       Text(
                         '• Your $streak-day streak 🔥',
                         style: TextStyle(
-                          fontSize: 13.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 13,
+                              minSize: 11, maxSize: 15),
                           color: AppColors.secondaryText,
                         ),
                       ),
                     Text(
                       '• All progress history',
                       style: TextStyle(
-                        fontSize: 13.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 13,
+                            minSize: 11, maxSize: 15),
                         color: AppColors.secondaryText,
                       ),
                     ),
                   ],
                 ),
               ),
-              AppSpacing.md.sbh,
+              const SizedBox(height: AppSpacing.md),
               Text(
                 'This action cannot be undone.',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                   color: Colors.red,
                 ),
                 textAlign: TextAlign.center,
               ),
-              AppSpacing.xxl.sbh,
+              const SizedBox(height: AppSpacing.xxl),
               Row(
                 children: [
                   Expanded(
@@ -1330,7 +1357,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
                       onPressed: () => Navigator.of(context).pop(false),
                     ),
                   ),
-                  AppSpacing.md.sbw,
+                  const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: GlassButton(
                       text: l10n.reset,

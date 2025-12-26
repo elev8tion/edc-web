@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_card.dart';
@@ -69,26 +68,21 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
       body: Stack(
         children: [
           const GradientBackground(),
-          AppWidthLimiter(
-            maxWidth: 1200,
-            horizontalPadding: 0,
-            backgroundColor: Colors.transparent,
-            child: SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  _buildTabBar(),
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        _buildSavedVerses(),
-                        _buildSharedVerses(),
-                      ],
-                    ),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(),
+                _buildTabBar(),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildSavedVerses(),
+                      _buildSharedVerses(),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -117,7 +111,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
         ),
         child: IconButton(
           icon: Icon(Icons.more_vert,
-              color: Colors.white, size: 24.iz),
+              color: Colors.white, size: ResponsiveUtils.iconSize(context, 24)),
           onPressed: _showVerseOptions,
           tooltip: l10n.verseOptions,
           constraints: const BoxConstraints(
@@ -164,7 +158,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
           labelStyle: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize:
-                14.fz,
+                ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
           ),
           tabs: [
             Tab(text: useShortLabel ? l10n.saved : l10n.savedVerses),
@@ -275,7 +269,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
               padding: AppSpacing.screenPaddingLarge,
               child: Icon(
                 icon,
-                size: 48.iz,
+                size: ResponsiveUtils.iconSize(context, 48),
                 color: AppColors.tertiaryText,
               ),
             )
@@ -286,7 +280,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
             Text(
               title,
               style: TextStyle(
-                fontSize: 20.fz,
+                fontSize: ResponsiveUtils.fontSize(context, 20,
+                    minSize: 18, maxSize: 24),
                 fontWeight: FontWeight.w700,
                 color: AppColors.primaryText,
               ),
@@ -297,7 +292,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
             Text(
               subtitle,
               style: TextStyle(
-                fontSize: 14.fz,
+                fontSize: ResponsiveUtils.fontSize(context, 14,
+                    minSize: 12, maxSize: 16),
                 color: AppColors.secondaryText,
                 height: 1.4,
               ),
@@ -320,14 +316,15 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
           children: [
             Icon(
               Icons.error_outline,
-              size: 48.iz,
+              size: ResponsiveUtils.iconSize(context, 48),
               color: Colors.red.withValues(alpha: 0.7),
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               l10n.somethingWentWrong,
               style: TextStyle(
-                fontSize: 20.fz,
+                fontSize: ResponsiveUtils.fontSize(context, 20,
+                    minSize: 18, maxSize: 24),
                 fontWeight: FontWeight.w700,
                 color: AppColors.primaryText,
               ),
@@ -337,7 +334,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
             Text(
               error,
               style: TextStyle(
-                fontSize: 14.fz,
+                fontSize: ResponsiveUtils.fontSize(context, 14,
+                    minSize: 12, maxSize: 16),
                 color: AppColors.secondaryText,
                 height: 1.4,
               ),
@@ -365,7 +363,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                   children: [
                     Icon(
                       Icons.book,
-                      size: 16.iz,
+                      size: ResponsiveUtils.iconSize(context, 16),
                       color: AppTheme.goldColor.withValues(alpha: 0.8),
                     ),
                     const SizedBox(width: AppSpacing.sm),
@@ -373,7 +371,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                       child: Text(
                         '${verse.reference} (${verse.translation})',
                         style: TextStyle(
-                          fontSize: 14.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 14,
+                              minSize: 12, maxSize: 16),
                           color: Colors.white.withValues(alpha: 0.9),
                           fontWeight: FontWeight.w600,
                         ),
@@ -409,7 +408,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                   padding: const EdgeInsets.all(AppSpacing.sm),
                   child: Icon(
                     Icons.more_vert,
-                    size: 20.iz,
+                    size: ResponsiveUtils.iconSize(context, 20),
                     color: AppColors.primaryText,
                   ),
                 ),
@@ -420,7 +419,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
           Text(
             '"${verse.text}"',
             style: TextStyle(
-              fontSize: 16.fz,
+              fontSize: ResponsiveUtils.fontSize(context, 16,
+                  minSize: 14, maxSize: 18),
               color: AppColors.primaryText,
               height: 1.5,
               fontWeight: FontWeight.w500,
@@ -446,7 +446,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                   child: Text(
                     theme.substring(0, 1).toUpperCase() + theme.substring(1),
                     style: TextStyle(
-                      fontSize: 11.fz,
+                      fontSize: ResponsiveUtils.fontSize(context, 11,
+                          minSize: 9, maxSize: 13),
                       color: Colors.white.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w500,
                     ),
@@ -490,7 +491,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                       children: [
                         Icon(
                           Icons.history,
-                          size: 16.iz,
+                          size: ResponsiveUtils.iconSize(context, 16),
                           color: AppTheme.primaryColor.withValues(alpha: 0.8),
                         ),
                         const SizedBox(width: AppSpacing.sm),
@@ -498,7 +499,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                           child: Text(
                             '${verse.reference} (${verse.translation})',
                             style: TextStyle(
-                              fontSize: 14.fz,
+                              fontSize: ResponsiveUtils.fontSize(context, 14,
+                                  minSize: 12, maxSize: 16),
                               color: Colors.white.withValues(alpha: 0.9),
                               fontWeight: FontWeight.w600,
                             ),
@@ -512,7 +514,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                           ? '$sharedTimestamp • $channelLabel'
                           : sharedTimestamp,
                       style: TextStyle(
-                        fontSize: 12.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 12,
+                            minSize: 10, maxSize: 14),
                         color: Colors.white.withValues(alpha: 0.55),
                       ),
                     ),
@@ -539,7 +542,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                   padding: const EdgeInsets.all(AppSpacing.sm),
                   child: Icon(
                     Icons.more_vert,
-                    size: 20.iz,
+                    size: ResponsiveUtils.iconSize(context, 20),
                     color: AppColors.primaryText,
                   ),
                 ),
@@ -550,7 +553,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
           Text(
             '"${entry.text}"',
             style: TextStyle(
-              fontSize: 16.fz,
+              fontSize: ResponsiveUtils.fontSize(context, 16,
+                  minSize: 14, maxSize: 18),
               color: AppColors.primaryText,
               height: 1.5,
               fontWeight: FontWeight.w500,
@@ -579,7 +583,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                   child: Text(
                     displayTheme,
                     style: TextStyle(
-                      fontSize: 11.fz,
+                      fontSize: ResponsiveUtils.fontSize(context, 11,
+                          minSize: 9, maxSize: 13),
                       color: Colors.white.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w500,
                     ),
@@ -735,7 +740,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
               subtitle: Text(
                 l10n.browseAndManageYourSavedVerses,
                 style: TextStyle(
-                  fontSize: 12.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 12,
+                      minSize: 10, maxSize: 14),
                   color: AppColors.secondaryText,
                 ),
                 maxLines: 2,
@@ -756,7 +762,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
               subtitle: Text(
                 l10n.jumpToRecentlySharedVerses,
                 style: TextStyle(
-                  fontSize: 12.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 12,
+                      minSize: 10, maxSize: 14),
                   color: AppColors.secondaryText,
                 ),
                 maxLines: 2,
@@ -781,7 +788,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
               subtitle: Text(
                 l10n.removeAllVersesFromSavedCollection,
                 style: TextStyle(
-                  fontSize: 12.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 12,
+                      minSize: 10, maxSize: 14),
                   color: AppColors.secondaryText,
                 ),
               ),
@@ -804,7 +812,8 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
               subtitle: Text(
                 l10n.removeEveryVerseFromSharedActivity,
                 style: TextStyle(
-                  fontSize: 12.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 12,
+                      minSize: 10, maxSize: 14),
                   color: AppColors.secondaryText,
                 ),
               ),
@@ -859,14 +868,14 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
             children: [
               Icon(
                 Icons.warning_amber_rounded,
-                size: 48.iz,
+                size: ResponsiveUtils.iconSize(context, 48),
                 color: Colors.orange,
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
                 l10n.delete,
                 style: TextStyle(
-                  fontSize: 20.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 20, minSize: 18, maxSize: 24),
                   fontWeight: FontWeight.w700,
                   color: AppColors.primaryText,
                 ),
@@ -875,7 +884,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
               Text(
                 l10n.deleteVerseConfirmation,
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
                   color: AppColors.secondaryText,
                 ),
                 textAlign: TextAlign.center,
@@ -912,7 +921,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                             child: Text(
                               l10n.delete,
                               style: TextStyle(
-                                fontSize: 14.fz,
+                                fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
                                 fontWeight: FontWeight.w600,
                                 color: Colors.red,
                               ),
@@ -970,14 +979,14 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
             children: [
               Icon(
                 Icons.warning_amber_rounded,
-                size: 48.iz,
+                size: ResponsiveUtils.iconSize(context, 48),
                 color: Colors.orange,
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
                 l10n.delete,
                 style: TextStyle(
-                  fontSize: 20.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 20, minSize: 18, maxSize: 24),
                   fontWeight: FontWeight.w700,
                   color: AppColors.primaryText,
                 ),
@@ -986,7 +995,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
               Text(
                 l10n.deleteVerseConfirmation,
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
                   color: AppColors.secondaryText,
                 ),
                 textAlign: TextAlign.center,
@@ -1023,7 +1032,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                             child: Text(
                               l10n.delete,
                               style: TextStyle(
-                                fontSize: 14.fz,
+                                fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
                                 fontWeight: FontWeight.w600,
                                 color: Colors.red,
                               ),
@@ -1085,14 +1094,15 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                   Icon(
                     Icons.history_toggle_off,
                     color: Colors.redAccent,
-                    size: 32.iz,
+                    size: ResponsiveUtils.iconSize(context, 32),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Text(
                       l10n.clearSharedHistoryQuestion,
                       style: TextStyle(
-                        fontSize: 18.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 18,
+                            minSize: 16, maxSize: 20),
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryText,
                       ),
@@ -1144,7 +1154,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                             child: Text(
                               l10n.clearAll,
                               style: TextStyle(
-                                fontSize: 14.fz,
+                                fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
                                 fontWeight: FontWeight.w600,
                                 color: Colors.red,
                               ),
@@ -1203,14 +1213,15 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                   Icon(
                     Icons.delete_sweep,
                     color: Colors.redAccent,
-                    size: 32.iz,
+                    size: ResponsiveUtils.iconSize(context, 32),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Text(
                       l10n.clearSavedVersesQuestion,
                       style: TextStyle(
-                        fontSize: 18.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 18,
+                            minSize: 16, maxSize: 20),
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryText,
                       ),
@@ -1262,7 +1273,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                             child: Text(
                               l10n.clearAll,
                               style: TextStyle(
-                                fontSize: 14.fz,
+                                fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
                                 fontWeight: FontWeight.w600,
                                 color: Colors.red,
                               ),

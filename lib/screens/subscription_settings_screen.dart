@@ -14,7 +14,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_button.dart';
@@ -23,6 +22,7 @@ import '../components/standard_screen_header.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_gradients.dart';
 import '../core/providers/app_providers.dart';
+import '../utils/responsive_utils.dart';
 import 'paywall_screen.dart';
 import '../l10n/app_localizations.dart';
 
@@ -46,120 +46,108 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
       body: Stack(
         children: [
           const GradientBackground(),
-          AppWidthLimiter(
-            maxWidth: 1000,
-            horizontalPadding: 0,
-            backgroundColor: Colors.transparent,
-            child: SafeArea(
-              child: Column(
-                children: [
-                  _buildAppBar(context),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: AppSpacing.screenPadding,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Status Header
-                          _buildStatusHeader(
-                            context: context,
-                            l10n: l10n,
-                            isPremium: isPremium,
-                            isInTrial: isInTrial,
-                            hasTrialExpired: hasTrialExpired,
-                            trialDaysRemaining: trialDaysRemaining,
-                            subscriptionService: subscriptionService,
-                          ),
-                          AppSpacing.xxl.sbh,
+          SafeArea(
+            child: Column(
+              children: [
+                _buildAppBar(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: AppSpacing.screenPadding,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Status Header
+                        _buildStatusHeader(
+                          context: context,
+                          l10n: l10n,
+                          isPremium: isPremium,
+                          isInTrial: isInTrial,
+                          hasTrialExpired: hasTrialExpired,
+                          trialDaysRemaining: trialDaysRemaining,
+                          subscriptionService: subscriptionService,
+                        ),
+                        const SizedBox(height: AppSpacing.xxl),
 
-                          // Stats Cards
-                          _buildStatsCards(
-                            context: context,
-                            l10n: l10n,
-                            isPremium: isPremium,
-                            remainingMessages: remainingMessages,
-                            messagesUsed: messagesUsed,
-                            trialDaysRemaining: trialDaysRemaining,
-                          ),
-                          AppSpacing.xxl.sbh,
+                        // Stats Cards
+                        _buildStatsCards(
+                          context: context,
+                          l10n: l10n,
+                          isPremium: isPremium,
+                          remainingMessages: remainingMessages,
+                          messagesUsed: messagesUsed,
+                          trialDaysRemaining: trialDaysRemaining,
+                        ),
+                        const SizedBox(height: AppSpacing.xxl),
 
-                          // What You Get Section
-                          GlassSectionHeader(
-                            title: isPremium
-                                ? l10n.subscriptionYourPremiumBenefits
-                                : l10n.subscriptionUpgradeToPremium,
-                            icon: Icons.workspace_premium,
-                          ),
-                          AppSpacing.lg.sbh,
-                          _buildBenefitsList(l10n, isPremium, premiumProduct),
-                          AppSpacing.xxl.sbh,
+                        // What You Get Section
+                        GlassSectionHeader(
+                          title: isPremium ? l10n.subscriptionYourPremiumBenefits : l10n.subscriptionUpgradeToPremium,
+                          icon: Icons.workspace_premium,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        _buildBenefitsList(l10n, isPremium, premiumProduct),
+                        const SizedBox(height: AppSpacing.xxl),
 
-                          // Action Buttons
-                          if (!isPremium) ...[
-                            GlassButton(
-                              text: (hasTrialExpired || isTrialBlocked)
-                                  ? l10n.subscriptionSubscribeNowButton(
-                                      premiumProduct?.price ?? "\$35.99")
-                                  : l10n.subscriptionStartFreeTrialButton,
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => PaywallScreen(
-                                      showTrialInfo:
-                                          !(hasTrialExpired || isTrialBlocked),
-                                    ),
+                        // Action Buttons
+                        if (!isPremium) ...[
+                          GlassButton(
+                            text: (hasTrialExpired || isTrialBlocked)
+                                ? l10n.subscriptionSubscribeNowButton(premiumProduct?.price ?? "\$35.99")
+                                : l10n.subscriptionStartFreeTrialButton,
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => PaywallScreen(
+                                    showTrialInfo: !(hasTrialExpired || isTrialBlocked),
                                   ),
-                                );
-                              },
-                            ),
-                            AppSpacing.lg.sbh,
-                          ] else ...[
-                            GlassButton(
-                              text: l10n.subscriptionManageButton,
-                              onPressed: () =>
-                                  _openManageSubscription(context, l10n),
-                            ),
-                            AppSpacing.lg.sbh,
-                          ],
-
-                          // Info Card
-                          FrostedGlassCard(
-                            padding: EdgeInsets.all(AppSpacing.lg.s),
-                            intensity: GlassIntensity.light,
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.info_outline,
-                                  color: AppColors.secondaryText,
-                                  size: 20,
                                 ),
-                                AppSpacing.sm.sbh,
-                                AutoSizeText(
-                                  isPremium
-                                      ? l10n.subscriptionRenewalInfoPremium(
-                                          premiumProduct?.price ?? "\$35.99")
-                                      : l10n.subscriptionRenewalInfoTrial(
-                                          premiumProduct?.price ?? "\$35.99"),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.secondaryText,
-                                    height: 1.4,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 5,
-                                  minFontSize: 10,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
-                          AppSpacing.xxl.sbh,
+                          const SizedBox(height: AppSpacing.lg),
+                        ] else ...[
+                          GlassButton(
+                            text: l10n.subscriptionManageButton,
+                            onPressed: () => _openManageSubscription(context, l10n),
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
                         ],
-                      ),
+
+                        // Info Card
+                        FrostedGlassCard(
+                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          intensity: GlassIntensity.light,
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: AppColors.secondaryText,
+                                size: 20,
+                              ),
+                              const SizedBox(height: AppSpacing.sm),
+                              AutoSizeText(
+                                isPremium
+                                    ? l10n.subscriptionRenewalInfoPremium(premiumProduct?.price ?? "\$35.99")
+                                    : l10n.subscriptionRenewalInfoTrial(premiumProduct?.price ?? "\$35.99"),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.secondaryText,
+                                  height: 1.4,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 5,
+                                minFontSize: 10,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xxl),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -215,7 +203,7 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
         AutoSizeText(
           status,
           style: TextStyle(
-            fontSize: 24.fz,
+            fontSize: ResponsiveUtils.fontSize(context, 24, minSize: 20, maxSize: 28),
             fontWeight: FontWeight.bold,
             color: AppColors.primaryText,
           ),
@@ -224,7 +212,7 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
           minFontSize: 18,
           overflow: TextOverflow.ellipsis,
         ),
-        AppSpacing.sm.sbh,
+        const SizedBox(height: AppSpacing.sm),
         AutoSizeText(
           subtitle,
           style: TextStyle(
@@ -261,27 +249,23 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
             delay: 400,
           ),
         ),
-        AppSpacing.md.sbw,
+        const SizedBox(width: AppSpacing.md),
         Expanded(
           child: _buildStatCard(
             context: context,
             value: '$messagesUsed',
-            label: isPremium
-                ? l10n.subscriptionUsedThisMonth
-                : l10n.subscriptionUsedToday,
+            label: isPremium ? l10n.subscriptionUsedThisMonth : l10n.subscriptionUsedToday,
             icon: Icons.check_circle_outline,
             color: Colors.green,
             delay: 500,
           ),
         ),
-        AppSpacing.md.sbw,
+        const SizedBox(width: AppSpacing.md),
         Expanded(
           child: _buildStatCard(
             context: context,
             value: isPremium ? '150' : '$trialDaysRemaining',
-            label: isPremium
-                ? l10n.subscriptionMonthlyLimit
-                : l10n.subscriptionTrialDaysLeft,
+            label: isPremium ? l10n.subscriptionMonthlyLimit : l10n.subscriptionTrialDaysLeft,
             icon: isPremium ? Icons.all_inclusive : Icons.schedule,
             color: isPremium ? AppTheme.goldColor : Colors.blue,
             delay: 600,
@@ -304,7 +288,7 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
       padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         gradient: AppGradients.glassMedium,
-        borderRadius: AppRadius.md.br,
+        borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.2),
           width: 1,
@@ -321,18 +305,18 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(10.s),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.2),
-              borderRadius: AppRadius.sm.br,
+              borderRadius: BorderRadius.circular(AppRadius.sm),
             ),
-            child: Icon(icon, size: 24.iz, color: color),
+            child: Icon(icon, size: ResponsiveUtils.iconSize(context, 24), color: color),
           ),
-          AppSpacing.sm.sbh,
+          const SizedBox(height: AppSpacing.sm),
           AutoSizeText(
             value,
             style: TextStyle(
-              fontSize: 20.fz,
+              fontSize: ResponsiveUtils.fontSize(context, 20, minSize: 16, maxSize: 24),
               fontWeight: FontWeight.bold,
               color: AppColors.primaryText,
               shadows: AppTheme.textShadowStrong,
@@ -345,7 +329,7 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
           AutoSizeText(
             label,
             style: TextStyle(
-              fontSize: 11.fz,
+              fontSize: ResponsiveUtils.fontSize(context, 11, minSize: 9, maxSize: 13),
               fontWeight: FontWeight.w600,
               color: Colors.white.withValues(alpha: 0.9),
               shadows: AppTheme.textShadowSubtle,
@@ -357,15 +341,11 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
           ),
         ],
       ),
-    )
-        .animate()
-        .fadeIn(delay: Duration(milliseconds: delay))
-        .scale(delay: Duration(milliseconds: delay));
+    ).animate().fadeIn(delay: Duration(milliseconds: delay)).scale(delay: Duration(milliseconds: delay));
   }
 
   /// Build benefits list
-  Widget _buildBenefitsList(
-      AppLocalizations l10n, bool isPremium, dynamic premiumProduct) {
+  Widget _buildBenefitsList(AppLocalizations l10n, bool isPremium, dynamic premiumProduct) {
     final benefits = [
       {
         'icon': Icons.chat_bubble_outline,
@@ -375,8 +355,7 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
       {
         'icon': Icons.all_inclusive,
         'title': l10n.subscriptionBenefit150Messages,
-        'subtitle': l10n.subscriptionBenefit150MessagesDesc(
-            premiumProduct?.price ?? "\$35.99"),
+        'subtitle': l10n.subscriptionBenefit150MessagesDesc(premiumProduct?.price ?? "\$35.99"),
       },
       {
         'icon': Icons.psychology,
@@ -400,18 +379,18 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
           .asMap()
           .entries
           .map((entry) => Padding(
-                padding: EdgeInsets.only(bottom: AppSpacing.md.s),
+                padding: const EdgeInsets.only(bottom: AppSpacing.md),
                 child: FrostedGlassCard(
-                  padding: EdgeInsets.all(AppSpacing.lg.s),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   intensity: GlassIntensity.medium,
                   borderColor: AppTheme.goldColor.withValues(alpha: 0.4),
                   child: Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(AppSpacing.md.s),
+                        padding: const EdgeInsets.all(AppSpacing.md),
                         decoration: BoxDecoration(
                           color: AppTheme.goldColor.withValues(alpha: 0.2),
-                          borderRadius: AppRadius.sm.br,
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
                           border: Border.all(
                             color: AppTheme.goldColor.withValues(alpha: 0.4),
                             width: 1,
@@ -423,7 +402,7 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
                           color: AppTheme.goldColor,
                         ),
                       ),
-                      AppSpacing.lg.sbw,
+                      const SizedBox(width: AppSpacing.lg),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -462,21 +441,14 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
                         ),
                     ],
                   ),
-                )
-                    .animate()
-                    .fadeIn(
-                        delay: Duration(milliseconds: 700 + (entry.key * 100)))
-                    .slideX(
-                        begin: 0.3,
-                        delay: Duration(milliseconds: 700 + (entry.key * 100))),
+                ).animate().fadeIn(delay: Duration(milliseconds: 700 + (entry.key * 100))).slideX(begin: 0.3, delay: Duration(milliseconds: 700 + (entry.key * 100))),
               ))
           .toList(),
     );
   }
 
   /// Open manage subscription (App Store or Play Store based on platform)
-  Future<void> _openManageSubscription(
-      BuildContext context, AppLocalizations l10n) async {
+  Future<void> _openManageSubscription(BuildContext context, AppLocalizations l10n) async {
     // Use platform-specific subscription management URL
     final Uri url = Platform.isIOS
         ? Uri.parse('https://apps.apple.com/account/subscriptions')

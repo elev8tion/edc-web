@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/noise_overlay.dart';
@@ -355,18 +356,28 @@ class _CoachMarkOverlayState extends State<_CoachMarkOverlay>
                 // Content
                 _buildContent(context, target),
 
-                // Skip button
-                Positioned(
-                  top: MediaQuery.of(context).padding.top + 16,
-                  right: 16,
-                  child: GestureDetector(
-                    onTap: widget.coachMark._skip,
-                    child: _buildGlassButton(
-                      context,
-                      config.skipText,
-                      config.skipTextStyle,
-                    ),
-                  ),
+                // Skip button - positioned within the 430px container on web
+                Builder(
+                  builder: (context) {
+                    final screenWidth = MediaQuery.of(context).size.width;
+                    const double webMaxWidth = 430;
+                    final double webHorizontalOffset = kIsWeb && screenWidth > webMaxWidth
+                        ? (screenWidth - webMaxWidth) / 2
+                        : 0;
+
+                    return Positioned(
+                      top: MediaQuery.of(context).padding.top + 16,
+                      right: webHorizontalOffset + 16,
+                      child: GestureDetector(
+                        onTap: widget.coachMark._skip,
+                        child: _buildGlassButton(
+                          context,
+                          config.skipText,
+                          config.skipTextStyle,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -416,19 +427,25 @@ class _CoachMarkOverlayState extends State<_CoachMarkOverlay>
   Widget _buildContent(BuildContext context, CoachTarget target) {
     final screenSize = MediaQuery.of(context).size;
 
+    // On web, calculate the horizontal offset for the centered 430px container
+    const double webMaxWidth = 430;
+    final double webHorizontalOffset = kIsWeb && screenSize.width > webMaxWidth
+        ? (screenSize.width - webMaxWidth) / 2
+        : 0;
+
     // Calculate content position
     double? top, bottom, left, right;
 
     switch (target.contentPosition) {
       case ContentPosition.top:
         bottom = screenSize.height - _targetRect!.top + 20;
-        left = 20;
-        right = 20;
+        left = webHorizontalOffset + 20;
+        right = webHorizontalOffset + 20;
         break;
       case ContentPosition.bottom:
         top = _targetRect!.bottom + 20;
-        left = 20;
-        right = 20;
+        left = webHorizontalOffset + 20;
+        right = webHorizontalOffset + 20;
         break;
       case ContentPosition.left:
         right = screenSize.width - _targetRect!.left + 20;

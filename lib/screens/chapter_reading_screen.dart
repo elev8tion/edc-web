@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_card.dart';
@@ -16,6 +15,7 @@ import '../core/services/database_service.dart';
 import '../services/bible_chapter_service.dart';
 import '../models/bible_verse.dart';
 import '../models/verse_context.dart';
+import '../utils/responsive_utils.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../core/services/tts_service.dart';
 import '../core/services/book_name_service.dart';
@@ -373,12 +373,10 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
     final currentChapter = widget.startChapter + _currentChapterIndex;
 
     return Scaffold(
-      body: AppWidthLimiter(
-        maxWidth: 900,
-        child: Stack(
-          children: [
-            const GradientBackground(),
-            SafeArea(
+      body: Stack(
+        children: [
+          const GradientBackground(),
+          SafeArea(
             child: FutureBuilder<Map<int, List<BibleVerse>>>(
               future: _versesFuture,
               builder: (context, snapshot) {
@@ -444,7 +442,6 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
             ),
           ),
         ],
-        ),
       ),
     );
   }
@@ -485,7 +482,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                   ),
                 ),
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.iz),
+                  icon: Icon(Icons.arrow_back, color: Colors.white, size: ResponsiveUtils.iconSize(context, 24)),
                   onPressed: () => NavigationService.pop(),
                   tooltip: l10n.backButton,
                   constraints: const BoxConstraints(
@@ -505,7 +502,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                     Text(
                       displayBookName,
                       style: TextStyle(
-                        fontSize: 20.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 20, minSize: 18, maxSize: 22),
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
                         height: 1.2,
@@ -522,7 +519,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                               ? l10n.chapterOfTotal(_currentChapterIndex + 1, totalChapters)
                               : 'Chapter $currentChapter',
                             style: TextStyle(
-                              fontSize: 12.fz,
+                              fontSize: ResponsiveUtils.fontSize(context, 12, minSize: 11, maxSize: 13),
                               color: Colors.white.withValues(alpha: 0.7),
                               fontWeight: FontWeight.w500,
                               height: 1.2,
@@ -690,14 +687,14 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
               children: [
                 Icon(
                   Icons.info_outline,
-                  size: 48.iz,
+                  size: ResponsiveUtils.iconSize(context, 48),
                   color: AppTheme.primaryColor,
                 ),
                 const SizedBox(height: 16),
                 Text(
                   l10n.noVersesFoundForBook(widget.book, chapterNum),
                   style: TextStyle(
-                    fontSize: 16.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 16, minSize: 14, maxSize: 18),
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
@@ -807,7 +804,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                               child: Text(
                                 '${verse.verseNumber}',
                                 style: TextStyle(
-                                  fontSize: 14.fz,
+                                  fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.primaryText,
                                 ),
@@ -894,7 +891,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                           child: Text(
                             verse.text,
                             style: TextStyle(
-                              fontSize: 18.fz,
+                              fontSize: ResponsiveUtils.fontSize(context, 18, minSize: 16, maxSize: 20),
                               height: 1.6,
                               color: isActive ? AppTheme.goldColor : Colors.white,
                               fontWeight: FontWeight.w400,
@@ -957,7 +954,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
             padding: EdgeInsets.zero,
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
-              size: 18.iz,
+              size: ResponsiveUtils.iconSize(context, 18),
               color: isFavorite ? Colors.red : Colors.white.withValues(alpha: 0.7),
             ),
             onPressed: () => _toggleFavorite(verse),
@@ -1129,7 +1126,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
               children: [
                 Icon(
                   Icons.error_outline,
-                  size: 64.iz,
+                  size: ResponsiveUtils.iconSize(context, 64),
                   color: Colors.red.shade300,
                 ),
                 const SizedBox(height: 16),
@@ -1145,7 +1142,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                 Text(
                   error,
                   style: TextStyle(
-                    fontSize: 14.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
                     color: Colors.white.withValues(alpha: 0.8),
                   ),
                   textAlign: TextAlign.center,
@@ -1189,7 +1186,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
               children: [
                 Icon(
                   Icons.book_outlined,
-                  size: 64.iz,
+                  size: ResponsiveUtils.iconSize(context, 64),
                   color: AppTheme.primaryColor,
                 ),
                 const SizedBox(height: 16),

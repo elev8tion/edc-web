@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/physics.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:local_auth/local_auth.dart';
@@ -13,6 +12,7 @@ import '../core/services/preferences_service.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/navigation/app_routes.dart';
 import '../theme/app_theme.dart';
+import '../utils/responsive_utils.dart';
 import '../utils/motion_character.dart';
 import '../utils/ui_audio.dart';
 import '../l10n/app_localizations.dart';
@@ -176,15 +176,13 @@ class _UnifiedInteractiveOnboardingScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      body: AppWidthLimiter(
-        maxWidth: 600,
-        child: Stack(
-          children: [
-            RepaintBoundary(
-              key: _backgroundKey,
-              child: const GradientBackground(),
-            ),
-            SafeArea(
+      body: Stack(
+        children: [
+          RepaintBoundary(
+            key: _backgroundKey,
+            child: const GradientBackground(),
+          ),
+          SafeArea(
             child: Column(
               children: [
                 // Header with back button (hidden on first page)
@@ -238,7 +236,6 @@ class _UnifiedInteractiveOnboardingScreenState
             ),
           ),
         ],
-        ),
       ),
     );
   }
@@ -460,27 +457,12 @@ class _UnifiedInteractiveOnboardingScreenState
   }
 
   Future<void> _openLegalDoc(String type) async {
-    // Open legal documents
+    // Open legal documents (simplified - you can enhance this)
     final url = type == 'terms'
         ? 'https://everydaychristian.app/terms'
         : 'https://everydaychristian.app/privacy';
-
-    try {
-      final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-        );
-      } else {
-        // Fallback - try to launch anyway
-        await launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-        );
-      }
-    } catch (e) {
-      debugPrint('Could not launch $url: $e');
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
     }
   }
 
@@ -574,13 +556,15 @@ class _UnifiedInteractiveOnboardingScreenState
               controller: _nameController,
               style: TextStyle(
                 color: AppColors.primaryText,
-                fontSize: 15.fz,
+                fontSize: ResponsiveUtils.fontSize(context, 15,
+                    minSize: 13, maxSize: 17),
               ),
               decoration: InputDecoration(
                 hintText: l10n.firstNameOptional,
                 hintStyle: TextStyle(
                   color: AppColors.tertiaryText,
-                  fontSize: 15.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 15,
+                      minSize: 13, maxSize: 17),
                 ),
                 border: InputBorder.none,
                 filled: true,

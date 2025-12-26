@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/services/preferences_service.dart';
 import '../core/navigation/app_routes.dart';
@@ -36,57 +35,52 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
         children: [
           const GradientBackground(),
           SafeArea(
-            child: AppWidthLimiter(
-              maxWidth: 900,
-              horizontalPadding: 0,
-              backgroundColor: Colors.transparent,
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(24.0.s),
+            child: Column(
+              children: [
+                _buildHeader(),
+                Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildIntroText(),
-                      32.sbh,
+                      const SizedBox(height: 32),
                       _buildDisclaimerSection(
                         icon: Icons.health_and_safety,
                         title: l10n.notProfessionalCounseling,
                         content: l10n.notProfessionalCounselingDesc,
                       ),
-                      24.sbh,
+                      const SizedBox(height: 24),
                       _buildCrisisResourcesSection(),
-                      24.sbh,
+                      const SizedBox(height: 24),
                       _buildDisclaimerSection(
                         icon: Icons.gavel,
                         title: l10n.noMedicalLegalAdvice,
                         content: l10n.noMedicalLegalAdviceDesc,
                       ),
-                      24.sbh,
+                      const SizedBox(height: 24),
                       _buildDisclaimerSection(
                         icon: Icons.smart_toy,
                         title: l10n.aiLimitations,
                         content: l10n.aiLimitationsDesc,
                       ),
-                      24.sbh,
+                      const SizedBox(height: 24),
                       _buildDisclaimerSection(
                         icon: Icons.lightbulb_outline,
                         title: l10n.recommendedUse,
                         content: l10n.recommendedUseDesc,
                       ),
-                      40.sbh,
+                      const SizedBox(height: 40),
                       _buildConsentSection(),
-                      32.sbh,
+                      const SizedBox(height: 32),
                       _buildBottomButton(),
-                      24.sbh,
+                      const SizedBox(height: 24),
                     ],
                   ).animate().fadeIn(duration: AppAnimations.slow, delay: AppAnimations.fast).slideY(begin: 0.2),
-                  ),
                 ),
-              ],
               ),
+            ],
             ),
           ),
         ],
@@ -98,7 +92,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
     final l10n = AppLocalizations.of(context);
 
     return Padding(
-      padding: EdgeInsets.all(24.0.s),
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
           Text(
@@ -109,7 +103,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 ),
             textAlign: TextAlign.center,
           ),
-          8.sbh,
+          const SizedBox(height: 8),
           Text(
             l10n.pleaseReviewAndAccept,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -127,7 +121,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
 
     return FrostedGlassCard(
       child: Padding(
-        padding: EdgeInsets.all(20.0.s),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -136,9 +130,9 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 Icon(
                   Icons.info_outline,
                   color: Colors.white.withValues(alpha: 0.4),
-                  size: 28.iz,
+                  size: 28,
                 ),
-                12.sbw,
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     l10n.importantInformation,
@@ -150,7 +144,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 ),
               ],
             ),
-            12.sbh,
+            const SizedBox(height: 12),
             Text(
               l10n.legalIntroText,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -171,7 +165,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
   }) {
     return FrostedGlassCard(
       child: Padding(
-        padding: EdgeInsets.all(20.0.s),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -180,9 +174,9 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 Icon(
                   icon,
                   color: Colors.white.withValues(alpha: 0.4),
-                  size: 28.iz,
+                  size: 28,
                 ),
-                12.sbw,
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     title,
@@ -194,7 +188,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 ),
               ],
             ),
-            12.sbh,
+            const SizedBox(height: 12),
             Text(
               content,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -213,7 +207,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
 
     return FrostedGlassCard(
       child: Padding(
-        padding: EdgeInsets.all(20.0.s),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -222,9 +216,9 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 Icon(
                   Icons.phone_in_talk,
                   color: Colors.red[300],
-                  size: 28.iz,
+                  size: 28,
                 ),
-                12.sbw,
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     l10n.crisisResources,
@@ -236,21 +230,21 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 ),
               ],
             ),
-            16.sbh,
+            const SizedBox(height: 16),
             _buildCrisisResource(
               title: l10n.crisis988Title,
               description: l10n.crisis988Desc,
               icon: Icons.phone,
               onTap: _call988,
             ),
-            12.sbh,
+            const SizedBox(height: 12),
             _buildCrisisResource(
               title: l10n.crisisTextLine,
               description: l10n.crisisTextLineDesc,
               icon: Icons.message,
               onTap: _textCrisisLine,
             ),
-            12.sbh,
+            const SizedBox(height: 12),
             _buildCrisisResource(
               title: l10n.emergencyServices,
               description: l10n.emergencyServicesDesc,
@@ -271,12 +265,12 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: 8.br,
+      borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: EdgeInsets.all(12.0.s),
+        padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: Colors.red.withValues(alpha: 0.1),
-          borderRadius: 8.br,
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: Colors.red.withValues(alpha: 0.3),
             width: 1,
@@ -287,9 +281,9 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
             Icon(
               icon,
               color: Colors.red[300],
-              size: 24.iz,
+              size: 24,
             ),
-            12.sbw,
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -301,7 +295,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  4.sbh,
+                  const SizedBox(height: 4),
                   Text(
                     description,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -327,7 +321,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
 
     return FrostedGlassCard(
       child: Padding(
-        padding: EdgeInsets.all(20.0.s),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -336,9 +330,9 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 Icon(
                   Icons.assignment,
                   color: Colors.white.withValues(alpha: 0.4),
-                  size: 28.iz,
+                  size: 28,
                 ),
-                12.sbw,
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     l10n.acceptanceRequired,
@@ -350,7 +344,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 ),
               ],
             ),
-            20.sbh,
+            const SizedBox(height: 20),
             _buildCheckboxTile(
               value: _termsChecked,
               onChanged: (value) {
@@ -360,7 +354,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
               linkText: l10n.termsOfService,
               onLinkTap: () => _launchURL('/terms'),
             ),
-            12.sbh,
+            const SizedBox(height: 12),
             _buildCheckboxTile(
               value: _privacyChecked,
               onChanged: (value) {
@@ -370,7 +364,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
               linkText: l10n.privacyPolicy,
               onLinkTap: () => _launchURL('/privacy'),
             ),
-            12.sbh,
+            const SizedBox(height: 12),
             _buildSimpleCheckboxTile(
               value: _ageChecked,
               onChanged: (value) {
@@ -418,7 +412,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 : null,
           ),
         ),
-        12.sbw,
+        const SizedBox(width: 12),
         Expanded(
           child: GestureDetector(
             onTap: () => onChanged(!value),
@@ -484,7 +478,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 : null,
           ),
         ),
-        12.sbw,
+        const SizedBox(width: 12),
         Expanded(
           child: GestureDetector(
             onTap: () => onChanged(!value),
@@ -532,8 +526,18 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
       final success = await prefsService.saveLegalAgreementAcceptance(true);
 
       if (success && mounted) {
-        // Navigate to onboarding screen
-        Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
+        // Check if onboarding is also needed
+        final hasCompletedOnboarding = prefsService.hasCompletedOnboarding();
+
+        if (!hasCompletedOnboarding) {
+          // Go to onboarding next
+          debugPrint('📱 [LegalAgreements] Legal accepted, navigating to onboarding');
+          Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
+        } else {
+          // Rare case: legal reset but onboarding done - go home
+          debugPrint('🏠 [LegalAgreements] Legal accepted, onboarding already complete, going to home');
+          Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+        }
       } else {
         _showSnackBar(l10n.failedToSaveAcceptance);
         setState(() {
@@ -589,10 +593,10 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
         elevation: 0,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
-        margin: EdgeInsets.all(16.s),
+        margin: const EdgeInsets.all(16),
         padding: EdgeInsets.zero,
         content: Container(
-          padding: EdgeInsets.all(16.s),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
@@ -602,7 +606,7 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
                 Color(0xFF0F172A), // slate-900
               ],
             ),
-            borderRadius: 12.br,
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: borderColor,
               width: 1,
@@ -610,14 +614,14 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
           ),
           child: Row(
             children: [
-              Icon(icon, color: iconColor, size: 20.iz),
-              12.sbw,
+              Icon(icon, color: iconColor, size: 20),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   message,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 14.fz,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

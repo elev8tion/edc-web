@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_card.dart';
@@ -240,47 +239,42 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
         child: Stack(
           children: [
             const GradientBackground(),
-            AppWidthLimiter(
-              maxWidth: 1200,
-              horizontalPadding: 0,
-              backgroundColor: Colors.transparent,
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    _buildHeader()
+            SafeArea(
+              child: Column(
+                children: [
+                  _buildHeader()
+                      .animate()
+                      .fadeIn(duration: AppAnimations.normal)
+                      .slideY(begin: -0.2, end: 0),
+                  _buildSearchBar()
+                      .animate()
+                      .fadeIn(duration: AppAnimations.normal, delay: 100.ms)
+                      .slideY(begin: -0.2, end: 0),
+                  // TabBar - hide during search
+                  if (!_showSearchOverlay)
+                    _buildTabBar()
                         .animate()
-                        .fadeIn(duration: AppAnimations.normal)
-                        .slideY(begin: -0.2, end: 0),
-                    _buildSearchBar()
-                        .animate()
-                        .fadeIn(duration: AppAnimations.normal, delay: 100.ms)
-                        .slideY(begin: -0.2, end: 0),
-                    // TabBar - hide during search
-                    if (!_showSearchOverlay)
-                      _buildTabBar()
-                          .animate()
-                          .fadeIn(duration: AppAnimations.normal, delay: 200.ms),
-                    Expanded(
-                      child: _isLoading
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppTheme.goldColor),
-                                strokeWidth: 3,
+                        .fadeIn(duration: AppAnimations.normal, delay: 200.ms),
+                  Expanded(
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppTheme.goldColor),
+                              strokeWidth: 3,
+                            ),
+                          )
+                        : _showSearchOverlay
+                            ? _buildSearchOverlay()
+                            : TabBarView(
+                                controller: _tabController,
+                                children: [
+                                  _buildTestamentView(_getOldTestamentBooks()),
+                                  _buildTestamentView(_getNewTestamentBooks()),
+                                ],
                               ),
-                            )
-                          : _showSearchOverlay
-                              ? _buildSearchOverlay()
-                              : TabBarView(
-                                  controller: _tabController,
-                                  children: [
-                                    _buildTestamentView(_getOldTestamentBooks()),
-                                    _buildTestamentView(_getNewTestamentBooks()),
-                                  ],
-                                ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -305,7 +299,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                 Text(
                   l10n.searchingVerses,
                   style: TextStyle(
-                    fontSize: 14.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 14,
+                        minSize: 12, maxSize: 16),
                     color: Colors.white.withValues(alpha: 0.7),
                   ),
                   maxLines: 1,
@@ -366,7 +361,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                 autocorrect: false,
                 style: TextStyle(
                   color: AppColors.primaryText,
-                  fontSize: 15.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 15,
+                      minSize: 13, maxSize: 17),
                 ),
                 decoration: InputDecoration(
                   hintText: l10n.searchBooks,
@@ -385,7 +381,7 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                   prefixIcon: Icon(
                     Icons.search,
                     color: Colors.white.withValues(alpha: 0.7),
-                    size: 20.iz,
+                    size: ResponsiveUtils.iconSize(context, 20),
                   ),
                 ),
               ),
@@ -472,7 +468,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                       unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
                       labelStyle: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 13.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 13,
+                            minSize: 11, maxSize: 15),
                       ),
                       tabs: [
                         Tab(
@@ -508,7 +505,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                 unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
                 labelStyle: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                 ),
                 tabs: [
                   Tab(text: oldTestamentText),
@@ -530,14 +528,15 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
             children: [
               Icon(
                 Icons.search_off,
-                size: 64.iz,
+                size: ResponsiveUtils.iconSize(context, 64),
                 color: Colors.white.withValues(alpha: 0.5),
               ),
               const SizedBox(height: 16),
               Text(
                 l10n.noBooksFound,
                 style: TextStyle(
-                  fontSize: 18.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 18,
+                      minSize: 16, maxSize: 20),
                   fontWeight: FontWeight.w600,
                   color: Colors.white.withValues(alpha: 0.9),
                 ),
@@ -548,7 +547,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
               Text(
                 l10n.tryDifferentSearchTerm,
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                   color: Colors.white.withValues(alpha: 0.7),
                 ),
                 maxLines: 2,
@@ -651,7 +651,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                           child: Text(
                             abbreviation,
                             style: TextStyle(
-                              fontSize: 14.fz,
+                              fontSize: ResponsiveUtils.fontSize(context, 14,
+                                  minSize: 12, maxSize: 16),
                               fontWeight: FontWeight.w700,
                               color: Colors.white.withValues(alpha: 0.9),
                             ),
@@ -674,7 +675,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                       Text(
                         displayName,
                         style: TextStyle(
-                          fontSize: 16.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 16,
+                              minSize: 14, maxSize: 18),
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -687,7 +689,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                             ? l10n.chapterCount(chapterCount)
                             : l10n.chaptersCount(chapterCount),
                         style: TextStyle(
-                          fontSize: 12.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 12,
+                              minSize: 10, maxSize: 14),
                           color: Colors.white.withValues(alpha: 0.7),
                         ),
                         maxLines: 1,
@@ -700,7 +703,7 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                 // Chevron
                 Icon(
                   Icons.chevron_right,
-                  size: 24.iz,
+                  size: ResponsiveUtils.iconSize(context, 24),
                   color: Colors.white.withValues(alpha: 0.6),
                 ),
               ],
@@ -776,7 +779,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                 child: Text(
                   l10n.selectChapterBook(localizedBookName),
                   style: TextStyle(
-                    fontSize: 20.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 20,
+                        minSize: 18, maxSize: 24),
                     fontWeight: FontWeight.w700,
                     color: AppColors.primaryText,
                   ),
@@ -824,7 +828,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                           child: Text(
                             '$chapterNum',
                             style: TextStyle(
-                              fontSize: 16.fz,
+                              fontSize: ResponsiveUtils.fontSize(context, 16,
+                                  minSize: 14, maxSize: 18),
                               fontWeight: FontWeight.w600,
                               color: AppColors.primaryText,
                             ),
@@ -929,14 +934,15 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
             children: [
               Icon(
                 Icons.search_off,
-                size: 64.iz,
+                size: ResponsiveUtils.iconSize(context, 64),
                 color: Colors.white.withValues(alpha: 0.5),
               ),
               const SizedBox(height: 16),
               Text(
                 l10n.noVersesFound,
                 style: TextStyle(
-                  fontSize: 18.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 18,
+                      minSize: 16, maxSize: 20),
                   fontWeight: FontWeight.w600,
                   color: Colors.white.withValues(alpha: 0.9),
                 ),
@@ -947,7 +953,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
               Text(
                 l10n.tryDifferentSearchTerm,
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                   color: Colors.white.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
@@ -966,7 +973,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
           child: Text(
             l10n.versesFoundCount(_verseSearchResults.length),
             style: TextStyle(
-              fontSize: 14.fz,
+              fontSize: ResponsiveUtils.fontSize(context, 14,
+                  minSize: 12, maxSize: 16),
               fontWeight: FontWeight.w600,
               color: Colors.white.withValues(alpha: 0.7),
             ),
@@ -1024,7 +1032,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                     child: Text(
                       reference,
                       style: TextStyle(
-                        fontSize: 12.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 12,
+                            minSize: 10, maxSize: 14),
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
@@ -1036,7 +1045,7 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                   Icon(
                     Icons.chevron_right,
                     color: Colors.white.withValues(alpha: 0.6),
-                    size: 20.iz,
+                    size: ResponsiveUtils.iconSize(context, 20),
                   ),
                 ],
               ),
@@ -1044,7 +1053,8 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
               Text(
                 verse.text,
                 style: TextStyle(
-                  fontSize: 15.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 15,
+                      minSize: 13, maxSize: 17),
                   color: AppColors.primaryText,
                   height: 1.5,
                   fontWeight: FontWeight.w500,

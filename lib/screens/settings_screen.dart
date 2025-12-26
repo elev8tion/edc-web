@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_scalify/flutter_scalify.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +10,8 @@ import 'package:local_auth/local_auth.dart';
 import '../core/services/database_service.dart';
 import '../core/services/preferences_service.dart';
 import '../core/services/bible_config.dart';
+import '../features/auth/services/secure_storage_service.dart';
+import '../components/pin_setup_dialog.dart';
 import '../services/conversation_service.dart';
 import '../theme/app_theme.dart';
 import '../components/gradient_background.dart';
@@ -62,27 +63,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: Stack(
           children: [
             const GradientBackground(),
-            AppWidthLimiter(
-              maxWidth: 1000,
-              horizontalPadding: 0,
-              backgroundColor: Colors.transparent,
-              child: SafeArea(
-                child: _buildSettingsContent(),
-              ),
+            SafeArea(
+              child: _buildSettingsContent(),
             ),
-            // Pinned FAB - also needs AppWidthLimiter for proper positioning
-            AppWidthLimiter(
-              maxWidth: 1000,
-              horizontalPadding: 0,
-              backgroundColor: Colors.transparent,
-              child: Positioned(
-                top: MediaQuery.of(context).padding.top + AppSpacing.xl,
-                left: AppSpacing.xl,
-                child: const GlassmorphicFABMenu()
-                    .animate()
-                    .fadeIn(duration: AppAnimations.slow)
-                    .slideY(begin: -0.3),
-              ),
+            // Pinned FAB
+            Positioned(
+              top: MediaQuery.of(context).padding.top + AppSpacing.xl,
+              left: AppSpacing.xl,
+              child: const GlassmorphicFABMenu()
+                  .animate()
+                  .fadeIn(duration: AppAnimations.slow)
+                  .slideY(begin: -0.3),
             ),
           ],
         ),
@@ -222,8 +213,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             l10n.dataPrivacy,
             Icons.security,
             [
-              // Biometric auth not supported on web
-              if (!kIsWeb) _buildAppLockTile(),
+              _buildAppLockTile(),
+              _buildPinManagementTile(),
               _buildActionTile(
                 l10n.clearCache,
                 l10n.clearCacheDesc,
@@ -326,7 +317,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: Icon(
                   icon,
                   color: AppColors.primaryText,
-                  size: 20.iz,
+                  size: ResponsiveUtils.iconSize(context, 20),
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -334,7 +325,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 18.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 18,
+                        minSize: 16, maxSize: 20),
                     fontWeight: FontWeight.w700,
                     color: AppColors.primaryText,
                     shadows: AppTheme.textShadowSubtle,
@@ -369,7 +361,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(
                       title,
                       style: TextStyle(
-                        fontSize: 16.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 16,
+                            minSize: 14, maxSize: 18),
                         fontWeight: FontWeight.w600,
                         color: AppColors.primaryText,
                       ),
@@ -378,7 +371,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(
                       subtitle,
                       style: TextStyle(
-                        fontSize: 13.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 13,
+                            minSize: 11, maxSize: 15),
                         color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
@@ -388,7 +382,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Text(
                 '${(value * 100).round()}%',
                 style: TextStyle(
-                  fontSize: 14.fz,
+                  fontSize: ResponsiveUtils.fontSize(context, 14,
+                      minSize: 12, maxSize: 16),
                   fontWeight: FontWeight.w600,
                   color: AppColors.primaryText,
                 ),
@@ -452,7 +447,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: Icon(
                   icon,
                   color: Colors.white,
-                  size: 22.iz,
+                  size: ResponsiveUtils.iconSize(context, 22),
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -464,7 +459,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(
                       title,
                       style: TextStyle(
-                        fontSize: 16.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 16,
+                            minSize: 14, maxSize: 18),
                         fontWeight: FontWeight.w600,
                         color: AppColors.primaryText,
                       ),
@@ -473,7 +469,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(
                       subtitle,
                       style: TextStyle(
-                        fontSize: 13.fz,
+                        fontSize: ResponsiveUtils.fontSize(context, 13,
+                            minSize: 11, maxSize: 15),
                         color: AppColors.tertiaryText,
                       ),
                     ),
@@ -531,14 +528,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         Icons.access_time_rounded,
                         color:
                             AppTheme.toggleActiveColor.withValues(alpha: 0.8),
-                        size: 18.iz,
+                        size: ResponsiveUtils.iconSize(context, 18),
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
                           l10n.notificationTime,
                           style: TextStyle(
-                            fontSize: 14.fz,
+                            fontSize: ResponsiveUtils.fontSize(context, 14,
+                                minSize: 12, maxSize: 16),
                             color: Colors.white.withValues(alpha: 0.7),
                           ),
                         ),
@@ -547,7 +545,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       Text(
                         _formatTimeTo12Hour(currentTime),
                         style: TextStyle(
-                          fontSize: 15.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 15,
+                              minSize: 13, maxSize: 17),
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -556,7 +555,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       Icon(
                         Icons.chevron_right,
                         color: AppColors.tertiaryText,
-                        size: 18.iz,
+                        size: ResponsiveUtils.iconSize(context, 18),
                       ),
                     ],
                   ),
@@ -593,7 +592,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Icon(
               Icons.lock_outline,
               color: Colors.white,
-              size: 22.iz,
+              size: ResponsiveUtils.iconSize(context, 22),
             ),
           ),
           const SizedBox(width: AppSpacing.md),
@@ -605,7 +604,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Text(
                   l10n.appLock,
                   style: TextStyle(
-                    fontSize: 16.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 16,
+                        minSize: 14, maxSize: 18),
                     fontWeight: FontWeight.w600,
                     color: AppColors.primaryText,
                   ),
@@ -614,7 +614,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Text(
                   l10n.appLockDesc,
                   style: TextStyle(
-                    fontSize: 13.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 13,
+                        minSize: 11, maxSize: 15),
                     color: AppColors.tertiaryText,
                   ),
                 ),
@@ -708,6 +709,173 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     } catch (e) {
       debugPrint('App lock toggle error: $e');
     }
+  }
+
+  /// Build PIN management tile (mobile only)
+  Widget _buildPinManagementTile() {
+    // PIN management not available on web
+    if (kIsWeb) return const SizedBox.shrink();
+
+    return FutureBuilder<bool>(
+      future: Future.value(false), // Skip PIN check on web
+      builder: (context, snapshot) {
+        final hasPin = snapshot.data ?? false;
+
+        return _buildActionTile(
+          hasPin ? 'Change App PIN' : 'Set App PIN',
+          hasPin
+              ? 'Update your app PIN for fallback authentication'
+              : 'Create a PIN as backup when biometrics fail',
+          Icons.pin,
+          hasPin ? _handleChangePIN : _handleSetPIN,
+        );
+      },
+    );
+  }
+
+  /// Handle setting new PIN
+  Future<void> _handleSetPIN() async {
+    final created = await PinSetupDialog.show(context);
+
+    if (created && mounted) {
+      AppSnackBar.show(
+        context,
+        message: 'App PIN created successfully',
+        icon: Icons.check_circle,
+        iconColor: Colors.green,
+      );
+      setState(() {}); // Refresh tile
+    }
+  }
+
+  /// Handle changing existing PIN
+  Future<void> _handleChangePIN() async {
+    final secureStorage = const SecureStorageService();
+
+    // First verify current PIN
+    final verified = await _showPINVerificationDialog();
+    if (!verified || !mounted) return;
+
+    // Show PIN setup dialog to create new PIN
+    final created = await PinSetupDialog.show(context);
+
+    if (created && mounted) {
+      AppSnackBar.show(
+        context,
+        message: 'App PIN updated successfully',
+        icon: Icons.check_circle,
+        iconColor: Colors.green,
+      );
+      setState(() {}); // Refresh tile
+    }
+  }
+
+  /// Show dialog to verify current PIN before changing (mobile only)
+  Future<bool> _showPINVerificationDialog() async {
+    // PIN verification not available on web
+    if (kIsWeb) return false;
+
+    final pinController = TextEditingController();
+    String? errorText;
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: Colors.black.withValues(alpha: 0.9),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: AppTheme.goldColor.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          title: Text(
+            'Verify Current PIN',
+            style: TextStyle(
+              color: AppTheme.goldColor,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Enter your current PIN to continue',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: pinController,
+                autofocus: true,
+                obscureText: true,
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  letterSpacing: 8,
+                ),
+                decoration: InputDecoration(
+                  counterText: '',
+                  hintText: '••••••',
+                  hintStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.3),
+                    letterSpacing: 8,
+                  ),
+                  errorText: errorText,
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppTheme.goldColor.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppTheme.goldColor,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                onSubmitted: (pin) async {
+                  // PIN verification skipped on web
+                  Navigator.of(context).pop(false);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // PIN verification skipped on web
+                Navigator.of(context).pop(false);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.goldColor,
+                foregroundColor: Colors.black,
+              ),
+              child: const Text('Verify'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    pinController.dispose();
+    return result ?? false;
   }
 
   String _formatTimeTo12Hour(String time24) {
@@ -866,7 +1034,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   child: Icon(
                     icon,
                     color: iconColor,
-                    size: 20.iz,
+                    size: ResponsiveUtils.iconSize(context, 20),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
@@ -877,7 +1045,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       Text(
                         title,
                         style: TextStyle(
-                          fontSize: 16.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 16,
+                              minSize: 14, maxSize: 18),
                           fontWeight: FontWeight.w600,
                           color: textColor,
                         ),
@@ -886,7 +1055,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          fontSize: 13.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 13,
+                              minSize: 11, maxSize: 15),
                           color: subtitleColor,
                         ),
                       ),
@@ -898,7 +1068,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   color: isDestructive
                       ? Colors.red.withValues(alpha: 0.5)
                       : Colors.white.withValues(alpha: 0.5),
-                  size: 16.iz,
+                  size: ResponsiveUtils.iconSize(context, 16),
                 ),
               ],
             ),
@@ -991,7 +1161,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Icon(
                         Icons.cleaning_services,
                         color: AppColors.primaryText,
-                        size: 20.iz,
+                        size: ResponsiveUtils.iconSize(context, 20),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.md),
@@ -999,7 +1169,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Text(
                         l10n.clearCacheDialogTitle,
                         style: TextStyle(
-                          fontSize: 20.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 20,
+                              minSize: 18, maxSize: 24),
                           fontWeight: FontWeight.w700,
                           color: AppColors.primaryText,
                         ),
@@ -1012,7 +1183,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Text(
                   l10n.clearCacheDialogMessage,
                   style: TextStyle(
-                    fontSize: 13.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 13,
+                        minSize: 11, maxSize: 15),
                     color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
@@ -1188,7 +1360,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Icon(
                         Icons.warning_amber_rounded,
                         color: Colors.red,
-                        size: 20.iz,
+                        size: ResponsiveUtils.iconSize(context, 20),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.md),
@@ -1196,7 +1368,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Text(
                         l10n.deleteAllData,
                         style: TextStyle(
-                          fontSize: 20.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 20,
+                              minSize: 18, maxSize: 24),
                           fontWeight: FontWeight.w700,
                           color: AppColors.primaryText,
                         ),
@@ -1228,7 +1401,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         Text(
                           l10n.thisWillPermanentlyDelete,
                           style: TextStyle(
-                            fontSize: 14.fz,
+                            fontSize: ResponsiveUtils.fontSize(context, 14,
+                                minSize: 12, maxSize: 16),
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
@@ -1329,7 +1503,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           controller: confirmController,
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14.fz,
+                            fontSize: ResponsiveUtils.fontSize(context, 14,
+                                minSize: 12, maxSize: 16),
                           ),
                           decoration: InputDecoration(
                             hintText: l10n.typeDeletePlaceholder,
@@ -1409,7 +1584,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               text,
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 13.fz,
+                fontSize: ResponsiveUtils.fontSize(context, 13),
               ),
             ),
           ),
@@ -1538,7 +1713,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Icon(
                         Icons.help_outline,
                         color: AppColors.primaryText,
-                        size: 20.iz,
+                        size: ResponsiveUtils.iconSize(context, 20),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.md),
@@ -1546,7 +1721,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Text(
                         l10n.helpFAQ,
                         style: TextStyle(
-                          fontSize: 20.fz,
+                          fontSize: ResponsiveUtils.fontSize(context, 20,
+                              minSize: 18, maxSize: 24),
                           fontWeight: FontWeight.w700,
                           color: AppColors.primaryText,
                         ),
@@ -1559,7 +1735,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Text(
                   l10n.faqSubtitle,
                   style: TextStyle(
-                    fontSize: 13.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 13,
+                        minSize: 11, maxSize: 15),
                     color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
@@ -1824,7 +2001,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   message,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14.fz,
+                    fontSize: ResponsiveUtils.fontSize(context, 14),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1890,7 +2067,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 16.fz,
+                      fontSize: ResponsiveUtils.fontSize(context, 16),
                       fontWeight: FontWeight.w600,
                       color: AppColors.primaryText,
                     ),
@@ -1899,7 +2076,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Text(
                     subtitle,
                     style: TextStyle(
-                      fontSize: 14.fz,
+                      fontSize: ResponsiveUtils.fontSize(context, 14),
                       color: AppColors.secondaryText,
                     ),
                   ),
