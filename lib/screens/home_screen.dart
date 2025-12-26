@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -174,11 +175,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
-          // Pinned FAB - positioned directly without AppWidthLimiter to avoid LayoutBuilder nesting issues
-          Positioned(
-            top: MediaQuery.of(context).padding.top + AppSpacing.xl,
-            left: AppSpacing.xl,
-            child: GlassmorphicFABMenu(key: _fabMenuKey),
+          // Pinned FAB - positioned within the centered container on web
+          Builder(
+            builder: (context) {
+              final screenWidth = MediaQuery.of(context).size.width;
+              const double webMaxWidth = 430;
+              final double webHorizontalOffset = kIsWeb && screenWidth > webMaxWidth
+                  ? (screenWidth - webMaxWidth) / 2
+                  : 0;
+
+              return Positioned(
+                top: MediaQuery.of(context).padding.top + AppSpacing.xl,
+                left: webHorizontalOffset + AppSpacing.xl,
+                child: GlassmorphicFABMenu(key: _fabMenuKey),
+              );
+            },
           ),
         ],
       ),
