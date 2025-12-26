@@ -405,11 +405,21 @@ class BibleDataLoaderWeb {
       }
 
       // Fallback: Execute statements one by one
-      // Split on semicolons and filter out empty statements
+      // Split on semicolons and filter out empty statements and transaction control
       final statements = sql
           .split(';')
           .map((s) => s.trim())
-          .where((s) => s.isNotEmpty)
+          .where((s) {
+            if (s.isEmpty) return false;
+            final upper = s.toUpperCase();
+            // Filter out transaction control statements since we use our own transactions
+            if (upper.startsWith('BEGIN')) return false;
+            if (upper.startsWith('COMMIT')) return false;
+            if (upper.startsWith('ROLLBACK')) return false;
+            // Filter out PRAGMA statements that may not be compatible
+            if (upper.startsWith('PRAGMA')) return false;
+            return true;
+          })
           .toList();
 
       debugPrint('📖 [BibleDataLoaderWeb] Executing ${statements.length} statements...');
@@ -600,19 +610,20 @@ class BibleDataLoaderWeb {
   /// Throws [BibleLoadException] if marking fails.
   Future<void> _markAsLoaded() async {
     try {
-      // First ensure app_metadata table exists
+      // First ensure app_metadata table exists (must match schema in database_helper_web.dart)
       await _db.execute('''
         CREATE TABLE IF NOT EXISTS app_metadata (
           key TEXT PRIMARY KEY,
-          value TEXT NOT NULL
+          value TEXT NOT NULL,
+          updated_at INTEGER
         )
       ''');
 
       // Insert or update the loaded timestamp
       await _db.execute('''
-        INSERT OR REPLACE INTO app_metadata (key, value)
-        VALUES ('bible_data_loaded', ?)
-      ''', [DateTime.now().millisecondsSinceEpoch.toString()]);
+        INSERT OR REPLACE INTO app_metadata (key, value, updated_at)
+        VALUES ('bible_data_loaded', ?, ?)
+      ''', [DateTime.now().millisecondsSinceEpoch.toString(), DateTime.now().millisecondsSinceEpoch]);
 
       debugPrint('📖 [BibleDataLoaderWeb] Marked as loaded');
     } catch (e) {

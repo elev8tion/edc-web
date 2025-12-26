@@ -1139,7 +1139,7 @@ class SubscriptionService {
 
     // Mark trial as completed (if applicable)
     if (isInTrial) {
-      await _markTrialAsExpiredInKeychain();
+      await markTrialAsUsed();
     }
 
     debugPrint('✅ [SubscriptionService] Subscription activated: $tier');

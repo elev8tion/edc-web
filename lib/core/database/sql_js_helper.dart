@@ -263,7 +263,7 @@ class SqlJsDatabase {
     String table,
     Map<String, Object?> values, {
     String? nullColumnHack,
-    ConflictAlgorithm? conflictAlgorithm,
+    Object? conflictAlgorithm,
   }) async {
     try {
       return await _db.insert(
@@ -307,7 +307,7 @@ class SqlJsDatabase {
     Map<String, Object?> values, {
     String? where,
     List<Object?>? whereArgs,
-    ConflictAlgorithm? conflictAlgorithm,
+    Object? conflictAlgorithm,
   }) async {
     try {
       return await _db.update(
@@ -457,21 +457,27 @@ class SqlJsDatabase {
   /// and the sqflite_common library's ConflictAlgorithm enum.
   ///
   /// Returns null if input is null (allows sqflite to use default behavior).
-  sqflite.ConflictAlgorithm? _mapConflictAlgorithm(ConflictAlgorithm? algorithm) {
-  if (algorithm == null) return null;
+  sqflite.ConflictAlgorithm? _mapConflictAlgorithm(Object? algorithm) {
+    if (algorithm == null) return null;
 
-  switch (algorithm) {
-    case ConflictAlgorithm.rollback:
-      return sqflite.ConflictAlgorithm.rollback;
-    case ConflictAlgorithm.abort:
-      return sqflite.ConflictAlgorithm.abort;
-    case ConflictAlgorithm.fail:
-      return sqflite.ConflictAlgorithm.fail;
-    case ConflictAlgorithm.ignore:
-      return sqflite.ConflictAlgorithm.ignore;
-    case ConflictAlgorithm.replace:
-      return sqflite.ConflictAlgorithm.replace;
-  }
+    // Handle both sql_js_helper.ConflictAlgorithm and database_helper.ConflictAlgorithm
+    // by converting based on enum name string
+    final name = algorithm.toString().split('.').last;
+
+    switch (name) {
+      case 'rollback':
+        return sqflite.ConflictAlgorithm.rollback;
+      case 'abort':
+        return sqflite.ConflictAlgorithm.abort;
+      case 'fail':
+        return sqflite.ConflictAlgorithm.fail;
+      case 'ignore':
+        return sqflite.ConflictAlgorithm.ignore;
+      case 'replace':
+        return sqflite.ConflictAlgorithm.replace;
+      default:
+        return null;
+    }
   }
 }
 

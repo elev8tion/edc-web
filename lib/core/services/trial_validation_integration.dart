@@ -4,11 +4,24 @@
 /// using IP + Fingerprint hybrid approach via Cloudflare Worker.
 ///
 /// ADD THIS CODE TO subscription_service.dart
+library trial_validation_integration;
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'device_fingerprint_service.dart';
+
+// Stub variables for compilation - these would be defined in SubscriptionService
+// ignore: unused_element
+SharedPreferences? _prefs;
+// ignore: unused_element
+const String _keyTrialStartDate = 'trial_start_date';
+// ignore: unused_element
+const String _keyTrialMessagesUsed = 'trial_messages_used';
+// ignore: unused_element
+bool get hasStartedTrial => false;
 
 // ============================================================================
 // STEP 1: Add this import at the top of subscription_service.dart

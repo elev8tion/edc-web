@@ -176,7 +176,7 @@ class BibleChapterService {
         END
     ''', [version, language]);
 
-    return results.map((row) => row['book'] as String).toList();
+    return List<String>.from(results.map((row) => row['book'] as String));
   }
 
   /// Check if a chapter exists
