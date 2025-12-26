@@ -175,21 +175,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
-          // Pinned FAB - positioned within the centered container on web
-          Builder(
-            builder: (context) {
-              final screenWidth = MediaQuery.of(context).size.width;
-              const double webMaxWidth = 430;
-              final double webHorizontalOffset = kIsWeb && screenWidth > webMaxWidth
-                  ? (screenWidth - webMaxWidth) / 2
-                  : 0;
-
-              return Positioned(
-                top: MediaQuery.of(context).padding.top + AppSpacing.xl,
-                left: webHorizontalOffset + AppSpacing.xl,
-                child: GlassmorphicFABMenu(key: _fabMenuKey),
-              );
-            },
+          // Pinned FAB
+          Positioned(
+            top: MediaQuery.of(context).padding.top + AppSpacing.xl,
+            left: AppSpacing.xl,
+            child: GlassmorphicFABMenu(key: _fabMenuKey),
           ),
         ],
       ),
@@ -536,7 +526,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           l10n.biblicalChat,
                           group: _mainFeatureTitlesGroup,
                           style: TextStyle(
-                            fontSize: 16.fz,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primaryText,
                           ),
@@ -592,7 +582,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           l10n.dailyDevotional,
                           group: _mainFeatureTitlesGroup,
                           style: TextStyle(
-                            fontSize: 16.fz,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primaryText,
                           ),
@@ -660,7 +650,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           l10n.prayerJournal,
                           group: _mainFeatureTitlesGroup,
                           style: TextStyle(
-                            fontSize: 16.fz,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primaryText,
                           ),
@@ -716,7 +706,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           l10n.readingPlans,
                           group: _mainFeatureTitlesGroup,
                           style: TextStyle(
-                            fontSize: 16.fz,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primaryText,
                           ),
@@ -1022,7 +1012,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       AutoSizeText(
                         text,
                         style: TextStyle(
-                          fontSize: 16.fz,
+                          fontSize: 16,
                           color: AppColors.primaryText,
                           fontStyle: FontStyle.italic,
                           height: 1.6,
@@ -1067,7 +1057,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final textSize =
         ref.watch(textSizeProvider); // Watch textSize to force rebuilds
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.s),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       key: ValueKey('start_chat_button_$textSize'),
       child: GlassButton(
         text: l10n.startSpiritualConversation,

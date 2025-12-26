@@ -100,19 +100,6 @@ class MyApp extends ConsumerWidget {
           child: OfflineIndicator(child: child!),
         );
 
-        // Lock to mobile viewport on web for consistent experience
-        if (kIsWeb) {
-          return Container(
-            color: const Color(0xFF1a1a2e), // Dark background outside app
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 430), // iPhone 14 Pro Max
-                child: content,
-              ),
-            ),
-          );
-        }
-
         return content;
       },
       theme: ThemeData(

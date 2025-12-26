@@ -27,16 +27,9 @@ class GlassFab extends StatelessWidget {
     final systemPadding = MediaQuery.of(context).padding.bottom;
     final effectiveBottom = (bottom ?? 16) + systemPadding;
 
-    // On web, account for the centered 430px container offset
-    final screenWidth = MediaQuery.of(context).size.width;
-    const double webMaxWidth = 430;
-    final double webHorizontalOffset = kIsWeb && screenWidth > webMaxWidth
-        ? (screenWidth - webMaxWidth) / 2
-        : 0;
-
     return Positioned(
       bottom: effectiveBottom,
-      right: webHorizontalOffset + (right ?? 16),
+      right: right ?? 16,
       child: Container(
         width: size,
         height: size,

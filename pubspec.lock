@@ -512,6 +512,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+  flutter_scalify:
+    dependency: "direct main"
+    description:
+      name: flutter_scalify
+      sha256: "552479f3cab877608c0875bee213fc3b478ebc3859e10b63f4a3b006f0c801cb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
   flutter_secure_storage:
     dependency: "direct main"
     description:
