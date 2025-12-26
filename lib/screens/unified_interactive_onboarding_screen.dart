@@ -122,53 +122,30 @@ class _UnifiedInteractiveOnboardingScreenState
   }
 
   Future<void> _completeOnboarding() async {
-    print('🎯 [Onboarding] Button pressed! _isNavigating: $_isNavigating');
-
-    if (_isNavigating) {
-      print('❌ [Onboarding] Already navigating, returning early');
-      return;
-    }
+    if (_isNavigating) return;
     _isNavigating = true;
-    print('🎯 [Onboarding] Set _isNavigating to true');
-
-    print('🎯 [Onboarding] Starting completion process...');
 
     final prefsService = await PreferencesService.getInstance();
 
     // Save legal agreements
     await prefsService.saveLegalAgreementAcceptance(true);
-    print('🎯 [Onboarding] Legal agreement saved');
 
     // Save name if provided
     final firstName = _nameController.text.trim();
     if (firstName.isNotEmpty) {
       await prefsService.saveFirstName(firstName);
-      print('🎯 [Onboarding] First name saved: $firstName');
     }
 
     // Save app lock preference
     await prefsService.setAppLockEnabled(_appLockEnabled);
     await prefsService.setBiometricSetupCompleted();
-    print('🎯 [Onboarding] App lock preference saved: $_appLockEnabled');
 
     // Mark onboarding as completed
     await prefsService.setOnboardingCompleted();
-    print('🎯 [Onboarding] Onboarding marked complete');
 
     // Navigate to home using IMMEDIATE navigation (bypasses debounce)
     if (mounted) {
-      print(
-          '🎯 [Onboarding] Widget is mounted, attempting IMMEDIATE navigation...');
-      print(
-          '🎯 [Onboarding] Calling NavigationService.pushAndRemoveUntilImmediate...');
-      try {
-        await NavigationService.pushAndRemoveUntilImmediate(AppRoutes.home);
-        print('✅ [Onboarding] Navigation completed successfully!');
-      } catch (e) {
-        print('❌ [Onboarding] Navigation failed with error: $e');
-      }
-    } else {
-      print('❌ [Onboarding] Widget not mounted, cannot navigate');
+      await NavigationService.pushAndRemoveUntilImmediate(AppRoutes.home);
     }
   }
 

@@ -22,6 +22,7 @@ import '../core/services/book_name_service.dart';
 import '../core/services/bible_config.dart';
 import 'chat_screen.dart';
 import '../l10n/app_localizations.dart';
+import '../core/utils/simple_coach_mark.dart';
 
 /// Chapter Reading Screen - displays Bible chapters with verse-by-verse reading
 class ChapterReadingScreen extends ConsumerStatefulWidget {
@@ -61,6 +62,9 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
 
   // Keys for verse widgets (for auto-scroll)
   final Map<int, GlobalKey> _verseKeys = {};
+
+  // Key for tutorial highlighting
+  final GlobalKey _firstVerseKey = GlobalKey();
 
   // Double-tap verse interaction state
   int? _activeVerseIndex;
@@ -119,89 +123,52 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
 
     final l10n = AppLocalizations.of(context);
 
-    // Show informational dialog about Bible features
-    await showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        child: DarkGlassContainer(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.tutorialBibleTapTitle,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.tutorialBibleTapDescription,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.white70,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                l10n.tutorialBibleBookmarkTitle,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.tutorialBibleBookmarkDescription,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.white70,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                l10n.tutorialBibleChatTitle,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.tutorialBibleChatDescription,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.white70,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GlassButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    prefsService.setBibleBrowserTutorialShown();
-                  },
-                  text: l10n.tutorialFinish,
-                  width: 100,
-                  height: 40,
-                ),
-              ),
-            ],
-          ),
+    // Show multi-step tutorial using SimpleCoachMark
+    SimpleCoachMark(
+      targets: [
+        CoachTarget(
+          key: _firstVerseKey,
+          title: l10n.tutorialBibleTapTitle,
+          description: l10n.tutorialBibleTapDescription,
+          contentPosition: ContentPosition.bottom,
+          shape: HighlightShape.rectangle,
+          borderRadius: 12,
+          padding: 8,
+          semanticLabel: l10n.tutorialBibleTapTitle,
         ),
+        CoachTarget(
+          key: _firstVerseKey,
+          title: l10n.tutorialBibleBookmarkTitle,
+          description: l10n.tutorialBibleBookmarkDescription,
+          contentPosition: ContentPosition.bottom,
+          shape: HighlightShape.rectangle,
+          borderRadius: 12,
+          padding: 8,
+          semanticLabel: l10n.tutorialBibleBookmarkTitle,
+        ),
+        CoachTarget(
+          key: _firstVerseKey,
+          title: l10n.tutorialBibleChatTitle,
+          description: l10n.tutorialBibleChatDescription,
+          contentPosition: ContentPosition.bottom,
+          shape: HighlightShape.rectangle,
+          borderRadius: 12,
+          padding: 8,
+          semanticLabel: l10n.tutorialBibleChatTitle,
+        ),
+      ],
+      config: CoachMarkConfig(
+        skipText: l10n.tutorialSkip,
+        nextText: l10n.tutorialNext,
+        previousText: l10n.tutorialPrevious,
       ),
-    );
-
-    // Mark as shown even if dismissed
-    prefsService.setBibleBrowserTutorialShown();
+      onFinish: () {
+        prefsService.setBibleBrowserTutorialShown();
+      },
+      onSkip: () {
+        prefsService.setBibleBrowserTutorialShown();
+      },
+    ).show(context);
   }
 
   @override
@@ -661,9 +628,10 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
     final l10n = AppLocalizations.of(context);
 
     // Generate keys for verses (for auto-scroll)
+    // Use _firstVerseKey for first verse to enable tutorial highlighting
     _verseKeys.clear();
     for (int i = 0; i < verses.length; i++) {
-      _verseKeys[i] = GlobalKey();
+      _verseKeys[i] = i == 0 ? _firstVerseKey : GlobalKey();
     }
 
     // If initial verse number is set and matches current chapter, scroll to it after frame
