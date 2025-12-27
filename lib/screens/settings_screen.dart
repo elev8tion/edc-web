@@ -750,7 +750,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   /// Handle changing existing PIN
   Future<void> _handleChangePIN() async {
-    final secureStorage = const SecureStorageService();
+    const secureStorage = SecureStorageService();
 
     // First verify current PIN
     final verified = await _showPINVerificationDialog();
@@ -791,7 +791,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               width: 1,
             ),
           ),
-          title: Text(
+          title: const Text(
             'Verify Current PIN',
             style: TextStyle(
               color: AppTheme.goldColor,
@@ -834,7 +834,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: AppTheme.goldColor.withValues(alpha: 0.3),
                     ),
                   ),
-                  focusedBorder: UnderlineInputBorder(
+                  focusedBorder: const UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: AppTheme.goldColor,
                       width: 2,

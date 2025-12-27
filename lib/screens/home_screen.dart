@@ -525,7 +525,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         AutoSizeText(
                           l10n.biblicalChat,
                           group: _mainFeatureTitlesGroup,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primaryText,
@@ -581,7 +581,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         AutoSizeText(
                           l10n.dailyDevotional,
                           group: _mainFeatureTitlesGroup,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primaryText,
@@ -649,7 +649,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         AutoSizeText(
                           l10n.prayerJournal,
                           group: _mainFeatureTitlesGroup,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primaryText,
@@ -705,7 +705,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         AutoSizeText(
                           l10n.readingPlans,
                           group: _mainFeatureTitlesGroup,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primaryText,
@@ -1011,7 +1011,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       // Verse text
                       AutoSizeText(
                         text,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           color: AppColors.primaryText,
                           fontStyle: FontStyle.italic,
@@ -1057,7 +1057,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final textSize =
         ref.watch(textSizeProvider); // Watch textSize to force rebuilds
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       key: ValueKey('start_chat_button_$textSize'),
       child: GlassButton(
         text: l10n.startSpiritualConversation,

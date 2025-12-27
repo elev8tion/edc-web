@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
@@ -74,10 +73,7 @@ class GlassFab extends StatelessWidget {
             ),
           ),
         ),
-      )
-          .animate()
-          .fadeIn(duration: AppAnimations.normal)
-          .scale(
+      ).animate().fadeIn(duration: AppAnimations.normal).scale(
             begin: const Offset(0.8, 0.8),
             end: const Offset(1.0, 1.0),
             duration: AppAnimations.normal,

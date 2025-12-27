@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/noise_overlay.dart';
@@ -300,7 +299,8 @@ class _CoachMarkOverlayState extends State<_CoachMarkOverlay>
 
   void _updateTargetRect() {
     final target = widget.coachMark.targets[widget.coachMark._currentIndex];
-    final renderBox = target.key.currentContext?.findRenderObject() as RenderBox?;
+    final renderBox =
+        target.key.currentContext?.findRenderObject() as RenderBox?;
 
     if (renderBox != null && mounted) {
       final position = renderBox.localToGlobal(Offset.zero);
@@ -327,7 +327,8 @@ class _CoachMarkOverlayState extends State<_CoachMarkOverlay>
     final config = widget.coachMark.config;
 
     return Semantics(
-      label: target.semanticLabel ?? '${target.title}. ${target.description ?? ''}',
+      label: target.semanticLabel ??
+          '${target.title}. ${target.description ?? ''}',
       button: true,
       enabled: true,
       child: GestureDetector(
@@ -346,10 +347,12 @@ class _CoachMarkOverlayState extends State<_CoachMarkOverlay>
                     targetRect: _targetRect!,
                     overlayColor: config.overlayColor,
                     overlayOpacity: config.overlayOpacity,
-                    highlightColor: target.highlightColor ?? config.highlightColor,
+                    highlightColor:
+                        target.highlightColor ?? config.highlightColor,
                     shape: target.shape,
                     borderRadius: target.borderRadius,
-                    pulseAnimation: config.enablePulse ? _animationController : null,
+                    pulseAnimation:
+                        config.enablePulse ? _animationController : null,
                   ),
                 ),
 
@@ -562,7 +565,8 @@ class _CoachMarkOverlayState extends State<_CoachMarkOverlay>
             onTap: widget.coachMark._next,
             child: _buildGlassButton(
               context,
-              widget.coachMark._currentIndex == widget.coachMark.targets.length - 1
+              widget.coachMark._currentIndex ==
+                      widget.coachMark.targets.length - 1
                   ? 'Finish'
                   : config.nextText,
               config.skipTextStyle.copyWith(color: AppTheme.goldColor),
@@ -604,8 +608,7 @@ class _OverlayPainter extends CustomPainter {
       ..color = overlayColor.withValues(alpha: overlayOpacity);
 
     // Create path with hole
-    final path = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final path = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     // Add hole based on shape
     final holePath = shape == HighlightShape.circle

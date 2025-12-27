@@ -130,7 +130,8 @@ class _PinSetupDialogContentState extends State<_PinSetupDialogContent> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.check_circle, color: Colors.green.shade300, size: 20),
+                    Icon(Icons.check_circle,
+                        color: Colors.green.shade300, size: 20),
                     const SizedBox(width: 12),
                     const Expanded(
                       child: Text(
@@ -147,7 +148,8 @@ class _PinSetupDialogContentState extends State<_PinSetupDialogContent> {
       } catch (e) {
         setState(() {
           _isProcessing = false;
-          _errorMessage = e.toString().replaceAll('SecureStorageException: ', '');
+          _errorMessage =
+              e.toString().replaceAll('SecureStorageException: ', '');
         });
         HapticFeedback.heavyImpact();
       }
@@ -216,7 +218,7 @@ class _PinSetupDialogContentState extends State<_PinSetupDialogContent> {
                     width: 1,
                   ),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.lock_outline,
                   color: AppTheme.goldColor,
                   size: 32,
@@ -228,7 +230,7 @@ class _PinSetupDialogContentState extends State<_PinSetupDialogContent> {
               // Title
               Text(
                 _isFirstStep ? 'Create App PIN' : 'Confirm PIN',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -283,7 +285,7 @@ class _PinSetupDialogContentState extends State<_PinSetupDialogContent> {
                       width: 2,
                     ),
                   ),
-                  focusedBorder: UnderlineInputBorder(
+                  focusedBorder: const UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: AppTheme.goldColor,
                       width: 2,
@@ -295,7 +297,7 @@ class _PinSetupDialogContentState extends State<_PinSetupDialogContent> {
                       width: 2,
                     ),
                   ),
-                  focusedErrorBorder: UnderlineInputBorder(
+                  focusedErrorBorder: const UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.red,
                       width: 2,
@@ -394,7 +396,8 @@ class _PinSetupDialogContentState extends State<_PinSetupDialogContent> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.black),
                               ),
                             )
                           : Text(

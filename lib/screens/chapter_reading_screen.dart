@@ -5,7 +5,6 @@ import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_card.dart';
 import '../components/glass_button.dart';
-import '../components/dark_glass_container.dart';
 import '../components/audio_control_pill.dart';
 import '../theme/app_theme.dart';
 import '../core/navigation/navigation_service.dart';
@@ -42,7 +41,8 @@ class ChapterReadingScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ChapterReadingScreen> createState() => _ChapterReadingScreenState();
+  ConsumerState<ChapterReadingScreen> createState() =>
+      _ChapterReadingScreenState();
 }
 
 class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
@@ -228,7 +228,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
 
   Future<void> _checkCompletion() async {
     if (widget.readingId != null) {
-      final completed = await _chapterService.isReadingComplete(widget.readingId!);
+      final completed =
+          await _chapterService.isReadingComplete(widget.readingId!);
       if (mounted) {
         setState(() => _isCompleted = completed);
       }
@@ -347,7 +348,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
             child: FutureBuilder<Map<int, List<BibleVerse>>>(
               future: _versesFuture,
               builder: (context, snapshot) {
-                final currentChapterNum = widget.startChapter + _currentChapterIndex;
+                final currentChapterNum =
+                    widget.startChapter + _currentChapterIndex;
                 final currentVerses = (snapshot.hasData)
                     ? (snapshot.data![currentChapterNum] ?? <BibleVerse>[])
                     : <BibleVerse>[];
@@ -358,12 +360,14 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                     _buildHeader(currentChapter, totalChapters, currentVerses),
 
                     // Chapter indicator
-                    _buildChapterIndicator(context, currentChapter, totalChapters),
+                    _buildChapterIndicator(
+                        context, currentChapter, totalChapters),
 
                     // Content
                     Expanded(
                       child: Builder(builder: (context) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return _buildLoading();
                         }
 
@@ -395,7 +399,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                           itemBuilder: (context, index) {
                             final chapterNum = chapters[index];
                             final verses = chaptersMap[chapterNum] ?? [];
-                            return _buildChapterPage(chapterNum, verses, chaptersMap);
+                            return _buildChapterPage(
+                                chapterNum, verses, chaptersMap);
                           },
                         );
                       }),
@@ -413,10 +418,12 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
     );
   }
 
-  Widget _buildHeader(int currentChapter, int totalChapters, List<BibleVerse> currentVerses) {
+  Widget _buildHeader(
+      int currentChapter, int totalChapters, List<BibleVerse> currentVerses) {
     final l10n = AppLocalizations.of(context);
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, top: 16.0, bottom: 16.0, right: 8.0),
+      padding: const EdgeInsets.only(
+          left: 16.0, top: 16.0, bottom: 16.0, right: 8.0),
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Adaptive audio pill width - compact to allow more title space
@@ -449,7 +456,9 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                   ),
                 ),
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white, size: ResponsiveUtils.iconSize(context, 24)),
+                  icon: Icon(Icons.arrow_back,
+                      color: Colors.white,
+                      size: ResponsiveUtils.iconSize(context, 24)),
                   onPressed: () => NavigationService.pop(),
                   tooltip: l10n.backButton,
                   constraints: const BoxConstraints(
@@ -469,7 +478,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                     Text(
                       displayBookName,
                       style: TextStyle(
-                        fontSize: ResponsiveUtils.fontSize(context, 20, minSize: 18, maxSize: 22),
+                        fontSize: ResponsiveUtils.fontSize(context, 20,
+                            minSize: 18, maxSize: 22),
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
                         height: 1.2,
@@ -483,10 +493,12 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                         Flexible(
                           child: Text(
                             totalChapters > 1
-                              ? l10n.chapterOfTotal(_currentChapterIndex + 1, totalChapters)
-                              : 'Chapter $currentChapter',
+                                ? l10n.chapterOfTotal(
+                                    _currentChapterIndex + 1, totalChapters)
+                                : 'Chapter $currentChapter',
                             style: TextStyle(
-                              fontSize: ResponsiveUtils.fontSize(context, 12, minSize: 11, maxSize: 13),
+                              fontSize: ResponsiveUtils.fontSize(context, 12,
+                                  minSize: 11, maxSize: 13),
                               color: Colors.white.withValues(alpha: 0.7),
                               fontWeight: FontWeight.w500,
                               height: 1.2,
@@ -519,7 +531,9 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                     isPlaying: _isAudioPlaying,
                     isPaused: _ttsService.isPaused,
                     speedLabel: _ttsService.speedLabel,
-                    currentVerse: _currentPlayingVerseIndex >= 0 ? _currentPlayingVerseIndex + 1 : null,
+                    currentVerse: _currentPlayingVerseIndex >= 0
+                        ? _currentPlayingVerseIndex + 1
+                        : null,
                     totalVerses: currentVerses.length,
                     onPlayPause: () {
                       if (!_isAudioPlaying) {
@@ -541,7 +555,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
     );
   }
 
-  Widget _buildChapterIndicator(BuildContext context, int currentChapter, int totalChapters) {
+  Widget _buildChapterIndicator(
+      BuildContext context, int currentChapter, int totalChapters) {
     if (totalChapters == 1) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
 
@@ -624,7 +639,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
     );
   }
 
-  Widget _buildChapterPage(int chapterNum, List<BibleVerse> verses, Map<int, List<BibleVerse>> chaptersMap) {
+  Widget _buildChapterPage(int chapterNum, List<BibleVerse> verses,
+      Map<int, List<BibleVerse>> chaptersMap) {
     final l10n = AppLocalizations.of(context);
 
     // Generate keys for verses (for auto-scroll)
@@ -635,7 +651,9 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
     }
 
     // If initial verse number is set and matches current chapter, scroll to it after frame
-    if (widget.initialVerseNumber != null && chapterNum == widget.startChapter && _currentChapterIndex == 0) {
+    if (widget.initialVerseNumber != null &&
+        chapterNum == widget.startChapter &&
+        _currentChapterIndex == 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted) {
@@ -662,7 +680,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                 Text(
                   l10n.noVersesFoundForBook(widget.book, chapterNum),
                   style: TextStyle(
-                    fontSize: ResponsiveUtils.fontSize(context, 16, minSize: 14, maxSize: 18),
+                    fontSize: ResponsiveUtils.fontSize(context, 16,
+                        minSize: 14, maxSize: 18),
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
@@ -711,171 +730,213 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                     children: [
                       // Verses
                       ...verses.asMap().entries.map((entry) {
-                final verseIndex = entry.key;
-                final verse = entry.value;
-                final isCurrentVerse = _isAudioPlaying && verseIndex == _currentPlayingVerseIndex;
+                        final verseIndex = entry.key;
+                        final verse = entry.value;
+                        final isCurrentVerse = _isAudioPlaying &&
+                            verseIndex == _currentPlayingVerseIndex;
 
-                final isActive = _activeVerseIndex == verseIndex;
+                        final isActive = _activeVerseIndex == verseIndex;
 
-                return Padding(
-                  key: _verseKeys[verseIndex],
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    decoration: isCurrentVerse
-                        ? BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppTheme.primaryColor.withValues(alpha: 0.15),
-                                AppTheme.primaryColor.withValues(alpha: 0.05),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          )
-                        : null,
-                    padding: isCurrentVerse ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      // Verse number and action icons column
-                      Column(
-                        children: [
-                          // Verse number with glassmorphic style (always visible)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.white.withValues(alpha: 0.25),
-                                  Colors.white.withValues(alpha: 0.15),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: AppRadius.smallRadius,
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.3),
-                                width: 1.5,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.primaryColor.withValues(alpha: 0.2),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${verse.verseNumber}',
-                                style: TextStyle(
-                                  fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primaryText,
-                                ),
-                              ),
-                            ),
-                            ),
-                          ),
-                          // Animated icons (only shown when verse is active)
-                          if (isActive) ...[
-                            const SizedBox(height: 4),
-                            // Favorite button with animation
-                            AnimatedBuilder(
-                              animation: _iconAnimationController,
-                              builder: (context, child) {
-                                return Transform.scale(
-                                  scale: _iconAnimationController.value,
-                                  child: Opacity(
-                                    opacity: _iconAnimationController.value,
-                                    child: GestureDetector(
-                                      onTap: () => _performVerseAction(() async {
-                                        if (verse.id != null) {
-                                          await ref.read(unifiedVerseServiceProvider).toggleFavorite(verse.id!);
-                                          ref.invalidate(favoriteVersesProvider);
-                                        }
-                                      }),
-                                      child: _buildFavoriteButton(verse),
+                        return Padding(
+                          key: _verseKeys[verseIndex],
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            decoration: isCurrentVerse
+                                ? BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        AppTheme.primaryColor
+                                            .withValues(alpha: 0.15),
+                                        AppTheme.primaryColor
+                                            .withValues(alpha: 0.05),
+                                      ],
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 4),
-                            // Chat icon with animation
-                            AnimatedBuilder(
-                              animation: _iconAnimationController,
-                              builder: (context, child) {
-                                return Transform.scale(
-                                  scale: _iconAnimationController.value,
-                                  child: Opacity(
-                                    opacity: _iconAnimationController.value,
-                                    child: GestureDetector(
-                                      onTap: () => _performVerseAction(() => _navigateToVerseDiscussion(verse)),
+                                    borderRadius: BorderRadius.circular(8),
+                                  )
+                                : null,
+                            padding: isCurrentVerse
+                                ? const EdgeInsets.all(8.0)
+                                : EdgeInsets.zero,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Verse number and action icons column
+                                Column(
+                                  children: [
+                                    // Verse number with glassmorphic style (always visible)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
                                       child: Container(
                                         width: 36,
                                         height: 36,
-                                        padding: const EdgeInsets.all(4),
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                             colors: [
-                                              AppTheme.goldColor.withValues(alpha: 0.3),
-                                              AppTheme.goldColor.withValues(alpha: 0.1),
+                                              Colors.white
+                                                  .withValues(alpha: 0.25),
+                                              Colors.white
+                                                  .withValues(alpha: 0.15),
                                             ],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
                                           ),
                                           borderRadius: AppRadius.smallRadius,
                                           border: Border.all(
-                                            color: AppTheme.goldColor.withValues(alpha: 0.3),
-                                            width: 1,
+                                            color: Colors.white
+                                                .withValues(alpha: 0.3),
+                                            width: 1.5,
                                           ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: AppTheme.primaryColor
+                                                  .withValues(alpha: 0.2),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
                                         ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(AppRadius.xs),
-                                          child: Image.asset(
-                                            l10n.localeName == 'es'
-                                                ? 'assets/images/logo_spanish.png'
-                                                : 'assets/images/logo_cropped.png',
-                                            fit: BoxFit.contain,
+                                        child: Center(
+                                          child: Text(
+                                            '${verse.verseNumber}',
+                                            style: TextStyle(
+                                              fontSize:
+                                                  ResponsiveUtils.fontSize(
+                                                      context, 14,
+                                                      minSize: 12, maxSize: 16),
+                                              fontWeight: FontWeight.w700,
+                                              color: AppColors.primaryText,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(width: 12),
+                                    // Animated icons (only shown when verse is active)
+                                    if (isActive) ...[
+                                      const SizedBox(height: 4),
+                                      // Favorite button with animation
+                                      AnimatedBuilder(
+                                        animation: _iconAnimationController,
+                                        builder: (context, child) {
+                                          return Transform.scale(
+                                            scale:
+                                                _iconAnimationController.value,
+                                            child: Opacity(
+                                              opacity: _iconAnimationController
+                                                  .value,
+                                              child: GestureDetector(
+                                                onTap: () =>
+                                                    _performVerseAction(
+                                                        () async {
+                                                  if (verse.id != null) {
+                                                    await ref
+                                                        .read(
+                                                            unifiedVerseServiceProvider)
+                                                        .toggleFavorite(
+                                                            verse.id!);
+                                                    ref.invalidate(
+                                                        favoriteVersesProvider);
+                                                  }
+                                                }),
+                                                child:
+                                                    _buildFavoriteButton(verse),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(height: 4),
+                                      // Chat icon with animation
+                                      AnimatedBuilder(
+                                        animation: _iconAnimationController,
+                                        builder: (context, child) {
+                                          return Transform.scale(
+                                            scale:
+                                                _iconAnimationController.value,
+                                            child: Opacity(
+                                              opacity: _iconAnimationController
+                                                  .value,
+                                              child: GestureDetector(
+                                                onTap: () =>
+                                                    _performVerseAction(() =>
+                                                        _navigateToVerseDiscussion(
+                                                            verse)),
+                                                child: Container(
+                                                  width: 36,
+                                                  height: 36,
+                                                  padding:
+                                                      const EdgeInsets.all(4),
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        AppTheme.goldColor
+                                                            .withValues(
+                                                                alpha: 0.3),
+                                                        AppTheme.goldColor
+                                                            .withValues(
+                                                                alpha: 0.1),
+                                                      ],
+                                                    ),
+                                                    borderRadius:
+                                                        AppRadius.smallRadius,
+                                                    border: Border.all(
+                                                      color: AppTheme.goldColor
+                                                          .withValues(
+                                                              alpha: 0.3),
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            AppRadius.xs),
+                                                    child: Image.asset(
+                                                      l10n.localeName == 'es'
+                                                          ? 'assets/images/logo_spanish.png'
+                                                          : 'assets/images/logo_cropped.png',
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                const SizedBox(width: 12),
 
-                      // Verse text with double-tap gesture
-                      Expanded(
-                        child: GestureDetector(
-                          onDoubleTap: () => _onVerseDoubleTap(verseIndex),
-                          child: Text(
-                            verse.text,
-                            style: TextStyle(
-                              fontSize: ResponsiveUtils.fontSize(context, 18, minSize: 16, maxSize: 20),
-                              height: 1.6,
-                              color: isActive ? AppTheme.goldColor : Colors.white,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 0.2,
+                                // Verse text with double-tap gesture
+                                Expanded(
+                                  child: GestureDetector(
+                                    onDoubleTap: () =>
+                                        _onVerseDoubleTap(verseIndex),
+                                    child: Text(
+                                      verse.text,
+                                      style: TextStyle(
+                                        fontSize: ResponsiveUtils.fontSize(
+                                            context, 18,
+                                            minSize: 16, maxSize: 20),
+                                        height: 1.6,
+                                        color: isActive
+                                            ? AppTheme.goldColor
+                                            : Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ),
-                      ],
-                    ),
+                        );
+                      }),
+                    ],
                   ),
-                );
-              }),
-                  ],
                 ),
-              ),
               ),
             ),
           ],
@@ -923,10 +984,12 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
               size: ResponsiveUtils.iconSize(context, 18),
-              color: isFavorite ? Colors.red : Colors.white.withValues(alpha: 0.7),
+              color:
+                  isFavorite ? Colors.red : Colors.white.withValues(alpha: 0.7),
             ),
             onPressed: () => _toggleFavorite(verse),
-            tooltip: isFavorite ? l10n.removeFromFavorites : l10n.addToFavorites,
+            tooltip:
+                isFavorite ? l10n.removeFromFavorites : l10n.addToFavorites,
             constraints: const BoxConstraints(
               minWidth: 44,
               minHeight: 44,
@@ -1005,7 +1068,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
 
     // If user returned from chat, scroll to the verse
     if (result != null && mounted) {
-      debugPrint('📖 Returned from chat, scrolling to verse ${result.verseNumber}');
+      debugPrint(
+          '📖 Returned from chat, scrolling to verse ${result.verseNumber}');
       _scrollToVerseNumber(result.verseNumber);
     }
   }
@@ -1110,7 +1174,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                 Text(
                   error,
                   style: TextStyle(
-                    fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
+                    fontSize: ResponsiveUtils.fontSize(context, 14,
+                        minSize: 12, maxSize: 16),
                     color: Colors.white.withValues(alpha: 0.8),
                   ),
                   textAlign: TextAlign.center,
@@ -1168,7 +1233,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  l10n.couldNotFindVersesForRange(widget.book, widget.startChapter, widget.endChapter),
+                  l10n.couldNotFindVersesForRange(
+                      widget.book, widget.startChapter, widget.endChapter),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
