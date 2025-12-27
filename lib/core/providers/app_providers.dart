@@ -142,13 +142,15 @@ final versesByThemeProvider = FutureProvider.autoDispose.family<List<BibleVerse>
 });
 
 /// Provider for getting all available themes
-final availableThemesProvider = FutureProvider<List<String>>((ref) async {
+/// Uses keepAlive() since themes rarely change and are accessed frequently
+final availableThemesProvider = FutureProvider.keepAlive<List<String>>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getAllThemes();
 });
 
 /// Provider for verse statistics
-final verseStatsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+/// Uses keepAlive() since stats are displayed on dashboard and profile
+final verseStatsProvider = FutureProvider.keepAlive<Map<String, dynamic>>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getVerseStats();
 });
@@ -160,60 +162,61 @@ final sharedVersesProvider = FutureProvider.autoDispose<List<SharedVerseEntry>>(
 });
 
 /// Provider for count of shared verses
-final sharedVersesCountProvider = FutureProvider<int>((ref) async {
+/// Uses keepAlive() since count is used in profile stats
+final sharedVersesCountProvider = FutureProvider.keepAlive<int>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getSharedVerseCount();
 });
 
 /// Provider for count of saved/favorite verses
 /// OPTIMIZED: Uses COUNT query instead of fetching all verses
-final savedVersesCountProvider = FutureProvider<int>((ref) async {
+/// Uses keepAlive() since count is used in profile stats
+final savedVersesCountProvider = FutureProvider.keepAlive<int>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getFavoriteVerseCount();
 });
 
 /// Provider for count of active prayers
-final activePrayersCountProvider = FutureProvider<int>((ref) async {
+/// Uses keepAlive() since count is a core dashboard metric
+final activePrayersCountProvider = FutureProvider.keepAlive<int>((ref) async {
   final service = ref.watch(prayerServiceProvider);
   return await service.getPrayerCount();
 });
 
 /// Provider for count of answered prayers
-final answeredPrayersCountProvider = FutureProvider<int>((ref) async {
+/// Uses keepAlive() since count is used in profile stats
+final answeredPrayersCountProvider = FutureProvider.keepAlive<int>((ref) async {
   final service = ref.watch(prayerServiceProvider);
   return await service.getAnsweredPrayerCount();
 });
 
 /// Provider for count of shared chats
 /// Used for the Conversation Sharer achievement (10 chat shares)
-final sharedChatsCountProvider = FutureProvider<int>((ref) async {
+final sharedChatsCountProvider = FutureProvider.keepAlive<int>((ref) async {
   final database = ref.watch(databaseServiceProvider);
   final db = await database.database;
 
   final result = await db.rawQuery('SELECT COUNT(*) as count FROM shared_chats');
-  return result.first['count'] as int? ?? 0;
+  return result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
 });
 
 /// Provider for count of ALL shares (chats, verses, devotionals, prayers)
 /// Used for the Disciple achievement (10 total shares across all types)
-final totalSharesCountProvider = FutureProvider<int>((ref) async {
+/// OPTIMIZED: Uses single combined query instead of 4 separate queries
+final totalSharesCountProvider = FutureProvider.keepAlive<int>((ref) async {
   final database = ref.watch(databaseServiceProvider);
   final db = await database.database;
 
-  // Count all share types in parallel
-  final results = await Future.wait<List<Map<String, dynamic>>>([
-    db.rawQuery('SELECT COUNT(*) as count FROM shared_chats'),
-    db.rawQuery('SELECT COUNT(*) as count FROM shared_verses'),
-    db.rawQuery('SELECT COUNT(*) as count FROM shared_devotionals'),
-    db.rawQuery('SELECT COUNT(*) as count FROM shared_prayers'),
-  ]);
+  // Combined query - single database round-trip instead of 4
+  final result = await db.rawQuery('''
+    SELECT
+      (SELECT COUNT(*) FROM shared_chats) +
+      (SELECT COUNT(*) FROM shared_verses) +
+      (SELECT COUNT(*) FROM shared_devotionals) +
+      (SELECT COUNT(*) FROM shared_prayers) as total_count
+  ''');
 
-  final chatShares = results[0].first['count'] as int? ?? 0;
-  final verseShares = results[1].first['count'] as int? ?? 0;
-  final devotionalShares = results[2].first['count'] as int? ?? 0;
-  final prayerShares = results[3].first['count'] as int? ?? 0;
-
-  return chatShares + verseShares + devotionalShares + prayerShares;
+  return result.isEmpty ? 0 : (result.first['total_count'] as int? ?? 0);
 });
 
 /// Provider for Disciple achievement completion count

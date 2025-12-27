@@ -183,7 +183,7 @@ class PrayerStreakService {
       final result = await db.rawQuery(
         'SELECT COUNT(*) as count FROM prayer_streak_activity',
       );
-      return result.first['count'] as int;
+      return result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
     } catch (e) {
       return 0;
     }

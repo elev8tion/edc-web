@@ -10,54 +10,70 @@ class CategoryService {
 
   /// Get all active categories ordered by display_order
   Future<List<PrayerCategory>> getActiveCategories() async {
-    final db = await _database.database;
-    final maps = await db.query(
-      'prayer_categories',
-      where: 'is_active = ?',
-      whereArgs: [1],
-      orderBy: 'display_order ASC, name ASC',
-    );
+    try {
+      final db = await _database.database;
+      final maps = await db.query(
+        'prayer_categories',
+        where: 'is_active = ?',
+        whereArgs: [1],
+        orderBy: 'display_order ASC, name ASC',
+      );
 
-    return List<PrayerCategory>.from(maps.map((map) => PrayerCategoryExtension.fromMap(map)));
+      return List<PrayerCategory>.from(maps.map((map) => PrayerCategoryExtension.fromMap(map)));
+    } catch (e) {
+      throw Exception('Failed to get active categories: $e');
+    }
   }
 
   /// Get all categories (including inactive)
   Future<List<PrayerCategory>> getAllCategories() async {
-    final db = await _database.database;
-    final maps = await db.query(
-      'prayer_categories',
-      orderBy: 'display_order ASC, name ASC',
-    );
+    try {
+      final db = await _database.database;
+      final maps = await db.query(
+        'prayer_categories',
+        orderBy: 'display_order ASC, name ASC',
+      );
 
-    return List<PrayerCategory>.from(maps.map((map) => PrayerCategoryExtension.fromMap(map)));
+      return List<PrayerCategory>.from(maps.map((map) => PrayerCategoryExtension.fromMap(map)));
+    } catch (e) {
+      throw Exception('Failed to get all categories: $e');
+    }
   }
 
   /// Get category by ID
   Future<PrayerCategory?> getCategoryById(String id) async {
-    final db = await _database.database;
-    final maps = await db.query(
-      'prayer_categories',
-      where: 'id = ?',
-      whereArgs: [id],
-      limit: 1,
-    );
+    try {
+      final db = await _database.database;
+      final maps = await db.query(
+        'prayer_categories',
+        where: 'id = ?',
+        whereArgs: [id],
+        limit: 1,
+      );
 
-    if (maps.isEmpty) return null;
-    return PrayerCategoryExtension.fromMap(maps.first);
+      if (maps.isEmpty) return null;
+      return PrayerCategoryExtension.fromMap(maps.first);
+    } catch (e) {
+      throw Exception('Failed to get category by ID: $e');
+    }
   }
 
   /// Get category by name
   Future<PrayerCategory?> getCategoryByName(String name) async {
-    final db = await _database.database;
-    final maps = await db.query(
-      'prayer_categories',
-      where: 'name = ? COLLATE NOCASE',
-      whereArgs: [name],
-      limit: 1,
-    );
+    try {
+      final db = await _database.database;
+      final maps = await db.query(
+        'prayer_categories',
+        where: 'name = ? COLLATE NOCASE',
+        whereArgs: [name],
+        limit: 1,
+      );
 
-    if (maps.isEmpty) return null;
-    return PrayerCategoryExtension.fromMap(maps.first);
+      if (maps.isEmpty) return null;
+      return PrayerCategoryExtension.fromMap(maps.first);
+    } catch (e) {
+      throw Exception('Failed to get category by name: $e');
+    }
   }
 
   /// Create new custom category
@@ -78,7 +94,7 @@ class CategoryService {
     final maxOrderResult = await db.rawQuery(
       'SELECT MAX(display_order) as max_order FROM prayer_categories',
     );
-    final nextOrder = ((maxOrderResult.first['max_order'] as int?) ?? 0) + 1;
+    final nextOrder = (maxOrderResult.isEmpty ? 0 : (maxOrderResult.first['max_order'] as int? ?? 0)) + 1;
 
     final category = PrayerCategory(
       id: 'cat_${_uuid.v4()}',
@@ -157,40 +173,49 @@ class CategoryService {
 
   /// Deactivate/activate category
   Future<void> toggleCategoryActive(String id) async {
-    final category = await getCategoryById(id);
-    if (category == null) {
-      throw Exception('Category not found');
-    }
+    try {
+      final category = await getCategoryById(id);
+      if (category == null) {
+        throw Exception('Category not found');
+      }
 
-    final db = await _database.database;
-    await db.update(
-      'prayer_categories',
-      {
-        'is_active': category.isActive ? 0 : 1,
-        'date_modified': DateTime.now().millisecondsSinceEpoch,
-      },
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+      final db = await _database.database;
+      await db.update(
+        'prayer_categories',
+        {
+          'is_active': category.isActive ? 0 : 1,
+          'date_modified': DateTime.now().millisecondsSinceEpoch,
+        },
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      if (e.toString().contains('Category not found')) rethrow;
+      throw Exception('Failed to toggle category active: $e');
+    }
   }
 
   /// Reorder categories
   Future<void> reorderCategories(List<String> categoryIds) async {
-    final db = await _database.database;
+    try {
+      final db = await _database.database;
 
-    await db.transaction((txn) async {
-      for (var i = 0; i < categoryIds.length; i++) {
-        await txn.update(
-          'prayer_categories',
-          {
-            'display_order': i,
-            'date_modified': DateTime.now().millisecondsSinceEpoch,
-          },
-          where: 'id = ?',
-          whereArgs: [categoryIds[i]],
-        );
-      }
-    });
+      await db.transaction((txn) async {
+        for (var i = 0; i < categoryIds.length; i++) {
+          await txn.update(
+            'prayer_categories',
+            {
+              'display_order': i,
+              'date_modified': DateTime.now().millisecondsSinceEpoch,
+            },
+            where: 'id = ?',
+            whereArgs: [categoryIds[i]],
+          );
+        }
+      });
+    } catch (e) {
+      throw Exception('Failed to reorder categories: $e');
+    }
   }
 
   /// Get category statistics
@@ -207,21 +232,21 @@ class CategoryService {
       'SELECT COUNT(*) as count FROM prayer_requests WHERE category = ?',
       [category.id],
     );
-    final total = (totalResult.first['count'] as int?) ?? 0;
+    final total = totalResult.isEmpty ? 0 : (totalResult.first['count'] as int? ?? 0);
 
     // Get active prayers
     final activeResult = await db.rawQuery(
       'SELECT COUNT(*) as count FROM prayer_requests WHERE category = ? AND is_answered = 0',
       [category.id],
     );
-    final active = (activeResult.first['count'] as int?) ?? 0;
+    final active = activeResult.isEmpty ? 0 : (activeResult.first['count'] as int? ?? 0);
 
     // Get answered prayers
     final answeredResult = await db.rawQuery(
       'SELECT COUNT(*) as count FROM prayer_requests WHERE category = ? AND is_answered = 1',
       [category.id],
     );
-    final answered = (answeredResult.first['count'] as int?) ?? 0;
+    final answered = answeredResult.isEmpty ? 0 : (answeredResult.first['count'] as int? ?? 0);
 
     // For archived, we'll use 0 for now (as the current schema doesn't have archived status)
     const archived = 0;
@@ -264,39 +289,51 @@ class CategoryService {
       [category.id],
     );
 
-    return (result.first['count'] as int?) ?? 0;
+    return result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
   }
 
   /// Reset to default categories (delete all custom categories)
   Future<void> resetToDefaults() async {
-    final db = await _database.database;
+    try {
+      final db = await _database.database;
 
-    await db.delete(
-      'prayer_categories',
-      where: 'is_default = ?',
-      whereArgs: [0],
-    );
+      await db.delete(
+        'prayer_categories',
+        where: 'is_default = ?',
+        whereArgs: [0],
+      );
 
-    // Reset display order for default categories
-    final categories = await getActiveCategories();
-    await reorderCategories(categories.map((c) => c.id).toList());
+      // Reset display order for default categories
+      final categories = await getActiveCategories();
+      await reorderCategories(categories.map((c) => c.id).toList());
+    } catch (e) {
+      throw Exception('Failed to reset to defaults: $e');
+    }
   }
 
   /// Get count of custom categories
   Future<int> getCustomCategoryCount() async {
-    final db = await _database.database;
-    final result = await db.rawQuery(
-      'SELECT COUNT(*) as count FROM prayer_categories WHERE is_default = 0',
-    );
+    try {
+      final db = await _database.database;
+      final result = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM prayer_categories WHERE is_default = 0',
+      );
 
-    return (result.first['count'] as int?) ?? 0;
+      return result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
+    } catch (e) {
+      throw Exception('Failed to get custom category count: $e');
+    }
   }
 
   /// Check if category name is available
   Future<bool> isCategoryNameAvailable(String name, {String? excludeId}) async {
-    final existing = await getCategoryByName(name);
-    if (existing == null) return true;
-    if (excludeId != null && existing.id == excludeId) return true;
-    return false;
+    try {
+      final existing = await getCategoryByName(name);
+      if (existing == null) return true;
+      if (excludeId != null && existing.id == excludeId) return true;
+      return false;
+    } catch (e) {
+      throw Exception('Failed to check category name availability: $e');
+    }
   }
 }

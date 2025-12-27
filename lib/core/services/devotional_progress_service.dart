@@ -54,7 +54,7 @@ class DevotionalProgressService {
         lastDayOfMonth.millisecondsSinceEpoch,
       ]);
 
-      final completedThisMonth = result.first['count'] as int? ?? 0;
+      final completedThisMonth = result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
 
       if (completedThisMonth >= 30) {
         final completionCount = await _achievementService!.getCompletionCount(AchievementType.dailyBread);
@@ -114,7 +114,7 @@ class DevotionalProgressService {
       'SELECT COUNT(*) as count FROM devotionals WHERE is_completed = 1',
     );
 
-    return result.first['count'] as int? ?? 0;
+    return result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
   }
 
   /// Get list of all completed devotionals
@@ -217,7 +217,7 @@ class DevotionalProgressService {
     final totalResult = await db.rawQuery(
       'SELECT COUNT(*) as count FROM devotionals',
     );
-    final total = totalResult.first['count'] as int? ?? 0;
+    final total = totalResult.isEmpty ? 0 : (totalResult.first['count'] as int? ?? 0);
 
     if (total == 0) {
       return 0.0;

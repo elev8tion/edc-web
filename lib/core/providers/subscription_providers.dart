@@ -60,44 +60,54 @@ final subscriptionSnapshotProvider = Provider<SubscriptionSnapshot>((ref) {
   );
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when specific field changes
 final subscriptionStatusProvider = Provider<SubscriptionStatus>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).status;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.status));
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when isPremium changes
 final isPremiumProvider = Provider<bool>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).isPremium;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.isPremium));
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when isInTrial changes
 final isInTrialProvider = Provider<bool>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).isInTrial;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.isInTrial));
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when hasTrialExpired changes
 final hasTrialExpiredProvider = Provider<bool>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).hasTrialExpired;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.hasTrialExpired));
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when remainingMessages changes
 final remainingMessagesProvider = Provider<int>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).remainingMessages;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.remainingMessages));
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when messagesUsed changes
 final messagesUsedProvider = Provider<int>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).messagesUsed;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.messagesUsed));
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when canSendMessage changes
 final canSendMessageProvider = Provider<bool>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).canSendMessage;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.canSendMessage));
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when trialDaysRemaining changes
 final trialDaysRemainingProvider = Provider<int>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).trialDaysRemaining;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.trialDaysRemaining));
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when premiumMessagesRemaining changes
 final premiumMessagesRemainingProvider = Provider<int>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).premiumMessagesRemaining;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.premiumMessagesRemaining));
 });
 
+/// OPTIMIZED: Uses .select() to only rebuild when trialMessagesRemaining changes
 final trialMessagesRemainingProvider = Provider<int>((ref) {
-  return ref.watch(subscriptionSnapshotProvider).trialMessagesRemaining;
+  return ref.watch(subscriptionSnapshotProvider.select((snap) => snap.trialMessagesRemaining));
 });
 
 // ============================================================================
