@@ -32,26 +32,27 @@ class FrostedGlassCard extends StatelessWidget {
     this.showInnerBorder = true,
   });
 
-  // Get gradient opacity based on intensity
-  List<Color> _getGradientColors() {
-    switch (intensity) {
-      case GlassIntensity.light:
-        return [
-          Colors.white.withValues(alpha: 0.10),
-          Colors.white.withValues(alpha: 0.05),
-        ];
-      case GlassIntensity.medium:
-        return [
-          Colors.white.withValues(alpha: 0.15),
-          Colors.white.withValues(alpha: 0.08),
-        ];
-      case GlassIntensity.strong:
-        return [
-          Colors.white.withValues(alpha: 0.25),
-          Colors.white.withValues(alpha: 0.15),
-        ];
-    }
-  }
+  // Static gradient colors cached by intensity - avoids recalculating on every build
+  static final Map<GlassIntensity, List<Color>> _gradientColorsCache = {
+    GlassIntensity.light: [
+      Colors.white.withValues(alpha: 0.10),
+      Colors.white.withValues(alpha: 0.05),
+    ],
+    GlassIntensity.medium: [
+      Colors.white.withValues(alpha: 0.15),
+      Colors.white.withValues(alpha: 0.08),
+    ],
+    GlassIntensity.strong: [
+      Colors.white.withValues(alpha: 0.25),
+      Colors.white.withValues(alpha: 0.15),
+    ],
+  };
+
+  // Static inner border color - avoids recalculating on every build
+  static final Color _innerBorderColor = Colors.white.withValues(alpha: 0.2);
+
+  // Get gradient colors from cache
+  List<Color> _getGradientColors() => _gradientColorsCache[intensity]!;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +82,7 @@ class FrostedGlassCard extends StatelessWidget {
               // Add subtle inner border for depth
               border: showInnerBorder
                   ? Border.all(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: _innerBorderColor,
                       width: 1,
                     )
                   : null,

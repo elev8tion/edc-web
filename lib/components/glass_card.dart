@@ -89,12 +89,35 @@ class GlassContainer extends StatelessWidget {
     this.enableLightSimulation = true,
   });
 
+  // Static cached values - avoids recalculating on every build
+  static final List<Color> _defaultGradientColors = [
+    Colors.white.withValues(alpha: 0.18),
+    Colors.white.withValues(alpha: 0.12),
+  ];
+
+  static final Color _defaultBorderColor = Colors.white.withValues(alpha: 0.4);
+
+  static final List<BoxShadow> _defaultBoxShadows = [
+    // Ambient shadow (far, soft)
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.1),
+      offset: const Offset(0, 10),
+      blurRadius: 30,
+      spreadRadius: -5,
+    ),
+    // Definition shadow (close, sharp)
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.05),
+      offset: const Offset(0, 4),
+      blurRadius: 8,
+      spreadRadius: -2,
+    ),
+  ];
+
+  static final Color _lightSimulationColor = Colors.white.withValues(alpha: 0.3);
+
   @override
   Widget build(BuildContext context) {
-    final defaultGradientColors = [
-      Colors.white.withValues(alpha: 0.18), // Increased from 0.15 for dramatic lightening
-      Colors.white.withValues(alpha: 0.12), // Increased from 0.05 for dramatic lightening
-    ];
 
     Widget content = ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
@@ -125,33 +148,17 @@ class GlassContainer extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: gradientColors ?? defaultGradientColors,
+          colors: gradientColors ?? _defaultGradientColors,
           stops: gradientStops ?? const [0.0, 1.0],
           begin: const AlignmentDirectional(0.98, -1.0),
           end: const AlignmentDirectional(-0.98, 1.0),
         ),
         borderRadius: BorderRadius.circular(borderRadius),
         border: border ?? Border.all(
-          color: Colors.white.withValues(alpha: 0.4), // Increased from 0.2 for dramatic lightening
+          color: _defaultBorderColor,
           width: 1,
         ),
-        // Enhanced dual shadows for realistic depth
-        boxShadow: [
-          // Ambient shadow (far, soft) - reduced for dramatic lightening
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1), // Reduced from 0.3
-            offset: const Offset(0, 10),
-            blurRadius: 30,
-            spreadRadius: -5,
-          ),
-          // Definition shadow (close, sharp) - reduced for dramatic lightening
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05), // Reduced from 0.2
-            offset: const Offset(0, 4),
-            blurRadius: 8,
-            spreadRadius: -2,
-          ),
-        ],
+        boxShadow: _defaultBoxShadows,
       ),
       // Light simulation via foreground decoration
       foregroundDecoration: enableLightSimulation
@@ -162,7 +169,7 @@ class GlassContainer extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 stops: const [0.0, 0.5],
                 colors: [
-                  Colors.white.withValues(alpha: 0.3), // Increased to 0.3 for dramatic lightening
+                  _lightSimulationColor,
                   Colors.transparent,
                 ],
               ),
