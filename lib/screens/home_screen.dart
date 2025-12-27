@@ -768,7 +768,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         AppSpacing.lg.sbh,
         LayoutBuilder(
           builder: (context, constraints) => SizedBox(
-            height: scaledHeight.clamp(88.0, 165.0), // Min 88px, max 165px
+            height: scaledHeight.clamp(120.0, 180.0), // Min 120px, max 180px
             child: ListView(
               scrollDirection: Axis.horizontal,
               padding: AppSpacing.horizontalXl,
@@ -872,7 +872,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onTap: onTap,
         child: Container(
           width: 100.s,
-          padding: EdgeInsets.symmetric(horizontal: 6.s, vertical: 8.s),
+          padding: EdgeInsets.symmetric(horizontal: 6.s, vertical: 6.s),
           decoration: BoxDecoration(
             gradient: AppGradients.glassMedium,
             borderRadius: AppRadius.md.br,
@@ -889,40 +889,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.all(10.s),
+                padding: EdgeInsets.all(6.s),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.2),
                   borderRadius: AppRadius.mediumRadius,
                 ),
                 child: Icon(
                   icon,
-                  size: 24.iz,
+                  size: 20.iz,
                   color: AppColors.secondaryText,
                 ),
               ),
-              AppSpacing.sm.sbh,
-              Expanded(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: AutoSizeText(
-                    label,
-                    style: TextStyle(
-                      fontSize: 11.fz,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white.withValues(alpha: 0.9),
-                      shadows: AppTheme.textShadowSubtle,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    minFontSize: 7,
-                    maxFontSize: 11,
-                    overflow: TextOverflow.ellipsis,
+              SizedBox(height: 3.s),
+              Flexible(
+                child: AutoSizeText(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11.fz,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withValues(alpha: 0.9),
+                    shadows: AppTheme.textShadowSubtle,
                   ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  minFontSize: 7,
+                  maxFontSize: 11,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

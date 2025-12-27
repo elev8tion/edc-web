@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../components/gradient_background.dart';
@@ -21,7 +22,6 @@ import '../core/services/book_name_service.dart';
 import '../core/services/bible_config.dart';
 import 'chat_screen.dart';
 import '../l10n/app_localizations.dart';
-import '../core/utils/simple_coach_mark.dart';
 
 /// Chapter Reading Screen - displays Bible chapters with verse-by-verse reading
 class ChapterReadingScreen extends ConsumerStatefulWidget {
@@ -123,52 +123,140 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
 
     final l10n = AppLocalizations.of(context);
 
-    // Show multi-step tutorial using SimpleCoachMark
-    SimpleCoachMark(
-      targets: [
-        CoachTarget(
-          key: _firstVerseKey,
-          title: l10n.tutorialBibleTapTitle,
-          description: l10n.tutorialBibleTapDescription,
-          contentPosition: ContentPosition.bottom,
-          shape: HighlightShape.rectangle,
-          borderRadius: 12,
-          padding: 8,
-          semanticLabel: l10n.tutorialBibleTapTitle,
+    // Show informational dialog about Bible features
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    offset: const Offset(0, 10),
+                    blurRadius: 30,
+                    spreadRadius: -5,
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    offset: const Offset(0, 4),
+                    blurRadius: 8,
+                    spreadRadius: -2,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.tutorialBibleTapTitle,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.tutorialBibleTapDescription,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    l10n.tutorialBibleBookmarkTitle,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.tutorialBibleBookmarkDescription,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    l10n.tutorialBibleChatTitle,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.tutorialBibleChatDescription,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        prefsService.setBibleBrowserTutorialShown();
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(AppRadius.sm),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              l10n.tutorialFinish,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppTheme.goldColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        CoachTarget(
-          key: _firstVerseKey,
-          title: l10n.tutorialBibleBookmarkTitle,
-          description: l10n.tutorialBibleBookmarkDescription,
-          contentPosition: ContentPosition.bottom,
-          shape: HighlightShape.rectangle,
-          borderRadius: 12,
-          padding: 8,
-          semanticLabel: l10n.tutorialBibleBookmarkTitle,
-        ),
-        CoachTarget(
-          key: _firstVerseKey,
-          title: l10n.tutorialBibleChatTitle,
-          description: l10n.tutorialBibleChatDescription,
-          contentPosition: ContentPosition.bottom,
-          shape: HighlightShape.rectangle,
-          borderRadius: 12,
-          padding: 8,
-          semanticLabel: l10n.tutorialBibleChatTitle,
-        ),
-      ],
-      config: CoachMarkConfig(
-        skipText: l10n.tutorialSkip,
-        nextText: l10n.tutorialNext,
-        previousText: l10n.tutorialPrevious,
       ),
-      onFinish: () {
-        prefsService.setBibleBrowserTutorialShown();
-      },
-      onSkip: () {
-        prefsService.setBibleBrowserTutorialShown();
-      },
-    ).show(context);
+    );
+
+    // Mark as shown even if dismissed
+    prefsService.setBibleBrowserTutorialShown();
   }
 
   @override

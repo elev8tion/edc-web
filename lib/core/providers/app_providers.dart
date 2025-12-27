@@ -142,15 +142,15 @@ final versesByThemeProvider = FutureProvider.autoDispose.family<List<BibleVerse>
 });
 
 /// Provider for getting all available themes
-/// Uses keepAlive() since themes rarely change and are accessed frequently
-final availableThemesProvider = FutureProvider.keepAlive<List<String>>((ref) async {
+/// FutureProvider (without autoDispose) keeps alive since themes rarely change
+final availableThemesProvider = FutureProvider<List<String>>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getAllThemes();
 });
 
 /// Provider for verse statistics
-/// Uses keepAlive() since stats are displayed on dashboard and profile
-final verseStatsProvider = FutureProvider.keepAlive<Map<String, dynamic>>((ref) async {
+/// FutureProvider (without autoDispose) keeps alive for dashboard and profile
+final verseStatsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getVerseStats();
 });
@@ -162,37 +162,37 @@ final sharedVersesProvider = FutureProvider.autoDispose<List<SharedVerseEntry>>(
 });
 
 /// Provider for count of shared verses
-/// Uses keepAlive() since count is used in profile stats
-final sharedVersesCountProvider = FutureProvider.keepAlive<int>((ref) async {
+/// FutureProvider (without autoDispose) keeps alive for profile stats
+final sharedVersesCountProvider = FutureProvider<int>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getSharedVerseCount();
 });
 
 /// Provider for count of saved/favorite verses
 /// OPTIMIZED: Uses COUNT query instead of fetching all verses
-/// Uses keepAlive() since count is used in profile stats
-final savedVersesCountProvider = FutureProvider.keepAlive<int>((ref) async {
+/// FutureProvider (without autoDispose) keeps alive for profile stats
+final savedVersesCountProvider = FutureProvider<int>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getFavoriteVerseCount();
 });
 
 /// Provider for count of active prayers
-/// Uses keepAlive() since count is a core dashboard metric
-final activePrayersCountProvider = FutureProvider.keepAlive<int>((ref) async {
+/// FutureProvider (without autoDispose) keeps alive for dashboard
+final activePrayersCountProvider = FutureProvider<int>((ref) async {
   final service = ref.watch(prayerServiceProvider);
   return await service.getPrayerCount();
 });
 
 /// Provider for count of answered prayers
-/// Uses keepAlive() since count is used in profile stats
-final answeredPrayersCountProvider = FutureProvider.keepAlive<int>((ref) async {
+/// FutureProvider (without autoDispose) keeps alive for profile stats
+final answeredPrayersCountProvider = FutureProvider<int>((ref) async {
   final service = ref.watch(prayerServiceProvider);
   return await service.getAnsweredPrayerCount();
 });
 
 /// Provider for count of shared chats
 /// Used for the Conversation Sharer achievement (10 chat shares)
-final sharedChatsCountProvider = FutureProvider.keepAlive<int>((ref) async {
+final sharedChatsCountProvider = FutureProvider<int>((ref) async {
   final database = ref.watch(databaseServiceProvider);
   final db = await database.database;
 
@@ -203,7 +203,7 @@ final sharedChatsCountProvider = FutureProvider.keepAlive<int>((ref) async {
 /// Provider for count of ALL shares (chats, verses, devotionals, prayers)
 /// Used for the Disciple achievement (10 total shares across all types)
 /// OPTIMIZED: Uses single combined query instead of 4 separate queries
-final totalSharesCountProvider = FutureProvider.keepAlive<int>((ref) async {
+final totalSharesCountProvider = FutureProvider<int>((ref) async {
   final database = ref.watch(databaseServiceProvider);
   final db = await database.database;
 
@@ -249,14 +249,14 @@ final profileStatsProvider = FutureProvider<ProfileStats>((ref) async {
   ]);
 
   return ProfileStats(
-    devotionalStreak: results[0],
-    totalPrayers: results[1],
-    savedVerses: results[2],
-    devotionalsCompleted: results[3],
-    prayerStreak: results[4],
-    readingPlansActive: results[5],
-    sharedChats: results[6],
-    discipleCompletionCount: results[7],
+    devotionalStreak: results[0] as int,
+    totalPrayers: results[1] as int,
+    savedVerses: results[2] as int,
+    devotionalsCompleted: results[3] as int,
+    prayerStreak: results[4] as int,
+    readingPlansActive: results[5] as int,
+    sharedChats: results[6] as int,
+    discipleCompletionCount: results[7] as int,
   );
 });
 
