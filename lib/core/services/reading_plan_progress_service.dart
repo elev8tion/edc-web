@@ -94,7 +94,7 @@ class ReadingPlanProgressService {
         [planId],
       );
 
-      final totalReadings = totalResult.first['count'] as int;
+      final totalReadings = totalResult.isEmpty ? 0 : (totalResult.first['count'] as int? ?? 0);
       if (totalReadings == 0) return 0.0;
 
       // Get completed readings count
@@ -103,7 +103,7 @@ class ReadingPlanProgressService {
         [planId],
       );
 
-      final completedCount = completedResult.first['count'] as int;
+      final completedCount = completedResult.isEmpty ? 0 : (completedResult.first['count'] as int? ?? 0);
       return (completedCount / totalReadings) * 100;
     } catch (e) {
       throw Exception('Failed to get progress percentage: $e');
@@ -335,13 +335,13 @@ class ReadingPlanProgressService {
         'SELECT COUNT(*) as count FROM daily_readings WHERE plan_id = ?',
         [planId],
       );
-      final total = totalResult.first['count'] as int;
+      final total = totalResult.isEmpty ? 0 : (totalResult.first['count'] as int? ?? 0);
 
       final completedResult = await db.rawQuery(
         'SELECT COUNT(*) as count FROM daily_readings WHERE plan_id = ? AND is_completed = 1',
         [planId],
       );
-      final completed = completedResult.first['count'] as int;
+      final completed = completedResult.isEmpty ? 0 : (completedResult.first['count'] as int? ?? 0);
 
       // Get current streak
       final streak = await getStreak(planId);
@@ -476,7 +476,7 @@ class ReadingPlanProgressService {
         'SELECT COUNT(*) as count FROM daily_readings WHERE plan_id = ? AND date >= ?',
         [planId, weekAgo.millisecondsSinceEpoch],
       );
-      final scheduled = scheduledResult.first['count'] as int;
+      final scheduled = scheduledResult.isEmpty ? 0 : (scheduledResult.first['count'] as int? ?? 0);
 
       if (scheduled == 0) return 0.0;
 
@@ -485,7 +485,7 @@ class ReadingPlanProgressService {
         'SELECT COUNT(*) as count FROM daily_readings WHERE plan_id = ? AND date >= ? AND is_completed = 1',
         [planId, weekAgo.millisecondsSinceEpoch],
       );
-      final completed = completedResult.first['count'] as int;
+      final completed = completedResult.isEmpty ? 0 : (completedResult.first['count'] as int? ?? 0);
 
       return (completed / scheduled) * 100;
     } catch (e) {
@@ -519,7 +519,7 @@ class ReadingPlanProgressService {
         'SELECT COUNT(*) as count FROM daily_readings WHERE plan_id = ? AND is_completed = 1',
         [planId],
       );
-      final completed = completedResult.first['count'] as int;
+      final completed = completedResult.isEmpty ? 0 : (completedResult.first['count'] as int? ?? 0);
 
       if (completed == 0) {
         // No progress yet, can't estimate
@@ -559,7 +559,7 @@ class ReadingPlanProgressService {
       [planId],
     );
 
-    final completedCount = (result.first['count'] as int?) ?? 0;
+    final completedCount = result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
 
     // Check if plan is now complete
     final planResult = await db.query(
@@ -603,7 +603,7 @@ class ReadingPlanProgressService {
         'SELECT COUNT(*) as count FROM reading_plans WHERE is_completed = 1',
       );
 
-      final completedPlans = result.first['count'] as int? ?? 0;
+      final completedPlans = result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
 
       if (completedPlans >= 5) {
         final completionCount = await _achievementService!.getCompletionCount(AchievementType.deepDiver);
