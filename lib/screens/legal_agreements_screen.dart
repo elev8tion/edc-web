@@ -7,7 +7,6 @@ import '../theme/app_theme.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/gradient_background.dart';
 import '../components/glass_button.dart';
-import '../utils/legal_document_viewer.dart';
 import '../l10n/app_localizations.dart';
 
 /// Combined legal agreements screen showing crisis disclaimer and terms/privacy acceptance
@@ -555,11 +554,19 @@ class _LegalAgreementsScreenState extends State<LegalAgreementsScreen> {
   }
 
   Future<void> _launchURL(String route) async {
-    // Show legal documents using reusable viewer component
+    // Open legal documents in external browser (same as settings/profile screens)
+    final String url;
     if (route == '/terms') {
-      await LegalDocumentViewer.showTermsOfService(context);
+      url = 'https://everydaychristian.app/terms';
     } else if (route == '/privacy') {
-      await LegalDocumentViewer.showPrivacyPolicy(context);
+      url = 'https://everydaychristian.app/privacy';
+    } else {
+      return;
+    }
+
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 
