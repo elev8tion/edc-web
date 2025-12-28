@@ -51,19 +51,12 @@ Future<void> main() async {
     tz.setLocalLocation(tz.UTC);
   }
 
-  // Load environment variables from .env file (skip on web if file doesn't exist)
-  try {
-    await dotenv.load(fileName: ".env");
-
-    // Validate environment configuration (security check)
-    // This will throw EnvValidationException if any issues are found
-    EnvValidator.validate();
-  } catch (e) {
-    // .env file not found - continue without it (web deployment)
-    if (kIsWeb) {
-      // On web, env vars are typically set at build time or in environment
-      debugPrint('[main] .env file not found on web - continuing without it');
-    } else {
+  // Load environment variables from .env file (mobile only - web uses Cloudflare proxy)
+  if (!kIsWeb) {
+    try {
+      await dotenv.load(fileName: ".env");
+      EnvValidator.validate();
+    } catch (e) {
       rethrow;
     }
   }
