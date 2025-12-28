@@ -22,7 +22,8 @@ class _PWAInstallDialogContent extends StatefulWidget {
   const _PWAInstallDialogContent({this.isIOS = false});
 
   @override
-  State<_PWAInstallDialogContent> createState() => _PWAInstallDialogContentState();
+  State<_PWAInstallDialogContent> createState() =>
+      _PWAInstallDialogContentState();
 }
 
 class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
@@ -92,7 +93,8 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
             child: Icon(
               Icons.download_rounded,
               color: AppTheme.goldColor,
-              size: ResponsiveUtils.scaleSize(context, 36, minScale: 0.8, maxScale: 1.3),
+              size: ResponsiveUtils.scaleSize(context, 36,
+                  minScale: 0.8, maxScale: 1.3),
             ),
           ),
           const SizedBox(height: 20),
@@ -103,7 +105,8 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
             style: TextStyle(
               color: AppColors.primaryText,
               fontWeight: FontWeight.w700,
-              fontSize: ResponsiveUtils.fontSize(context, 22, minSize: 18, maxSize: 26),
+              fontSize: ResponsiveUtils.fontSize(context, 22,
+                  minSize: 18, maxSize: 26),
             ),
             textAlign: TextAlign.center,
           ),
@@ -114,7 +117,8 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
             l10n.pwaInstallDescription,
             style: TextStyle(
               color: AppColors.secondaryText,
-              fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
+              fontSize: ResponsiveUtils.fontSize(context, 14,
+                  minSize: 12, maxSize: 16),
               height: 1.4,
             ),
             textAlign: TextAlign.center,
@@ -122,11 +126,13 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
           const SizedBox(height: 20),
 
           // Features list
-          _buildFeature(context, Icons.offline_bolt_outlined, l10n.pwaFeatureOffline),
+          _buildFeature(
+              context, Icons.offline_bolt_outlined, l10n.pwaFeatureOffline),
           const SizedBox(height: 10),
           _buildFeature(context, Icons.speed_outlined, l10n.pwaFeatureFast),
           const SizedBox(height: 10),
-          _buildFeature(context, Icons.home_outlined, l10n.pwaFeatureHomeScreen),
+          _buildFeature(
+              context, Icons.home_outlined, l10n.pwaFeatureHomeScreen),
 
           const SizedBox(height: 24),
 
@@ -148,7 +154,8 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
                     l10n.pwaIOSInstructions,
                     style: TextStyle(
                       color: AppColors.primaryText,
-                      fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
+                      fontSize: ResponsiveUtils.fontSize(context, 14,
+                          minSize: 12, maxSize: 16),
                       fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.center,
@@ -157,15 +164,18 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.ios_share, color: AppTheme.goldColor, size: 24),
+                      const Icon(Icons.ios_share,
+                          color: AppTheme.goldColor, size: 24),
                       const SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, color: AppColors.secondaryText, size: 16),
+                      Icon(Icons.arrow_forward,
+                          color: AppColors.secondaryText, size: 16),
                       const SizedBox(width: 8),
                       Text(
                         l10n.pwaIOSAddToHomeScreen,
                         style: TextStyle(
                           color: AppColors.secondaryText,
-                          fontSize: ResponsiveUtils.fontSize(context, 13, minSize: 11, maxSize: 15),
+                          fontSize: ResponsiveUtils.fontSize(context, 13,
+                              minSize: 11, maxSize: 15),
                         ),
                       ),
                     ],
@@ -246,7 +256,8 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
             text,
             style: TextStyle(
               color: AppColors.primaryText,
-              fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
+              fontSize: ResponsiveUtils.fontSize(context, 14,
+                  minSize: 12, maxSize: 16),
             ),
           ),
         ),

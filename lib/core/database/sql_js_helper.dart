@@ -411,7 +411,7 @@ class SqlJsDatabase {
     }
 
     try {
-      return await _database!.transaction((txn) async {
+      return await _database.transaction((txn) async {
         // Wrap the sqflite transaction in our SqlJsDatabase wrapper
         final wrappedTxn = SqlJsDatabase._internal(txn);
         return await action(wrappedTxn);
