@@ -147,28 +147,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     if (!mounted) return;
 
-    final pwa = FlutterPWAInstall.instance;
+    try {
+      final pwa = FlutterPWAInstall.instance;
 
-    // Check if we can show install prompt
-    final canInstall = await pwa.canInstall();
-    if (!canInstall) return;
+      // Check if we can show install prompt
+      final canInstall = await pwa.canInstall();
+      if (!canInstall) return;
 
-    // Show install prompt
-    final result = await pwa.promptInstall(
-      options: PromptOptions(
-        onAccepted: () {
-          debugPrint('[PWA] User accepted install prompt');
-        },
-        onDismissed: () {
-          debugPrint('[PWA] User dismissed install prompt');
-        },
-        onError: (error) {
-          debugPrint('[PWA] Install prompt error: $error');
-        },
-      ),
-    );
+      // Show install prompt
+      final result = await pwa.promptInstall(
+        options: PromptOptions(
+          onAccepted: () {
+            debugPrint('[PWA] User accepted install prompt');
+          },
+          onDismissed: () {
+            debugPrint('[PWA] User dismissed install prompt');
+          },
+          onError: (error) {
+            debugPrint('[PWA] Install prompt error: $error');
+          },
+        ),
+      );
 
-    debugPrint('[PWA] Install result: ${result.outcome.name}');
+      debugPrint('[PWA] Install result: ${result.outcome.name}');
+    } catch (e) {
+      // flutter_pwa_install package may throw on some browsers
+      // due to navigator.standalone access issues
+      debugPrint('[PWA] Install check failed (expected on some browsers): $e');
+    }
   }
 
   @override

@@ -52,7 +52,13 @@ class BiometricService {
   }
 
   /// Authenticate using biometric authentication
+  ///
+  /// [reason] - The reason shown to the user for why authentication is needed
+  /// [localizedFallbackTitle] - Title for fallback button (iOS)
+  /// [androidSignInTitle] - Title shown on Android auth dialog
+  /// [biometricOnly] - If true, only biometric auth is allowed (no PIN fallback)
   Future<bool> authenticate({
+    String? reason,
     String localizedFallbackTitle = 'Use PIN',
     String androidSignInTitle = 'Biometric Authentication',
     String androidCancelButton = 'Cancel',
@@ -61,6 +67,10 @@ class BiometricService {
     bool stickyAuth = false,
   }) async {
     try {
+      // Use reason for logging if provided
+      final authReason = reason ?? androidSignInTitle;
+      debugPrint('[BiometricService] Authenticating with reason: $authReason');
+
       if (!await canCheckBiometrics()) {
         throw const BiometricException('Biometric authentication not available');
       }

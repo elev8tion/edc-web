@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorageService {
@@ -20,6 +21,7 @@ class SecureStorageService {
   static const String _biometricEnabledKey = 'biometric_enabled';
   static const String _lastLoginKey = 'last_login';
   static const String _sessionTokenKey = 'session_token';
+  static const String _appPinKey = 'app_pin_hash';
 
   // Constructor with optional dependency injection for testing
   const SecureStorageService({FlutterSecureStorage? storage})
@@ -210,6 +212,55 @@ class SecureStorageService {
       return credentials != null;
     } catch (e) {
       return false;
+    }
+  }
+
+  // =========================================================================
+  // App PIN Methods
+  // =========================================================================
+
+  /// Check if app PIN is set
+  Future<bool> hasAppPin() async {
+    try {
+      final pinHash = await _storage.read(key: _appPinKey);
+      return pinHash != null && pinHash.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Store app PIN (hashed with SHA-256 for security)
+  Future<void> setAppPin(String pin) async {
+    try {
+      final bytes = utf8.encode(pin);
+      final hash = sha256.convert(bytes).toString();
+      await _storage.write(key: _appPinKey, value: hash);
+    } catch (e) {
+      throw SecureStorageException('Failed to store app PIN: $e');
+    }
+  }
+
+  /// Verify app PIN against stored hash
+  Future<bool> verifyAppPin(String pin) async {
+    try {
+      final storedHash = await _storage.read(key: _appPinKey);
+      if (storedHash == null) return false;
+
+      final inputBytes = utf8.encode(pin);
+      final inputHash = sha256.convert(inputBytes).toString();
+
+      return storedHash == inputHash;
+    } catch (e) {
+      throw SecureStorageException('Failed to verify app PIN: $e');
+    }
+  }
+
+  /// Clear app PIN
+  Future<void> clearAppPin() async {
+    try {
+      await _storage.delete(key: _appPinKey);
+    } catch (e) {
+      throw SecureStorageException('Failed to clear app PIN: $e');
     }
   }
 

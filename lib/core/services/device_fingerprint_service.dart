@@ -12,8 +12,9 @@
 
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
+import 'package:web/web.dart' as web;
+import 'dart:js_interop';
 
 class DeviceFingerprintService {
   /// Generate a unique device fingerprint based on browser characteristics
@@ -52,39 +53,39 @@ class DeviceFingerprintService {
 
   /// Collect browser characteristics
   static Future<Map<String, dynamic>> _collectBrowserSignals() async {
-    final window = html.window;
-    final navigator = html.window.navigator;
-    final screen = html.window.screen;
+    final window = web.window;
+    final navigator = web.window.navigator;
+    final screen = web.window.screen;
 
     final signals = <String, dynamic>{
       // Browser identification
-      'userAgent': navigator.userAgent ?? '',
-      'language': navigator.language ?? '',
-      'languages': navigator.languages?.join(',') ?? '',
-      'platform': navigator.platform ?? '',
+      'userAgent': navigator.userAgent,
+      'language': navigator.language,
+      'languages': _getLanguages(navigator),
+      'platform': _getPlatform(navigator),
 
       // Screen characteristics
-      'screenWidth': screen?.width ?? 0,
-      'screenHeight': screen?.height ?? 0,
-      'screenColorDepth': screen?.colorDepth ?? 0,
-      'screenPixelDepth': screen?.pixelDepth ?? 0,
+      'screenWidth': screen.width,
+      'screenHeight': screen.height,
+      'screenColorDepth': screen.colorDepth,
+      'screenPixelDepth': screen.pixelDepth,
 
       // Viewport
-      'windowWidth': window.innerWidth ?? 0,
-      'windowHeight': window.innerHeight ?? 0,
+      'windowWidth': window.innerWidth,
+      'windowHeight': window.innerHeight,
 
       // Time zone
       'timezoneOffset': DateTime.now().timeZoneOffset.inMinutes,
 
       // Hardware (if available)
-      'hardwareConcurrency': _getHardwareConcurrency(navigator),
+      'hardwareConcurrency': navigator.hardwareConcurrency,
       'deviceMemory': _getDeviceMemory(navigator),
 
       // Touch support
-      'maxTouchPoints': _getMaxTouchPoints(navigator),
+      'maxTouchPoints': navigator.maxTouchPoints,
 
       // Cookie enabled
-      'cookieEnabled': navigator.cookieEnabled ?? false,
+      'cookieEnabled': navigator.cookieEnabled,
 
       // Do Not Track
       'doNotTrack': _getDoNotTrack(navigator),
@@ -100,6 +101,37 @@ class DeviceFingerprintService {
     return signals;
   }
 
+  /// Get languages as comma-separated string
+  static String _getLanguages(web.Navigator navigator) {
+    try {
+      // Use dynamic access for compatibility
+      final languagesArray = (navigator as dynamic).languages;
+      if (languagesArray == null) return '';
+
+      final list = <String>[];
+      final length = (languagesArray.length as num?)?.toInt() ?? 0;
+      for (int i = 0; i < length; i++) {
+        final lang = languagesArray[i];
+        if (lang != null) {
+          list.add(lang.toString());
+        }
+      }
+      return list.join(',');
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /// Get platform safely
+  static String _getPlatform(web.Navigator navigator) {
+    try {
+      // platform is deprecated but still useful for fingerprinting
+      return (navigator as dynamic).platform?.toString() ?? '';
+    } catch (e) {
+      return '';
+    }
+  }
+
   /// Generate canvas fingerprint (most unique signal)
   ///
   /// Canvas fingerprinting works by rendering text and shapes,
@@ -107,24 +139,27 @@ class DeviceFingerprintService {
   /// (due to GPU, drivers, fonts, etc.) create a unique signature.
   static Future<String> _generateCanvasFingerprint() async {
     try {
-      final canvas = html.CanvasElement(width: 200, height: 50);
-      final ctx = canvas.getContext('2d') as html.CanvasRenderingContext2D;
+      final canvas = web.document.createElement('canvas') as web.HTMLCanvasElement;
+      canvas.width = 200;
+      canvas.height = 50;
+
+      final ctx = canvas.getContext('2d') as web.CanvasRenderingContext2D;
 
       // Draw text with specific font
       ctx.textBaseline = 'top';
       ctx.font = '14px "Arial"';
       ctx.textBaseline = 'alphabetic';
-      ctx.fillStyle = '#f60';
+      ctx.fillStyle = '#f60'.toJS;
       ctx.fillRect(125, 1, 62, 20);
 
-      ctx.fillStyle = '#069';
-      ctx.fillText('EDC Trial 🙏', 2, 15);
+      ctx.fillStyle = '#069'.toJS;
+      ctx.fillText('EDC Trial', 2, 15);
 
-      ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
-      ctx.fillText('EDC Trial 🙏', 4, 17);
+      ctx.fillStyle = 'rgba(102, 204, 0, 0.7)'.toJS;
+      ctx.fillText('EDC Trial', 4, 17);
 
       // Get canvas data URL
-      final dataUrl = canvas.toDataUrl('image/png');
+      final dataUrl = canvas.toDataURL('image/png');
 
       // Hash the canvas data
       final bytes = utf8.encode(dataUrl);
@@ -140,13 +175,17 @@ class DeviceFingerprintService {
   /// Get WebGL vendor
   static String _getWebGLVendor() {
     try {
-      final canvas = html.CanvasElement();
-      final gl = canvas.getContext('webgl') as html.RenderingContext?;
+      final canvas = web.document.createElement('canvas') as web.HTMLCanvasElement;
+      final gl = canvas.getContext('webgl');
 
       if (gl != null) {
-        final debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+        // Use dynamic to access WebGL methods
+        final glDynamic = gl as dynamic;
+        final debugInfo = glDynamic.getExtension('WEBGL_debug_renderer_info');
         if (debugInfo != null) {
-          return gl.getParameter(0x9245).toString(); // UNMASKED_VENDOR_WEBGL
+          // UNMASKED_VENDOR_WEBGL = 0x9245
+          final vendor = glDynamic.getParameter(0x9245);
+          return vendor?.toString() ?? 'unknown';
         }
       }
     } catch (error) {
@@ -158,13 +197,17 @@ class DeviceFingerprintService {
   /// Get WebGL renderer
   static String _getWebGLRenderer() {
     try {
-      final canvas = html.CanvasElement();
-      final gl = canvas.getContext('webgl') as html.RenderingContext?;
+      final canvas = web.document.createElement('canvas') as web.HTMLCanvasElement;
+      final gl = canvas.getContext('webgl');
 
       if (gl != null) {
-        final debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+        // Use dynamic to access WebGL methods
+        final glDynamic = gl as dynamic;
+        final debugInfo = glDynamic.getExtension('WEBGL_debug_renderer_info');
         if (debugInfo != null) {
-          return gl.getParameter(0x9246).toString(); // UNMASKED_RENDERER_WEBGL
+          // UNMASKED_RENDERER_WEBGL = 0x9246
+          final renderer = glDynamic.getParameter(0x9246);
+          return renderer?.toString() ?? 'unknown';
         }
       }
     } catch (error) {
@@ -173,18 +216,8 @@ class DeviceFingerprintService {
     return 'unknown';
   }
 
-  /// Get hardware concurrency (CPU cores)
-  static int _getHardwareConcurrency(html.Navigator navigator) {
-    try {
-      // Access via JS interop
-      return (navigator as dynamic).hardwareConcurrency ?? 0;
-    } catch (error) {
-      return 0;
-    }
-  }
-
   /// Get device memory (GB)
-  static dynamic _getDeviceMemory(html.Navigator navigator) {
+  static dynamic _getDeviceMemory(web.Navigator navigator) {
     try {
       return (navigator as dynamic).deviceMemory ?? 'unknown';
     } catch (error) {
@@ -192,17 +225,8 @@ class DeviceFingerprintService {
     }
   }
 
-  /// Get max touch points
-  static int _getMaxTouchPoints(html.Navigator navigator) {
-    try {
-      return (navigator as dynamic).maxTouchPoints ?? 0;
-    } catch (error) {
-      return 0;
-    }
-  }
-
   /// Get Do Not Track setting
-  static String _getDoNotTrack(html.Navigator navigator) {
+  static String _getDoNotTrack(web.Navigator navigator) {
     try {
       return (navigator as dynamic).doNotTrack?.toString() ?? 'unknown';
     } catch (error) {
