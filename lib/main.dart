@@ -85,6 +85,29 @@ Future<void> main() async {
 
     // Initialize app update service to detect service worker updates
     await AppUpdateService.instance.initialize();
+
+    // Check if user came from landing page with ?install=true parameter
+    // If so, trigger the install prompt immediately after a short delay
+    final uri = Uri.base;
+    final installParam = uri.queryParameters['install'];
+    if (installParam == 'true') {
+      debugPrint('[PWA] Install param detected from landing page - will show install prompt');
+      // Schedule install prompt after app initializes
+      Future.delayed(const Duration(milliseconds: 1500), () async {
+        try {
+          final pwa = FlutterPWAInstall.instance;
+          final canInstall = await pwa.canInstall();
+          if (canInstall) {
+            debugPrint('[PWA] Triggering install prompt from landing page redirect');
+            await pwa.promptInstall();
+          } else {
+            debugPrint('[PWA] Cannot install - app may already be installed');
+          }
+        } catch (e) {
+          debugPrint('[PWA] Install prompt failed: $e');
+        }
+      });
+    }
   }
 
   runApp(
