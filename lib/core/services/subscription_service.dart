@@ -438,17 +438,15 @@ class SubscriptionService {
   // STRIPE CHECKOUT (PWA)
   // ============================================================================
 
-  /// Get Stripe Checkout URL for the selected plan
-  /// Returns the URL to redirect user to Stripe Checkout
-  String getStripeCheckoutUrl({required bool isYearly, String locale = 'en'}) {
-    final baseUrl = dotenv.get('STRIPE_CHECKOUT_URL', fallback: '');
-    if (baseUrl.isEmpty) {
-      debugPrint('⚠️ [SubscriptionService] STRIPE_CHECKOUT_URL not configured');
-      return '';
-    }
+  // Stripe Payment Links (Production)
+  static const String _paymentLinkYearly = 'https://buy.stripe.com/3cIaEYbLj8ccbq75VZ0RG00';
+  static const String _paymentLinkMonthly = 'https://buy.stripe.com/6oU14odTrgIIcubfwz0RG01';
 
-    final plan = isYearly ? 'yearly' : 'monthly';
-    return '$baseUrl?plan=$plan&locale=$locale';
+  /// Get Stripe Checkout URL for the selected plan
+  String getStripeCheckoutUrl({required bool isYearly, String locale = 'en'}) {
+    final url = isYearly ? _paymentLinkYearly : _paymentLinkMonthly;
+    debugPrint('💳 [SubscriptionService] Using Payment Link: ${isYearly ? 'yearly' : 'monthly'}');
+    return url;
   }
 
   /// Get the purchased product ID (yearly vs monthly)
