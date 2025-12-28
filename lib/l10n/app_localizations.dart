@@ -5792,6 +5792,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Later'**
   String get updateLater;
+
+  /// Title for PWA install dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Install Everyday Christian'**
+  String get pwaInstallTitle;
+
+  /// Description for PWA install dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Add Everyday Christian to your home screen for the best experience.'**
+  String get pwaInstallDescription;
+
+  /// PWA feature - offline access
+  ///
+  /// In en, this message translates to:
+  /// **'Works offline - access your Bible anytime'**
+  String get pwaFeatureOffline;
+
+  /// PWA feature - fast loading
+  ///
+  /// In en, this message translates to:
+  /// **'Faster loading - launches like a native app'**
+  String get pwaFeatureFast;
+
+  /// PWA feature - home screen access
+  ///
+  /// In en, this message translates to:
+  /// **'Easy access from your home screen'**
+  String get pwaFeatureHomeScreen;
+
+  /// Button to install PWA
+  ///
+  /// In en, this message translates to:
+  /// **'Install'**
+  String get pwaInstallButton;
+
+  /// Button to dismiss PWA install dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Not Now'**
+  String get pwaNotNow;
+
+  /// Message when PWA is already installed
+  ///
+  /// In en, this message translates to:
+  /// **'App may already be installed. Check your home screen!'**
+  String get pwaAlreadyInstalled;
+
+  /// iOS install instructions header
+  ///
+  /// In en, this message translates to:
+  /// **'To install on iPhone/iPad:'**
+  String get pwaIOSInstructions;
+
+  /// iOS add to home screen instruction
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Home Screen'**
+  String get pwaIOSAddToHomeScreen;
+
+  /// Button to dismiss iOS instructions
+  ///
+  /// In en, this message translates to:
+  /// **'Got It'**
+  String get pwaGotIt;
 }
 
 class _AppLocalizationsDelegate

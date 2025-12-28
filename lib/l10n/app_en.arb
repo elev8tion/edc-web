@@ -4382,5 +4382,49 @@
   "updateLater": "Later",
   "@updateLater": {
     "description": "Button to dismiss update dialog"
+  },
+  "pwaInstallTitle": "Install Everyday Christian",
+  "@pwaInstallTitle": {
+    "description": "Title for PWA install dialog"
+  },
+  "pwaInstallDescription": "Add Everyday Christian to your home screen for the best experience.",
+  "@pwaInstallDescription": {
+    "description": "Description for PWA install dialog"
+  },
+  "pwaFeatureOffline": "Works offline - access your Bible anytime",
+  "@pwaFeatureOffline": {
+    "description": "PWA feature - offline access"
+  },
+  "pwaFeatureFast": "Faster loading - launches like a native app",
+  "@pwaFeatureFast": {
+    "description": "PWA feature - fast loading"
+  },
+  "pwaFeatureHomeScreen": "Easy access from your home screen",
+  "@pwaFeatureHomeScreen": {
+    "description": "PWA feature - home screen access"
+  },
+  "pwaInstallButton": "Install",
+  "@pwaInstallButton": {
+    "description": "Button to install PWA"
+  },
+  "pwaNotNow": "Not Now",
+  "@pwaNotNow": {
+    "description": "Button to dismiss PWA install dialog"
+  },
+  "pwaAlreadyInstalled": "App may already be installed. Check your home screen!",
+  "@pwaAlreadyInstalled": {
+    "description": "Message when PWA is already installed"
+  },
+  "pwaIOSInstructions": "To install on iPhone/iPad:",
+  "@pwaIOSInstructions": {
+    "description": "iOS install instructions header"
+  },
+  "pwaIOSAddToHomeScreen": "Add to Home Screen",
+  "@pwaIOSAddToHomeScreen": {
+    "description": "iOS add to home screen instruction"
+  },
+  "pwaGotIt": "Got It",
+  "@pwaGotIt": {
+    "description": "Button to dismiss iOS instructions"
   }
 }

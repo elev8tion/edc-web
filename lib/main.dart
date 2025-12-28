@@ -1,5 +1,6 @@
 import 'package:everyday_christian/components/app_update_wrapper.dart';
 import 'package:everyday_christian/components/offline_indicator.dart';
+import 'package:everyday_christian/components/pwa_install_wrapper.dart';
 import 'package:everyday_christian/core/config/env_validator.dart';
 import 'package:everyday_christian/core/navigation/app_routes.dart';
 import 'package:everyday_christian/core/navigation/navigation_service.dart';
@@ -86,28 +87,8 @@ Future<void> main() async {
     // Initialize app update service to detect service worker updates
     await AppUpdateService.instance.initialize();
 
-    // Check if user came from landing page with ?install=true parameter
-    // If so, trigger the install prompt immediately after a short delay
-    final uri = Uri.base;
-    final installParam = uri.queryParameters['install'];
-    if (installParam == 'true') {
-      debugPrint('[PWA] Install param detected from landing page - will show install prompt');
-      // Schedule install prompt after app initializes
-      Future.delayed(const Duration(milliseconds: 1500), () async {
-        try {
-          final pwa = FlutterPWAInstall.instance;
-          final canInstall = await pwa.canInstall();
-          if (canInstall) {
-            debugPrint('[PWA] Triggering install prompt from landing page redirect');
-            await pwa.promptInstall();
-          } else {
-            debugPrint('[PWA] Cannot install - app may already be installed');
-          }
-        } catch (e) {
-          debugPrint('[PWA] Install prompt failed: $e');
-        }
-      });
-    }
+    // Note: Install prompt handling moved to PWAInstallWrapper
+    // which shows a dialog when ?install=true is in the URL
   }
 
   runApp(
@@ -143,9 +124,10 @@ class MyApp extends ConsumerWidget {
           child: OfflineIndicator(child: child!),
         );
 
-        // Wrap with AppUpdateWrapper for web to show update dialogs
+        // Wrap with web-specific wrappers for update and install dialogs
         if (kIsWeb) {
           content = AppUpdateWrapper(child: content);
+          content = PWAInstallWrapper(child: content);
         }
 
         return content;

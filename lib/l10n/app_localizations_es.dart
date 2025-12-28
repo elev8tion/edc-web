@@ -3298,4 +3298,40 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get updateLater => 'Más Tarde';
+
+  @override
+  String get pwaInstallTitle => 'Instalar Everyday Christian';
+
+  @override
+  String get pwaInstallDescription =>
+      'Añade Everyday Christian a tu pantalla de inicio para la mejor experiencia.';
+
+  @override
+  String get pwaFeatureOffline =>
+      'Funciona sin conexión - accede a tu Biblia en cualquier momento';
+
+  @override
+  String get pwaFeatureFast => 'Carga más rápida - se abre como una app nativa';
+
+  @override
+  String get pwaFeatureHomeScreen => 'Acceso fácil desde tu pantalla de inicio';
+
+  @override
+  String get pwaInstallButton => 'Instalar';
+
+  @override
+  String get pwaNotNow => 'Ahora No';
+
+  @override
+  String get pwaAlreadyInstalled =>
+      'La app puede estar ya instalada. ¡Revisa tu pantalla de inicio!';
+
+  @override
+  String get pwaIOSInstructions => 'Para instalar en iPhone/iPad:';
+
+  @override
+  String get pwaIOSAddToHomeScreen => 'Añadir a Inicio';
+
+  @override
+  String get pwaGotIt => 'Entendido';
 }

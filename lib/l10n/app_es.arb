@@ -1091,5 +1091,16 @@
   "updateAvailableTitle": "Actualización Disponible",
   "updateAvailableDescription": "Una nueva versión de Everyday Christian está lista. Actualiza para obtener las últimas funciones y mejoras.",
   "updateNow": "Actualizar Ahora",
-  "updateLater": "Más Tarde"
+  "updateLater": "Más Tarde",
+  "pwaInstallTitle": "Instalar Everyday Christian",
+  "pwaInstallDescription": "Añade Everyday Christian a tu pantalla de inicio para la mejor experiencia.",
+  "pwaFeatureOffline": "Funciona sin conexión - accede a tu Biblia en cualquier momento",
+  "pwaFeatureFast": "Carga más rápida - se abre como una app nativa",
+  "pwaFeatureHomeScreen": "Acceso fácil desde tu pantalla de inicio",
+  "pwaInstallButton": "Instalar",
+  "pwaNotNow": "Ahora No",
+  "pwaAlreadyInstalled": "La app puede estar ya instalada. ¡Revisa tu pantalla de inicio!",
+  "pwaIOSInstructions": "Para instalar en iPhone/iPad:",
+  "pwaIOSAddToHomeScreen": "Añadir a Inicio",
+  "pwaGotIt": "Entendido"
 }
