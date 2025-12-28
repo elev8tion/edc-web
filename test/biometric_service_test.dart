@@ -41,7 +41,7 @@ void main() {
 
     group('BiometricSettings', () {
       test('can be constructed with required parameters', () {
-        final settings = BiometricSettings(
+        const settings = BiometricSettings(
           isAvailable: true,
           availableTypes: [BiometricType.face, BiometricType.fingerprint],
           isStrongSupported: true,
@@ -55,7 +55,7 @@ void main() {
       });
 
       test('hasType() returns correct values', () {
-        final settings = BiometricSettings(
+        const settings = BiometricSettings(
           isAvailable: true,
           availableTypes: [BiometricType.face],
           isStrongSupported: true,
@@ -67,7 +67,7 @@ void main() {
       });
 
       test('toJson() produces valid JSON map', () {
-        final settings = BiometricSettings(
+        const settings = BiometricSettings(
           isAvailable: true,
           availableTypes: [BiometricType.fingerprint],
           isStrongSupported: false,
