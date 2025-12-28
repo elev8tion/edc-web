@@ -1,0 +1,15 @@
+# Gemini AI Proxy Worker Configuration
+# Deploy with: wrangler deploy -c wrangler-gemini.toml
+
+name = "edc-gemini-proxy"
+main = "src/gemini-proxy.js"
+compatibility_date = "2024-01-01"
+
+# API keys are stored as secrets (not in vars for security)
+# Set each key with:
+#   wrangler secret put GEMINI_API_KEY_1 -c wrangler-gemini.toml
+#   wrangler secret put GEMINI_API_KEY_2 -c wrangler-gemini.toml
+#   ... through GEMINI_API_KEY_20
+
+# After deploying, the worker will be available at:
+# https://edc-gemini-proxy.<your-subdomain>.workers.dev
