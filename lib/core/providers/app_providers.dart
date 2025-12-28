@@ -51,7 +51,8 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
   return NotificationService(database);
 });
 
-final preferencesServiceProvider = FutureProvider<PreferencesService>((ref) async {
+final preferencesServiceProvider =
+    FutureProvider<PreferencesService>((ref) async {
   return await PreferencesService.getInstance();
 });
 
@@ -116,19 +117,22 @@ final unifiedVerseServiceProvider = Provider<UnifiedVerseService>((ref) {
 // Verse Library Providers
 
 /// Provider for getting all verses
-final allVersesProvider = FutureProvider.autoDispose<List<BibleVerse>>((ref) async {
+final allVersesProvider =
+    FutureProvider.autoDispose<List<BibleVerse>>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getAllVerses(limit: 100);
 });
 
 /// Provider for getting favorite verses
-final favoriteVersesProvider = FutureProvider.autoDispose<List<BibleVerse>>((ref) async {
+final favoriteVersesProvider =
+    FutureProvider.autoDispose<List<BibleVerse>>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getFavoriteVerses();
 });
 
 /// Provider for searching verses (family provider with query parameter)
-final searchVersesProvider = FutureProvider.autoDispose.family<List<BibleVerse>, String>((ref, query) async {
+final searchVersesProvider = FutureProvider.autoDispose
+    .family<List<BibleVerse>, String>((ref, query) async {
   if (query.trim().isEmpty) return [];
 
   final service = ref.watch(unifiedVerseServiceProvider);
@@ -136,7 +140,8 @@ final searchVersesProvider = FutureProvider.autoDispose.family<List<BibleVerse>,
 });
 
 /// Provider for getting verses by theme
-final versesByThemeProvider = FutureProvider.autoDispose.family<List<BibleVerse>, String>((ref, theme) async {
+final versesByThemeProvider = FutureProvider.autoDispose
+    .family<List<BibleVerse>, String>((ref, theme) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.searchByTheme(theme, limit: 50);
 });
@@ -156,7 +161,8 @@ final verseStatsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
 });
 
 /// Provider for recently shared verses
-final sharedVersesProvider = FutureProvider.autoDispose<List<SharedVerseEntry>>((ref) async {
+final sharedVersesProvider =
+    FutureProvider.autoDispose<List<SharedVerseEntry>>((ref) async {
   final service = ref.watch(unifiedVerseServiceProvider);
   return await service.getSharedVerses();
 });
@@ -196,7 +202,8 @@ final sharedChatsCountProvider = FutureProvider<int>((ref) async {
   final database = ref.watch(databaseServiceProvider);
   final db = await database.database;
 
-  final result = await db.rawQuery('SELECT COUNT(*) as count FROM shared_chats');
+  final result =
+      await db.rawQuery('SELECT COUNT(*) as count FROM shared_chats');
   return result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
 });
 
@@ -249,14 +256,14 @@ final profileStatsProvider = FutureProvider<ProfileStats>((ref) async {
   ]);
 
   return ProfileStats(
-    devotionalStreak: results[0] as int,
-    totalPrayers: results[1] as int,
-    savedVerses: results[2] as int,
-    devotionalsCompleted: results[3] as int,
-    prayerStreak: results[4] as int,
-    readingPlansActive: results[5] as int,
-    sharedChats: results[6] as int,
-    discipleCompletionCount: results[7] as int,
+    devotionalStreak: results[0],
+    totalPrayers: results[1],
+    savedVerses: results[2],
+    devotionalsCompleted: results[3],
+    prayerStreak: results[4],
+    readingPlansActive: results[5],
+    sharedChats: results[6],
+    discipleCompletionCount: results[7],
   );
 });
 
@@ -275,12 +282,14 @@ final bibleLoaderServiceProvider = Provider<BibleLoaderService>((ref) {
   return BibleLoaderService(database);
 });
 
-final devotionalContentLoaderProvider = Provider<DevotionalContentLoader>((ref) {
+final devotionalContentLoaderProvider =
+    Provider<DevotionalContentLoader>((ref) {
   final database = ref.watch(databaseServiceProvider);
   return DevotionalContentLoader(database);
 });
 
-final devotionalProgressServiceProvider = Provider<DevotionalProgressService>((ref) {
+final devotionalProgressServiceProvider =
+    Provider<DevotionalProgressService>((ref) {
   final database = ref.watch(databaseServiceProvider);
   final achievementService = ref.watch(achievementServiceProvider);
   return DevotionalProgressService(
@@ -289,7 +298,8 @@ final devotionalProgressServiceProvider = Provider<DevotionalProgressService>((r
   );
 });
 
-final readingPlanProgressServiceProvider = Provider<ReadingPlanProgressService>((ref) {
+final readingPlanProgressServiceProvider =
+    Provider<ReadingPlanProgressService>((ref) {
   final database = ref.watch(databaseServiceProvider);
   final achievementService = ref.watch(achievementServiceProvider);
   return ReadingPlanProgressService(
@@ -298,7 +308,8 @@ final readingPlanProgressServiceProvider = Provider<ReadingPlanProgressService>(
   );
 });
 
-final curatedReadingPlanLoaderProvider = Provider<CuratedReadingPlanLoader>((ref) {
+final curatedReadingPlanLoaderProvider =
+    Provider<CuratedReadingPlanLoader>((ref) {
   final database = ref.watch(databaseServiceProvider);
   return CuratedReadingPlanLoader(database);
 });
@@ -343,7 +354,8 @@ final appInitializationProvider = FutureProvider<void>((ref) async {
         await suspension.initialize();
         await dailyVerseService.initialize();
       } else {
-        debugPrint('🌐 [AppInit] Web platform - skipping mobile-only services (notifications, subscriptions)');
+        debugPrint(
+            '🌐 [AppInit] Web platform - skipping mobile-only services (notifications, subscriptions)');
       }
 
       // Automatic cleanup: Remove old chat messages (60+ days OR keep only 100 most recent)
@@ -351,7 +363,8 @@ final appInitializationProvider = FutureProvider<void>((ref) async {
         final dbHelper = DatabaseHelper.instance;
         final cleanup = await dbHelper.autoCleanupChatMessages();
         if (cleanup['total_deleted']! > 0) {
-          debugPrint('🧹 Auto-cleanup: Removed ${cleanup['total_deleted']} old chat messages');
+          debugPrint(
+              '🧹 Auto-cleanup: Removed ${cleanup['total_deleted']} old chat messages');
         }
       } catch (e) {
         // Don't block app initialization if cleanup fails
@@ -372,7 +385,8 @@ final appInitializationProvider = FutureProvider<void>((ref) async {
           debugPrint('📖 [AppInit] Checking English Bible: WEB=$isWEBLoaded');
 
           if (!isWEBLoaded) {
-            debugPrint('📖 [AppInit] Loading English Bible (WEB) for English user...');
+            debugPrint(
+                '📖 [AppInit] Loading English Bible (WEB) for English user...');
             await bibleLoader.loadEnglishBible();
             debugPrint('📖 [AppInit] ✅ English Bible loaded');
           } else {
@@ -381,10 +395,12 @@ final appInitializationProvider = FutureProvider<void>((ref) async {
         } else {
           // Spanish user - load only Spanish Bible
           final isRVR1909Loaded = await bibleLoader.isBibleLoaded('RVR1909');
-          debugPrint('📖 [AppInit] Checking Spanish Bible: RVR1909=$isRVR1909Loaded');
+          debugPrint(
+              '📖 [AppInit] Checking Spanish Bible: RVR1909=$isRVR1909Loaded');
 
           if (!isRVR1909Loaded) {
-            debugPrint('📖 [AppInit] Loading Spanish Bible (RVR1909) for Spanish user...');
+            debugPrint(
+                '📖 [AppInit] Loading Spanish Bible (RVR1909) for Spanish user...');
             await bibleLoader.loadSpanishBible();
             debugPrint('📖 [AppInit] ✅ Spanish Bible loaded');
           } else {
@@ -392,7 +408,8 @@ final appInitializationProvider = FutureProvider<void>((ref) async {
           }
         }
       } else {
-        debugPrint('📖 [AppInit] Web platform detected - Bible data handled by DatabaseHelper');
+        debugPrint(
+            '📖 [AppInit] Web platform detected - Bible data handled by DatabaseHelper');
       }
 
       // Load devotional content on first launch (language-specific)
@@ -412,7 +429,8 @@ final appInitializationProvider = FutureProvider<void>((ref) async {
       try {
         // Get translation code based on language: WEB for English, RVR1909 for Spanish
         final translationCode = language == 'en' ? 'WEB' : 'RVR1909';
-        await dailyVerseService.checkAndUpdateVerse(translation: translationCode);
+        await dailyVerseService.checkAndUpdateVerse(
+            translation: translationCode);
         debugPrint('✅ Daily verse widget updated ($translationCode)');
       } catch (e) {
         debugPrint('⚠️ Failed to update daily verse widget: $e');
@@ -422,7 +440,8 @@ final appInitializationProvider = FutureProvider<void>((ref) async {
       const Duration(seconds: 60),
       onTimeout: () {
         debugPrint('❌ App initialization timed out after 60 seconds');
-        throw TimeoutException('App initialization timed out. Please check your connection and try again.');
+        throw TimeoutException(
+            'App initialization timed out. Please check your connection and try again.');
       },
     );
   } catch (e) {
@@ -446,7 +465,8 @@ final todaysDevotionalProvider = FutureProvider<Devotional?>((ref) async {
 });
 
 /// Provider for getting completion status of a specific devotional
-final devotionalCompletionStatusProvider = FutureProvider.family<bool, String>((ref, devotionalId) async {
+final devotionalCompletionStatusProvider =
+    FutureProvider.family<bool, String>((ref, devotionalId) async {
   final progressService = ref.watch(devotionalProgressServiceProvider);
   return await progressService.getCompletionStatus(devotionalId);
 });
@@ -464,13 +484,15 @@ final totalDevotionalsCompletedProvider = FutureProvider<int>((ref) async {
 });
 
 /// Provider for getting completion percentage
-final devotionalCompletionPercentageProvider = FutureProvider<double>((ref) async {
+final devotionalCompletionPercentageProvider =
+    FutureProvider<double>((ref) async {
   final progressService = ref.watch(devotionalProgressServiceProvider);
   return await progressService.getCompletionPercentage();
 });
 
 /// Provider for getting all completed devotionals
-final completedDevotionalsProvider = FutureProvider<List<Devotional>>((ref) async {
+final completedDevotionalsProvider =
+    FutureProvider<List<Devotional>>((ref) async {
   final progressService = ref.watch(devotionalProgressServiceProvider);
   return await progressService.getCompletedDevotionals();
 });
@@ -484,7 +506,8 @@ final allReadingPlansProvider = FutureProvider<List<ReadingPlan>>((ref) async {
 });
 
 /// Provider for getting active reading plans
-final activeReadingPlansProvider = FutureProvider<List<ReadingPlan>>((ref) async {
+final activeReadingPlansProvider =
+    FutureProvider<List<ReadingPlan>>((ref) async {
   final planService = ref.watch(readingPlanServiceProvider);
   return await planService.getActivePlans();
 });
@@ -496,67 +519,78 @@ final currentReadingPlanProvider = FutureProvider<ReadingPlan?>((ref) async {
 });
 
 /// Provider for getting progress percentage for a specific plan
-final planProgressPercentageProvider = FutureProvider.family<double, String>((ref, planId) async {
+final planProgressPercentageProvider =
+    FutureProvider.family<double, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getProgressPercentage(planId);
 });
 
 /// Provider for getting current day number in a plan
-final planCurrentDayProvider = FutureProvider.family<int, String>((ref, planId) async {
+final planCurrentDayProvider =
+    FutureProvider.family<int, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getCurrentDay(planId);
 });
 
 /// Provider for getting today's readings for a plan
-final todaysReadingsProvider = FutureProvider.family<List<DailyReading>, String>((ref, planId) async {
+final todaysReadingsProvider =
+    FutureProvider.family<List<DailyReading>, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getTodaysReadings(planId);
 });
 
 /// Provider for getting incomplete readings for a plan
-final incompleteReadingsProvider = FutureProvider.family<List<DailyReading>, String>((ref, planId) async {
+final incompleteReadingsProvider =
+    FutureProvider.family<List<DailyReading>, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getIncompleteReadings(planId);
 });
 
 /// Provider for getting completed readings for a plan
-final completedReadingsProvider = FutureProvider.family<List<DailyReading>, String>((ref, planId) async {
+final completedReadingsProvider =
+    FutureProvider.family<List<DailyReading>, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getCompletedReadings(planId);
 });
 
 /// Provider for getting reading streak for a plan
-final planStreakProvider = FutureProvider.family<int, String>((ref, planId) async {
+final planStreakProvider =
+    FutureProvider.family<int, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getStreak(planId);
 });
 
 /// Provider for getting calendar heatmap data for a plan
-final planHeatmapDataProvider = FutureProvider.family<Map<DateTime, int>, String>((ref, planId) async {
+final planHeatmapDataProvider =
+    FutureProvider.family<Map<DateTime, int>, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getCalendarHeatmapData(planId, days: 90);
 });
 
 /// Provider for getting completion statistics for a plan
-final planCompletionStatsProvider = FutureProvider.family<Map<String, dynamic>, String>((ref, planId) async {
+final planCompletionStatsProvider =
+    FutureProvider.family<Map<String, dynamic>, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getCompletionStats(planId);
 });
 
 /// Provider for getting missed days for a plan
-final planMissedDaysProvider = FutureProvider.family<List<DateTime>, String>((ref, planId) async {
+final planMissedDaysProvider =
+    FutureProvider.family<List<DateTime>, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getMissedDays(planId);
 });
 
 /// Provider for getting weekly completion rate for a plan
-final planWeeklyCompletionRateProvider = FutureProvider.family<double, String>((ref, planId) async {
+final planWeeklyCompletionRateProvider =
+    FutureProvider.family<double, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getWeeklyCompletionRate(planId);
 });
 
 /// Provider for getting estimated completion date for a plan
-final planEstimatedCompletionDateProvider = FutureProvider.family<DateTime?, String>((ref, planId) async {
+final planEstimatedCompletionDateProvider =
+    FutureProvider.family<DateTime?, String>((ref, planId) async {
   final progressService = ref.watch(readingPlanProgressServiceProvider);
   return await progressService.getEstimatedCompletionDate(planId);
 });
@@ -594,7 +628,8 @@ final prayerActivityDatesProvider = FutureProvider<List<DateTime>>((ref) async {
 });
 
 // Theme Mode Provider
-final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+final themeModeProvider =
+    StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return ThemeModeNotifier(preferencesAsync);
 });
@@ -670,7 +705,8 @@ class LanguageNotifier extends StateNotifier<Locale> {
       // Check if this is first run (language preference not set)
       if (savedLanguage == 'English') {
         // Check if this is truly first run or if user explicitly chose English
-        final hasSetLanguage = prefs.prefs?.containsKey('language_preference') ?? false;
+        final hasSetLanguage =
+            prefs.prefs?.containsKey('language_preference') ?? false;
 
         if (!hasSetLanguage) {
           // First run - detect system language
@@ -691,7 +727,6 @@ class LanguageNotifier extends StateNotifier<Locale> {
       state = Locale(languageCode);
     });
   }
-
 }
 
 // Text Size Provider
@@ -701,49 +736,58 @@ final textSizeProvider = StateNotifierProvider<TextSizeNotifier, double>((ref) {
 });
 
 // Notification Settings Providers
-final dailyNotificationsProvider = StateNotifierProvider<DailyNotificationsNotifier, bool>((ref) {
+final dailyNotificationsProvider =
+    StateNotifierProvider<DailyNotificationsNotifier, bool>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return DailyNotificationsNotifier(preferencesAsync, ref);
 });
 
-final prayerRemindersProvider = StateNotifierProvider<PrayerRemindersNotifier, bool>((ref) {
+final prayerRemindersProvider =
+    StateNotifierProvider<PrayerRemindersNotifier, bool>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return PrayerRemindersNotifier(preferencesAsync, ref);
 });
 
-final verseOfTheDayProvider = StateNotifierProvider<VerseOfTheDayNotifier, bool>((ref) {
+final verseOfTheDayProvider =
+    StateNotifierProvider<VerseOfTheDayNotifier, bool>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return VerseOfTheDayNotifier(preferencesAsync, ref);
 });
 
-final readingPlanRemindersProvider = StateNotifierProvider<ReadingPlanRemindersNotifier, bool>((ref) {
+final readingPlanRemindersProvider =
+    StateNotifierProvider<ReadingPlanRemindersNotifier, bool>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return ReadingPlanRemindersNotifier(preferencesAsync, ref);
 });
 
 // Individual notification time providers
-final devotionalTimeProvider = StateNotifierProvider<DevotionalTimeNotifier, String>((ref) {
+final devotionalTimeProvider =
+    StateNotifierProvider<DevotionalTimeNotifier, String>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return DevotionalTimeNotifier(preferencesAsync, ref);
 });
 
-final prayerTimeProvider = StateNotifierProvider<PrayerTimeNotifier, String>((ref) {
+final prayerTimeProvider =
+    StateNotifierProvider<PrayerTimeNotifier, String>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return PrayerTimeNotifier(preferencesAsync, ref);
 });
 
-final verseTimeProvider = StateNotifierProvider<VerseTimeNotifier, String>((ref) {
+final verseTimeProvider =
+    StateNotifierProvider<VerseTimeNotifier, String>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return VerseTimeNotifier(preferencesAsync, ref);
 });
 
-final readingPlanTimeProvider = StateNotifierProvider<ReadingPlanTimeNotifier, String>((ref) {
+final readingPlanTimeProvider =
+    StateNotifierProvider<ReadingPlanTimeNotifier, String>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return ReadingPlanTimeNotifier(preferencesAsync, ref);
 });
 
 // Legacy single time provider - kept for migration purposes
-final notificationTimeProvider = StateNotifierProvider<NotificationTimeNotifier, String>((ref) {
+final notificationTimeProvider =
+    StateNotifierProvider<NotificationTimeNotifier, String>((ref) {
   final preferencesAsync = ref.watch(preferencesServiceProvider);
   return NotificationTimeNotifier(preferencesAsync, ref);
 });
@@ -752,7 +796,8 @@ class TextSizeNotifier extends StateNotifier<double> {
   final AsyncValue<PreferencesService> _preferencesAsync;
   PreferencesService? _preferences;
 
-  TextSizeNotifier(this._preferencesAsync) : super(1.0) { // Default 1.0 = 100% scale
+  TextSizeNotifier(this._preferencesAsync) : super(1.0) {
+    // Default 1.0 = 100% scale
     _initializeTextSize();
   }
 
@@ -763,7 +808,8 @@ class TextSizeNotifier extends StateNotifier<double> {
       final savedSize = prefs.loadTextSize();
       final scaleFactor = _migrateToScaleFactor(savedSize);
       state = scaleFactor;
-      print('🔍 [TextSizeNotifier] Loaded text size: $savedSize → scaleFactor: $scaleFactor (${(scaleFactor * 100).round()}%)');
+      print(
+          '🔍 [TextSizeNotifier] Loaded text size: $savedSize → scaleFactor: $scaleFactor (${(scaleFactor * 100).round()}%)');
     });
   }
 
@@ -787,7 +833,8 @@ class TextSizeNotifier extends StateNotifier<double> {
     }
 
     state = size;
-    print('🔍 [TextSizeNotifier] Setting text size to: $size (${(size * 100).round()}%)');
+    print(
+        '🔍 [TextSizeNotifier] Setting text size to: $size (${(size * 100).round()}%)');
 
     if (_preferences == null) {
       developer.log(
@@ -839,9 +886,9 @@ class DailyNotificationsNotifier extends StateNotifier<bool> {
     final time = _ref.read(devotionalTimeProvider);
     final parts = time.split(':');
     await _ref.read(notificationServiceProvider).scheduleDailyDevotional(
-      hour: int.parse(parts[0]),
-      minute: int.parse(parts[1]),
-    );
+          hour: int.parse(parts[0]),
+          minute: int.parse(parts[1]),
+        );
   }
 }
 
@@ -875,9 +922,9 @@ class PrayerRemindersNotifier extends StateNotifier<bool> {
     final time = _ref.read(prayerTimeProvider);
     final parts = time.split(':');
     await _ref.read(notificationServiceProvider).schedulePrayerReminder(
-      hour: int.parse(parts[0]),
-      minute: int.parse(parts[1]),
-    );
+          hour: int.parse(parts[0]),
+          minute: int.parse(parts[1]),
+        );
   }
 }
 
@@ -911,9 +958,9 @@ class VerseOfTheDayNotifier extends StateNotifier<bool> {
     final time = _ref.read(verseTimeProvider);
     final parts = time.split(':');
     await _ref.read(notificationServiceProvider).scheduleDailyVerse(
-      hour: int.parse(parts[0]),
-      minute: int.parse(parts[1]),
-    );
+          hour: int.parse(parts[0]),
+          minute: int.parse(parts[1]),
+        );
   }
 }
 
@@ -922,7 +969,8 @@ class ReadingPlanRemindersNotifier extends StateNotifier<bool> {
   final Ref _ref;
   PreferencesService? _preferences;
 
-  ReadingPlanRemindersNotifier(this._preferencesAsync, this._ref) : super(true) {
+  ReadingPlanRemindersNotifier(this._preferencesAsync, this._ref)
+      : super(true) {
     _initialize();
   }
 
@@ -947,9 +995,9 @@ class ReadingPlanRemindersNotifier extends StateNotifier<bool> {
     final time = _ref.read(readingPlanTimeProvider);
     final parts = time.split(':');
     await _ref.read(notificationServiceProvider).scheduleReadingPlanReminder(
-      hour: int.parse(parts[0]),
-      minute: int.parse(parts[1]),
-    );
+          hour: int.parse(parts[0]),
+          minute: int.parse(parts[1]),
+        );
   }
 }
 
@@ -983,23 +1031,23 @@ class NotificationTimeNotifier extends StateNotifier<String> {
 
     if (_ref.read(dailyNotificationsProvider)) {
       await _ref.read(notificationServiceProvider).scheduleDailyDevotional(
-        hour: hour,
-        minute: minute,
-      );
+            hour: hour,
+            minute: minute,
+          );
     }
 
     if (_ref.read(prayerRemindersProvider)) {
       await _ref.read(notificationServiceProvider).schedulePrayerReminder(
-        hour: hour,
-        minute: minute,
-      );
+            hour: hour,
+            minute: minute,
+          );
     }
 
     if (_ref.read(verseOfTheDayProvider)) {
       await _ref.read(notificationServiceProvider).scheduleReadingPlanReminder(
-        hour: hour,
-        minute: minute,
-      );
+            hour: hour,
+            minute: minute,
+          );
     }
   }
 }
@@ -1028,9 +1076,9 @@ class DevotionalTimeNotifier extends StateNotifier<String> {
     if (_ref.read(dailyNotificationsProvider)) {
       final parts = time.split(':');
       await _ref.read(notificationServiceProvider).scheduleDailyDevotional(
-        hour: int.parse(parts[0]),
-        minute: int.parse(parts[1]),
-      );
+            hour: int.parse(parts[0]),
+            minute: int.parse(parts[1]),
+          );
     }
   }
 }
@@ -1058,9 +1106,9 @@ class PrayerTimeNotifier extends StateNotifier<String> {
     if (_ref.read(prayerRemindersProvider)) {
       final parts = time.split(':');
       await _ref.read(notificationServiceProvider).schedulePrayerReminder(
-        hour: int.parse(parts[0]),
-        minute: int.parse(parts[1]),
-      );
+            hour: int.parse(parts[0]),
+            minute: int.parse(parts[1]),
+          );
     }
   }
 }
@@ -1088,9 +1136,9 @@ class VerseTimeNotifier extends StateNotifier<String> {
     if (_ref.read(verseOfTheDayProvider)) {
       final parts = time.split(':');
       await _ref.read(notificationServiceProvider).scheduleDailyVerse(
-        hour: int.parse(parts[0]),
-        minute: int.parse(parts[1]),
-      );
+            hour: int.parse(parts[0]),
+            minute: int.parse(parts[1]),
+          );
     }
   }
 }
@@ -1118,9 +1166,9 @@ class ReadingPlanTimeNotifier extends StateNotifier<String> {
     if (_ref.read(readingPlanRemindersProvider)) {
       final parts = time.split(':');
       await _ref.read(notificationServiceProvider).scheduleReadingPlanReminder(
-        hour: int.parse(parts[0]),
-        minute: int.parse(parts[1]),
-      );
+            hour: int.parse(parts[0]),
+            minute: int.parse(parts[1]),
+          );
     }
   }
 }

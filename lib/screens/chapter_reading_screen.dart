@@ -225,7 +225,8 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -236,7 +237,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
                             ),
                             child: Text(
                               l10n.tutorialFinish,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                                 color: AppTheme.goldColor,
                                 fontWeight: FontWeight.w600,
