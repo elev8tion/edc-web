@@ -4366,5 +4366,21 @@
   "tutorialPrayerDescription": "Tap here to add a new prayer request. Track your prayers and mark them as answered!",
   "@tutorialPrayerDescription": {
     "description": "Description for prayer screen add button tutorial"
+  },
+  "updateAvailableTitle": "Update Available",
+  "@updateAvailableTitle": {
+    "description": "Title for app update dialog"
+  },
+  "updateAvailableDescription": "A new version of Everyday Christian is ready. Refresh to get the latest features and improvements.",
+  "@updateAvailableDescription": {
+    "description": "Description for app update dialog"
+  },
+  "updateNow": "Refresh Now",
+  "@updateNow": {
+    "description": "Button to apply update immediately"
+  },
+  "updateLater": "Later",
+  "@updateLater": {
+    "description": "Button to dismiss update dialog"
   }
 }

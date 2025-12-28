@@ -5768,6 +5768,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap here to add a new prayer request. Track your prayers and mark them as answered!'**
   String get tutorialPrayerDescription;
+
+  /// Title for app update dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Update Available'**
+  String get updateAvailableTitle;
+
+  /// Description for app update dialog
+  ///
+  /// In en, this message translates to:
+  /// **'A new version of Everyday Christian is ready. Refresh to get the latest features and improvements.'**
+  String get updateAvailableDescription;
+
+  /// Button to apply update immediately
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh Now'**
+  String get updateNow;
+
+  /// Button to dismiss update dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get updateLater;
 }
 
 class _AppLocalizationsDelegate

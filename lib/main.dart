@@ -1,8 +1,10 @@
+import 'package:everyday_christian/components/app_update_wrapper.dart';
 import 'package:everyday_christian/components/offline_indicator.dart';
 import 'package:everyday_christian/core/config/env_validator.dart';
 import 'package:everyday_christian/core/navigation/app_routes.dart';
 import 'package:everyday_christian/core/navigation/navigation_service.dart';
 import 'package:everyday_christian/core/providers/app_providers.dart';
+import 'package:everyday_christian/core/services/app_update_service.dart';
 import 'package:everyday_christian/core/services/subscription_service.dart';
 import 'package:everyday_christian/screens/bible_browser_screen.dart';
 import 'package:everyday_christian/screens/chapter_reading_screen.dart';
@@ -80,6 +82,9 @@ Future<void> main() async {
         debug: true, // Enable debug to see PWA events in console
       ),
     );
+
+    // Initialize app update service to detect service worker updates
+    await AppUpdateService.instance.initialize();
   }
 
   runApp(
@@ -114,6 +119,11 @@ class MyApp extends ConsumerWidget {
           ),
           child: OfflineIndicator(child: child!),
         );
+
+        // Wrap with AppUpdateWrapper for web to show update dialogs
+        if (kIsWeb) {
+          content = AppUpdateWrapper(child: content);
+        }
 
         return content;
       },

@@ -1087,5 +1087,9 @@
   "tutorialBibleChatTitle": "Chat Inteligente de Versículos",
   "tutorialBibleChatDescription": "Haz preguntas sobre cualquier versículo y obtén perspectivas y explicaciones bíblicas.",
   "tutorialPrayerTitle": "Añade tus Oraciones",
-  "tutorialPrayerDescription": "Toca aquí para añadir una nueva petición de oración. Sigue tus oraciones y márcalas como respondidas!"
+  "tutorialPrayerDescription": "Toca aquí para añadir una nueva petición de oración. Sigue tus oraciones y márcalas como respondidas!",
+  "updateAvailableTitle": "Actualización Disponible",
+  "updateAvailableDescription": "Una nueva versión de Everyday Christian está lista. Actualiza para obtener las últimas funciones y mejoras.",
+  "updateNow": "Actualizar Ahora",
+  "updateLater": "Más Tarde"
 }

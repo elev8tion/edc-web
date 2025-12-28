@@ -3285,4 +3285,17 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get tutorialPrayerDescription =>
       'Toca aquí para añadir una nueva petición de oración. Sigue tus oraciones y márcalas como respondidas!';
+
+  @override
+  String get updateAvailableTitle => 'Actualización Disponible';
+
+  @override
+  String get updateAvailableDescription =>
+      'Una nueva versión de Everyday Christian está lista. Actualiza para obtener las últimas funciones y mejoras.';
+
+  @override
+  String get updateNow => 'Actualizar Ahora';
+
+  @override
+  String get updateLater => 'Más Tarde';
 }
