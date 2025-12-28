@@ -1262,6 +1262,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallNoPreviousPurchaseFound => 'No previous purchase found.';
 
   @override
+  String get paywallSubscriptionTermsWeb =>
+      'You will be redirected to Stripe for secure payment. Subscription automatically renews unless cancelled. Manage your subscription anytime via the Customer Portal link in your email.';
+
+  @override
+  String get paywallHaveActivationCode => 'Have an activation code?';
+
+  @override
+  String get paywallCheckoutNotConfigured =>
+      'Checkout not configured. Please contact support.';
+
+  @override
+  String get paywallCheckoutRedirectInfo =>
+      'Complete your purchase in the browser. You\'ll receive an activation code via email.';
+
+  @override
   String get everydayVerses => 'Everyday verses';
 
   @override
@@ -1620,6 +1635,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get subscriptionUnableToOpenSettings =>
       'Unable to open subscription settings';
+
+  @override
+  String get subscriptionManageViaEmail =>
+      'To manage your subscription, use the Customer Portal link in your purchase confirmation email.';
 
   @override
   String get legalAgreements => 'Legal Agreements';

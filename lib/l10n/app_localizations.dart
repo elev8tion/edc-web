@@ -2397,6 +2397,30 @@ abstract class AppLocalizations {
   /// **'No previous purchase found.'**
   String get paywallNoPreviousPurchaseFound;
 
+  /// Subscription terms and conditions for PWA/Web
+  ///
+  /// In en, this message translates to:
+  /// **'You will be redirected to Stripe for secure payment. Subscription automatically renews unless cancelled. Manage your subscription anytime via the Customer Portal link in your email.'**
+  String get paywallSubscriptionTermsWeb;
+
+  /// Link text for users with activation codes
+  ///
+  /// In en, this message translates to:
+  /// **'Have an activation code?'**
+  String get paywallHaveActivationCode;
+
+  /// Error when Stripe Checkout URL is not configured
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout not configured. Please contact support.'**
+  String get paywallCheckoutNotConfigured;
+
+  /// Info message after redirecting to Stripe Checkout
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your purchase in the browser. You\'ll receive an activation code via email.'**
+  String get paywallCheckoutRedirectInfo;
+
   /// Verse library subtitle
   ///
   /// In en, this message translates to:
@@ -3032,6 +3056,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to open subscription settings'**
   String get subscriptionUnableToOpenSettings;
+
+  /// Info message for managing subscription via email link
+  ///
+  /// In en, this message translates to:
+  /// **'To manage your subscription, use the Customer Portal link in your purchase confirmation email.'**
+  String get subscriptionManageViaEmail;
 
   /// Legal agreements screen title
   ///

@@ -5,9 +5,10 @@
 /// - Trial status or expired message
 /// - Premium features list
 /// - Pricing ($35.99/year, 150 messages/month)
-/// - Purchase and restore buttons
+/// - Subscribe button (redirects to Stripe Checkout)
+///
+/// PWA-only: Uses Stripe Checkout for payments (no in-app purchase)
 
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -155,10 +156,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     const SizedBox(height: AppSpacing.xxl),
                   ],
 
-                  // Plan Selector - ALWAYS show per Apple Guideline 3.1.2
-                  // Apple requires subscription length and price to be visible WITHOUT user action
-                  // (cannot be hidden behind a button click or conditional on trial status)
-                  _buildPlanSelector(context, l10n, subscriptionService),
+                  // Plan Selector
+                  _buildPlanSelector(context, l10n),
                   const SizedBox(height: AppSpacing.xl),
 
                   // 150 Scripture Chats badge (centered under plan selectors)
@@ -205,7 +204,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   ),
                   const SizedBox(height: AppSpacing.xl),
 
-                  // Purchase Button - generic text that works for both monthly and yearly
+                  // Subscribe Button - redirects to Stripe Checkout
                   GlassButton(
                     text: _isProcessing
                         ? l10n.paywallProcessing
@@ -217,20 +216,20 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                 .subscribeNow // Generic "Subscribe Now" for all post-trial cases
                             : l10n
                                 .paywallStartPremiumButton, // "Start Free Trial" for new users
-                    onPressed: _isProcessing ? null : _handlePurchase,
+                    onPressed: _isProcessing ? null : _handleSubscribe,
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
-                  // Restore Button
+                  // Have an activation code? Link
                   GestureDetector(
-                    onTap: _isProcessing ? null : _handleRestore,
+                    onTap: _navigateToActivation,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         vertical: AppSpacing.md,
                       ),
                       child: Center(
                         child: Text(
-                          l10n.paywallRestorePurchase,
+                          l10n.paywallHaveActivationCode,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -242,8 +241,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
-                  // CRITICAL: Terms of Use & Privacy Policy (required by Apple Guideline 3.1.2)
-                  // Apple requires functional links to EULA and Privacy Policy in prominent location
+                  // Terms of Use & Privacy Policy
                   FrostedGlassCard(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     intensity: GlassIntensity.light,
@@ -276,7 +274,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                           onTap: () =>
                               _launchURL('https://everydaychristian.app/terms'),
                           child: const Text(
-                            'Terms of Use (EULA)',
+                            'Terms of Use',
                             style: TextStyle(
                               fontSize: 13,
                               color: AppTheme.goldColor,
@@ -333,7 +331,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
-                  // Auto-renewal terms and subscription info (required by App Store)
+                  // Subscription info
                   FrostedGlassCard(
                     padding: const EdgeInsets.all(AppSpacing.lg),
                     intensity: GlassIntensity.light,
@@ -346,10 +344,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
-                          Platform.isIOS
-                              ? l10n.paywallSubscriptionTerms // iOS: App Store
-                              : l10n
-                                  .paywallSubscriptionTermsAndroid, // Android: Google Play
+                          l10n.paywallSubscriptionTermsWeb,
                           style: TextStyle(
                             fontSize: 12,
                             color: AppColors.secondaryText,
@@ -497,8 +492,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  /// Handle purchase button
-  Future<void> _handlePurchase() async {
+  /// Handle subscribe button - redirects to Stripe Checkout
+  Future<void> _handleSubscribe() async {
     if (_isProcessing) return;
 
     setState(() => _isProcessing = true);
@@ -506,102 +501,23 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     final subscriptionService = ref.read(subscriptionServiceProvider);
     final l10n = AppLocalizations.of(context);
 
-    // CRITICAL FIX: Validate products are loaded before attempting purchase
-    final selectedProduct = _selectedPlanIsYearly
-        ? subscriptionService.premiumProductYearly
-        : subscriptionService.premiumProductMonthly;
-
-    if (selectedProduct == null) {
-      setState(() => _isProcessing = false);
-
-      // Show detailed error with troubleshooting steps
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 5),
-          margin: const EdgeInsets.all(16),
-          padding: EdgeInsets.zero,
-          content: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF1E293B), // slate-800
-                  Color(0xFF0F172A), // slate-900
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.red.withValues(alpha: 0.5),
-                width: 1,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      color: Colors.red.shade300,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Text(
-                        'Subscription Not Available',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Please try:\n1. Check your internet connection\n2. Sign in to App Store with your Apple ID\n3. Restart the app',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+    try {
+      // Get Stripe Checkout URL
+      final locale = Localizations.localeOf(context).languageCode;
+      final checkoutUrl = subscriptionService.getStripeCheckoutUrl(
+        isYearly: _selectedPlanIsYearly,
+        locale: locale,
       );
 
-      debugPrint(
-          '📊 [PaywallScreen] Purchase failed - product not loaded. Product IDs configured: yearly=${SubscriptionService.premiumYearlyProductId}, monthly=${SubscriptionService.premiumMonthlyProductId}');
-      return;
-    }
-
-    // Set up purchase callback
-    subscriptionService.onPurchaseUpdate = (success, error) {
-      if (!mounted) return;
-
-      setState(() => _isProcessing = false);
-
-      if (success) {
-        // CRITICAL FIX: Invalidate provider to refresh UI with new premium status
-        ref.invalidate(subscriptionSnapshotProvider);
-
-        // Show success message
+      if (checkoutUrl.isEmpty) {
+        // Show configuration error
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 5),
             margin: const EdgeInsets.all(16),
             padding: EdgeInsets.zero,
             content: Container(
@@ -611,61 +527,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF1E293B), // slate-800
-                    Color(0xFF0F172A), // slate-900
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppTheme.goldColor.withValues(alpha: 0.3),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.check_circle,
-                    color: AppTheme.goldColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      l10n.paywallPremiumActivatedSuccess,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-
-        // Close paywall
-        Navigator.of(context).pop();
-      } else {
-        // Show error
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 3),
-            margin: const EdgeInsets.all(16),
-            padding: EdgeInsets.zero,
-            content: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF1E293B), // slate-800
-                    Color(0xFF0F172A), // slate-900
+                    Color(0xFF1E293B),
+                    Color(0xFF0F172A),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -684,7 +547,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      error ?? l10n.paywallPurchaseFailed,
+                      l10n.paywallCheckoutNotConfigured,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -697,42 +560,26 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             ),
           ),
         );
+        setState(() => _isProcessing = false);
+        return;
       }
-    };
 
-    // Initiate purchase with selected product (yearly or monthly)
-    await subscriptionService.purchasePremium(
-      productId: _selectedPlanIsYearly
-          ? SubscriptionService.premiumYearlyProductId
-          : SubscriptionService.premiumMonthlyProductId,
-    );
-  }
+      // Launch Stripe Checkout in browser
+      final uri = Uri.parse(checkoutUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
 
-  /// Handle restore button
-  Future<void> _handleRestore() async {
-    if (_isProcessing) return;
-
-    setState(() => _isProcessing = true);
-
-    final subscriptionService = ref.read(subscriptionServiceProvider);
-    final l10n = AppLocalizations.of(context);
-
-    // Set up restore callback
-    subscriptionService.onPurchaseUpdate = (success, error) {
-      if (!mounted) return;
-
-      setState(() => _isProcessing = false);
-
-      if (success) {
-        // CRITICAL FIX: Invalidate provider to refresh UI with restored premium status
-        ref.invalidate(subscriptionSnapshotProvider);
-
+        // Show info about activation code
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 5),
             margin: const EdgeInsets.all(16),
             padding: EdgeInsets.zero,
             content: Container(
@@ -742,8 +589,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF1E293B), // slate-800
-                    Color(0xFF0F172A), // slate-900
+                    Color(0xFF1E293B),
+                    Color(0xFF0F172A),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -755,14 +602,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               child: Row(
                 children: [
                   const Icon(
-                    Icons.check_circle,
+                    Icons.info_outline,
                     color: AppTheme.goldColor,
                     size: 20,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      l10n.paywallPurchaseRestoredSuccess,
+                      l10n.paywallCheckoutRedirectInfo,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -775,80 +622,78 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             ),
           ),
         );
-        Navigator.of(context).pop();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 3),
-            margin: const EdgeInsets.all(16),
-            padding: EdgeInsets.zero,
-            content: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF1E293B), // slate-800
-                    Color(0xFF0F172A), // slate-900
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.orange.withValues(alpha: 0.5),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: Colors.orange.shade300,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      l10n.paywallNoPreviousPurchaseFound,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
+        throw Exception('Could not launch checkout URL');
+      }
+    } catch (e) {
+      debugPrint('📊 [PaywallScreen] Error launching checkout: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+          margin: const EdgeInsets.all(16),
+          padding: EdgeInsets.zero,
+          content: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF1E293B),
+                  Color(0xFF0F172A),
                 ],
               ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.red.withValues(alpha: 0.5),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red.shade300,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.paywallPurchaseFailed,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        );
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isProcessing = false);
       }
-    };
+    }
+  }
 
-    // Initiate restore
-    await subscriptionService.restorePurchases();
+  /// Navigate to activation screen
+  void _navigateToActivation() {
+    Navigator.of(context).pushNamed('/activation');
   }
 
   /// Build plan selector (yearly vs monthly)
-  Widget _buildPlanSelector(BuildContext context, AppLocalizations l10n,
-      dynamic subscriptionService) {
-    final yearlyProduct = subscriptionService.premiumProductYearly;
-    final monthlyProduct = subscriptionService.premiumProductMonthly;
-
-    // Calculate savings
-    final yearlyPrice = double.tryParse(
-            yearlyProduct?.price.replaceAll(RegExp(r'[^\d.]'), '') ??
-                '35.99') ??
-        35.99;
-    final monthlyPrice = double.tryParse(
-            monthlyProduct?.price.replaceAll(RegExp(r'[^\d.]'), '') ??
-                '5.99') ??
-        5.99;
-    final yearlyTotal = monthlyPrice * 12;
-    final savings = ((yearlyTotal - yearlyPrice) / yearlyTotal * 100).round();
+  Widget _buildPlanSelector(BuildContext context, AppLocalizations l10n) {
+    // Static prices for PWA (actual prices shown on Stripe Checkout)
+    const yearlyPrice = '\$35.99';
+    const monthlyPrice = '\$5.99';
+    const savings = 50; // Approximate savings
 
     return Row(
       children: [
@@ -856,7 +701,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         Expanded(
           child: Semantics(
             label:
-                '${l10n.paywallPlanYearly} ${yearlyProduct?.price ?? '\$35.99'} ${l10n.paywallPerYear}. ${l10n.paywallBestValue}. ${l10n.paywallSavePercent(savings)}',
+                '${l10n.paywallPlanYearly} $yearlyPrice ${l10n.paywallPerYear}. ${l10n.paywallBestValue}. ${l10n.paywallSavePercent(savings)}',
             selected: _selectedPlanIsYearly,
             button: true,
             child: GestureDetector(
@@ -917,7 +762,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     const SizedBox(height: 4),
                     // Price
                     Text(
-                      yearlyProduct?.price ?? '\$35.99',
+                      yearlyPrice,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -936,7 +781,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    // CRITICAL: Subscription length (required by Apple Guideline 3.1.2)
+                    // Subscription length
                     Text(
                       '12 months of access',
                       style: TextStyle(
@@ -968,7 +813,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         Expanded(
           child: Semantics(
             label:
-                '${l10n.paywallPlanMonthly} ${monthlyProduct?.price ?? '\$5.99'} ${l10n.paywallPerMonth}. ${l10n.paywallBilledMonthly}',
+                '${l10n.paywallPlanMonthly} $monthlyPrice ${l10n.paywallPerMonth}. ${l10n.paywallBilledMonthly}',
             selected: !_selectedPlanIsYearly,
             button: true,
             child: GestureDetector(
@@ -1013,7 +858,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     const SizedBox(height: 4),
                     // Price
                     Text(
-                      monthlyProduct?.price ?? '\$5.99',
+                      monthlyPrice,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -1032,7 +877,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    // CRITICAL: Subscription length (required by Apple Guideline 3.1.2)
+                    // Subscription length
                     Text(
                       '1 month of access',
                       style: TextStyle(
@@ -1062,15 +907,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  /// Launch URL in external browser (Safari/Chrome)
-  /// Used for Privacy Policy and Terms of Use links
+  /// Launch URL in external browser
   Future<void> _launchURL(String urlString) async {
     try {
       final Uri url = Uri.parse(urlString);
       if (await canLaunchUrl(url)) {
         await launchUrl(
           url,
-          mode: LaunchMode.externalApplication, // Open in Safari/browser
+          mode: LaunchMode.externalApplication,
         );
       } else {
         debugPrint('📊 [PaywallScreen] Could not launch URL: $urlString');
@@ -1127,17 +971,5 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     } catch (e) {
       debugPrint('📊 [PaywallScreen] Error launching URL: $e');
     }
-  }
-
-  @override
-  void dispose() {
-    // Clear callback - use try-catch since ref may not be accessible after dispose starts
-    try {
-      final subscriptionService = ref.read(subscriptionServiceProvider);
-      subscriptionService.onPurchaseUpdate = null;
-    } catch (_) {
-      // Widget already disposed, callback will be garbage collected
-    }
-    super.dispose();
   }
 }

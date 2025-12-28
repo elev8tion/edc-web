@@ -1,14 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/app_theme.dart';
 import '../components/glass_button.dart';
 import '../utils/responsive_utils.dart';
 import '../utils/blur_dialog_utils.dart';
 import '../l10n/app_localizations.dart';
-import '../core/providers/app_providers.dart';
 
-class TrialWelcomeDialog extends ConsumerWidget {
+class TrialWelcomeDialog extends StatelessWidget {
   const TrialWelcomeDialog({super.key});
 
   static Future<bool?> show(BuildContext context) {
@@ -20,10 +18,8 @@ class TrialWelcomeDialog extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final subscriptionService = ref.watch(subscriptionServiceProvider);
-    final premiumProduct = subscriptionService.premiumProduct;
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(

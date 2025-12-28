@@ -1731,6 +1731,22 @@
   "@paywallNoPreviousPurchaseFound": {
     "description": "No previous purchase error message"
   },
+  "paywallSubscriptionTermsWeb": "You will be redirected to Stripe for secure payment. Subscription automatically renews unless cancelled. Manage your subscription anytime via the Customer Portal link in your email.",
+  "@paywallSubscriptionTermsWeb": {
+    "description": "Subscription terms and conditions for PWA/Web"
+  },
+  "paywallHaveActivationCode": "Have an activation code?",
+  "@paywallHaveActivationCode": {
+    "description": "Link text for users with activation codes"
+  },
+  "paywallCheckoutNotConfigured": "Checkout not configured. Please contact support.",
+  "@paywallCheckoutNotConfigured": {
+    "description": "Error when Stripe Checkout URL is not configured"
+  },
+  "paywallCheckoutRedirectInfo": "Complete your purchase in the browser. You'll receive an activation code via email.",
+  "@paywallCheckoutRedirectInfo": {
+    "description": "Info message after redirecting to Stripe Checkout"
+  },
   "everydayVerses": "Everyday verses",
   "@everydayVerses": {
     "description": "Verse library subtitle"
@@ -2220,6 +2236,10 @@
   "subscriptionUnableToOpenSettings": "Unable to open subscription settings",
   "@subscriptionUnableToOpenSettings": {
     "description": "Error message when unable to open subscription settings"
+  },
+  "subscriptionManageViaEmail": "To manage your subscription, use the Customer Portal link in your purchase confirmation email.",
+  "@subscriptionManageViaEmail": {
+    "description": "Info message for managing subscription via email link"
   },
   "legalAgreements": "Legal Agreements",
   "@legalAgreements": {

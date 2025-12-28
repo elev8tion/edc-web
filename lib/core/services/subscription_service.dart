@@ -5,14 +5,12 @@
 /// Premium: ~$35.99/year (pricing may vary by region and currency), 150 messages/month
 ///
 /// Uses SharedPreferences for local persistence (privacy-first design)
-/// Uses in_app_purchase for App Store/Play Store subscriptions
+/// Uses Stripe Checkout for web payments (PWA-only, no in-app purchase)
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -52,8 +50,7 @@ class SubscriptionService {
   // CONSTANTS
   // ============================================================================
 
-  // Product IDs (must match App Store Connect / Play Console)
-  // NOTE: Updated for new free app to avoid conflicts with old paid app
+  // Product IDs (for reference/tracking only - no IAP)
   static const String premiumYearlyProductId =
       'everyday_christian_free_premium_yearly';
   static const String premiumMonthlyProductId =
@@ -78,12 +75,12 @@ class SubscriptionService {
   static const String _keySubscriptionReceipt = 'subscription_receipt';
   // New keys for expiry tracking and trial abuse prevention
   static const String _keyPremiumExpiryDate = 'premium_expiry_date';
+  // ignore: unused_field - Reserved for tracking purchase history
   static const String _keyPremiumOriginalPurchaseDate =
       'premium_original_purchase_date';
-  static const String _keyTrialEverUsed =
-      'trial_ever_used'; // ignore: unused_field
+  // ignore: unused_field - Reserved for trial abuse prevention
+  static const String _keyTrialEverUsed = 'trial_ever_used';
   static const String _keyAutoRenewStatus = 'auto_renew_status';
-  static const String _keyAutoSubscribeAttempted = 'auto_subscribe_attempted';
   static const String _keyPurchasedProductId =
       'purchased_product_id'; // Track yearly vs monthly
 
@@ -96,8 +93,6 @@ class SubscriptionService {
   // ============================================================================
 
   SharedPreferences? _prefs;
-  final InAppPurchase _iap = InAppPurchase.instance;
-  StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
 
   // Secure storage for trial abuse prevention (survives app uninstall)
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage(
@@ -106,11 +101,6 @@ class SubscriptionService {
   );
 
   bool _isInitialized = false;
-  ProductDetails? _premiumProductYearly;
-  ProductDetails? _premiumProductMonthly;
-
-  // Purchase update callback
-  Function(bool success, String? error)? onPurchaseUpdate;
 
   // ============================================================================
   // INITIALIZATION
@@ -122,31 +112,6 @@ class SubscriptionService {
 
     try {
       _prefs = await SharedPreferences.getInstance();
-
-      // Check if in-app purchase is available
-      final bool available = await _iap.isAvailable();
-      if (!available) {
-        debugPrint('📊 [SubscriptionService] In-app purchase not available');
-        _isInitialized = true;
-        return;
-      }
-
-      // Load product details
-      await _loadProducts();
-
-      // Auto-restore purchases on app launch (prevents data loss after "Delete All Data")
-      // Use timeout to prevent hanging on simulator or when StoreKit is unavailable
-      try {
-        await restorePurchases().timeout(
-          const Duration(seconds: 5),
-          onTimeout: () {
-            debugPrint(
-                '📊 [SubscriptionService] Restore purchases timed out (expected on simulator)');
-          },
-        );
-      } catch (e) {
-        debugPrint('📊 [SubscriptionService] Restore purchases failed: $e');
-      }
 
       // ============================================================
       // TRIAL ABUSE PREVENTION: Check Keychain for previous trial
@@ -197,17 +162,6 @@ class SubscriptionService {
         }
       }
 
-      // Check if user should be automatically subscribed (day 3 without cancellation)
-      await attemptAutoSubscribe();
-
-      // Listen to purchase updates
-      _purchaseSubscription = _iap.purchaseStream.listen(
-        _handlePurchaseUpdates,
-        onDone: () => _purchaseSubscription?.cancel(),
-        onError: (error) => debugPrint(
-            '📊 [SubscriptionService] Purchase stream error: $error'),
-      );
-
       // Initialize counters for first-time users (no trial start date = brand new)
       final trialStartDate = _prefs?.getString(_keyTrialStartDate);
       if (trialStartDate == null) {
@@ -226,7 +180,7 @@ class SubscriptionService {
       await _checkAndMarkTrialExpiry();
 
       _isInitialized = true;
-      debugPrint('📊 [SubscriptionService] SubscriptionService initialized');
+      debugPrint('📊 [SubscriptionService] SubscriptionService initialized (PWA mode)');
     } catch (e) {
       debugPrint(
           '📊 [SubscriptionService] Failed to initialize SubscriptionService: $e');
@@ -234,48 +188,9 @@ class SubscriptionService {
     }
   }
 
-  /// Load product details from App Store / Play Store
-  Future<void> _loadProducts() async {
-    try {
-      final ProductDetailsResponse response = await _iap.queryProductDetails(
-        {premiumYearlyProductId, premiumMonthlyProductId},
-      );
-
-      if (response.notFoundIDs.isNotEmpty) {
-        debugPrint(
-            '📊 [SubscriptionService] Products not found: ${response.notFoundIDs}');
-      }
-
-      // Load yearly product
-      _premiumProductYearly = response.productDetails.firstWhere(
-        (product) => product.id == premiumYearlyProductId,
-        orElse: () => response.productDetails.first,
-      );
-
-      // Load monthly product
-      _premiumProductMonthly = response.productDetails.firstWhere(
-        (product) => product.id == premiumMonthlyProductId,
-        orElse: () => response.productDetails.first,
-      );
-
-      if (_premiumProductYearly != null) {
-        debugPrint(
-            '📊 [SubscriptionService] Loaded yearly product: ${_premiumProductYearly!.id} - ${_premiumProductYearly!.price}');
-      }
-
-      if (_premiumProductMonthly != null) {
-        debugPrint(
-            '📊 [SubscriptionService] Loaded monthly product: ${_premiumProductMonthly!.id} - ${_premiumProductMonthly!.price}');
-      }
-    } catch (e) {
-      debugPrint('📊 [SubscriptionService] Failed to load products: $e');
-    }
-  }
-
   /// Dispose resources
   Future<void> dispose() async {
-    await _purchaseSubscription?.cancel();
-    _purchaseSubscription = null;
+    // No resources to dispose in PWA mode
   }
 
   // ============================================================================
@@ -347,10 +262,6 @@ class SubscriptionService {
     await _prefs?.setString(
         _keyTrialStartDate, DateTime.now().toIso8601String());
     await _prefs?.setInt(_keyTrialMessagesUsed, 0);
-    // Note: No longer setting _keyTrialLastResetDate (no daily resets)
-
-    // Note: Keychain marking moved to trial expiry (when 3 days or 15 messages exhausted)
-    // This prevents blocking active trials on app restart
 
     debugPrint('📊 [SubscriptionService] Trial started');
   }
@@ -369,7 +280,6 @@ class SubscriptionService {
     final expiryDate = _getExpiryDate();
     if (expiryDate != null) {
       if (DateTime.now().isAfter(expiryDate)) {
-        // Subscription expired - should trigger restorePurchases() on next app launch
         debugPrint(
             '📊 [SubscriptionService] Premium subscription expired on $expiryDate');
         return false;
@@ -423,137 +333,6 @@ class SubscriptionService {
     return SubscriptionStatus.trialExpired;
   }
 
-  /// Check if user should be automatically subscribed on day 3
-  ///
-  /// Returns true if:
-  /// - Trial has expired (3+ days since start)
-  /// - User hasn't cancelled trial
-  /// - Auto-subscribe hasn't been attempted yet
-  Future<bool> shouldAutoSubscribe() async {
-    try {
-      // Only applies if premium is not active
-      if (isPremium) return false;
-
-      // Get trial start date
-      final trialStartDate = _getTrialStartDate();
-      if (trialStartDate == null) return false; // Never started trial
-
-      // Check if trial has expired (3+ days since start)
-      final daysSinceStart = DateTime.now().difference(trialStartDate).inDays;
-      if (daysSinceStart < trialDurationDays) return false; // Still in trial
-
-      // Check if we've already attempted auto-subscribe
-      final autoSubscribeAttempted =
-          _prefs?.getBool(_keyAutoSubscribeAttempted) ?? false;
-      if (autoSubscribeAttempted) return false;
-
-      // Check if user cancelled trial via App Store/Play Store
-      final userCancelled = await _checkTrialCancellation();
-
-      return !userCancelled;
-    } catch (e) {
-      developer.log(
-        'Error checking auto-subscribe eligibility: $e',
-        name: 'SubscriptionService',
-        error: e,
-      );
-      // On error, don't auto-subscribe (fail safe)
-      return false;
-    }
-  }
-
-  /// Check if user cancelled trial via platform APIs
-  ///
-  /// Returns true if user has cancelled, false otherwise.
-  ///
-  /// Implementation: Uses client-side approach with in_app_purchase plugin
-  /// - Queries past purchases from App Store/Play Store
-  /// - If premium subscription not found, assumes cancelled
-  /// - Privacy-first: No backend, all local
-  /// - Trade-off: Detection is eventual (on app launch), not real-time
-  ///
-  /// See: openspec/changes/subscription-refactor/RESEARCH_CANCELLATION_DETECTION.md
-  Future<bool> _checkTrialCancellation() async {
-    try {
-      developer.log(
-        'Checking for subscription cancellation via restorePurchases',
-        name: 'SubscriptionService',
-      );
-
-      // Since restorePurchases() has already been called in initialize(),
-      // the isPremium flag reflects the current subscription status from the platform
-      //
-      // Implementation: Client-side detection using isPremium flag
-      // - restorePurchases() updates local state from App Store/Play Store
-      // - If premium subscription exists, isPremium will be true
-      // - If subscription was cancelled/expired, isPremium will be false
-      // - Privacy-first: No backend, all local validation
-      // - Trade-off: Detection is eventual (on app launch), not real-time
-      //
-      // See: openspec/changes/subscription-refactor/RESEARCH_CANCELLATION_DETECTION.md
-
-      final hasActivePremium = isPremium;
-
-      if (hasActivePremium) {
-        developer.log(
-          'Active premium subscription found - user has NOT cancelled',
-          name: 'SubscriptionService',
-        );
-        return false; // Has active subscription, did not cancel
-      } else {
-        developer.log(
-          'No active premium subscription found - assuming user cancelled or never subscribed',
-          name: 'SubscriptionService',
-        );
-        return true; // No active subscription found, assume cancelled
-      }
-    } catch (e) {
-      developer.log(
-        'Exception during cancellation check: $e',
-        name: 'SubscriptionService',
-        error: e,
-      );
-      // On error, assume not cancelled (fail-safe)
-      // This prevents blocking auto-subscribe due to temporary errors
-      return false;
-    }
-  }
-
-  /// Attempt automatic subscription if user is on day 3 and hasn't cancelled
-  ///
-  /// Should be called on app initialization to handle automatic subscription
-  /// when trial expires without user cancellation.
-  Future<void> attemptAutoSubscribe() async {
-    try {
-      final shouldSubscribe = await shouldAutoSubscribe();
-
-      if (!shouldSubscribe) {
-        debugPrint(
-            '📊 [SubscriptionService] Auto-subscribe check: not applicable');
-        return;
-      }
-
-      // Mark attempt as started to prevent repeated attempts
-      await _prefs?.setBool(_keyAutoSubscribeAttempted, true);
-
-      developer.log(
-        'Auto-subscribe triggered: Trial expired without cancellation',
-        name: 'SubscriptionService',
-      );
-
-      // Initiate purchase flow
-      await purchasePremium();
-    } catch (e) {
-      developer.log(
-        'Auto-subscribe failed: $e',
-        name: 'SubscriptionService',
-        error: e,
-      );
-      // Don't throw - this is a background operation that shouldn't crash the app
-      // User will see the paywall when they try to send a message
-    }
-  }
-
   /// Get premium messages used this month
   int get premiumMessagesUsed {
     if (!isPremium) return 0;
@@ -586,16 +365,8 @@ class SubscriptionService {
 
   /// Check if user can send a message (has remaining messages)
   bool get canSendMessage {
-    // NOTE: Debug bypass DISABLED for testing Phase 1 subscription fixes
-    // Ref: openspec/changes/subscription-state-management-fixes
     debugPrint(
         '📊 [SubscriptionService] canSendMessage check: kDebugMode=$kDebugMode, isPremium=$isPremium, isInTrial=$isInTrial, trialMessagesRemaining=$trialMessagesRemaining');
-
-    // DISABLED: Debug bypass prevents testing race conditions and state updates
-    // if (kDebugMode) {
-    //   debugPrint('📊 [SubscriptionService] Bypassing subscription check - debug mode');
-    //   return true;
-    // }
 
     if (isPremium) {
       return premiumMessagesRemaining > 0;
@@ -647,7 +418,6 @@ class SubscriptionService {
         // Consume trial message (no daily reset)
         final used = trialMessagesUsed + 1;
         await _prefs?.setInt(_keyTrialMessagesUsed, used);
-        // No longer calling _updateTrialResetDate() - no daily resets
         debugPrint(
             '📊 [SubscriptionService] Trial message consumed ($used/$trialTotalMessages total)');
 
@@ -665,17 +435,21 @@ class SubscriptionService {
   }
 
   // ============================================================================
-  // PURCHASE FLOW
+  // STRIPE CHECKOUT (PWA)
   // ============================================================================
 
-  /// Get premium product details (defaults to yearly for backwards compatibility)
-  ProductDetails? get premiumProduct => _premiumProductYearly;
+  /// Get Stripe Checkout URL for the selected plan
+  /// Returns the URL to redirect user to Stripe Checkout
+  String getStripeCheckoutUrl({required bool isYearly, String locale = 'en'}) {
+    final baseUrl = dotenv.get('STRIPE_CHECKOUT_URL', fallback: '');
+    if (baseUrl.isEmpty) {
+      debugPrint('⚠️ [SubscriptionService] STRIPE_CHECKOUT_URL not configured');
+      return '';
+    }
 
-  /// Get yearly product details
-  ProductDetails? get premiumProductYearly => _premiumProductYearly;
-
-  /// Get monthly product details
-  ProductDetails? get premiumProductMonthly => _premiumProductMonthly;
+    final plan = isYearly ? 'yearly' : 'monthly';
+    return '$baseUrl?plan=$plan&locale=$locale';
+  }
 
   /// Get the purchased product ID (yearly vs monthly)
   /// Returns null if no subscription purchased
@@ -691,135 +465,6 @@ class SubscriptionService {
   bool get hasMonthlySubscription {
     final productId = purchasedProductId;
     return productId == premiumMonthlyProductId;
-  }
-
-  /// Purchase premium subscription
-  /// [productId] - Product ID to purchase (defaults to yearly if not specified)
-  Future<void> purchasePremium({String? productId}) async {
-    // Default to yearly product if not specified (for trial auto-subscribe)
-    final selectedProductId = productId ?? premiumYearlyProductId;
-
-    ProductDetails? productToPurchase;
-    if (selectedProductId == premiumYearlyProductId) {
-      productToPurchase = _premiumProductYearly;
-    } else if (selectedProductId == premiumMonthlyProductId) {
-      productToPurchase = _premiumProductMonthly;
-    }
-
-    if (productToPurchase == null) {
-      onPurchaseUpdate?.call(false, 'Product not available');
-      return;
-    }
-
-    try {
-      final PurchaseParam purchaseParam = PurchaseParam(
-        productDetails: productToPurchase,
-      );
-
-      await _iap.buyNonConsumable(purchaseParam: purchaseParam);
-      debugPrint(
-          '📊 [SubscriptionService] Purchase initiated for: ${productToPurchase.id}');
-    } catch (e) {
-      debugPrint('📊 [SubscriptionService] Purchase failed: $e');
-      onPurchaseUpdate?.call(false, e.toString());
-    }
-  }
-
-  /// Restore previous purchases
-  Future<void> restorePurchases() async {
-    try {
-      await _iap.restorePurchases();
-      debugPrint('📊 [SubscriptionService] Restore purchases initiated');
-    } catch (e) {
-      debugPrint('📊 [SubscriptionService] Restore failed: $e');
-      onPurchaseUpdate?.call(false, e.toString());
-    }
-  }
-
-  /// Handle purchase updates from the store
-  void _handlePurchaseUpdates(List<PurchaseDetails> purchases) {
-    for (final PurchaseDetails purchase in purchases) {
-      if (purchase.status == PurchaseStatus.purchased ||
-          purchase.status == PurchaseStatus.restored) {
-        _verifyAndActivatePurchase(purchase);
-      } else if (purchase.status == PurchaseStatus.error) {
-        debugPrint(
-            '📊 [SubscriptionService] Purchase error: ${purchase.error}');
-        onPurchaseUpdate?.call(false, purchase.error?.message);
-      }
-
-      // Complete purchase
-      if (purchase.pendingCompletePurchase) {
-        _iap.completePurchase(purchase);
-      }
-    }
-  }
-
-  /// Verify and activate purchase
-  Future<void> _verifyAndActivatePurchase(PurchaseDetails purchase) async {
-    try {
-      // Save subscription receipt
-      final receiptData = purchase.verificationData.serverVerificationData;
-      await _prefs?.setString(_keySubscriptionReceipt, receiptData);
-
-      // Store product ID to track yearly vs monthly subscription
-      final productId = purchase.productID;
-      await _prefs?.setString(_keyPurchasedProductId, productId);
-      debugPrint('📊 [SubscriptionService] Purchased product: $productId');
-
-      // Try to decode receipt and extract expiry information
-      // Note: Receipt format differs by platform (iOS: base64 JSON, Android: JWT)
-      try {
-        // For iOS: Receipt is base64-encoded JSON
-        // For Android: Receipt is a JWT token
-        // This is a simplified implementation - production should use platform-specific decoding
-
-        // For now, we'll extract basic info if available
-
-        // Placeholder for receipt parsing
-        // In production, use:
-        // - iOS: Decode base64, parse JSON, extract fields from receipt.in_app array
-        // - Android: Decode JWT, parse claims
-
-        debugPrint(
-            '📊 [SubscriptionService] Receipt data saved (expiry extraction requires platform-specific implementation)');
-
-        // Calculate expiry based on subscription type (yearly vs monthly)
-        final isYearly = productId == premiumYearlyProductId;
-        final expiryDuration =
-            isYearly ? const Duration(days: 365) : const Duration(days: 30);
-        final expiryDate = DateTime.now().add(expiryDuration);
-
-        await _prefs?.setString(
-            _keyPremiumExpiryDate, expiryDate.toIso8601String());
-        await _prefs?.setString(
-            _keyPremiumOriginalPurchaseDate, DateTime.now().toIso8601String());
-        await _prefs?.setBool(_keyAutoRenewStatus,
-            true); // Assume auto-renew unless receipt says otherwise
-
-        debugPrint(
-            '📊 [SubscriptionService] Expiry set to ${isYearly ? "365 days (yearly)" : "30 days (monthly)"}');
-
-        // Check if this was a trial purchase
-        // This will be extracted from receipt once parsing is implemented
-        // await _prefs?.setBool(_keyTrialEverUsed, wasTrialPurchase);
-      } catch (receiptError) {
-        debugPrint(
-            '📊 [SubscriptionService] Receipt parsing skipped (will implement platform-specific logic): $receiptError');
-      }
-
-      // Activate premium
-      await _prefs?.setBool(_keyPremiumActive, true);
-      await _prefs?.setInt(_keyPremiumMessagesUsed, 0);
-      await _prefs?.setString(_keyPremiumLastResetDate,
-          DateTime.now().toIso8601String().substring(0, 7));
-
-      debugPrint('📊 [SubscriptionService] Premium subscription activated');
-      onPurchaseUpdate?.call(true, null);
-    } catch (e) {
-      debugPrint('📊 [SubscriptionService] Failed to activate purchase: $e');
-      onPurchaseUpdate?.call(false, e.toString());
-    }
   }
 
   // ============================================================================
@@ -1163,15 +808,10 @@ class SubscriptionService {
       'premiumMessagesUsed': premiumMessagesUsed,
       'premiumMessagesRemaining': premiumMessagesRemaining,
       'canSendMessage': canSendMessage,
-      'hasYearlyProduct': _premiumProductYearly != null,
-      'hasMonthlyProduct': _premiumProductMonthly != null,
-      'yearlyProductId': _premiumProductYearly?.id,
-      'yearlyProductPrice': _premiumProductYearly?.price,
-      'monthlyProductId': _premiumProductMonthly?.id,
-      'monthlyProductPrice': _premiumProductMonthly?.price,
       'purchasedProductId': purchasedProductId,
       'hasYearlySubscription': hasYearlySubscription,
       'hasMonthlySubscription': hasMonthlySubscription,
+      'mode': 'PWA (Stripe Checkout)',
     };
   }
 }
