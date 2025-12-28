@@ -38,28 +38,36 @@ class GeminiAIService {
   final IntentDetectionService _intentDetector = IntentDetectionService();
 
   // API key pool - 20 unrestricted keys (work on both iOS + Android)
-  static final List<String> _apiKeyPool = [
-    dotenv.env['GEMINI_API_KEY_1'] ?? '',
-    dotenv.env['GEMINI_API_KEY_2'] ?? '',
-    dotenv.env['GEMINI_API_KEY_3'] ?? '',
-    dotenv.env['GEMINI_API_KEY_4'] ?? '',
-    dotenv.env['GEMINI_API_KEY_5'] ?? '',
-    dotenv.env['GEMINI_API_KEY_6'] ?? '',
-    dotenv.env['GEMINI_API_KEY_7'] ?? '',
-    dotenv.env['GEMINI_API_KEY_8'] ?? '',
-    dotenv.env['GEMINI_API_KEY_9'] ?? '',
-    dotenv.env['GEMINI_API_KEY_10'] ?? '',
-    dotenv.env['GEMINI_API_KEY_11'] ?? '',
-    dotenv.env['GEMINI_API_KEY_12'] ?? '',
-    dotenv.env['GEMINI_API_KEY_13'] ?? '',
-    dotenv.env['GEMINI_API_KEY_14'] ?? '',
-    dotenv.env['GEMINI_API_KEY_15'] ?? '',
-    dotenv.env['GEMINI_API_KEY_16'] ?? '',
-    dotenv.env['GEMINI_API_KEY_17'] ?? '',
-    dotenv.env['GEMINI_API_KEY_18'] ?? '',
-    dotenv.env['GEMINI_API_KEY_19'] ?? '',
-    dotenv.env['GEMINI_API_KEY_20'] ?? '',
-  ];
+  // Using lazy initialization to ensure .env is loaded before accessing keys
+  static List<String>? _cachedApiKeyPool;
+
+  static List<String> _getApiKeyPool() {
+    if (_cachedApiKeyPool != null) return _cachedApiKeyPool!;
+
+    _cachedApiKeyPool = [
+      dotenv.env['GEMINI_API_KEY_1'] ?? '',
+      dotenv.env['GEMINI_API_KEY_2'] ?? '',
+      dotenv.env['GEMINI_API_KEY_3'] ?? '',
+      dotenv.env['GEMINI_API_KEY_4'] ?? '',
+      dotenv.env['GEMINI_API_KEY_5'] ?? '',
+      dotenv.env['GEMINI_API_KEY_6'] ?? '',
+      dotenv.env['GEMINI_API_KEY_7'] ?? '',
+      dotenv.env['GEMINI_API_KEY_8'] ?? '',
+      dotenv.env['GEMINI_API_KEY_9'] ?? '',
+      dotenv.env['GEMINI_API_KEY_10'] ?? '',
+      dotenv.env['GEMINI_API_KEY_11'] ?? '',
+      dotenv.env['GEMINI_API_KEY_12'] ?? '',
+      dotenv.env['GEMINI_API_KEY_13'] ?? '',
+      dotenv.env['GEMINI_API_KEY_14'] ?? '',
+      dotenv.env['GEMINI_API_KEY_15'] ?? '',
+      dotenv.env['GEMINI_API_KEY_16'] ?? '',
+      dotenv.env['GEMINI_API_KEY_17'] ?? '',
+      dotenv.env['GEMINI_API_KEY_18'] ?? '',
+      dotenv.env['GEMINI_API_KEY_19'] ?? '',
+      dotenv.env['GEMINI_API_KEY_20'] ?? '',
+    ];
+    return _cachedApiKeyPool!;
+  }
 
   /// Get API key using round-robin rotation with desynchronized starting positions
   ///
@@ -69,8 +77,8 @@ class GeminiAIService {
   /// - Perfect even distribution over time (each key gets 1/20th of total requests)
   /// - Handles 10,000+ concurrent users without rate limit issues
   Future<String> _getApiKey() async {
-    // Filter out empty keys
-    final validKeys = _apiKeyPool.where((key) => key.isNotEmpty).toList();
+    // Filter out empty keys (using lazy-loaded pool)
+    final validKeys = _getApiKeyPool().where((key) => key.isNotEmpty).toList();
 
     if (validKeys.isEmpty) {
       // Fallback to original key for backward compatibility
