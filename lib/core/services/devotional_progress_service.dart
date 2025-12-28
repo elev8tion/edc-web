@@ -57,10 +57,10 @@ class DevotionalProgressService {
       final completedThisMonth = result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
 
       if (completedThisMonth >= 30) {
-        final completionCount = await _achievementService!.getCompletionCount(AchievementType.dailyBread);
+        final completionCount = await _achievementService.getCompletionCount(AchievementType.dailyBread);
         // Record if first completion or every 30 devotionals
         if (completionCount == 0 || completedThisMonth >= (completionCount + 1) * 30) {
-          await _achievementService!.recordCompletion(
+          await _achievementService.recordCompletion(
             type: AchievementType.dailyBread,
             progressValue: completedThisMonth,
           );

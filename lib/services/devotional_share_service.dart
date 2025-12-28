@@ -86,7 +86,7 @@ class DevotionalShareService {
 
       // Check for sharing achievements (counts ALL share types)
       if (_achievementService != null) {
-        await _achievementService!.checkAllSharesAchievement();
+        await _achievementService.checkAllSharesAchievement();
       }
     } catch (e) {
       debugPrint('Error tracking devotional share: $e');

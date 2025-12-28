@@ -606,10 +606,10 @@ class ReadingPlanProgressService {
       final completedPlans = result.isEmpty ? 0 : (result.first['count'] as int? ?? 0);
 
       if (completedPlans >= 5) {
-        final completionCount = await _achievementService!.getCompletionCount(AchievementType.deepDiver);
+        final completionCount = await _achievementService.getCompletionCount(AchievementType.deepDiver);
         // Record if first completion or every 5 plans
         if (completionCount == 0 || completedPlans >= (completionCount + 1) * 5) {
-          await _achievementService!.recordCompletion(
+          await _achievementService.recordCompletion(
             type: AchievementType.deepDiver,
             progressValue: completedPlans,
           );

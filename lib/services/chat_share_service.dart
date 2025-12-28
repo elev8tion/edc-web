@@ -90,7 +90,7 @@ class ChatShareService {
 
       // Check for Disciple achievement (10 total shares across all types)
       if (_achievementService != null) {
-        await _achievementService!.checkAllSharesAchievement();
+        await _achievementService.checkAllSharesAchievement();
       }
     } catch (e) {
       debugPrint('Error tracking share: $e');

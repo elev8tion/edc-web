@@ -219,7 +219,7 @@ class UnifiedVerseService {
 
     // Check for sharing achievements (counts ALL share types)
     if (_achievementService != null) {
-      await _achievementService!.checkAllSharesAchievement();
+      await _achievementService.checkAllSharesAchievement();
     }
   }
 
@@ -321,10 +321,10 @@ class UnifiedVerseService {
       // Check Curator (100 saved verses)
       final totalSaved = await getFavoriteVerseCount();
       if (totalSaved >= 100) {
-        final completionCount = await _achievementService!.getCompletionCount(AchievementType.curator);
+        final completionCount = await _achievementService.getCompletionCount(AchievementType.curator);
         // Only record if not already completed at this verse count level
         if (completionCount == 0 || totalSaved >= (completionCount + 1) * 100) {
-          await _achievementService!.recordCompletion(
+          await _achievementService.recordCompletion(
             type: AchievementType.curator,
             progressValue: totalSaved,
           );

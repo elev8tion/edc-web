@@ -122,12 +122,12 @@ class PrayerService {
 
     try {
       // Check Unbroken (7-day prayer streak)
-      final streak = await _streakService!.getCurrentStreak();
+      final streak = await _streakService.getCurrentStreak();
       if (streak >= 7) {
-        final completionCount = await _achievementService!.getCompletionCount(AchievementType.unbroken);
+        final completionCount = await _achievementService.getCompletionCount(AchievementType.unbroken);
         // Only record if not already completed at this streak level
         if (completionCount == 0 || streak > completionCount * 7) {
-          await _achievementService!.recordCompletion(
+          await _achievementService.recordCompletion(
             type: AchievementType.unbroken,
             progressValue: streak,
           );
@@ -137,10 +137,10 @@ class PrayerService {
       // Check Relentless (50 total prayers)
       final totalPrayers = await getPrayerCount();
       if (totalPrayers >= 50) {
-        final completionCount = await _achievementService!.getCompletionCount(AchievementType.relentless);
+        final completionCount = await _achievementService.getCompletionCount(AchievementType.relentless);
         // Only record if not already completed at this prayer count level
         if (completionCount == 0 || totalPrayers >= (completionCount + 1) * 50) {
-          await _achievementService!.recordCompletion(
+          await _achievementService.recordCompletion(
             type: AchievementType.relentless,
             progressValue: totalPrayers,
           );
