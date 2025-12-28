@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web/web.dart' as web;
 
+import '../core/navigation/navigation_service.dart';
 import 'pwa_install_dialog.dart';
 
 /// Wrapper widget that checks for ?install=true URL parameter and shows install dialog
@@ -29,13 +30,16 @@ class _PWAInstallWrapperState extends State<PWAInstallWrapper> {
     // Check if user came from landing page with ?install=true parameter
     final uri = Uri.base;
     final installParam = uri.queryParameters['install'];
+    debugPrint('[PWA Install] Checking URL: ${uri.toString()}');
+    debugPrint('[PWA Install] Install param: $installParam');
 
     if (installParam == 'true') {
-      debugPrint('[PWA] Install param detected from landing page');
-
-      // Delay to ensure the app is fully built and has context
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('[PWA Install] Install param detected - scheduling dialog');
+      // Wait for splash screen to finish (it takes ~2-3 seconds)
+      // then show the dialog
+      Future.delayed(const Duration(seconds: 4), () {
         if (mounted && !_dialogShown) {
+          debugPrint('[PWA Install] Attempting to show dialog now');
           _showInstallDialog();
         }
       });
@@ -43,14 +47,22 @@ class _PWAInstallWrapperState extends State<PWAInstallWrapper> {
   }
 
   Future<void> _showInstallDialog() async {
-    if (_dialogShown || !mounted) return;
+    if (_dialogShown) return;
     _dialogShown = true;
+
+    // Use the navigator's context which is guaranteed to have a valid overlay
+    final navigatorContext = NavigationService.navigatorKey.currentContext;
+    if (navigatorContext == null) {
+      debugPrint('[PWA Install] ERROR: No navigator context available');
+      _dialogShown = false;
+      return;
+    }
 
     // Detect iOS for showing manual instructions
     final isIOS = _detectIOS();
-    debugPrint('[PWA] Showing install dialog (iOS: $isIOS)');
+    debugPrint('[PWA Install] Showing install dialog (iOS: $isIOS)');
 
-    await showPWAInstallDialog(context, isIOS: isIOS);
+    await showPWAInstallDialog(navigatorContext, isIOS: isIOS);
 
     // Clean up the URL to remove the ?install=true parameter
     _cleanUrl();
