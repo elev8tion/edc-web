@@ -23,7 +23,6 @@ import '../components/standard_screen_header.dart';
 import '../components/glass_card.dart';
 import '../theme/app_theme.dart';
 import '../core/providers/app_providers.dart';
-import '../core/services/subscription_service.dart';
 import '../l10n/app_localizations.dart';
 
 class PaywallScreen extends ConsumerStatefulWidget {
