@@ -752,6 +752,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get termsOfServiceDesc => 'Read terms and conditions';
 
   @override
+  String get installApp => 'Install App';
+
+  @override
+  String get installAppDesc => 'Add to your home screen for quick access';
+
+  @override
+  String get appInstalledSuccess => 'App installed successfully!';
+
+  @override
+  String get appInstallFailed => 'Installation failed. Please try again.';
+
+  @override
   String get clearCacheDialogTitle => 'Cache';
 
   @override
@@ -3202,11 +3214,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tap this menu to navigate between different sections of the app - Bible, Chat, Prayers, Devotionals, and more!';
 
   @override
-  String get tutorialBibleTapTitle => 'Tap to Select Verses';
+  String get tutorialBibleTapTitle => 'Double Tap to Select Verses';
 
   @override
   String get tutorialBibleTapDescription =>
-      'Tap any verse to select it. Long press to view options like bookmarking and sharing.';
+      'Double tap any verse to select it and view options like bookmarking and sharing.';
 
   @override
   String get tutorialBibleBookmarkTitle => 'Bookmark Your Favorites';

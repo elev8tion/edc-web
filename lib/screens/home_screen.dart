@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_pwa_install/flutter_pwa_install.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_scalify/flutter_scalify.dart';
@@ -89,6 +91,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     // Check if tutorial already shown
     if (prefsService.hasFabTutorialShown()) {
+      // Tutorial already shown, try PWA install prompt
+      _showPwaInstallIfNeeded();
       return;
     }
 
@@ -121,12 +125,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       onFinish: () {
         // Mark tutorial as shown
         prefsService.setFabTutorialShown();
+        // Show PWA install prompt after tutorial
+        _showPwaInstallIfNeeded();
       },
       onSkip: () {
         // Mark tutorial as shown even if skipped
         prefsService.setFabTutorialShown();
+        // Show PWA install prompt after tutorial
+        _showPwaInstallIfNeeded();
       },
     ).show(context);
+  }
+
+  /// Show PWA install prompt if conditions are met (web only)
+  Future<void> _showPwaInstallIfNeeded() async {
+    // Only run on web
+    if (!kIsWeb) return;
+
+    // Wait for UI to settle after tutorial
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (!mounted) return;
+
+    final pwa = FlutterPWAInstall.instance;
+
+    // Check if we can show install prompt
+    final canInstall = await pwa.canInstall();
+    if (!canInstall) return;
+
+    // Show install prompt
+    final result = await pwa.promptInstall(
+      options: PromptOptions(
+        onAccepted: () {
+          debugPrint('[PWA] User accepted install prompt');
+        },
+        onDismissed: () {
+          debugPrint('[PWA] User dismissed install prompt');
+        },
+        onError: (error) {
+          debugPrint('[PWA] Install prompt error: $error');
+        },
+      ),
+    );
+
+    debugPrint('[PWA] Install result: ${result.outcome.name}');
   }
 
   @override

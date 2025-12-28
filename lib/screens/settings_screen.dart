@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_pwa_install/flutter_pwa_install.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -267,6 +268,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Icons.info,
             [
               _buildInfoTile(l10n.versionLabel, l10n.version),
+              // PWA Install tile (web only)
+              if (kIsWeb) _buildPwaInstallTile(),
               _buildActionTile(
                 l10n.privacyPolicy,
                 l10n.privacyPolicyDesc,
@@ -1126,6 +1129,72 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  /// Build PWA install tile (web only)
+  /// Only shows when the app can be installed (not already in standalone mode)
+  Widget _buildPwaInstallTile() {
+    final l10n = AppLocalizations.of(context);
+
+    return FutureBuilder<bool>(
+      future: FlutterPWAInstall.instance.canInstall(),
+      builder: (context, snapshot) {
+        // Only show if we can install
+        if (!snapshot.hasData || !snapshot.data!) {
+          return const SizedBox.shrink();
+        }
+
+        return _buildActionTile(
+          l10n.installApp,
+          l10n.installAppDesc,
+          Icons.install_mobile,
+          () => _promptPwaInstall(),
+        );
+      },
+    );
+  }
+
+  /// Prompt PWA installation
+  Future<void> _promptPwaInstall() async {
+    final l10n = AppLocalizations.of(context);
+
+    try {
+      final result = await FlutterPWAInstall.instance.promptInstall(
+        options: PromptOptions(
+          onAccepted: () {
+            if (mounted) {
+              AppSnackBar.show(
+                context,
+                message: l10n.appInstalledSuccess,
+                icon: Icons.check_circle,
+                iconColor: Colors.green,
+              );
+            }
+          },
+          onDismissed: () {
+            debugPrint('[PWA] User dismissed install prompt from settings');
+          },
+          onError: (error) {
+            debugPrint('[PWA] Install error: $error');
+            if (mounted) {
+              AppSnackBar.showError(context, message: l10n.appInstallFailed);
+            }
+          },
+        ),
+      );
+
+      debugPrint('[PWA] Install result: ${result.outcome.name}');
+
+      // Refresh the tile state after install attempt
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      debugPrint('[PWA] Install exception: $e');
+      if (mounted) {
+        AppSnackBar.showError(context, message: l10n.appInstallFailed);
+      }
+    }
   }
 
   void _showClearCacheDialog() {

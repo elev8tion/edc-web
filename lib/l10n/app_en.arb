@@ -991,6 +991,22 @@
   "@termsOfServiceDesc": {
     "description": "Setting description"
   },
+  "installApp": "Install App",
+  "@installApp": {
+    "description": "PWA install button title"
+  },
+  "installAppDesc": "Add to your home screen for quick access",
+  "@installAppDesc": {
+    "description": "PWA install button description"
+  },
+  "appInstalledSuccess": "App installed successfully!",
+  "@appInstalledSuccess": {
+    "description": "Success message after PWA install"
+  },
+  "appInstallFailed": "Installation failed. Please try again.",
+  "@appInstallFailed": {
+    "description": "Error message when PWA install fails"
+  },
   "clearCacheDialogTitle": "Cache",
   "@clearCacheDialogTitle": {
     "description": "Dialog title"
@@ -4319,13 +4335,13 @@
   "@tutorialHomeDescription": {
     "description": "Description for home screen FAB menu tutorial"
   },
-  "tutorialBibleTapTitle": "Tap to Select Verses",
+  "tutorialBibleTapTitle": "Double Tap to Select Verses",
   "@tutorialBibleTapTitle": {
-    "description": "Title for Bible tap-to-select tutorial"
+    "description": "Title for Bible double-tap-to-select tutorial"
   },
-  "tutorialBibleTapDescription": "Tap any verse to select it. Long press to view options like bookmarking and sharing.",
+  "tutorialBibleTapDescription": "Double tap any verse to select it and view options like bookmarking and sharing.",
   "@tutorialBibleTapDescription": {
-    "description": "Description for Bible tap-to-select tutorial"
+    "description": "Description for Bible double-tap-to-select tutorial"
   },
   "tutorialBibleBookmarkTitle": "Bookmark Your Favorites",
   "@tutorialBibleBookmarkTitle": {

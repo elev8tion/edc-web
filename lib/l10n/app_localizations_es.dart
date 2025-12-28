@@ -757,6 +757,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get termsOfServiceDesc => 'Leer términos y condiciones';
 
   @override
+  String get installApp => 'Instalar App';
+
+  @override
+  String get installAppDesc =>
+      'Agregar a tu pantalla de inicio para acceso rápido';
+
+  @override
+  String get appInstalledSuccess => '¡App instalada exitosamente!';
+
+  @override
+  String get appInstallFailed =>
+      'Instalación fallida. Por favor intente de nuevo.';
+
+  @override
   String get clearCacheDialogTitle => 'Caché';
 
   @override
@@ -3245,11 +3259,11 @@ class AppLocalizationsEs extends AppLocalizations {
       'Toca este menú para navegar entre las diferentes secciones de la aplicación: Biblia, Chat, Oraciones, Devocionales y más!';
 
   @override
-  String get tutorialBibleTapTitle => 'Toca para Seleccionar Versículos';
+  String get tutorialBibleTapTitle => 'Doble Toque para Seleccionar Versículos';
 
   @override
   String get tutorialBibleTapDescription =>
-      'Toca cualquier versículo para seleccionarlo. Mantén presionado para ver opciones como guardar y compartir.';
+      'Toca dos veces cualquier versículo para seleccionarlo y ver opciones como guardar y compartir.';
 
   @override
   String get tutorialBibleBookmarkTitle => 'Guarda tus Favoritos';

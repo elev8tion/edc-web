@@ -1484,6 +1484,30 @@ abstract class AppLocalizations {
   /// **'Read terms and conditions'**
   String get termsOfServiceDesc;
 
+  /// PWA install button title
+  ///
+  /// In en, this message translates to:
+  /// **'Install App'**
+  String get installApp;
+
+  /// PWA install button description
+  ///
+  /// In en, this message translates to:
+  /// **'Add to your home screen for quick access'**
+  String get installAppDesc;
+
+  /// Success message after PWA install
+  ///
+  /// In en, this message translates to:
+  /// **'App installed successfully!'**
+  String get appInstalledSuccess;
+
+  /// Error message when PWA install fails
+  ///
+  /// In en, this message translates to:
+  /// **'Installation failed. Please try again.'**
+  String get appInstallFailed;
+
   /// Dialog title
   ///
   /// In en, this message translates to:
@@ -5697,16 +5721,16 @@ abstract class AppLocalizations {
   /// **'Tap this menu to navigate between different sections of the app - Bible, Chat, Prayers, Devotionals, and more!'**
   String get tutorialHomeDescription;
 
-  /// Title for Bible tap-to-select tutorial
+  /// Title for Bible double-tap-to-select tutorial
   ///
   /// In en, this message translates to:
-  /// **'Tap to Select Verses'**
+  /// **'Double Tap to Select Verses'**
   String get tutorialBibleTapTitle;
 
-  /// Description for Bible tap-to-select tutorial
+  /// Description for Bible double-tap-to-select tutorial
   ///
   /// In en, this message translates to:
-  /// **'Tap any verse to select it. Long press to view options like bookmarking and sharing.'**
+  /// **'Double tap any verse to select it and view options like bookmarking and sharing.'**
   String get tutorialBibleTapDescription;
 
   /// Title for Bible bookmark tutorial

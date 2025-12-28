@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 1.0.0
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -84,6 +84,10 @@ dependencies:
   # - app_links: ^6.4.1             (Deep linking - unused in PWA context)
   # Removed by: Phase 4 cleanup (2025-12-23)
   # ==========================================
+
+  # PWA Installation Support
+  flutter_pwa_install:
+    path: ../flutter_pwa_install
 
 dev_dependencies:
   flutter_test:

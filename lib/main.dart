@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_pwa_install/flutter_pwa_install.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:upgrader/upgrader.dart';
@@ -66,6 +67,19 @@ Future<void> main() async {
 
   final subscriptionService = SubscriptionService.instance;
   await subscriptionService.initialize();
+
+  // Initialize PWA install support (web only)
+  if (kIsWeb) {
+    FlutterPWAInstall.instance.setup(
+      config: const PWAConfig(
+        delayPrompt: Duration(seconds: 30),
+        maxDismissals: 2,
+        dismissCooldown: Duration(days: 7),
+        showIOSInstructions: true,
+        debug: false,
+      ),
+    );
+  }
 
   runApp(
     ProviderScope(
