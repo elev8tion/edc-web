@@ -69,14 +69,15 @@ Future<void> main() async {
   await subscriptionService.initialize();
 
   // Initialize PWA install support (web only)
+  // Note: We manually trigger the install prompt after tutorial, so no auto-delay needed
   if (kIsWeb) {
     FlutterPWAInstall.instance.setup(
       config: const PWAConfig(
-        delayPrompt: Duration(seconds: 30),
+        delayPrompt: Duration.zero, // No auto-delay - we trigger manually after tutorial
         maxDismissals: 2,
         dismissCooldown: Duration(days: 7),
         showIOSInstructions: true,
-        debug: false,
+        debug: true, // Enable debug to see PWA events in console
       ),
     );
   }

@@ -137,24 +137,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ).show(context);
   }
 
-  /// Show PWA install prompt if conditions are met (web only)
+  /// Show PWA install prompt immediately after tutorial clears (web only)
   Future<void> _showPwaInstallIfNeeded() async {
     // Only run on web
     if (!kIsWeb) return;
 
-    // Wait for UI to settle after tutorial
-    await Future.delayed(const Duration(milliseconds: 500));
+    // Minimal delay to let tutorial animation complete
+    await Future.delayed(const Duration(milliseconds: 100));
 
     if (!mounted) return;
 
     try {
       final pwa = FlutterPWAInstall.instance;
 
-      // Check if we can show install prompt
-      final canInstall = await pwa.canInstall();
-      if (!canInstall) return;
+      // Debug: Print full installability report to see what's failing
+      final report = await pwa.getInstallabilityReport();
+      debugPrint('[PWA] Installability Report:\n$report');
 
-      // Show install prompt
+      // Check if install prompt is available (browser captured beforeinstallprompt event)
+      final canInstall = await pwa.canInstall();
+
+      if (!canInstall) {
+        debugPrint('[PWA] Install prompt not available - app may already be installed or not eligible');
+        return;
+      }
+
+      debugPrint('[PWA] Showing install prompt immediately after tutorial');
+
+      // Show install prompt immediately
       final result = await pwa.promptInstall(
         options: PromptOptions(
           onAccepted: () {
