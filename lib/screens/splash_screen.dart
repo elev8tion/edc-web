@@ -66,7 +66,8 @@ class SplashScreen extends HookConsumerWidget {
         if (_hasNavigated) return;
 
         // Check if we're still on splash screen before navigating
-        if (currentRoute != AppRoutes.splash && currentRoute != '/') return;
+        // On web, currentRoute may be null - allow navigation in that case
+        if (currentRoute != null && currentRoute != AppRoutes.splash && currentRoute != '/') return;
 
         // Check if user has completed onboarding (which now includes legal agreements)
         final prefsService = await PreferencesService.getInstance();

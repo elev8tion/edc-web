@@ -1,8 +1,3 @@
-/// Checkout Complete Screen
-/// Handles the return from Stripe Embedded Checkout
-/// Verifies the checkout session and navigates to home with success
-
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../components/gradient_background.dart';
