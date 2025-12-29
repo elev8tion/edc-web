@@ -1,6 +1,11 @@
 # Netlify configuration for Everyday Christian PWA
 [build]
-  command = "flutter build web --release --no-tree-shake-icons"
+  command = """
+    git clone https://github.com/flutter/flutter.git -b stable --depth 1 && \
+    export PATH="$PATH:$PWD/flutter/bin" && \
+    flutter precache --web && \
+    flutter build web --release --no-tree-shake-icons
+  """
   publish = "build/web"
 
 # Headers for JavaScript and WASM files - MUST come first
