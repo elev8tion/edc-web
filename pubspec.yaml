@@ -62,6 +62,9 @@ dependencies:
   audioplayers: ^6.5.1
   springster: ^1.0.2
 
+  # Stripe Payment (flutter_stripe for card collection UI)
+  flutter_stripe: ^11.4.0
+
   # Additional dependencies for production app
   dio: ^5.3.2
   connectivity_plus: ^5.0.1

@@ -1,0 +1,25 @@
+# Stripe Subscription Management Worker
+# Handles SetupIntent creation, subscription management, and trial ending
+#
+# Deploy:
+#   wrangler deploy -c wrangler-stripe.toml
+#
+# Set secret key (required before first deploy):
+#   wrangler secret put STRIPE_SECRET_KEY -c wrangler-stripe.toml
+#   Enter: sk_live_XXXX (or sk_test_XXXX for testing)
+
+name = "edc-stripe-subscription"
+main = "src/stripe-subscription.js"
+compatibility_date = "2024-01-01"
+
+# Uncomment for custom domain routing:
+# routes = [
+#   { pattern = "api.everydaychrist.app/stripe/*", zone_name = "everydaychrist.app" }
+# ]
+
+# Environment variables (non-secret)
+[vars]
+ENVIRONMENT = "production"
+
+# Note: STRIPE_SECRET_KEY must be set via `wrangler secret put`
+# Never commit secret keys to version control
