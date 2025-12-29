@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../../services/stripe_subscription_service.dart';
 
 /// Represents the current subscription state of the user
 enum SubscriptionStatus {
@@ -424,6 +425,16 @@ class SubscriptionService {
         // Check if trial just expired (message limit or time limit)
         await _checkAndMarkTrialExpiry();
 
+        // If 15 messages consumed, end Stripe trial early (triggers first charge)
+        if (used >= trialTotalMessages) {
+          final stripeService = StripeSubscriptionService.instance;
+          if (stripeService.hasSubscription && stripeService.isInTrial) {
+            await stripeService.endTrialNow();
+            debugPrint(
+                '📊 [SubscriptionService] Stripe trial ended - triggering first charge');
+          }
+        }
+
         return true;
       }
 
@@ -435,19 +446,10 @@ class SubscriptionService {
   }
 
   // ============================================================================
-  // STRIPE CHECKOUT (PWA)
+  // STRIPE SUBSCRIPTION (see StripeSubscriptionService)
   // ============================================================================
-
-  // Stripe Payment Links (Production)
-  static const String _paymentLinkYearly = 'https://buy.stripe.com/3cIaEYbLj8ccbq75VZ0RG00';
-  static const String _paymentLinkMonthly = 'https://buy.stripe.com/6oU14odTrgIIcubfwz0RG01';
-
-  /// Get Stripe Checkout URL for the selected plan
-  String getStripeCheckoutUrl({required bool isYearly, String locale = 'en'}) {
-    final url = isYearly ? _paymentLinkYearly : _paymentLinkMonthly;
-    debugPrint('💳 [SubscriptionService] Using Payment Link: ${isYearly ? 'yearly' : 'monthly'}');
-    return url;
-  }
+  // Payment link methods removed - replaced by StripeSubscriptionService
+  // which handles card collection via PaymentBottomSheet + SetupIntent
 
   /// Get the purchased product ID (yearly vs monthly)
   /// Returns null if no subscription purchased

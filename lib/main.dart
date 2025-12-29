@@ -25,10 +25,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_pwa_install/flutter_pwa_install.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:upgrader/upgrader.dart';
 import 'l10n/app_localizations.dart';
+import 'services/stripe_subscription_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,8 +63,16 @@ Future<void> main() async {
     }
   }
 
+  // Initialize Stripe for payment processing
+  // Test mode key - replace with pk_live_... for production
+  Stripe.publishableKey = 'pk_test_51SefukIDgcZhXc4USbi8BYmZmt6ITBeN8tmk7ZEsXG7aMf5VtEuvM5Eu3Txe4vX5H9htjPIL1rO8azTLE4JhZpfL00DzHWOZls';
+  await Stripe.instance.applySettings();
+
   final subscriptionService = SubscriptionService.instance;
   await subscriptionService.initialize();
+
+  // Initialize Stripe subscription service
+  await StripeSubscriptionService.instance.initialize();
 
   // Initialize PWA install support (web only)
   // Note: We manually trigger the install prompt after tutorial, so no auto-delay needed

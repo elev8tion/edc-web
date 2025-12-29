@@ -5,6 +5,7 @@ import '../components/glass_button.dart';
 import '../utils/responsive_utils.dart';
 import '../utils/blur_dialog_utils.dart';
 import '../l10n/app_localizations.dart';
+import '../services/stripe_subscription_service.dart';
 
 class TrialWelcomeDialog extends StatelessWidget {
   const TrialWelcomeDialog({super.key});
@@ -148,7 +149,24 @@ class TrialWelcomeDialog extends StatelessWidget {
                     children: [
                       GlassButton(
                         text: l10n.subscriptionStartFreeTrialButton,
-                        onPressed: () => Navigator.of(context).pop(true),
+                        onPressed: () async {
+                          // Use new Stripe subscription service with card collection
+                          final stripeService = StripeSubscriptionService.instance;
+
+                          // Generate a simple user ID for now (can be replaced with actual auth)
+                          final userId = DateTime.now().millisecondsSinceEpoch.toString();
+
+                          final success = await stripeService.smartSubscribe(
+                            context: context,
+                            userId: userId,
+                            isYearly: true,
+                          );
+
+                          // Close dialog
+                          if (context.mounted) {
+                            Navigator.of(context).pop(success);
+                          }
+                        },
                         height: 50,
                       ),
                       const SizedBox(height: AppSpacing.sm),

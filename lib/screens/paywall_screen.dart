@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../components/gradient_background.dart';
+import '../services/stripe_subscription_service.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_button.dart';
 import '../components/glass_section_header.dart';
@@ -491,190 +492,29 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  /// Handle subscribe button - redirects to Stripe Checkout
+  /// Handle subscribe button - shows payment bottom sheet
   Future<void> _handleSubscribe() async {
     if (_isProcessing) return;
 
     setState(() => _isProcessing = true);
 
-    final subscriptionService = ref.read(subscriptionServiceProvider);
-    final l10n = AppLocalizations.of(context);
-
     try {
-      // Get Stripe Checkout URL
-      final locale = Localizations.localeOf(context).languageCode;
-      final checkoutUrl = subscriptionService.getStripeCheckoutUrl(
+      // Use new Stripe subscription service with card collection
+      final stripeService = StripeSubscriptionService.instance;
+
+      // Generate a simple user ID for now (can be replaced with actual auth)
+      final userId = DateTime.now().millisecondsSinceEpoch.toString();
+
+      final success = await stripeService.smartSubscribe(
+        context: context,
+        userId: userId,
         isYearly: _selectedPlanIsYearly,
-        locale: locale,
       );
 
-      if (checkoutUrl.isEmpty) {
-        // Show configuration error
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 5),
-            margin: const EdgeInsets.all(16),
-            padding: EdgeInsets.zero,
-            content: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF1E293B),
-                    Color(0xFF0F172A),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.red.withValues(alpha: 0.5),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red.shade300,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      l10n.paywallCheckoutNotConfigured,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-        setState(() => _isProcessing = false);
-        return;
+      if (success && mounted) {
+        // Close paywall screen on success
+        Navigator.of(context).pop(true);
       }
-
-      // Launch Stripe Checkout in browser
-      final uri = Uri.parse(checkoutUrl);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-        );
-
-        // Show info about activation code
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 5),
-            margin: const EdgeInsets.all(16),
-            padding: EdgeInsets.zero,
-            content: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF1E293B),
-                    Color(0xFF0F172A),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppTheme.goldColor.withValues(alpha: 0.3),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.info_outline,
-                    color: AppTheme.goldColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      l10n.paywallCheckoutRedirectInfo,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      } else {
-        throw Exception('Could not launch checkout URL');
-      }
-    } catch (e) {
-      debugPrint('📊 [PaywallScreen] Error launching checkout: $e');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
-          margin: const EdgeInsets.all(16),
-          padding: EdgeInsets.zero,
-          content: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF1E293B),
-                  Color(0xFF0F172A),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.red.withValues(alpha: 0.5),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  color: Colors.red.shade300,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    l10n.paywallPurchaseFailed,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
     } finally {
       if (mounted) {
         setState(() => _isProcessing = false);
