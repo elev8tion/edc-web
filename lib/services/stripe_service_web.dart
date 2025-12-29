@@ -69,7 +69,9 @@ void _registerViewFactory() {
       div.id = 'stripe-checkout-$viewId';
       div.style.width = '100%';
       div.style.height = '100%';
-      div.style.minHeight = '400px';
+      div.style.minHeight = '500px';
+      div.style.overflow = 'auto';
+      div.style.setProperty('-webkit-overflow-scrolling', 'touch');
       return div;
     },
   );
@@ -267,9 +269,13 @@ class _StripeEmbeddedCheckoutDialogState extends State<StripeEmbeddedCheckoutDia
     return Dialog(
       backgroundColor: const Color(0xFF1E293B),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Container(
         width: 500,
-        height: 650,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
+          minHeight: 600,
+        ),
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -352,7 +358,7 @@ class _StripeEmbeddedCheckoutDialogState extends State<StripeEmbeddedCheckoutDia
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
           ),
-          clipBehavior: Clip.hardEdge,
+          clipBehavior: Clip.antiAlias,
           child: const HtmlElementView(viewType: 'stripe-checkout-element'),
         ),
 
