@@ -222,32 +222,17 @@ class AppSettings {
 
 /// Available Bible translations
 class BibleTranslations {
-  static const String esv = 'ESV';
-  static const String niv = 'NIV';
-  static const String nasb = 'NASB';
-  static const String kjv = 'WEB';
-  static const String nlt = 'NLT';
-  static const String csb = 'CSB';
-  static const String msg = 'MSG';
+  static const String web = 'WEB';
+  static const String rvr1909 = 'RVR1909';
 
-  static const List<String> all = [esv, niv, nasb, kjv, nlt, csb, msg];
+  static const List<String> all = [web, rvr1909];
 
   static String getFullName(String translation) {
     switch (translation) {
-      case esv:
-        return 'English Standard Version';
-      case niv:
-        return 'New International Version';
-      case nasb:
-        return 'New American Standard Bible';
-      case kjv:
-        return 'King James Version';
-      case nlt:
-        return 'New Living Translation';
-      case csb:
-        return 'Christian Standard Bible';
-      case msg:
-        return 'The Message';
+      case web:
+        return 'World English Bible';
+      case rvr1909:
+        return 'Reina-Valera 1909';
       default:
         return translation;
     }
