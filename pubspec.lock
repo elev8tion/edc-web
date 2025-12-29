@@ -507,9 +507,11 @@ packages:
   flutter_pwa_install:
     dependency: "direct main"
     description:
-      path: "../flutter_pwa_install"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: e58fb0a4b0d7a2e15a51197e4b4a9812e35c75b0
+      url: "https://github.com/elev8tion/flutter_pwa_install.git"
+    source: git
     version: "1.0.0"
   flutter_riverpod:
     dependency: "direct main"

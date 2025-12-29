@@ -90,7 +90,9 @@ dependencies:
 
   # PWA Installation Support
   flutter_pwa_install:
-    path: ../flutter_pwa_install
+    git:
+      url: https://github.com/elev8tion/flutter_pwa_install.git
+      ref: main
 
 dev_dependencies:
   flutter_test:
