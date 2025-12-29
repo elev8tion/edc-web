@@ -38,13 +38,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _checkShowTrialWelcome();
+    _startOnboardingFlow();
   }
 
-  Future<void> _checkShowTrialWelcome() async {
+  /// Onboarding flow: Tutorial first, then trial dialog
+  Future<void> _startOnboardingFlow() async {
     // Wait for widget to build
     await Future.delayed(const Duration(milliseconds: 500));
 
+    if (!mounted) return;
+
+    // Always start with tutorial check
+    _showFabTutorialIfNeeded();
+  }
+
+  /// Show trial welcome dialog LAST (after tutorial and PWA install)
+  /// This ensures payment bottom sheet has no interference from other dialogs
+  Future<void> _showTrialWelcomeIfNeeded() async {
     if (!mounted) return;
 
     final subscriptionService = SubscriptionService.instance;
@@ -71,19 +81,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         if (result == true && mounted) {
           Navigator.of(context).pushNamed(AppRoutes.chat);
         }
-
-        // After dialog closes, show FAB tutorial if first time
-        if (mounted) {
-          _showFabTutorialIfNeeded();
-        }
-      } else {
-        // If trial dialog already shown, check for tutorial
-        _showFabTutorialIfNeeded();
       }
-    } else {
-      // Premium user or trial started, still show tutorial if needed
-      _showFabTutorialIfNeeded();
     }
+    // Trial dialog is last in onboarding flow - nothing else to show
   }
 
   Future<void> _showFabTutorialIfNeeded() async {
@@ -91,7 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     // Check if tutorial already shown
     if (prefsService.hasFabTutorialShown()) {
-      // Tutorial already shown, try PWA install prompt
+      // Tutorial already shown, proceed to PWA install check
       _showPwaInstallIfNeeded();
       return;
     }
@@ -138,9 +138,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   /// Show PWA install prompt immediately after tutorial clears (web only)
+  /// Then shows trial welcome dialog (LAST in onboarding flow)
   Future<void> _showPwaInstallIfNeeded() async {
-    // Only run on web
-    if (!kIsWeb) return;
+    // Only run PWA logic on web, but still show trial dialog on all platforms
+    if (!kIsWeb) {
+      _showTrialWelcomeIfNeeded();
+      return;
+    }
 
     // Minimal delay to let tutorial animation complete
     await Future.delayed(const Duration(milliseconds: 100));
@@ -159,6 +163,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       if (!canInstall) {
         debugPrint('[PWA] Install prompt not available - app may already be installed or not eligible');
+        // Still show trial dialog even if PWA install not available
+        _showTrialWelcomeIfNeeded();
         return;
       }
 
@@ -185,6 +191,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       // due to navigator.standalone access issues
       debugPrint('[PWA] Install check failed (expected on some browsers): $e');
     }
+
+    // Show trial welcome dialog LAST (after all other dialogs cleared)
+    _showTrialWelcomeIfNeeded();
   }
 
   @override
