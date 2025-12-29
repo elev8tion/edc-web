@@ -4426,5 +4426,71 @@
   "pwaGotIt": "Got It",
   "@pwaGotIt": {
     "description": "Button to dismiss iOS instructions"
+  },
+  "lockoutNoTrialTitle": "Start Your\nFree Trial",
+  "@lockoutNoTrialTitle": {
+    "description": "Title for chat lockout when user hasn't started trial"
+  },
+  "lockoutNoTrialMessage": "Experience 3 days of AI-powered Biblical guidance completely free. Get personalized scripture insights and spiritual support.",
+  "@lockoutNoTrialMessage": {
+    "description": "Message for chat lockout when user hasn't started trial"
+  },
+  "lockoutTrialExpiredTitle": "Premium\nScripture Chat",
+  "@lockoutTrialExpiredTitle": {
+    "description": "Title for chat lockout when trial expired"
+  },
+  "lockoutTrialExpiredMessage": "Your free trial has ended. Subscribe to view your chat history and continue conversations with AI-powered Biblical guidance.",
+  "@lockoutTrialExpiredMessage": {
+    "description": "Message for chat lockout when trial expired"
+  },
+  "lockoutPremiumExpiredMessage": "Subscribe to view your chat history and continue conversations with AI-powered Biblical guidance.",
+  "@lockoutPremiumExpiredMessage": {
+    "description": "Message for chat lockout when premium expired"
+  },
+  "lockoutSuspendedTitle": "Account Suspended",
+  "@lockoutSuspendedTitle": {
+    "description": "Title for chat lockout when account is suspended"
+  },
+  "lockoutSuspendedMessage": "Your AI chat access has been temporarily suspended due to Terms of Service violations. Your subscription remains active and all other features are available.",
+  "@lockoutSuspendedMessage": {
+    "description": "Message for chat lockout when account is suspended"
+  },
+  "lockoutStartFreeTrial": "Start Free Trial",
+  "@lockoutStartFreeTrial": {
+    "description": "Button text to start free trial"
+  },
+  "lockoutSubscribeNow": "Subscribe Now",
+  "@lockoutSubscribeNow": {
+    "description": "Button text to subscribe"
+  },
+  "lockoutBenefitMessages": "150 AI messages per month",
+  "@lockoutBenefitMessages": {
+    "description": "Benefit item - message count"
+  },
+  "lockoutBenefitHistory": "Access to all your chat history",
+  "@lockoutBenefitHistory": {
+    "description": "Benefit item - chat history"
+  },
+  "lockoutBenefitGuidance": "Personalized Biblical guidance",
+  "@lockoutBenefitGuidance": {
+    "description": "Benefit item - biblical guidance"
+  },
+  "lockoutFreeFeatures": "Prayer journal, Bible reading, and verses remain free and unlimited",
+  "@lockoutFreeFeatures": {
+    "description": "Note about features that remain free"
+  },
+  "lockoutSuspensionTimeRemaining": "Time Remaining: {time}",
+  "@lockoutSuspensionTimeRemaining": {
+    "description": "Suspension time remaining display",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "2d 5h"
+      }
+    }
+  },
+  "lockoutSuspensionContactInfo": "If you believe this suspension was issued in error, please contact:",
+  "@lockoutSuspensionContactInfo": {
+    "description": "Contact info text for suspended accounts"
   }
 }

@@ -5858,6 +5858,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got It'**
   String get pwaGotIt;
+
+  /// Title for chat lockout when user hasn't started trial
+  ///
+  /// In en, this message translates to:
+  /// **'Start Your\nFree Trial'**
+  String get lockoutNoTrialTitle;
+
+  /// Message for chat lockout when user hasn't started trial
+  ///
+  /// In en, this message translates to:
+  /// **'Experience 3 days of AI-powered Biblical guidance completely free. Get personalized scripture insights and spiritual support.'**
+  String get lockoutNoTrialMessage;
+
+  /// Title for chat lockout when trial expired
+  ///
+  /// In en, this message translates to:
+  /// **'Premium\nScripture Chat'**
+  String get lockoutTrialExpiredTitle;
+
+  /// Message for chat lockout when trial expired
+  ///
+  /// In en, this message translates to:
+  /// **'Your free trial has ended. Subscribe to view your chat history and continue conversations with AI-powered Biblical guidance.'**
+  String get lockoutTrialExpiredMessage;
+
+  /// Message for chat lockout when premium expired
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe to view your chat history and continue conversations with AI-powered Biblical guidance.'**
+  String get lockoutPremiumExpiredMessage;
+
+  /// Title for chat lockout when account is suspended
+  ///
+  /// In en, this message translates to:
+  /// **'Account Suspended'**
+  String get lockoutSuspendedTitle;
+
+  /// Message for chat lockout when account is suspended
+  ///
+  /// In en, this message translates to:
+  /// **'Your AI chat access has been temporarily suspended due to Terms of Service violations. Your subscription remains active and all other features are available.'**
+  String get lockoutSuspendedMessage;
+
+  /// Button text to start free trial
+  ///
+  /// In en, this message translates to:
+  /// **'Start Free Trial'**
+  String get lockoutStartFreeTrial;
+
+  /// Button text to subscribe
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe Now'**
+  String get lockoutSubscribeNow;
+
+  /// Benefit item - message count
+  ///
+  /// In en, this message translates to:
+  /// **'150 AI messages per month'**
+  String get lockoutBenefitMessages;
+
+  /// Benefit item - chat history
+  ///
+  /// In en, this message translates to:
+  /// **'Access to all your chat history'**
+  String get lockoutBenefitHistory;
+
+  /// Benefit item - biblical guidance
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized Biblical guidance'**
+  String get lockoutBenefitGuidance;
+
+  /// Note about features that remain free
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer journal, Bible reading, and verses remain free and unlimited'**
+  String get lockoutFreeFeatures;
+
+  /// Suspension time remaining display
+  ///
+  /// In en, this message translates to:
+  /// **'Time Remaining: {time}'**
+  String lockoutSuspensionTimeRemaining(String time);
+
+  /// Contact info text for suspended accounts
+  ///
+  /// In en, this message translates to:
+  /// **'If you believe this suspension was issued in error, please contact:'**
+  String get lockoutSuspensionContactInfo;
 }
 
 class _AppLocalizationsDelegate

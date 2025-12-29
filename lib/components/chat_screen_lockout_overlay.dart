@@ -1,7 +1,8 @@
 /// Chat Screen Lockout Overlay
 /// Displays when:
-/// 1. Trial has expired or premium subscription has ended
-/// 2. User is suspended for Terms of Service violations
+/// 1. User hasn't started a trial yet
+/// 2. Trial has expired or premium subscription has ended
+/// 3. User is suspended for Terms of Service violations
 /// Prevents viewing chat history and sending messages
 
 import 'package:flutter/material.dart';
@@ -9,8 +10,10 @@ import '../components/frosted_glass_card.dart';
 import '../components/glass_button.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
+import '../l10n/app_localizations.dart';
 
 enum LockoutReason {
+  noTrial,         // Never started trial - must sign up first
   trialExpired,    // Trial period ended
   premiumExpired,  // Subscription expired
   suspended,       // Account suspended for violations
@@ -32,6 +35,8 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Container(
       // Full screen overlay with blur effect
       width: double.infinity,
@@ -62,7 +67,7 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Icon (Lock for subscription, Warning for suspension)
+                      // Icon (Gift for new trial, Lock for expired, Warning for suspension)
                       Container(
                         width: 100,
                         height: 100,
@@ -91,7 +96,9 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                         child: Icon(
                           reason == LockoutReason.suspended
                               ? Icons.warning_amber_rounded
-                              : Icons.lock_outline,
+                              : reason == LockoutReason.noTrial
+                                  ? Icons.auto_awesome
+                                  : Icons.lock_outline,
                           size: ResponsiveUtils.iconSize(context, 50),
                           color: reason == LockoutReason.suspended
                               ? Colors.orange
@@ -102,7 +109,7 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
 
                       // Title
                       Text(
-                        _getTitle(),
+                        _getTitle(l10n),
                         style: TextStyle(
                           fontSize: ResponsiveUtils.fontSize(context, 28, minSize: 24, maxSize: 32),
                           fontWeight: FontWeight.w600,
@@ -115,7 +122,7 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
 
                       // Message
                       Text(
-                        _getMessage(),
+                        _getMessage(l10n),
                         style: TextStyle(
                           fontSize: ResponsiveUtils.fontSize(context, 16, minSize: 14, maxSize: 18),
                           color: AppColors.secondaryText,
@@ -143,7 +150,7 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              'Time Remaining: ${_formatDuration(remainingSuspension!)}',
+                              l10n.lockoutSuspensionTimeRemaining(_formatDuration(remainingSuspension!)),
                               style: TextStyle(
                                 fontSize: ResponsiveUtils.fontSize(context, 16, minSize: 14, maxSize: 18),
                                 color: Colors.orange.shade200,
@@ -155,7 +162,7 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
 
                         // Contact support text
                         Text(
-                          'If you believe this suspension was issued in error, please contact:',
+                          l10n.lockoutSuspensionContactInfo,
                           style: TextStyle(
                             fontSize: ResponsiveUtils.fontSize(context, 13, minSize: 11, maxSize: 15),
                             color: AppColors.tertiaryText,
@@ -178,25 +185,27 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                         _buildBenefitItem(
                           context,
                           icon: Icons.chat_bubble_outline,
-                          text: '150 AI messages per month',
+                          text: l10n.lockoutBenefitMessages,
                         ),
                         SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.md)),
                         _buildBenefitItem(
                           context,
                           icon: Icons.history,
-                          text: 'Access to all your chat history',
+                          text: l10n.lockoutBenefitHistory,
                         ),
                         SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.md)),
                         _buildBenefitItem(
                           context,
                           icon: Icons.auto_awesome,
-                          text: 'Personalized Biblical guidance',
+                          text: l10n.lockoutBenefitGuidance,
                         ),
                         SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.xxl)),
 
-                        // Subscribe button
+                        // Subscribe/Trial button
                         GlassButton(
-                          text: 'Subscribe Now',
+                          text: reason == LockoutReason.noTrial
+                              ? l10n.lockoutStartFreeTrial
+                              : l10n.lockoutSubscribeNow,
                           onPressed: onSubscribePressed,
                         ),
                       ],
@@ -204,7 +213,7 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
 
                       // Info text
                       Text(
-                        'Prayer journal, Bible reading, and verses remain free and unlimited',
+                        l10n.lockoutFreeFeatures,
                         style: TextStyle(
                           fontSize: ResponsiveUtils.fontSize(context, 12, minSize: 10, maxSize: 14),
                           color: AppColors.tertiaryText,
@@ -223,27 +232,28 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
     );
   }
 
-  String _getTitle() {
+  String _getTitle(AppLocalizations l10n) {
     switch (reason) {
       case LockoutReason.suspended:
-        return 'Account Suspended';
+        return l10n.lockoutSuspendedTitle;
+      case LockoutReason.noTrial:
+        return l10n.lockoutNoTrialTitle;
       case LockoutReason.trialExpired:
       case LockoutReason.premiumExpired:
-        return 'Premium\nScripture Chat';
+        return l10n.lockoutTrialExpiredTitle;
     }
   }
 
-  String _getMessage() {
+  String _getMessage(AppLocalizations l10n) {
     switch (reason) {
       case LockoutReason.suspended:
-        return suspensionMessage ??
-            'Your AI chat access has been temporarily suspended due to Terms of Service violations. '
-            'Your subscription remains active and all other features are available.';
+        return suspensionMessage ?? l10n.lockoutSuspendedMessage;
+      case LockoutReason.noTrial:
+        return l10n.lockoutNoTrialMessage;
       case LockoutReason.trialExpired:
-        return 'Your free trial has ended. Subscribe to view your chat history and continue conversations '
-            'with AI-powered Biblical guidance.';
+        return l10n.lockoutTrialExpiredMessage;
       case LockoutReason.premiumExpired:
-        return 'Subscribe to view your chat history and continue conversations with AI-powered Biblical guidance.';
+        return l10n.lockoutPremiumExpiredMessage;
     }
   }
 

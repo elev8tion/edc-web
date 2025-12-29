@@ -39,6 +39,7 @@ import '../core/widgets/app_snackbar.dart';
 import '../services/chat_share_service.dart';
 import '../l10n/app_localizations.dart';
 import '../models/verse_context.dart';
+import '../services/stripe_service.dart';
 
 class ChatScreen extends HookConsumerWidget {
   final VerseContext?
@@ -1466,6 +1467,29 @@ class ChatScreen extends HookConsumerWidget {
     // Check subscription status for chat lockout
     final subscriptionService = ref.watch(subscriptionServiceProvider);
     final subscriptionStatus = subscriptionService.getSubscriptionStatus();
+
+    // If user never started trial, require them to sign up first
+    if (subscriptionStatus == SubscriptionStatus.neverStarted) {
+      return Scaffold(
+        body: Stack(
+          children: [
+            const GradientBackground(),
+            ChatScreenLockoutOverlay(
+              reason: LockoutReason.noTrial,
+              onSubscribePressed: () async {
+                // Launch Stripe checkout for free trial
+                final userId = DateTime.now().millisecondsSinceEpoch.toString();
+                await startSubscription(
+                  context: context,
+                  userId: userId,
+                  isYearly: true,
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
 
     // If trial expired or premium expired, show lockout overlay
     if (subscriptionStatus == SubscriptionStatus.trialExpired ||

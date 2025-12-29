@@ -3334,4 +3334,57 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get pwaGotIt => 'Entendido';
+
+  @override
+  String get lockoutNoTrialTitle => 'Comienza Tu\nPrueba Gratis';
+
+  @override
+  String get lockoutNoTrialMessage =>
+      'Experimenta 3 días de orientación bíblica impulsada por IA completamente gratis. Obtén perspectivas personalizadas de las Escrituras y apoyo espiritual.';
+
+  @override
+  String get lockoutTrialExpiredTitle => 'Chat Premium\nde Escrituras';
+
+  @override
+  String get lockoutTrialExpiredMessage =>
+      'Tu prueba gratis ha terminado. Suscríbete para ver tu historial de chat y continuar conversaciones con orientación bíblica impulsada por IA.';
+
+  @override
+  String get lockoutPremiumExpiredMessage =>
+      'Suscríbete para ver tu historial de chat y continuar conversaciones con orientación bíblica impulsada por IA.';
+
+  @override
+  String get lockoutSuspendedTitle => 'Cuenta Suspendida';
+
+  @override
+  String get lockoutSuspendedMessage =>
+      'Tu acceso al chat de IA ha sido suspendido temporalmente debido a violaciones de los Términos de Servicio. Tu suscripción sigue activa y todas las demás funciones están disponibles.';
+
+  @override
+  String get lockoutStartFreeTrial => 'Comenzar Prueba Gratis';
+
+  @override
+  String get lockoutSubscribeNow => 'Suscribirse Ahora';
+
+  @override
+  String get lockoutBenefitMessages => '150 mensajes de IA por mes';
+
+  @override
+  String get lockoutBenefitHistory => 'Acceso a todo tu historial de chat';
+
+  @override
+  String get lockoutBenefitGuidance => 'Orientación bíblica personalizada';
+
+  @override
+  String get lockoutFreeFeatures =>
+      'Diario de oración, lectura bíblica y versículos permanecen gratis e ilimitados';
+
+  @override
+  String lockoutSuspensionTimeRemaining(String time) {
+    return 'Tiempo Restante: $time';
+  }
+
+  @override
+  String get lockoutSuspensionContactInfo =>
+      'Si crees que esta suspensión fue emitida por error, por favor contacta:';
 }

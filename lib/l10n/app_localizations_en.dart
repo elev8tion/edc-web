@@ -3288,4 +3288,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pwaGotIt => 'Got It';
+
+  @override
+  String get lockoutNoTrialTitle => 'Start Your\nFree Trial';
+
+  @override
+  String get lockoutNoTrialMessage =>
+      'Experience 3 days of AI-powered Biblical guidance completely free. Get personalized scripture insights and spiritual support.';
+
+  @override
+  String get lockoutTrialExpiredTitle => 'Premium\nScripture Chat';
+
+  @override
+  String get lockoutTrialExpiredMessage =>
+      'Your free trial has ended. Subscribe to view your chat history and continue conversations with AI-powered Biblical guidance.';
+
+  @override
+  String get lockoutPremiumExpiredMessage =>
+      'Subscribe to view your chat history and continue conversations with AI-powered Biblical guidance.';
+
+  @override
+  String get lockoutSuspendedTitle => 'Account Suspended';
+
+  @override
+  String get lockoutSuspendedMessage =>
+      'Your AI chat access has been temporarily suspended due to Terms of Service violations. Your subscription remains active and all other features are available.';
+
+  @override
+  String get lockoutStartFreeTrial => 'Start Free Trial';
+
+  @override
+  String get lockoutSubscribeNow => 'Subscribe Now';
+
+  @override
+  String get lockoutBenefitMessages => '150 AI messages per month';
+
+  @override
+  String get lockoutBenefitHistory => 'Access to all your chat history';
+
+  @override
+  String get lockoutBenefitGuidance => 'Personalized Biblical guidance';
+
+  @override
+  String get lockoutFreeFeatures =>
+      'Prayer journal, Bible reading, and verses remain free and unlimited';
+
+  @override
+  String lockoutSuspensionTimeRemaining(String time) {
+    return 'Time Remaining: $time';
+  }
+
+  @override
+  String get lockoutSuspensionContactInfo =>
+      'If you believe this suspension was issued in error, please contact:';
 }
