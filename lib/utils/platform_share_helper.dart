@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // Conditional imports for platform-specific code
 import 'platform_share_helper_stub.dart'
     if (dart.library.io) 'platform_share_helper_mobile.dart'
-    if (dart.library.html) 'platform_share_helper_web.dart';
+    if (dart.library.js_interop) 'platform_share_helper_web.dart';
 
 /// Platform-aware helper for sharing images and content
 ///

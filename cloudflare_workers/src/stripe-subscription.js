@@ -29,6 +29,10 @@ export default {
           return await createSetupIntent(request, env);
         case '/create-subscription':
           return await createSubscription(request, env);
+        case '/create-embedded-checkout':
+          return await createEmbeddedCheckout(request, env);
+        case '/verify-checkout':
+          return await verifyCheckout(request, env);
         case '/end-trial':
           return await endTrial(request, env);
         case '/cancel':
@@ -346,5 +350,134 @@ async function getSubscription(request, env) {
     trialEnd: subscription.trial_end,
     currentPeriodEnd: subscription.current_period_end,
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
+  }), { headers: CORS_HEADERS });
+}
+
+// ============================================================================
+// WEB: Create Embedded Checkout Session
+// ============================================================================
+// For PWA/web platform using Stripe Embedded Checkout
+async function createEmbeddedCheckout(request, env) {
+  const { userId, email, customerId, deviceId, isYearly, withTrial, returnUrl } = await request.json();
+
+  let customer = customerId;
+
+  // Create customer if needed
+  if (!customer) {
+    const custResponse = await fetch('https://api.stripe.com/v1/customers', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        email: email || '',
+        'metadata[user_id]': userId || '',
+        'metadata[device_id]': deviceId || '',
+        'metadata[created_at]': new Date().toISOString(),
+        'metadata[source]': 'edc_pwa_web',
+      }),
+    });
+
+    if (!custResponse.ok) {
+      const error = await custResponse.json();
+      throw new Error(`Failed to create customer: ${error.error?.message || 'Unknown error'}`);
+    }
+
+    const custData = await custResponse.json();
+    customer = custData.id;
+    console.log(`Created new Stripe customer: ${customer}`);
+  }
+
+  const priceId = isYearly ? YEARLY_PRICE_ID : MONTHLY_PRICE_ID;
+
+  // Build checkout session params for embedded mode
+  const params = new URLSearchParams({
+    'ui_mode': 'embedded',
+    'mode': 'subscription',
+    'customer': customer,
+    'line_items[0][price]': priceId,
+    'line_items[0][quantity]': '1',
+    'return_url': returnUrl || 'https://everydaychristian.app/checkout-complete?session_id={CHECKOUT_SESSION_ID}',
+    // Metadata for tracking
+    'metadata[user_id]': userId || '',
+    'metadata[device_id]': deviceId || '',
+    'metadata[plan_type]': isYearly ? 'yearly' : 'monthly',
+    'metadata[is_trial]': withTrial ? 'true' : 'false',
+    'metadata[source]': 'edc_pwa_web',
+    // Subscription data
+    'subscription_data[metadata][user_id]': userId || '',
+    'subscription_data[metadata][device_id]': deviceId || '',
+    'subscription_data[metadata][plan_type]': isYearly ? 'yearly' : 'monthly',
+    'subscription_data[metadata][source]': 'edc_pwa_web',
+  });
+
+  // Add trial if eligible
+  if (withTrial) {
+    params.append('subscription_data[trial_period_days]', '3');
+    params.append('subscription_data[metadata][is_trial]', 'true');
+  }
+
+  // Create checkout session
+  const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: params,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`Failed to create checkout session: ${error.error?.message || 'Unknown error'}`);
+  }
+
+  const session = await response.json();
+  console.log(`Created embedded checkout session: ${session.id} for customer: ${customer}`);
+
+  return new Response(JSON.stringify({
+    sessionId: session.id,
+    clientSecret: session.client_secret,
+    customerId: customer,
+  }), { headers: CORS_HEADERS });
+}
+
+// ============================================================================
+// WEB: Verify Checkout Session Completion
+// ============================================================================
+async function verifyCheckout(request, env) {
+  const { sessionId } = await request.json();
+
+  if (!sessionId) {
+    throw new Error('sessionId is required');
+  }
+
+  // Retrieve the checkout session with subscription expanded
+  const response = await fetch(
+    `https://api.stripe.com/v1/checkout/sessions/${sessionId}?expand[]=subscription`,
+    {
+      headers: { 'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}` },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`Failed to verify checkout: ${error.error?.message || 'Unknown error'}`);
+  }
+
+  const session = await response.json();
+  console.log(`Verified checkout session: ${sessionId}, status: ${session.status}`);
+
+  // Extract subscription details
+  const subscription = session.subscription;
+
+  return new Response(JSON.stringify({
+    status: session.status,
+    customerId: session.customer,
+    subscriptionId: subscription?.id || null,
+    subscriptionStatus: subscription?.status || null,
+    trialEnd: subscription?.trial_end || null,
+    currentPeriodEnd: subscription?.current_period_end || null,
   }), { headers: CORS_HEADERS });
 }

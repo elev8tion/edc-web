@@ -14,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../components/gradient_background.dart';
-import '../services/stripe_subscription_service.dart';
+import '../services/stripe_service.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_button.dart';
 import '../components/glass_section_header.dart';
@@ -499,13 +499,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     setState(() => _isProcessing = true);
 
     try {
-      // Use new Stripe subscription service with card collection
-      final stripeService = StripeSubscriptionService.instance;
-
       // Generate a simple user ID for now (can be replaced with actual auth)
       final userId = DateTime.now().millisecondsSinceEpoch.toString();
 
-      final success = await stripeService.smartSubscribe(
+      final success = await startSubscription(
         context: context,
         userId: userId,
         isYearly: _selectedPlanIsYearly,

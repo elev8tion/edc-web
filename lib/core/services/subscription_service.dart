@@ -14,7 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../services/stripe_subscription_service.dart';
+import '../../services/stripe_service.dart';
 
 /// Represents the current subscription state of the user
 enum SubscriptionStatus {
@@ -427,9 +427,8 @@ class SubscriptionService {
 
         // If 15 messages consumed, end Stripe trial early (triggers first charge)
         if (used >= trialTotalMessages) {
-          final stripeService = StripeSubscriptionService.instance;
-          if (stripeService.hasSubscription && stripeService.isInTrial) {
-            await stripeService.endTrialNow();
+          if (hasActiveSubscription() && isInTrialPeriod()) {
+            await endTrialEarly();
             debugPrint(
                 '📊 [SubscriptionService] Stripe trial ended - triggering first charge');
           }

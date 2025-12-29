@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 
 /// Web implementation of image sharing using Blob URLs and download links
 Future<void> shareImageWeb({
@@ -12,14 +12,25 @@ Future<void> shareImageWeb({
     // Try Web Share API first (if available and supports files)
     try {
       // Create a Blob from the image bytes
-      final blob = html.Blob([imageBytes], 'image/png');
-      final file = html.File([blob], filename, {'type': 'image/png'});
+      final blob = web.Blob(
+        [imageBytes.toJS].toJS,
+        web.BlobPropertyBag(type: 'image/png'),
+      );
+      final file = web.File(
+        [blob].toJS,
+        filename,
+        web.FilePropertyBag(type: 'image/png'),
+      );
+
+      // Check if Web Share API is available and supports sharing files
+      final navigator = web.window.navigator;
+      final shareData = web.ShareData(
+        files: [file].toJS,
+        text: text,
+      );
 
       // Try to share using Web Share API
-      await html.window.navigator.share({
-        'files': [file],
-        'text': text,
-      });
+      await navigator.share(shareData).toDart;
       return;
     } catch (e) {
       // Web Share API failed or doesn't support files
@@ -31,7 +42,7 @@ Future<void> shareImageWeb({
 
     // Try to copy text to clipboard
     try {
-      await html.window.navigator.clipboard?.writeText(text);
+      await web.window.navigator.clipboard.writeText(text).toDart;
     } catch (e) {
       // Clipboard write failed, ignore
     }
@@ -52,20 +63,24 @@ Future<void> shareImageMobile({
 /// Download image by creating a temporary anchor element
 void _downloadImage(Uint8List imageBytes, String filename) {
   // Create a Blob from the image bytes
-  final blob = html.Blob([imageBytes], 'image/png');
+  final blob = web.Blob(
+    [imageBytes.toJS].toJS,
+    web.BlobPropertyBag(type: 'image/png'),
+  );
 
   // Create an object URL from the Blob
-  final url = html.Url.createObjectUrlFromBlob(blob);
+  final url = web.URL.createObjectURL(blob);
 
   // Create a temporary anchor element and trigger download
-  final anchor = html.AnchorElement(href: url)
-    ..setAttribute('download', filename)
-    ..style.display = 'none';
+  final anchor = web.document.createElement('a') as web.HTMLAnchorElement;
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.style.display = 'none';
 
-  html.document.body?.append(anchor);
+  web.document.body?.append(anchor);
   anchor.click();
 
   // Clean up
   anchor.remove();
-  html.Url.revokeObjectUrl(url);
+  web.URL.revokeObjectURL(url);
 }

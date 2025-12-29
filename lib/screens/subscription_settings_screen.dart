@@ -23,7 +23,7 @@ import '../theme/app_theme.dart';
 import '../theme/app_gradients.dart';
 import '../core/providers/app_providers.dart';
 import '../utils/responsive_utils.dart';
-import '../services/stripe_subscription_service.dart';
+import '../services/stripe_service.dart';
 import '../l10n/app_localizations.dart';
 
 class SubscriptionSettingsScreen extends ConsumerWidget {
@@ -96,13 +96,10 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
                                 ? l10n.subscriptionSubscribeNowButton(premiumPrice)
                                 : l10n.subscriptionStartFreeTrialButton,
                             onPressed: () async {
-                              // Use new Stripe subscription service with card collection
-                              final stripeService = StripeSubscriptionService.instance;
-
                               // Generate a simple user ID for now
                               final userId = DateTime.now().millisecondsSinceEpoch.toString();
 
-                              await stripeService.smartSubscribe(
+                              await startSubscription(
                                 context: context,
                                 userId: userId,
                                 isYearly: true, // Default to yearly
