@@ -79,3 +79,6 @@ key.properties
 # Cloudflare Workers - NEVER COMMIT! Contains API keys
 cloudflare_workers/*wrangler.toml
 !cloudflare_workers/*wrangler.toml.example
+
+# Local Flutter SDK (created during Netlify local builds)
+flutter/
