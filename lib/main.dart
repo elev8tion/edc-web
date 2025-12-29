@@ -19,6 +19,7 @@ import 'package:everyday_christian/screens/reading_plan_screen.dart';
 import 'package:everyday_christian/screens/settings_screen.dart';
 import 'package:everyday_christian/screens/splash_screen.dart';
 import 'package:everyday_christian/screens/verse_library_screen.dart';
+import 'package:everyday_christian/screens/checkout_complete_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
@@ -145,17 +146,26 @@ class MyApp extends ConsumerWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      // Upgrader not supported on web - skip for web platform
-      home: kIsWeb
-          ? const SplashScreen()
-          : UpgradeAlert(
-              upgrader: Upgrader(
-                durationUntilAlertAgain: const Duration(days: 3),
-                minAppVersion: '1.0.0',
-              ),
-              child: const SplashScreen(),
-            ),
+      // Use initialRoute to properly handle URL-based navigation on web (e.g., /checkout-complete)
+      // The WidgetsBinding.platformDispatcher.defaultRouteName returns the URL path on web
+      initialRoute: kIsWeb
+          ? WidgetsBinding.instance.platformDispatcher.defaultRouteName
+          : '/',
       onGenerateRoute: (settings) {
+        // Handle root route with platform-specific wrapping
+        if (settings.name == '/' || settings.name == '') {
+          return MaterialPageRoute(
+            builder: (_) => kIsWeb
+                ? const SplashScreen()
+                : UpgradeAlert(
+                    upgrader: Upgrader(
+                      durationUntilAlertAgain: const Duration(days: 3),
+                      minAppVersion: '1.0.0',
+                    ),
+                    child: const SplashScreen(),
+                  ),
+          );
+        }
         switch (settings.name) {
           case AppRoutes.splash:
             return MaterialPageRoute(builder: (_) => const SplashScreen());
@@ -189,9 +199,15 @@ class MyApp extends ConsumerWidget {
                 readingId: args?['readingId'],
               ),
             );
+          case AppRoutes.checkoutComplete:
+            return MaterialPageRoute(builder: (_) => const CheckoutCompleteScreen());
           default:
             return null;
         }
+      },
+      // Handle unknown routes by redirecting to splash (prevents PWA crash on unknown URLs)
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       },
     );
   }

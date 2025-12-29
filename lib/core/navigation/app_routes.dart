@@ -13,6 +13,7 @@ class AppRoutes {
   static const String readingPlan = '/reading-plan';
   static const String chapterReading = '/chapter-reading';
   static const String bibleBrowser = '/bible-browser';
+  static const String checkoutComplete = '/checkout-complete';
 
   static const List<String> authRequiredRoutes = [
     home,
@@ -32,6 +33,7 @@ class AppRoutes {
     legalAgreements,
     onboarding,
     auth,
+    checkoutComplete,
   ];
 
   static bool isAuthRequired(String route) {
