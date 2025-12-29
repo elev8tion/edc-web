@@ -129,7 +129,8 @@ flutter:
     - assets/bible_web_optimized.sql
     - assets/spanish_rvr1909_optimized.sql
     - assets/bible_transform.sql
-    - .env
+    # .env removed - secrets should not be bundled in assets
+    # Use Netlify environment variables instead
 
   shaders:
     - shaders/liquid_glass_lens.frag
