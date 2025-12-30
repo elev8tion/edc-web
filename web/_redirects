@@ -1,3 +1,0 @@
-# Cloudflare Pages SPA routing
-# Serve index.html for all routes (let Flutter handle routing)
-/*  /index.html  200
