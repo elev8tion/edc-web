@@ -1307,69 +1307,81 @@ async function sendPasswordResetEmail(email, token, locale, firstName, env) {
  */
 function getEmailBaseHTML(content, locale = 'en') {
   return `<!DOCTYPE html>
-<html lang="${locale}">
+<html lang="${locale}" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
   <style>
+    :root { color-scheme: light dark; supported-color-schemes: light dark; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif; line-height: 1.6; background: #0f0f1e; margin: 0; }
-    .email-wrapper { background: #0f0f1e; padding: 40px 20px; }
-    .email-container { max-width: 600px; margin: 0 auto; background: #1a1b2e; border-radius: 8px; overflow: hidden; }
-    .header { background: #1a1b2e; padding: 40px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .logo { width: 80px; height: 80px; margin: 0 auto 20px; }
-    .header-title { color: #ffffff; font-size: 28px; font-weight: 600; margin: 0 0 8px 0; }
-    .header-subtitle { color: rgba(255,255,255,0.6); font-size: 16px; font-weight: 400; }
-    .content { padding: 40px 30px; background: #1a1b2e; }
-    .greeting { font-size: 18px; color: #ffffff; margin-bottom: 16px; font-weight: 400; }
-    .message { color: rgba(255,255,255,0.8); font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
-    .cta-section { background: #FDB022; border-radius: 8px; padding: 32px 24px; text-align: center; margin: 32px 0; }
-    .cta-button { display: inline-block; background: #FDB022; color: #1a1b2e; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; }
-    .link-text { color: rgba(255,255,255,0.6); font-size: 13px; word-break: break-all; margin-top: 16px; }
-    .tip-box { background: rgba(253,176,34,0.1); border: 1px solid rgba(253,176,34,0.3); border-radius: 8px; padding: 20px; margin: 24px 0; }
-    .tip-text { color: rgba(255,255,255,0.9); font-size: 14px; line-height: 1.6; }
-    .tip-text strong { color: #FDB022; }
-    .footer { background: #0f0f1e; padding: 32px 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); }
-    .footer-text { color: rgba(255,255,255,0.5); font-size: 13px; line-height: 1.8; }
-    .contact-link { color: #FDB022; text-decoration: none; font-weight: 500; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif; line-height: 1.6; margin: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    [data-ogsc] .email-wrapper, .email-wrapper { background-color: #0f0f1e !important; }
+    [data-ogsc] .email-container, .email-container { background-color: #1a1b2e !important; }
+    [data-ogsc] .header, .header { background-color: #1a1b2e !important; }
+    [data-ogsc] .content, .content { background-color: #1a1b2e !important; }
+    [data-ogsc] .footer, .footer { background-color: #0f0f1e !important; }
+    [data-ogsc] .header-title, .header-title { color: #ffffff !important; }
+    [data-ogsc] .greeting, .greeting { color: #ffffff !important; }
+    [data-ogsc] .message, .message { color: #cccccc !important; }
+    [data-ogsc] .cta-button, .cta-button { background-color: #FDB022 !important; color: #1a1b2e !important; }
+    [data-ogsc] .tip-box, .tip-box { background-color: #2a2b3e !important; border-color: #FDB022 !important; }
+    [data-ogsc] .tip-text, .tip-text { color: #e0e0e0 !important; }
+    [data-ogsc] .footer-text, .footer-text { color: #999999 !important; }
+    [data-ogsc] .contact-link, .contact-link { color: #FDB022 !important; }
+    @media (prefers-color-scheme: dark) {
+      .email-wrapper { background-color: #0f0f1e !important; }
+      .email-container, .header, .content { background-color: #1a1b2e !important; }
+      .footer { background-color: #0f0f1e !important; }
+      .header-title, .greeting { color: #ffffff !important; }
+      .message { color: #cccccc !important; }
+      .cta-button { background-color: #FDB022 !important; color: #1a1b2e !important; }
+    }
     @media only screen and (max-width: 600px) {
-      .email-wrapper { padding: 20px 10px; }
-      .header { padding: 32px 24px; }
-      .content { padding: 32px 24px; }
-      .header-title { font-size: 24px; }
-      .logo { width: 60px; height: 60px; }
+      .email-wrapper { padding: 20px 10px !important; }
+      .header { padding: 32px 24px !important; }
+      .content { padding: 32px 24px !important; }
+      .header-title { font-size: 24px !important; }
     }
   </style>
 </head>
-<body>
-  <div class="email-wrapper">
-    <div class="email-container">
-      <div class="header">
-        <svg class="logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <g stroke="#FDB022" stroke-width="3" fill="none">
-            <path d="M 40 120 Q 100 60 160 120" stroke-width="4"/>
-            <line x1="100" y1="75" x2="100" y2="55"/>
-            <line x1="65" y1="85" x2="55" y2="70"/>
-            <line x1="135" y1="85" x2="145" y2="70"/>
-            <line x1="50" y1="105" x2="35" y2="100"/>
-            <line x1="150" y1="105" x2="165" y2="100"/>
-          </g>
-          <g fill="none" stroke="#FDB022" stroke-width="3">
-            <path d="M 100 95 L 100 155"/>
-            <path d="M 75 120 L 125 120"/>
-          </g>
-          <line x1="30" y1="165" x2="170" y2="165" stroke="#FDB022" stroke-width="2" opacity="0.5"/>
-        </svg>
-        <h1 class="header-title">Everyday Christian</h1>
-      </div>
-      ${content}
-      <div class="footer">
-        <p class="footer-text">
-          © 2026 Everyday Christian<br>
-          <a href="mailto:connect@everydaychristian.app" class="contact-link">connect@everydaychristian.app</a>
-        </p>
-      </div>
-    </div>
+<body style="margin: 0; padding: 0; background-color: #0f0f1e; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+  <div class="email-wrapper" style="background-color: #0f0f1e; padding: 40px 20px;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto;">
+      <tr>
+        <td class="email-container" style="background-color: #1a1b2e; border-radius: 8px; overflow: hidden;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+              <td class="header" style="background-color: #1a1b2e; padding: 40px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <img src="https://everydaychristian.app/images/logo-email.png" alt="Everyday Christian" width="80" height="80" style="display: block; margin: 0 auto 20px; width: 80px; height: 80px;" />
+                <h1 class="header-title" style="color: #ffffff !important; font-size: 28px; font-weight: 600; margin: 0 0 8px 0; -webkit-text-fill-color: #ffffff;">Everyday Christian</h1>
+              </td>
+            </tr>
+            <tr>
+              <td>${content}</td>
+            </tr>
+            <tr>
+              <td class="footer" style="background-color: #0f0f1e; padding: 32px 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p class="footer-text" style="color: #999999 !important; font-size: 13px; line-height: 1.8; margin: 0; -webkit-text-fill-color: #999999;">
+                  © 2025 Everyday Christian<br>
+                  <a href="mailto:connect@everydaychristian.app" class="contact-link" style="color: #FDB022 !important; text-decoration: none; font-weight: 500; -webkit-text-fill-color: #FDB022;">connect@everydaychristian.app</a>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </div>
 </body>
 </html>`;
@@ -1380,18 +1392,22 @@ function getEmailBaseHTML(content, locale = 'en') {
  */
 function getVerificationEmailHTML_EN(verifyUrl, firstName) {
   const content = `
-    <div class="content">
-      <p class="greeting">Welcome${firstName ? `, ${firstName}` : ''}!</p>
-      <p class="message">Thank you for joining Everyday Christian. Please verify your email address to complete your registration.</p>
-      <div class="cta-section">
-        <a href="${verifyUrl}" class="cta-button" style="color: #1a1b2e;">Verify Email Address</a>
+    <td class="content" style="padding: 40px 30px; background-color: #1a1b2e;">
+      <p class="greeting" style="font-size: 18px; color: #ffffff !important; margin: 0 0 16px 0; font-weight: 400; -webkit-text-fill-color: #ffffff;">Welcome${firstName ? `, ${firstName}` : ''}!</p>
+      <p class="message" style="color: #cccccc !important; font-size: 15px; margin: 0 0 24px 0; line-height: 1.6; -webkit-text-fill-color: #cccccc;">Thank you for joining Everyday Christian. Please verify your email address to complete your registration.</p>
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 32px 0;">
+        <tr>
+          <td align="center">
+            <a href="${verifyUrl}" class="cta-button" style="display: inline-block; background-color: #FDB022 !important; color: #1a1b2e !important; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; -webkit-text-fill-color: #1a1b2e;">Verify Email Address</a>
+          </td>
+        </tr>
+      </table>
+      <p style="color: #999999 !important; font-size: 13px; word-break: break-all; margin: 16px 0; -webkit-text-fill-color: #999999;">Or copy and paste this link:<br>${verifyUrl}</p>
+      <div class="tip-box" style="background-color: #2a2b3e !important; border: 1px solid #FDB022; border-radius: 8px; padding: 20px; margin: 24px 0;">
+        <p class="tip-text" style="color: #e0e0e0 !important; font-size: 14px; line-height: 1.6; margin: 0; -webkit-text-fill-color: #e0e0e0;"><strong style="color: #FDB022 !important; -webkit-text-fill-color: #FDB022;">Note:</strong> This link expires in 24 hours. If you didn't create an account, you can safely ignore this email.</p>
       </div>
-      <p class="link-text">Or copy and paste this link:<br>${verifyUrl}</p>
-      <div class="tip-box">
-        <p class="tip-text"><strong>Note:</strong> This link expires in 24 hours. If you didn't create an account, you can safely ignore this email.</p>
-      </div>
-      <p class="message">Blessings,<br>The Everyday Christian Team</p>
-    </div>`;
+      <p class="message" style="color: #cccccc !important; font-size: 15px; margin: 0; line-height: 1.6; -webkit-text-fill-color: #cccccc;">Blessings,<br>The Everyday Christian Team</p>
+    </td>`;
   return getEmailBaseHTML(content, 'en');
 }
 
@@ -1400,18 +1416,22 @@ function getVerificationEmailHTML_EN(verifyUrl, firstName) {
  */
 function getVerificationEmailHTML_ES(verifyUrl, firstName) {
   const content = `
-    <div class="content">
-      <p class="greeting">¡Bienvenido${firstName ? `, ${firstName}` : ''}!</p>
-      <p class="message">Gracias por unirte a Everyday Christian. Por favor verifica tu correo electrónico para completar tu registro.</p>
-      <div class="cta-section">
-        <a href="${verifyUrl}" class="cta-button" style="color: #1a1b2e;">Verificar Correo</a>
+    <td class="content" style="padding: 40px 30px; background-color: #1a1b2e;">
+      <p class="greeting" style="font-size: 18px; color: #ffffff !important; margin: 0 0 16px 0; font-weight: 400; -webkit-text-fill-color: #ffffff;">¡Bienvenido${firstName ? `, ${firstName}` : ''}!</p>
+      <p class="message" style="color: #cccccc !important; font-size: 15px; margin: 0 0 24px 0; line-height: 1.6; -webkit-text-fill-color: #cccccc;">Gracias por unirte a Everyday Christian. Por favor verifica tu correo electrónico para completar tu registro.</p>
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 32px 0;">
+        <tr>
+          <td align="center">
+            <a href="${verifyUrl}" class="cta-button" style="display: inline-block; background-color: #FDB022 !important; color: #1a1b2e !important; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; -webkit-text-fill-color: #1a1b2e;">Verificar Correo</a>
+          </td>
+        </tr>
+      </table>
+      <p style="color: #999999 !important; font-size: 13px; word-break: break-all; margin: 16px 0; -webkit-text-fill-color: #999999;">O copia y pega este enlace:<br>${verifyUrl}</p>
+      <div class="tip-box" style="background-color: #2a2b3e !important; border: 1px solid #FDB022; border-radius: 8px; padding: 20px; margin: 24px 0;">
+        <p class="tip-text" style="color: #e0e0e0 !important; font-size: 14px; line-height: 1.6; margin: 0; -webkit-text-fill-color: #e0e0e0;"><strong style="color: #FDB022 !important; -webkit-text-fill-color: #FDB022;">Nota:</strong> Este enlace expira en 24 horas. Si no creaste una cuenta, puedes ignorar este correo.</p>
       </div>
-      <p class="link-text">O copia y pega este enlace:<br>${verifyUrl}</p>
-      <div class="tip-box">
-        <p class="tip-text"><strong>Nota:</strong> Este enlace expira en 24 horas. Si no creaste una cuenta, puedes ignorar este correo.</p>
-      </div>
-      <p class="message">Bendiciones,<br>El Equipo de Everyday Christian</p>
-    </div>`;
+      <p class="message" style="color: #cccccc !important; font-size: 15px; margin: 0; line-height: 1.6; -webkit-text-fill-color: #cccccc;">Bendiciones,<br>El Equipo de Everyday Christian</p>
+    </td>`;
   return getEmailBaseHTML(content, 'es');
 }
 
@@ -1420,18 +1440,22 @@ function getVerificationEmailHTML_ES(verifyUrl, firstName) {
  */
 function getPasswordResetEmailHTML_EN(resetUrl, firstName) {
   const content = `
-    <div class="content">
-      <p class="greeting">Hi${firstName ? ` ${firstName}` : ''},</p>
-      <p class="message">We received a request to reset your password. Click the button below to create a new password.</p>
-      <div class="cta-section">
-        <a href="${resetUrl}" class="cta-button" style="color: #1a1b2e;">Reset Password</a>
+    <td class="content" style="padding: 40px 30px; background-color: #1a1b2e;">
+      <p class="greeting" style="font-size: 18px; color: #ffffff !important; margin: 0 0 16px 0; font-weight: 400; -webkit-text-fill-color: #ffffff;">Hi${firstName ? ` ${firstName}` : ''},</p>
+      <p class="message" style="color: #cccccc !important; font-size: 15px; margin: 0 0 24px 0; line-height: 1.6; -webkit-text-fill-color: #cccccc;">We received a request to reset your password. Click the button below to create a new password.</p>
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 32px 0;">
+        <tr>
+          <td align="center">
+            <a href="${resetUrl}" class="cta-button" style="display: inline-block; background-color: #FDB022 !important; color: #1a1b2e !important; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; -webkit-text-fill-color: #1a1b2e;">Reset Password</a>
+          </td>
+        </tr>
+      </table>
+      <p style="color: #999999 !important; font-size: 13px; word-break: break-all; margin: 16px 0; -webkit-text-fill-color: #999999;">Or copy and paste this link:<br>${resetUrl}</p>
+      <div class="tip-box" style="background-color: #2a2b3e !important; border: 1px solid #FDB022; border-radius: 8px; padding: 20px; margin: 24px 0;">
+        <p class="tip-text" style="color: #e0e0e0 !important; font-size: 14px; line-height: 1.6; margin: 0; -webkit-text-fill-color: #e0e0e0;"><strong style="color: #FDB022 !important; -webkit-text-fill-color: #FDB022;">Note:</strong> This link expires in 24 hours. If you didn't request a password reset, you can safely ignore this email.</p>
       </div>
-      <p class="link-text">Or copy and paste this link:<br>${resetUrl}</p>
-      <div class="tip-box">
-        <p class="tip-text"><strong>Note:</strong> This link expires in 24 hours. If you didn't request a password reset, you can safely ignore this email.</p>
-      </div>
-      <p class="message">Blessings,<br>The Everyday Christian Team</p>
-    </div>`;
+      <p class="message" style="color: #cccccc !important; font-size: 15px; margin: 0; line-height: 1.6; -webkit-text-fill-color: #cccccc;">Blessings,<br>The Everyday Christian Team</p>
+    </td>`;
   return getEmailBaseHTML(content, 'en');
 }
 
@@ -1440,18 +1464,22 @@ function getPasswordResetEmailHTML_EN(resetUrl, firstName) {
  */
 function getPasswordResetEmailHTML_ES(resetUrl, firstName) {
   const content = `
-    <div class="content">
-      <p class="greeting">Hola${firstName ? ` ${firstName}` : ''},</p>
-      <p class="message">Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón a continuación para crear una nueva contraseña.</p>
-      <div class="cta-section">
-        <a href="${resetUrl}" class="cta-button" style="color: #1a1b2e;">Restablecer Contraseña</a>
+    <td class="content" style="padding: 40px 30px; background-color: #1a1b2e;">
+      <p class="greeting" style="font-size: 18px; color: #ffffff !important; margin: 0 0 16px 0; font-weight: 400; -webkit-text-fill-color: #ffffff;">Hola${firstName ? ` ${firstName}` : ''},</p>
+      <p class="message" style="color: #cccccc !important; font-size: 15px; margin: 0 0 24px 0; line-height: 1.6; -webkit-text-fill-color: #cccccc;">Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón a continuación para crear una nueva contraseña.</p>
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 32px 0;">
+        <tr>
+          <td align="center">
+            <a href="${resetUrl}" class="cta-button" style="display: inline-block; background-color: #FDB022 !important; color: #1a1b2e !important; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; -webkit-text-fill-color: #1a1b2e;">Restablecer Contraseña</a>
+          </td>
+        </tr>
+      </table>
+      <p style="color: #999999 !important; font-size: 13px; word-break: break-all; margin: 16px 0; -webkit-text-fill-color: #999999;">O copia y pega este enlace:<br>${resetUrl}</p>
+      <div class="tip-box" style="background-color: #2a2b3e !important; border: 1px solid #FDB022; border-radius: 8px; padding: 20px; margin: 24px 0;">
+        <p class="tip-text" style="color: #e0e0e0 !important; font-size: 14px; line-height: 1.6; margin: 0; -webkit-text-fill-color: #e0e0e0;"><strong style="color: #FDB022 !important; -webkit-text-fill-color: #FDB022;">Nota:</strong> Este enlace expira en 24 horas. Si no solicitaste restablecer tu contraseña, puedes ignorar este correo.</p>
       </div>
-      <p class="link-text">O copia y pega este enlace:<br>${resetUrl}</p>
-      <div class="tip-box">
-        <p class="tip-text"><strong>Nota:</strong> Este enlace expira en 24 horas. Si no solicitaste restablecer tu contraseña, puedes ignorar este correo.</p>
-      </div>
-      <p class="message">Bendiciones,<br>El Equipo de Everyday Christian</p>
-    </div>`;
+      <p class="message" style="color: #cccccc !important; font-size: 15px; margin: 0; line-height: 1.6; -webkit-text-fill-color: #cccccc;">Bendiciones,<br>El Equipo de Everyday Christian</p>
+    </td>`;
   return getEmailBaseHTML(content, 'es');
 }
 
