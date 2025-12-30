@@ -25,8 +25,8 @@ class AuthService {
     _tokenManager.onTokenExpired = _handleTokenExpired;
   }
 
-  /// Base URL for auth API
-  static const String baseUrl = 'https://auth.everydaychristian.app';
+  /// Base URL for auth API (proxied through Netlify)
+  static const String baseUrl = 'https://everydaychristian.app/api/auth';
 
   /// Request timeout duration
   static const Duration _timeout = Duration(seconds: 30);

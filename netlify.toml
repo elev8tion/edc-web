@@ -36,6 +36,13 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "no-referrer"
 
+# Proxy auth API to Cloudflare Worker
+[[redirects]]
+  from = "/api/auth/*"
+  to = "https://auth-service.connect-2a2.workers.dev/:splat"
+  status = 200
+  force = true
+
 # Redirect only HTML routes to index.html for PWA routing
 # Don't redirect static files (js, wasm, css, images, etc.)
 [[redirects]]
