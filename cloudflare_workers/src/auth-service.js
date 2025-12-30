@@ -986,36 +986,11 @@ function base64UrlDecode(str) {
  */
 async function sendVerificationEmail(email, token, locale, firstName, env) {
   const verifyUrl = `${env.APP_URL_WEB}/verify-email?token=${token}`;
-
-  const templates = {
-    en: {
-      subject: 'Verify Your Email - Everyday Christian',
-      body: `
-        <h2>Welcome to Everyday Christian${firstName ? `, ${firstName}` : ''}!</h2>
-        <p>Please verify your email address by clicking the button below:</p>
-        <p><a href="${verifyUrl}" style="display: inline-block; padding: 12px 24px; background-color: #C9A227; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">Verify Email</a></p>
-        <p>Or copy and paste this link: ${verifyUrl}</p>
-        <p>This link expires in 24 hours.</p>
-        <p>If you didn't create an account, you can safely ignore this email.</p>
-        <p>Blessings,<br>The Everyday Christian Team</p>
-      `,
-    },
-    es: {
-      subject: 'Verifique su Correo - Cristiano Cada Día',
-      body: `
-        <h2>¡Bienvenido a Cristiano Cada Día${firstName ? `, ${firstName}` : ''}!</h2>
-        <p>Por favor verifique su correo electrónico haciendo clic en el botón a continuación:</p>
-        <p><a href="${verifyUrl}" style="display: inline-block; padding: 12px 24px; background-color: #C9A227; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">Verificar Correo</a></p>
-        <p>O copie y pegue este enlace: ${verifyUrl}</p>
-        <p>Este enlace expira en 24 horas.</p>
-        <p>Si no creó una cuenta, puede ignorar este correo.</p>
-        <p>Bendiciones,<br>El Equipo de Cristiano Cada Día</p>
-      `,
-    },
-  };
-
-  const template = templates[locale] || templates.en;
-  return sendEmail(email, template.subject, template.body, env);
+  const subject = locale === 'es' ? 'Verifique su Correo - Everyday Christian' : 'Verify Your Email - Everyday Christian';
+  const body = locale === 'es'
+    ? getVerificationEmailHTML_ES(verifyUrl, firstName)
+    : getVerificationEmailHTML_EN(verifyUrl, firstName);
+  return sendEmail(email, subject, body, env);
 }
 
 /**
@@ -1023,38 +998,164 @@ async function sendVerificationEmail(email, token, locale, firstName, env) {
  */
 async function sendPasswordResetEmail(email, token, locale, firstName, env) {
   const resetUrl = `${env.APP_URL_WEB}/reset-password?token=${token}`;
+  const subject = locale === 'es' ? 'Restablecer Contraseña - Everyday Christian' : 'Reset Your Password - Everyday Christian';
+  const body = locale === 'es'
+    ? getPasswordResetEmailHTML_ES(resetUrl, firstName)
+    : getPasswordResetEmailHTML_EN(resetUrl, firstName);
+  return sendEmail(email, subject, body, env);
+}
 
-  const templates = {
-    en: {
-      subject: 'Reset Your Password - Everyday Christian',
-      body: `
-        <h2>Password Reset Request</h2>
-        <p>Hi${firstName ? ` ${firstName}` : ''},</p>
-        <p>We received a request to reset your password. Click the button below to create a new password:</p>
-        <p><a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #C9A227; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">Reset Password</a></p>
-        <p>Or copy and paste this link: ${resetUrl}</p>
-        <p>This link expires in 24 hours.</p>
-        <p>If you didn't request a password reset, you can safely ignore this email.</p>
-        <p>Blessings,<br>The Everyday Christian Team</p>
-      `,
-    },
-    es: {
-      subject: 'Restablecer Contraseña - Cristiano Cada Día',
-      body: `
-        <h2>Solicitud de Restablecimiento de Contraseña</h2>
-        <p>Hola${firstName ? ` ${firstName}` : ''},</p>
-        <p>Recibimos una solicitud para restablecer su contraseña. Haga clic en el botón a continuación para crear una nueva contraseña:</p>
-        <p><a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #C9A227; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">Restablecer Contraseña</a></p>
-        <p>O copie y pegue este enlace: ${resetUrl}</p>
-        <p>Este enlace expira en 24 horas.</p>
-        <p>Si no solicitó restablecer su contraseña, puede ignorar este correo.</p>
-        <p>Bendiciones,<br>El Equipo de Cristiano Cada Día</p>
-      `,
-    },
-  };
+/**
+ * Branded email base template
+ */
+function getEmailBaseHTML(content, locale = 'en') {
+  return `<!DOCTYPE html>
+<html lang="${locale}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif; line-height: 1.6; background: #0f0f1e; margin: 0; }
+    .email-wrapper { background: #0f0f1e; padding: 40px 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #1a1b2e; border-radius: 8px; overflow: hidden; }
+    .header { background: #1a1b2e; padding: 40px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .logo { width: 80px; height: 80px; margin: 0 auto 20px; }
+    .header-title { color: #ffffff; font-size: 28px; font-weight: 600; margin: 0 0 8px 0; }
+    .header-subtitle { color: rgba(255,255,255,0.6); font-size: 16px; font-weight: 400; }
+    .content { padding: 40px 30px; background: #1a1b2e; }
+    .greeting { font-size: 18px; color: #ffffff; margin-bottom: 16px; font-weight: 400; }
+    .message { color: rgba(255,255,255,0.8); font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
+    .cta-section { background: #FDB022; border-radius: 8px; padding: 32px 24px; text-align: center; margin: 32px 0; }
+    .cta-button { display: inline-block; background: #FDB022; color: #1a1b2e; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; }
+    .link-text { color: rgba(255,255,255,0.6); font-size: 13px; word-break: break-all; margin-top: 16px; }
+    .tip-box { background: rgba(253,176,34,0.1); border: 1px solid rgba(253,176,34,0.3); border-radius: 8px; padding: 20px; margin: 24px 0; }
+    .tip-text { color: rgba(255,255,255,0.9); font-size: 14px; line-height: 1.6; }
+    .tip-text strong { color: #FDB022; }
+    .footer { background: #0f0f1e; padding: 32px 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); }
+    .footer-text { color: rgba(255,255,255,0.5); font-size: 13px; line-height: 1.8; }
+    .contact-link { color: #FDB022; text-decoration: none; font-weight: 500; }
+    @media only screen and (max-width: 600px) {
+      .email-wrapper { padding: 20px 10px; }
+      .header { padding: 32px 24px; }
+      .content { padding: 32px 24px; }
+      .header-title { font-size: 24px; }
+      .logo { width: 60px; height: 60px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-container">
+      <div class="header">
+        <svg class="logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="#FDB022" stroke-width="3" fill="none">
+            <path d="M 40 120 Q 100 60 160 120" stroke-width="4"/>
+            <line x1="100" y1="75" x2="100" y2="55"/>
+            <line x1="65" y1="85" x2="55" y2="70"/>
+            <line x1="135" y1="85" x2="145" y2="70"/>
+            <line x1="50" y1="105" x2="35" y2="100"/>
+            <line x1="150" y1="105" x2="165" y2="100"/>
+          </g>
+          <g fill="none" stroke="#FDB022" stroke-width="3">
+            <path d="M 100 95 L 100 155"/>
+            <path d="M 75 120 L 125 120"/>
+          </g>
+          <line x1="30" y1="165" x2="170" y2="165" stroke="#FDB022" stroke-width="2" opacity="0.5"/>
+        </svg>
+        <h1 class="header-title">Everyday Christian</h1>
+      </div>
+      ${content}
+      <div class="footer">
+        <p class="footer-text">
+          © 2026 Everyday Christian<br>
+          <a href="mailto:connect@everydaychristian.app" class="contact-link">connect@everydaychristian.app</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+}
 
-  const template = templates[locale] || templates.en;
-  return sendEmail(email, template.subject, template.body, env);
+/**
+ * Verification email - English
+ */
+function getVerificationEmailHTML_EN(verifyUrl, firstName) {
+  const content = `
+    <div class="content">
+      <p class="greeting">Welcome${firstName ? `, ${firstName}` : ''}!</p>
+      <p class="message">Thank you for joining Everyday Christian. Please verify your email address to complete your registration.</p>
+      <div class="cta-section">
+        <a href="${verifyUrl}" class="cta-button" style="color: #1a1b2e;">Verify Email Address</a>
+      </div>
+      <p class="link-text">Or copy and paste this link:<br>${verifyUrl}</p>
+      <div class="tip-box">
+        <p class="tip-text"><strong>Note:</strong> This link expires in 24 hours. If you didn't create an account, you can safely ignore this email.</p>
+      </div>
+      <p class="message">Blessings,<br>The Everyday Christian Team</p>
+    </div>`;
+  return getEmailBaseHTML(content, 'en');
+}
+
+/**
+ * Verification email - Spanish
+ */
+function getVerificationEmailHTML_ES(verifyUrl, firstName) {
+  const content = `
+    <div class="content">
+      <p class="greeting">¡Bienvenido${firstName ? `, ${firstName}` : ''}!</p>
+      <p class="message">Gracias por unirte a Everyday Christian. Por favor verifica tu correo electrónico para completar tu registro.</p>
+      <div class="cta-section">
+        <a href="${verifyUrl}" class="cta-button" style="color: #1a1b2e;">Verificar Correo</a>
+      </div>
+      <p class="link-text">O copia y pega este enlace:<br>${verifyUrl}</p>
+      <div class="tip-box">
+        <p class="tip-text"><strong>Nota:</strong> Este enlace expira en 24 horas. Si no creaste una cuenta, puedes ignorar este correo.</p>
+      </div>
+      <p class="message">Bendiciones,<br>El Equipo de Everyday Christian</p>
+    </div>`;
+  return getEmailBaseHTML(content, 'es');
+}
+
+/**
+ * Password reset email - English
+ */
+function getPasswordResetEmailHTML_EN(resetUrl, firstName) {
+  const content = `
+    <div class="content">
+      <p class="greeting">Hi${firstName ? ` ${firstName}` : ''},</p>
+      <p class="message">We received a request to reset your password. Click the button below to create a new password.</p>
+      <div class="cta-section">
+        <a href="${resetUrl}" class="cta-button" style="color: #1a1b2e;">Reset Password</a>
+      </div>
+      <p class="link-text">Or copy and paste this link:<br>${resetUrl}</p>
+      <div class="tip-box">
+        <p class="tip-text"><strong>Note:</strong> This link expires in 24 hours. If you didn't request a password reset, you can safely ignore this email.</p>
+      </div>
+      <p class="message">Blessings,<br>The Everyday Christian Team</p>
+    </div>`;
+  return getEmailBaseHTML(content, 'en');
+}
+
+/**
+ * Password reset email - Spanish
+ */
+function getPasswordResetEmailHTML_ES(resetUrl, firstName) {
+  const content = `
+    <div class="content">
+      <p class="greeting">Hola${firstName ? ` ${firstName}` : ''},</p>
+      <p class="message">Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón a continuación para crear una nueva contraseña.</p>
+      <div class="cta-section">
+        <a href="${resetUrl}" class="cta-button" style="color: #1a1b2e;">Restablecer Contraseña</a>
+      </div>
+      <p class="link-text">O copia y pega este enlace:<br>${resetUrl}</p>
+      <div class="tip-box">
+        <p class="tip-text"><strong>Nota:</strong> Este enlace expira en 24 horas. Si no solicitaste restablecer tu contraseña, puedes ignorar este correo.</p>
+      </div>
+      <p class="message">Bendiciones,<br>El Equipo de Everyday Christian</p>
+    </div>`;
+  return getEmailBaseHTML(content, 'es');
 }
 
 /**
@@ -1069,8 +1170,9 @@ async function sendEmail(to, subject, htmlBody, env) {
         'Authorization': `Bearer ${env.EMAILIT_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'Everyday Christian <noreply@everydaychristian.app>',
-        to: [to],
+        from: 'Everyday Christian <connect@everydaychristian.app>',
+        to: to,
+        reply_to: 'connect@everydaychristian.app',
         subject: subject,
         html: htmlBody,
       }),

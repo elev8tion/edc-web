@@ -5,3 +5,4 @@ wrangler.toml
 
 # Keep example file
 !wrangler.toml.example
+.dev.vars
