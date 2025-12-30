@@ -93,6 +93,7 @@ dependencies:
     git:
       url: https://github.com/elev8tion/flutter_pwa_install.git
       ref: main
+  skeletonizer: ^2.1.2
 
 dev_dependencies:
   flutter_test:

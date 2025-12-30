@@ -10,6 +10,7 @@ import '../components/glassmorphic_fab_menu.dart';
 import '../components/standard_screen_header.dart';
 import '../components/dark_glass_container.dart';
 import '../components/glass_card.dart';
+import '../components/skeleton/devotional_skeleton.dart';
 import '../theme/app_theme.dart';
 import '../core/providers/app_providers.dart';
 import '../core/models/devotional.dart';
@@ -264,23 +265,7 @@ class _DevotionalScreenState extends ConsumerState<DevotionalScreen> {
                   ),
                 );
               },
-              loading: () => SingleChildScrollView(
-                padding:
-                    const EdgeInsets.only(top: AppSpacing.xl), // Top padding
-                child: Column(
-                  children: [
-                    _buildHeader(streakAsync, totalCompletedAsync, null),
-                    const SizedBox(height: AppSpacing.xxl),
-                    const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppTheme.goldColor),
-                        strokeWidth: 3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              loading: () => const DevotionalScreenSkeleton(),
               error: (error, stack) => SingleChildScrollView(
                 padding:
                     const EdgeInsets.only(top: AppSpacing.xl), // Top padding

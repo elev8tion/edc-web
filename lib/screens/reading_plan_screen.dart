@@ -10,6 +10,7 @@ import '../components/glass_button.dart';
 import '../components/standard_screen_header.dart';
 import '../components/calendar_heatmap_widget.dart';
 import '../components/reading_progress_stats_widget.dart';
+import '../components/skeleton/reading_plan_skeleton.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../theme/app_theme.dart';
 import '../core/providers/app_providers.dart';
@@ -141,12 +142,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
     final currentPlanAsync = ref.watch(currentReadingPlanProvider);
 
     return currentPlanAsync.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.goldColor),
-          strokeWidth: 3,
-        ),
-      ),
+      loading: () => const ReadingPlanTabSkeleton(),
       error: (error, stack) => _buildErrorState(error.toString()),
       data: (currentPlan) {
         if (currentPlan == null) {
@@ -271,12 +267,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
     final currentPlanAsync = ref.watch(currentReadingPlanProvider);
 
     return currentPlanAsync.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.goldColor),
-          strokeWidth: 3,
-        ),
-      ),
+      loading: () => const ReadingPlanTabSkeleton(),
       error: (error, stack) => _buildErrorState(error.toString()),
       data: (currentPlan) {
         if (currentPlan == null) {
@@ -345,12 +336,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
     final activePlansAsync = ref.watch(activeReadingPlansProvider);
 
     return activePlansAsync.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.goldColor),
-          strokeWidth: 3,
-        ),
-      ),
+      loading: () => const ReadingPlanListSkeleton(),
       error: (error, stack) => _buildErrorState(error.toString()),
       data: (activePlans) {
         if (activePlans.isEmpty) {
@@ -416,12 +402,7 @@ class _ReadingPlanScreenState extends ConsumerState<ReadingPlanScreen>
     final allPlansAsync = ref.watch(allReadingPlansProvider);
 
     return allPlansAsync.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.goldColor),
-          strokeWidth: 3,
-        ),
-      ),
+      loading: () => const ReadingPlanListSkeleton(),
       error: (error, stack) => _buildErrorState(error.toString()),
       data: (allPlans) {
         return ListView.builder(

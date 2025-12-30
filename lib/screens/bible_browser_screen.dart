@@ -7,6 +7,7 @@ import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_card.dart';
 import '../components/standard_screen_header.dart';
+import '../components/skeleton/bible_browser_skeleton.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/services/book_name_service.dart';
 import '../core/services/bible_config.dart';
@@ -257,13 +258,7 @@ class _BibleBrowserScreenState extends ConsumerState<BibleBrowserScreen>
                         .fadeIn(duration: AppAnimations.normal, delay: 200.ms),
                   Expanded(
                     child: _isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppTheme.goldColor),
-                              strokeWidth: 3,
-                            ),
-                          )
+                        ? const BibleBrowserSkeleton()
                         : _showSearchOverlay
                             ? _buildSearchOverlay()
                             : TabBarView(

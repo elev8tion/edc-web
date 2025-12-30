@@ -13,6 +13,7 @@ import '../components/blur_popup_menu.dart';
 import '../components/base_bottom_sheet.dart';
 import '../components/glass_button.dart';
 import '../components/standard_screen_header.dart';
+import '../components/skeleton/verse_library_skeleton.dart';
 import '../theme/app_theme.dart';
 import '../core/navigation/navigation_service.dart';
 import '../models/bible_verse.dart';
@@ -201,11 +202,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
           },
         );
       },
-      loading: () => const Center(
-        child: CircularProgressIndicator(
-          color: AppTheme.primaryColor,
-        ),
-      ),
+      loading: () => const VerseLibraryTabSkeleton(),
       error: (error, stackTrace) => _buildErrorState(error.toString()),
     );
   }
@@ -245,11 +242,7 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
           },
         );
       },
-      loading: () => const Center(
-        child: CircularProgressIndicator(
-          color: AppTheme.primaryColor,
-        ),
-      ),
+      loading: () => const VerseLibraryTabSkeleton(),
       error: (error, stack) => _buildErrorState(error.toString()),
     );
   }
