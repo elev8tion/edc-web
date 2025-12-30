@@ -17,8 +17,6 @@ import '../core/navigation/app_routes.dart';
 import '../core/providers/app_providers.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/services/preferences_service.dart';
-import '../core/services/subscription_service.dart';
-import '../components/trial_welcome_dialog.dart';
 import '../l10n/app_localizations.dart';
 import '../core/utils/simple_coach_mark.dart';
 
@@ -52,38 +50,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _showFabTutorialIfNeeded();
   }
 
-  /// Show trial welcome dialog LAST (after tutorial and PWA install)
-  /// This ensures payment bottom sheet has no interference from other dialogs
+  /// Trial welcome dialog removed - users navigate directly to features
   Future<void> _showTrialWelcomeIfNeeded() async {
-    if (!mounted) return;
-
-    final subscriptionService = SubscriptionService.instance;
-
-    // Show dialog if:
-    // 1. User hasn't started trial yet
-    // 2. User isn't premium
-    // 3. Haven't shown dialog before
-    if (!subscriptionService.hasStartedTrial &&
-        !subscriptionService.isPremium) {
-      final prefsService = await PreferencesService.getInstance();
-      final sharedPrefs = prefsService.prefs;
-      final shownBefore = sharedPrefs?.getBool('trial_welcome_shown') ?? false;
-
-      if (!shownBefore && mounted) {
-        // Mark as shown
-        await sharedPrefs?.setBool('trial_welcome_shown', true);
-
-        // Show dialog
-        // ignore: use_build_context_synchronously
-        final result = await TrialWelcomeDialog.show(context);
-
-        // If user clicked "Start Free Trial", navigate to chat
-        if (result == true && mounted) {
-          Navigator.of(context).pushNamed(AppRoutes.chat);
-        }
-      }
-    }
-    // Trial dialog is last in onboarding flow - nothing else to show
+    // No-op: Trial welcome dialog removed to prevent app reset issues
   }
 
   Future<void> _showFabTutorialIfNeeded() async {
