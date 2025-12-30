@@ -182,6 +182,7 @@ function isTokenBlacklisted(token) {
 const ALLOWED_ORIGINS = [
   'https://everydaychristian.app',
   'https://www.everydaychristian.app',
+  'https://app.everydaychristian.app',
 ];
 
 /**
