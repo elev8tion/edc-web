@@ -16,8 +16,8 @@ import '../core/services/subscription_service.dart';
 // Cloudflare Worker URL
 const String _workerUrl = 'https://edc-stripe-subscription.connect-2a2.workers.dev';
 
-// Stripe publishable key
-const String _publishableKey = 'pk_test_51SefukIDgcZhXc4USbi8BYmZmt6ITBeN8tmk7ZEsXG7aMf5VtEuvM5Eu3Txe4vX5H9htjPIL1rO8azTLE4JhZpfL00DzHWOZls';
+// Stripe publishable key (LIVE MODE)
+const String _publishableKey = 'pk_live_51SefudIFwav1xmJDf1gc1OHStb4tQvLet9jSx9w1KHzAcoByHPxJLsMP2k94PWXST4pbZiWTMAou9bS0sieDTmSh00uvK4jMmV';
 
 // Storage keys
 const _keyCustomerId = 'stripe_customer_id';

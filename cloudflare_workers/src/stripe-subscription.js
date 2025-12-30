@@ -10,9 +10,9 @@ const CORS_HEADERS = {
   'Content-Type': 'application/json',
 };
 
-// Price IDs from Stripe Dashboard
-const YEARLY_PRICE_ID = 'price_1Shcv9IDgcZhXc4UUAD2Qfz3';  // $49.99/year
-const MONTHLY_PRICE_ID = 'price_1ShctRIDgcZhXc4UfDnbNf1s'; // $6.99/month
+// Price IDs from Stripe Dashboard (LIVE MODE)
+const YEARLY_PRICE_ID = 'price_1SiF64IFwav1xmJDtExdlpSZ';  // $35.99/year
+const MONTHLY_PRICE_ID = 'price_1SiF64IFwav1xmJD04g0Vto2'; // $5.99/month
 
 export default {
   async fetch(request, env) {
