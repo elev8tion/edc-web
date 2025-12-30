@@ -31,6 +31,7 @@ import 'paywall_screen.dart';
 import '../utils/blur_dialog_utils.dart';
 import '../l10n/app_localizations.dart';
 import '../core/widgets/app_snackbar.dart';
+import '../services/auth_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -233,6 +234,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 l10n.deleteAllDataDesc,
                 Icons.warning_amber_rounded,
                 () => _showDeleteAllDataDialog(),
+                isDestructive: true,
+              ),
+              _buildActionTile(
+                'Delete Account',
+                'Permanently delete your account and all data',
+                Icons.person_remove,
+                () => _showDeleteAccountDialog(),
                 isDestructive: true,
               ),
             ],
@@ -1745,6 +1753,223 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
       _showSnackBar(l10n.failedToDeleteData(e.toString()));
     }
+  }
+
+  void _showDeleteAccountDialog() {
+    final passwordController = TextEditingController();
+    bool isLoading = false;
+    String? errorText;
+
+    showBlurredDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: ResponsiveUtils.maxContentWidth(context),
+            ),
+            child: FrostedGlassCard(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(AppSpacing.sm),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.red.withValues(alpha: 0.3),
+                              Colors.red.withValues(alpha: 0.1),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(AppRadius.xs + 2),
+                        ),
+                        child: Icon(
+                          Icons.person_remove,
+                          color: Colors.red,
+                          size: ResponsiveUtils.iconSize(context, 20),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Text(
+                          'Delete Account',
+                          style: TextStyle(
+                            fontSize: ResponsiveUtils.fontSize(context, 20,
+                                minSize: 18, maxSize: 24),
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primaryText,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    '⚠️ THIS ACTION CANNOT BE UNDONE',
+                    style: TextStyle(
+                      fontSize: ResponsiveUtils.fontSize(context, 14,
+                          minSize: 12, maxSize: 16),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    'Deleting your account will:',
+                    style: TextStyle(
+                      fontSize: ResponsiveUtils.fontSize(context, 14,
+                          minSize: 12, maxSize: 16),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  _buildDeleteItem('Remove your account from our servers'),
+                  _buildDeleteItem('Delete all your local app data'),
+                  _buildDeleteItem('Cancel any active subscription'),
+                  _buildDeleteItem('Remove access to premium features'),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    'Enter your password to confirm:',
+                    style: TextStyle(
+                      fontSize: ResponsiveUtils.fontSize(context, 13,
+                          minSize: 11, maxSize: 15),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    enabled: !isLoading,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: ResponsiveUtils.fontSize(context, 14,
+                          minSize: 12, maxSize: 16),
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      hintStyle: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.3),
+                        fontSize: ResponsiveUtils.fontSize(context, 14,
+                            minSize: 12, maxSize: 16),
+                      ),
+                      errorText: errorText,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.white.withValues(alpha: 0.3)),
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.red, width: 2),
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.red, width: 2),
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                      ),
+                      contentPadding: const EdgeInsets.all(AppSpacing.md),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  // Actions
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GlassButton(
+                          text: 'Cancel',
+                          height: 48,
+                          onPressed: isLoading
+                              ? null
+                              : () {
+                                  passwordController.dispose();
+                                  NavigationService.pop();
+                                },
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: GlassButton(
+                          text: isLoading ? 'Deleting...' : 'Delete Account',
+                          height: 48,
+                          borderColor: Colors.red.withValues(alpha: 0.8),
+                          onPressed: isLoading
+                              ? null
+                              : () async {
+                                  final password =
+                                      passwordController.text.trim();
+                                  if (password.isEmpty) {
+                                    setDialogState(() {
+                                      errorText = 'Password is required';
+                                    });
+                                    return;
+                                  }
+
+                                  setDialogState(() {
+                                    isLoading = true;
+                                    errorText = null;
+                                  });
+
+                                  try {
+                                    final success = await AuthService.instance
+                                        .deleteAccount(password);
+
+                                    if (success) {
+                                      // Also clear local data
+                                      final dbService = DatabaseService();
+                                      await dbService.resetDatabase();
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      await prefs.clear();
+
+                                      passwordController.dispose();
+                                      if (mounted) {
+                                        NavigationService.pop();
+                                        _showSnackBar(
+                                            '✅ Account deleted successfully');
+                                        await Future.delayed(
+                                            const Duration(seconds: 2));
+                                        NavigationService.goToHome();
+                                      }
+                                    } else {
+                                      setDialogState(() {
+                                        isLoading = false;
+                                        errorText = 'Failed to delete account';
+                                      });
+                                    }
+                                  } catch (e) {
+                                    setDialogState(() {
+                                      isLoading = false;
+                                      errorText = e.toString().contains('password')
+                                          ? 'Incorrect password'
+                                          : 'Failed to delete account';
+                                    });
+                                  }
+                                },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _showHelpDialog() {
