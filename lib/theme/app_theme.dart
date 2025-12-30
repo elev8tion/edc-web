@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:math';
+import 'package:everyday_christian/theme/app_theme_extensions.dart';
 
 class AppTheme {
   static const Color primaryColor = Color(0xFF6366F1); // Modern indigo
@@ -23,18 +25,29 @@ class AppTheme {
       brightness: Brightness.light,
     ),
     textTheme: GoogleFonts.plusJakartaSansTextTheme(),
+    extensions: const <ThemeExtension<dynamic>>[
+      AppThemeExtension(
+        appSpacing: AppSpacing(),
+        appColors: AppColors(),
+        appRadius: AppRadius(),
+        appBorders: AppBorders(),
+        appAnimations: AppAnimations(),
+        appSizes: AppSizes(),
+        appBlur: AppBlur(),
+      ),
+    ],
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return primaryColor;
         }
-        return Colors.white.withValues(alpha: 0.5);
+        return Colors.white.withOpacity(0.5);
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return toggleActiveColor.withValues(alpha: 0.5);
+          return toggleActiveColor.withOpacity(0.5);
         }
-        return Colors.grey.withValues(alpha: 0.3);
+        return Colors.grey.withOpacity(0.3);
       }),
       trackOutlineColor: WidgetStateProperty.all(toggleActiveColor),
     ),
@@ -54,7 +67,7 @@ class AppTheme {
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         elevation: 8,
-        shadowColor: primaryColor.withValues(alpha: 0.3),
+        shadowColor: primaryColor.withOpacity(0.3),
         shape: RoundedRectangleBorder(
           borderRadius: AppRadius.buttonRadius,
         ),
@@ -104,19 +117,30 @@ class AppTheme {
     textTheme: GoogleFonts.plusJakartaSansTextTheme(
       ThemeData.dark().textTheme,
     ),
+    extensions: const <ThemeExtension<dynamic>>[
+      AppThemeExtension(
+        appSpacing: AppSpacing(),
+        appColors: AppColors(),
+        appRadius: AppRadius(),
+        appBorders: AppBorders(),
+        appAnimations: AppAnimations(),
+        appSizes: AppSizes(),
+        appBlur: AppBlur(),
+      ),
+    ],
     scaffoldBackgroundColor: const Color(0xFF121212),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return primaryColor;
         }
-        return Colors.white.withValues(alpha: 0.5);
+        return Colors.white.withOpacity(0.5);
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return toggleActiveColor.withValues(alpha: 0.5);
+          return toggleActiveColor.withOpacity(0.5);
         }
-        return Colors.grey.withValues(alpha: 0.3);
+        return Colors.grey.withOpacity(0.3);
       }),
       trackOutlineColor: WidgetStateProperty.all(toggleActiveColor),
     ),
@@ -136,7 +160,7 @@ class AppTheme {
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         elevation: 8,
-        shadowColor: primaryColor.withValues(alpha: 0.3),
+        shadowColor: primaryColor.withOpacity(0.3),
         shape: RoundedRectangleBorder(
           borderRadius: AppRadius.buttonRadius,
         ),
@@ -209,7 +233,7 @@ class AppTheme {
   // Beautiful Shadows
   static List<BoxShadow> cardShadow = [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.05),
+      color: Colors.black.withOpacity(0.05),
       blurRadius: 10,
       offset: const Offset(0, 4),
     ),
@@ -217,7 +241,7 @@ class AppTheme {
 
   static List<BoxShadow> elevatedShadow = [
     BoxShadow(
-      color: primaryColor.withValues(alpha: 0.2),
+      color: primaryColor.withOpacity(0.2),
       blurRadius: 20,
       offset: const Offset(0, 8),
     ),
@@ -225,7 +249,7 @@ class AppTheme {
 
   static List<BoxShadow> glassShadow = [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.1),
+      color: Colors.black.withOpacity(0.1),
       blurRadius: 20,
       offset: const Offset(0, 10),
     ),
@@ -305,11 +329,11 @@ class AppTheme {
 
   // Glass button styles
   static ButtonStyle glassButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: Colors.white.withValues(alpha: 0.1),
+    backgroundColor: Colors.white.withOpacity(0.1),
     foregroundColor: Colors.white,
     elevation: 0,
     side: BorderSide(
-      color: Colors.white.withValues(alpha: 0.2),
+      color: Colors.white.withOpacity(0.2),
       width: 1,
     ),
     shape: RoundedRectangleBorder(
@@ -323,10 +347,10 @@ class AppTheme {
   );
 
   static ButtonStyle primaryGlassButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: primaryColor.withValues(alpha: 0.8),
+    backgroundColor: primaryColor.withOpacity(0.8),
     foregroundColor: Colors.white,
     elevation: 8,
-    shadowColor: primaryColor.withValues(alpha: 0.4),
+    shadowColor: primaryColor.withOpacity(0.4),
     shape: RoundedRectangleBorder(
       borderRadius: AppRadius.buttonRadius,
     ),
@@ -338,217 +362,7 @@ class AppTheme {
   );
 }
 
-// ============================================================================
-// DESIGN TOKEN SYSTEM - Semantic constants for consistent styling
-// ============================================================================
 
-/// Spacing constants for consistent padding, margin, and gaps
-class AppSpacing {
-  AppSpacing._(); // Private constructor to prevent instantiation
-
-  // Base spacing scale (4px base unit)
-  static const double xs = 4.0;
-  static const double sm = 8.0;
-  static const double md = 12.0;
-  static const double lg = 16.0;
-  static const double xl = 20.0;
-  static const double xxl = 24.0;
-  static const double xxxl = 32.0;
-  static const double huge = 40.0;
-
-  // Common padding patterns
-  static const EdgeInsets screenPadding = EdgeInsets.all(xl);
-  static const EdgeInsets screenPaddingLarge = EdgeInsets.all(xxl);
-  static const EdgeInsets cardPadding = EdgeInsets.all(lg);
-  static const EdgeInsets cardPaddingLarge = EdgeInsets.all(xl);
-  static const EdgeInsets buttonPadding = EdgeInsets.symmetric(horizontal: xxl, vertical: lg);
-  static const EdgeInsets inputPadding = EdgeInsets.symmetric(horizontal: xl, vertical: lg);
-
-  // Horizontal spacing
-  static const EdgeInsets horizontalSm = EdgeInsets.symmetric(horizontal: sm);
-  static const EdgeInsets horizontalMd = EdgeInsets.symmetric(horizontal: md);
-  static const EdgeInsets horizontalLg = EdgeInsets.symmetric(horizontal: lg);
-  static const EdgeInsets horizontalXl = EdgeInsets.symmetric(horizontal: xl);
-  static const EdgeInsets horizontalXxl = EdgeInsets.symmetric(horizontal: xxl);
-
-  // Vertical spacing
-  static const EdgeInsets verticalSm = EdgeInsets.symmetric(vertical: sm);
-  static const EdgeInsets verticalMd = EdgeInsets.symmetric(vertical: md);
-  static const EdgeInsets verticalLg = EdgeInsets.symmetric(vertical: lg);
-  static const EdgeInsets verticalXl = EdgeInsets.symmetric(vertical: xl);
-  static const EdgeInsets verticalXxl = EdgeInsets.symmetric(vertical: xxl);
-
-  // Gaps between elements
-  static const double gapXs = xs;
-  static const double gapSm = sm;
-  static const double gapMd = md;
-  static const double gapLg = lg;
-  static const double gapXl = xl;
-  static const double gapXxl = xxl;
-}
-
-/// Semantic color tokens for consistent color usage
-class AppColors {
-  AppColors._();
-
-  // Text colors on dark backgrounds (gradients)
-  static const Color primaryText = Colors.white;
-  static final Color secondaryText = Colors.white.withValues(alpha: 0.8);
-  static final Color tertiaryText = Colors.white.withValues(alpha: 0.6);
-  static final Color disabledText = Colors.white.withValues(alpha: 0.4);
-
-  // Text colors on light backgrounds
-  static const Color darkPrimaryText = Colors.black87;
-  static final Color darkSecondaryText = Colors.black.withValues(alpha: 0.6);
-  static final Color darkTertiaryText = Colors.black.withValues(alpha: 0.4);
-
-  // Accent colors for emphasis
-  static const Color accent = AppTheme.goldColor;
-  static final Color accentSubtle = AppTheme.goldColor.withValues(alpha: 0.6);
-  static final Color accentVerySubtle = AppTheme.goldColor.withValues(alpha: 0.3);
-
-  // Background overlays
-  static final Color glassOverlayLight = Colors.white.withValues(alpha: 0.15);
-  static final Color glassOverlayMedium = Colors.white.withValues(alpha: 0.1);
-  static final Color glassOverlaySubtle = Colors.white.withValues(alpha: 0.05);
-
-  // Border colors
-  static final Color primaryBorder = Colors.white.withValues(alpha: 0.2);
-  static final Color accentBorder = AppTheme.goldColor.withValues(alpha: 0.6);
-  static final Color subtleBorder = Colors.white.withValues(alpha: 0.1);
-}
-
-/// Border radius constants for consistent rounded corners
-class AppRadius {
-  AppRadius._();
-
-  static const double xs = 8.0;
-  static const double sm = 12.0;
-  static const double md = 16.0;
-  static const double lg = 20.0;
-  static const double xl = 24.0;
-  static const double xxl = 28.0;
-  static const double pill = 100.0; // For fully rounded elements
-
-  // Common border radius patterns
-  static final BorderRadius smallRadius = BorderRadius.circular(sm);
-  static final BorderRadius mediumRadius = BorderRadius.circular(md);
-  static final BorderRadius cardRadius = BorderRadius.circular(lg);
-  static final BorderRadius largeCardRadius = BorderRadius.circular(xl);
-  static final BorderRadius buttonRadius = BorderRadius.circular(xxl);
-  static final BorderRadius pillRadius = BorderRadius.circular(pill);
-}
-
-/// Border styles for consistent component borders
-class AppBorders {
-  AppBorders._();
-
-  // Primary glass borders (gold accent)
-  static final Border primaryGlass = Border.all(
-    color: AppColors.accentBorder,
-    width: 2.0,
-  );
-
-  static final Border primaryGlassSubtle = Border.all(
-    color: AppTheme.goldColor.withValues(alpha: 0.5),
-    width: 1.5,
-  );
-
-  static final Border primaryGlassThin = Border.all(
-    color: AppTheme.goldColor.withValues(alpha: 0.3),
-    width: 1.0,
-  );
-
-  // Subtle white borders
-  static final Border subtle = Border.all(
-    color: AppColors.primaryBorder,
-    width: 1.0,
-  );
-
-  static final Border subtleThick = Border.all(
-    color: AppColors.primaryBorder,
-    width: 2.0,
-  );
-
-  // Icon container borders
-  static final Border iconContainer = Border.all(
-    color: AppColors.accentBorder,
-    width: 1.5,
-  );
-
-  // No border
-  static const Border none = Border();
-}
-
-/// Animation duration and timing constants
-class AppAnimations {
-  AppAnimations._();
-
-  // Standard durations
-  static const Duration instant = Duration(milliseconds: 0);
-  static const Duration fast = Duration(milliseconds: 200);
-  static const Duration normal = Duration(milliseconds: 400);
-  static const Duration slow = Duration(milliseconds: 350);
-  static const Duration verySlow = Duration(milliseconds: 800);
-
-  // Sequential animation delays
-  static const Duration sequentialShort = Duration(milliseconds: 100);
-  static const Duration sequentialMedium = Duration(milliseconds: 150);
-  static const Duration sequentialLong = Duration(milliseconds: 200);
-
-  // Common animation durations by type
-  static const Duration fadeIn = slow;
-  static const Duration slideIn = normal;
-  static const Duration scaleIn = normal;
-  static const Duration shimmer = Duration(milliseconds: 1500);
-
-  // Base delays for screen entry animations
-  static const Duration baseDelay = slow;
-  static const Duration sectionDelay = Duration(milliseconds: 400);
-}
-
-/// Component size constants
-class AppSizes {
-  AppSizes._();
-
-  // Icon sizes
-  static const double iconXs = 16.0;
-  static const double iconSm = 20.0;
-  static const double iconMd = 24.0;
-  static const double iconLg = 32.0;
-  static const double iconXl = 40.0;
-
-  // Avatar/circle sizes
-  static const double avatarSm = 32.0;
-  static const double avatarMd = 40.0;
-  static const double avatarLg = 56.0;
-  static const double avatarXl = 80.0;
-
-  // Card sizes
-  static const double statCardWidth = 140.0;
-  static const double statCardHeight = 120.0;
-  static const double quickActionWidth = 100.0;
-  static const double quickActionHeight = 120.0;
-
-  // App bar
-  static const double appBarHeight = 56.0;
-  static const double appBarIconSize = iconMd;
-
-  // Button heights
-  static const double buttonHeightSm = 40.0;
-  static const double buttonHeightMd = 48.0;
-  static const double buttonHeightLg = 56.0;
-}
-
-/// Glass effect blur strength constants
-class AppBlur {
-  AppBlur._();
-
-  static const double light = 15.0;
-  static const double medium = 25.0;
-  static const double strong = 40.0;
-  static const double veryStrong = 60.0;
-}
 
 /// WCAG Contrast Ratio Calculator for Accessibility
 ///
@@ -561,44 +375,16 @@ class WCAGContrast {
 
   /// Calculate relative luminance using WCAG formula
   static double _relativeLuminance(Color color) {
-    double r = color.r;
-    double g = color.g;
-    double b = color.b;
+    double r = color.red / 255.0;
+    double g = color.green / 255.0;
+    double b = color.blue / 255.0;
 
     // Apply sRGB gamma correction
-    r = (r <= 0.03928) ? r / 12.92 : _pow((r + 0.055) / 1.055, 2.4);
-    g = (g <= 0.03928) ? g / 12.92 : _pow((g + 0.055) / 1.055, 2.4);
-    b = (b <= 0.03928) ? b / 12.92 : _pow((b + 0.055) / 1.055, 2.4);
+    r = (r <= 0.03928) ? r / 12.92 : pow((r + 0.055) / 1.055, 2.4).toDouble();
+    g = (g <= 0.03928) ? g / 12.92 : pow((g + 0.055) / 1.055, 2.4).toDouble();
+    b = (b <= 0.03928) ? b / 12.92 : pow((b + 0.055) / 1.055, 2.4).toDouble();
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  }
-
-  /// Power function helper (dart:math pow returns num, we need double)
-  static double _pow(double base, double exponent) {
-    double result = 1.0;
-    for (int i = 0; i < exponent * 10; i++) {
-      result *= base;
-      if (i % 10 == 9) result = result; // Every 10 iterations = 1.0 power
-    }
-    // Approximate for fractional exponents
-    if (exponent == 2.4) {
-      // base^2.4 ≈ base^2 * base^0.4
-      result = base * base * _sqrtApprox(base); // Rough approximation
-    }
-    return result;
-  }
-
-  /// Simple square root approximation
-  static double _sqrtApprox(double n) {
-    if (n < 0) return 0;
-    double x = n;
-    double y = 1.0;
-    double e = 0.000001;
-    while (x - y > e) {
-      x = (x + y) / 2;
-      y = n / x;
-    }
-    return x;
   }
 
   /// Calculate contrast ratio between two colors
