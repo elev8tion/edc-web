@@ -20,6 +20,8 @@ import 'package:everyday_christian/screens/settings_screen.dart';
 import 'package:everyday_christian/screens/splash_screen.dart';
 import 'package:everyday_christian/screens/verse_library_screen.dart';
 import 'package:everyday_christian/screens/checkout_complete_screen.dart';
+import 'package:everyday_christian/screens/auth_screen.dart';
+import 'package:everyday_christian/screens/verify_email_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
@@ -174,6 +176,15 @@ class MyApp extends ConsumerWidget {
         switch (settings.name) {
           case AppRoutes.splash:
             return MaterialPageRoute(builder: (_) => const SplashScreen());
+          case AppRoutes.auth:
+            return MaterialPageRoute(builder: (_) => const AuthScreen());
+          case AppRoutes.verifyEmail:
+            final args = settings.arguments as Map<String, dynamic>?;
+            return MaterialPageRoute(
+              builder: (_) => VerifyEmailScreen(
+                email: args?['email'] ?? '',
+              ),
+            );
           case AppRoutes.onboarding:
             return MaterialPageRoute(builder: (_) => const UnifiedInteractiveOnboardingScreen());
           case AppRoutes.home:

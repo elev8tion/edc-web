@@ -111,6 +111,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String get or => 'or';
 
   @override
+  String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Enter your email and we\'ll send you a password reset link.';
+
+  @override
+  String get checkYourEmail => 'Check Your Email';
+
+  @override
+  String get passwordResetEmailSent =>
+      'We\'ve sent a password reset link to your email address.';
+
+  @override
+  String get passwordResetInstructions =>
+      'Click the link in the email to reset your password. If you don\'t see it, check your spam folder.';
+
+  @override
+  String get sendResetLink => 'Send Reset Link';
+
+  @override
+  String get backToSignIn => 'Back to Sign In';
+
+  @override
+  String get forgotPasswordError =>
+      'Failed to send reset email. Please try again.';
+
+  @override
+  String get signUpTermsNote =>
+      'By creating an account, you agree to keep your spiritual journey private and secure.';
+
+  @override
+  String get verifyYourEmail => 'Verify Your Email';
+
+  @override
+  String get verifyEmailSubtitle =>
+      'We\'ve sent a verification link to your email. Please check your inbox and click the link to verify your account.';
+
+  @override
+  String get resendVerificationEmail => 'Resend Verification Email';
+
+  @override
+  String get verificationEmailSent =>
+      'Verification email sent! Check your inbox.';
+
+  @override
+  String get verificationEmailError =>
+      'Failed to send verification email. Please try again.';
+
+  @override
+  String get alreadyVerified => 'I\'ve already verified';
+
+  @override
   String get riseAndShine => 'Rise and shine';
 
   @override

@@ -112,6 +112,59 @@ class AppLocalizationsEs extends AppLocalizations {
   String get or => 'o';
 
   @override
+  String get forgotPassword => '¿Olvidó su Contraseña?';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña.';
+
+  @override
+  String get checkYourEmail => 'Revise su Correo';
+
+  @override
+  String get passwordResetEmailSent =>
+      'Hemos enviado un enlace para restablecer su contraseña a su correo electrónico.';
+
+  @override
+  String get passwordResetInstructions =>
+      'Haga clic en el enlace del correo para restablecer su contraseña. Si no ve el correo, revise su carpeta de spam.';
+
+  @override
+  String get sendResetLink => 'Enviar Enlace';
+
+  @override
+  String get backToSignIn => 'Volver a Iniciar Sesión';
+
+  @override
+  String get forgotPasswordError =>
+      'Error al enviar el correo. Por favor intente de nuevo.';
+
+  @override
+  String get signUpTermsNote =>
+      'Al crear una cuenta, usted acepta mantener su jornada espiritual privada y segura.';
+
+  @override
+  String get verifyYourEmail => 'Verifique su Correo';
+
+  @override
+  String get verifyEmailSubtitle =>
+      'Hemos enviado un enlace de verificación a su correo electrónico. Por favor revise su bandeja de entrada y haga clic en el enlace para verificar su cuenta.';
+
+  @override
+  String get resendVerificationEmail => 'Reenviar Correo de Verificación';
+
+  @override
+  String get verificationEmailSent =>
+      '¡Correo de verificación enviado! Revise su bandeja de entrada.';
+
+  @override
+  String get verificationEmailError =>
+      'Error al enviar el correo de verificación. Por favor intente de nuevo.';
+
+  @override
+  String get alreadyVerified => 'Ya he verificado';
+
+  @override
   String get riseAndShine => 'Buenos días';
 
   @override

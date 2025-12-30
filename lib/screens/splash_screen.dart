@@ -10,6 +10,7 @@ import '../core/navigation/app_routes.dart';
 import '../core/widgets/app_initializer.dart';
 import '../core/services/preferences_service.dart';
 import '../core/providers/app_providers.dart';
+import '../features/auth/services/auth_service.dart';
 import '../hooks/animation_hooks.dart';
 import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
@@ -69,12 +70,31 @@ class SplashScreen extends HookConsumerWidget {
         // On web, currentRoute may be null - allow navigation in that case
         if (currentRoute != null && currentRoute != AppRoutes.splash && currentRoute != '/') return;
 
-        // Check if user has completed onboarding (which now includes legal agreements)
+        // Initialize auth service and check authentication status
+        final authService = ref.read(authServiceProvider.notifier);
+        await authService.initialize();
+        final authState = ref.read(authServiceProvider);
+
+        // Check if user is authenticated
+        final isAuthenticated = authState.maybeWhen(
+          authenticated: (_) => true,
+          orElse: () => false,
+        );
+
+        if (!isAuthenticated) {
+          // User not authenticated - show auth screen
+          if (_hasNavigated) return;
+          _hasNavigated = true;
+          NavigationService.pushReplacementNamed(AppRoutes.auth);
+          return;
+        }
+
+        // User is authenticated - check if they completed onboarding
         final prefsService = await PreferencesService.getInstance();
         final hasCompletedOnboarding = prefsService.hasCompletedOnboarding();
 
         if (!hasCompletedOnboarding) {
-          // First time user - show unified interactive onboarding
+          // Authenticated but not onboarded - show onboarding
           if (_hasNavigated) return;
           _hasNavigated = true;
           NavigationService.pushReplacementNamed(AppRoutes.onboarding);

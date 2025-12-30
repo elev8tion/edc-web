@@ -290,6 +290,96 @@ abstract class AppLocalizations {
   /// **'or'**
   String get or;
 
+  /// Forgot password link text
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPassword;
+
+  /// Forgot password screen subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you a password reset link.'**
+  String get forgotPasswordSubtitle;
+
+  /// Email sent confirmation title
+  ///
+  /// In en, this message translates to:
+  /// **'Check Your Email'**
+  String get checkYourEmail;
+
+  /// Password reset email sent message
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve sent a password reset link to your email address.'**
+  String get passwordResetEmailSent;
+
+  /// Password reset instructions
+  ///
+  /// In en, this message translates to:
+  /// **'Click the link in the email to reset your password. If you don\'t see it, check your spam folder.'**
+  String get passwordResetInstructions;
+
+  /// Send password reset link button
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Link'**
+  String get sendResetLink;
+
+  /// Back to sign in link
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Sign In'**
+  String get backToSignIn;
+
+  /// Forgot password error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send reset email. Please try again.'**
+  String get forgotPasswordError;
+
+  /// Sign up terms note
+  ///
+  /// In en, this message translates to:
+  /// **'By creating an account, you agree to keep your spiritual journey private and secure.'**
+  String get signUpTermsNote;
+
+  /// Verify email screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Email'**
+  String get verifyYourEmail;
+
+  /// Verify email screen subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve sent a verification link to your email. Please check your inbox and click the link to verify your account.'**
+  String get verifyEmailSubtitle;
+
+  /// Resend verification email button
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Verification Email'**
+  String get resendVerificationEmail;
+
+  /// Verification email sent success message
+  ///
+  /// In en, this message translates to:
+  /// **'Verification email sent! Check your inbox.'**
+  String get verificationEmailSent;
+
+  /// Verification email error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send verification email. Please try again.'**
+  String get verificationEmailError;
+
+  /// Already verified button text
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve already verified'**
+  String get alreadyVerified;
+
   /// Morning greeting
   ///
   /// In en, this message translates to:

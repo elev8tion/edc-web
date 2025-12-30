@@ -60,6 +60,7 @@ class PreferencesService {
   static const String _readingPlanTutorialShownKey = 'reading_plan_tutorial_shown';
   static const String _appLockEnabledKey = 'app_lock_enabled';
   static const String _biometricSetupCompletedKey = 'biometric_setup_completed';
+  static const String _deviceIdKey = 'device_id';
 
   // Default values
   static const String _defaultThemeMode = 'dark';
@@ -794,6 +795,44 @@ class PreferencesService {
     } catch (e) {
       return false;
     }
+  }
+
+  // ============================================================================
+  // DEVICE ID METHODS
+  // ============================================================================
+
+  /// Get the device ID
+  ///
+  /// Returns the stored device ID or null if not set.
+  String? getDeviceId() {
+    try {
+      return _preferences?.getString(_deviceIdKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Set the device ID
+  ///
+  /// Returns true if save was successful, false otherwise.
+  Future<bool> setDeviceId(String deviceId) async {
+    try {
+      final result = await _preferences?.setString(_deviceIdKey, deviceId);
+      return result ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ============================================================================
+  // LOCALE METHODS
+  // ============================================================================
+
+  /// Get locale code (e.g., 'en', 'es')
+  ///
+  /// Returns the language code based on the stored language preference.
+  String? getLocale() {
+    return getLanguage();
   }
 
   // ============================================================================

@@ -128,6 +128,66 @@
   "@or": {
     "description": "Divider text between options"
   },
+  "forgotPassword": "Forgot Password?",
+  "@forgotPassword": {
+    "description": "Forgot password link text"
+  },
+  "forgotPasswordSubtitle": "Enter your email and we'll send you a password reset link.",
+  "@forgotPasswordSubtitle": {
+    "description": "Forgot password screen subtitle"
+  },
+  "checkYourEmail": "Check Your Email",
+  "@checkYourEmail": {
+    "description": "Email sent confirmation title"
+  },
+  "passwordResetEmailSent": "We've sent a password reset link to your email address.",
+  "@passwordResetEmailSent": {
+    "description": "Password reset email sent message"
+  },
+  "passwordResetInstructions": "Click the link in the email to reset your password. If you don't see it, check your spam folder.",
+  "@passwordResetInstructions": {
+    "description": "Password reset instructions"
+  },
+  "sendResetLink": "Send Reset Link",
+  "@sendResetLink": {
+    "description": "Send password reset link button"
+  },
+  "backToSignIn": "Back to Sign In",
+  "@backToSignIn": {
+    "description": "Back to sign in link"
+  },
+  "forgotPasswordError": "Failed to send reset email. Please try again.",
+  "@forgotPasswordError": {
+    "description": "Forgot password error message"
+  },
+  "signUpTermsNote": "By creating an account, you agree to keep your spiritual journey private and secure.",
+  "@signUpTermsNote": {
+    "description": "Sign up terms note"
+  },
+  "verifyYourEmail": "Verify Your Email",
+  "@verifyYourEmail": {
+    "description": "Verify email screen title"
+  },
+  "verifyEmailSubtitle": "We've sent a verification link to your email. Please check your inbox and click the link to verify your account.",
+  "@verifyEmailSubtitle": {
+    "description": "Verify email screen subtitle"
+  },
+  "resendVerificationEmail": "Resend Verification Email",
+  "@resendVerificationEmail": {
+    "description": "Resend verification email button"
+  },
+  "verificationEmailSent": "Verification email sent! Check your inbox.",
+  "@verificationEmailSent": {
+    "description": "Verification email sent success message"
+  },
+  "verificationEmailError": "Failed to send verification email. Please try again.",
+  "@verificationEmailError": {
+    "description": "Verification email error message"
+  },
+  "alreadyVerified": "I've already verified",
+  "@alreadyVerified": {
+    "description": "Already verified button text"
+  },
   "riseAndShine": "Rise and shine",
   "@riseAndShine": {
     "description": "Morning greeting"

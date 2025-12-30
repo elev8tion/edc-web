@@ -1,0 +1,1125 @@
+/**
+ * Auth Service Worker - Complete Authentication System
+ *
+ * Endpoints:
+ * - POST /signup - Register new user
+ * - POST /login - Authenticate user
+ * - POST /logout - Invalidate token (stateless - client handles)
+ * - POST /forgot-password - Send password reset email
+ * - POST /reset-password - Reset password with token
+ * - POST /verify-email - Verify email with token
+ * - POST /resend-verification - Resend verification email
+ * - GET /validate-token - Validate JWT token
+ * - POST /refresh-token - Refresh JWT token
+ * - PATCH /profile - Update user profile
+ * - DELETE /account - Delete user account
+ */
+
+// CORS headers for PWA/mobile access
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+// Main entry point
+export default {
+  async fetch(request, env, ctx) {
+    // Handle CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
+    }
+
+    const url = new URL(request.url);
+    const path = url.pathname;
+
+    try {
+      // Route handling
+      switch (path) {
+        case '/signup':
+          return await handleSignup(request, env);
+        case '/login':
+          return await handleLogin(request, env);
+        case '/logout':
+          return await handleLogout(request, env);
+        case '/forgot-password':
+          return await handleForgotPassword(request, env);
+        case '/reset-password':
+          return await handleResetPassword(request, env);
+        case '/verify-email':
+          return await handleVerifyEmail(request, env);
+        case '/resend-verification':
+          return await handleResendVerification(request, env);
+        case '/validate-token':
+          return await handleValidateToken(request, env);
+        case '/refresh-token':
+          return await handleRefreshToken(request, env);
+        case '/profile':
+          return await handleProfile(request, env);
+        case '/account':
+          return await handleDeleteAccount(request, env);
+        case '/health':
+          return jsonResponse({ status: 'ok', service: 'auth-service' });
+        default:
+          return jsonResponse({ error: 'Not found' }, 404);
+      }
+    } catch (error) {
+      console.error('[Auth Service] Unhandled error:', error);
+      return jsonResponse({ error: 'Internal server error' }, 500);
+    }
+  }
+};
+
+// ============================================
+// ENDPOINT HANDLERS
+// ============================================
+
+/**
+ * POST /signup - Register new user
+ */
+async function handleSignup(request, env) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    const { email, password, first_name, locale, device_id } = await request.json();
+
+    // Validate required fields
+    if (!email || !password) {
+      return jsonResponse({ error: 'Email and password are required' }, 400);
+    }
+
+    // Validate email format
+    if (!isValidEmail(email)) {
+      return jsonResponse({ error: 'Invalid email format' }, 400);
+    }
+
+    // Validate password strength
+    if (password.length < 6) {
+      return jsonResponse({ error: 'Password must be at least 6 characters' }, 400);
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user already exists
+    const existingUser = await findUserByEmail(normalizedEmail, env);
+    if (existingUser) {
+      return jsonResponse({ error: 'An account with this email already exists' }, 409);
+    }
+
+    // Hash password
+    const passwordHash = await hashPassword(password);
+
+    // Generate verification token
+    const verificationToken = generateToken();
+
+    // Create user in NoCodeBackend
+    const now = formatMySQLDatetime(new Date());
+    const expiresAt = formatMySQLDatetime(new Date(Date.now() + parseInt(env.TOKEN_EXPIRES_IN || '86400') * 1000));
+
+    // Build user data - only include fields with values (avoid empty strings for nullable fields)
+    const userData = {
+      email: normalizedEmail,
+      password_hash: passwordHash,
+      created_at: now,
+      status: 'active',
+      email_verified: 0,
+      verification_token: verificationToken,
+      verification_expires: expiresAt,
+    };
+    if (first_name?.trim()) userData.first_name = first_name.trim();
+    if (locale) userData.locale = locale;
+    if (device_id) userData.device_ids = JSON.stringify([device_id]);
+
+    const newUser = await createUser(userData, env);
+
+    if (!newUser || !newUser.id) {
+      return jsonResponse({ error: 'Failed to create account' }, 500);
+    }
+
+    // Send verification email
+    await sendVerificationEmail(normalizedEmail, verificationToken, locale || 'en', first_name, env);
+
+    // Generate JWT token
+    const token = await generateJWT({
+      userId: newUser.id,
+      email: normalizedEmail,
+    }, env);
+
+    // Return user data (excluding sensitive fields)
+    return jsonResponse({
+      message: 'Account created successfully. Please verify your email.',
+      token,
+      user: sanitizeUser({
+        id: newUser.id,
+        email: normalizedEmail,
+        first_name: first_name?.trim() || null,
+        locale: locale || 'en',
+        email_verified: false,
+        created_at: new Date().toISOString(),
+        status: 'active',
+      }),
+    }, 201);
+
+  } catch (error) {
+    console.error('[Signup] Error:', error);
+    return jsonResponse({ error: 'Failed to create account' }, 500);
+  }
+}
+
+/**
+ * POST /login - Authenticate user
+ */
+async function handleLogin(request, env) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    const { email, password, device_id } = await request.json();
+
+    if (!email || !password) {
+      return jsonResponse({ error: 'Email and password are required' }, 400);
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Find user
+    const user = await findUserByEmail(normalizedEmail, env);
+    if (!user) {
+      return jsonResponse({ error: 'Invalid email or password' }, 401);
+    }
+
+    // Check account status
+    if (user.status === 'suspended') {
+      return jsonResponse({ error: 'Account has been suspended' }, 403);
+    }
+
+    if (user.status === 'deleted') {
+      return jsonResponse({ error: 'Account not found' }, 401);
+    }
+
+    // Verify password
+    const passwordValid = await verifyPassword(password, user.password_hash);
+    if (!passwordValid) {
+      return jsonResponse({ error: 'Invalid email or password' }, 401);
+    }
+
+    // Update device IDs and last login
+    let deviceIds = [];
+    try {
+      deviceIds = JSON.parse(user.device_ids || '[]');
+    } catch (e) {
+      deviceIds = [];
+    }
+    if (device_id && !deviceIds.includes(device_id)) {
+      deviceIds.push(device_id);
+    }
+
+    await updateUser(user.id, {
+      device_ids: JSON.stringify(deviceIds),
+      last_login: formatMySQLDatetime(new Date()),
+    }, env);
+
+    // Generate JWT token
+    const token = await generateJWT({
+      userId: user.id,
+      email: normalizedEmail,
+    }, env);
+
+    return jsonResponse({
+      message: 'Login successful',
+      token,
+      user: sanitizeUser(user),
+    });
+
+  } catch (error) {
+    console.error('[Login] Error:', error);
+    return jsonResponse({ error: 'Login failed' }, 500);
+  }
+}
+
+/**
+ * POST /logout - Logout (stateless - client handles token removal)
+ */
+async function handleLogout(request, env) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  // With stateless JWT, logout is handled client-side
+  // Server just acknowledges the request
+  return jsonResponse({ message: 'Logged out successfully' });
+}
+
+/**
+ * POST /forgot-password - Send password reset email
+ */
+async function handleForgotPassword(request, env) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    const { email, locale } = await request.json();
+
+    if (!email) {
+      return jsonResponse({ error: 'Email is required' }, 400);
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await findUserByEmail(normalizedEmail, env);
+
+    // Always return success to prevent email enumeration
+    if (!user) {
+      return jsonResponse({ message: 'If an account exists, a reset link has been sent' });
+    }
+
+    // Generate reset token
+    const resetToken = generateToken();
+    const resetExpires = formatMySQLDatetime(new Date(Date.now() + parseInt(env.TOKEN_EXPIRES_IN || '86400') * 1000));
+
+    // Update user with reset token
+    await updateUser(user.id, {
+      reset_token: resetToken,
+      reset_expires: resetExpires,
+    }, env);
+
+    // Send reset email
+    await sendPasswordResetEmail(normalizedEmail, resetToken, locale || user.locale || 'en', user.first_name, env);
+
+    return jsonResponse({ message: 'If an account exists, a reset link has been sent' });
+
+  } catch (error) {
+    console.error('[ForgotPassword] Error:', error);
+    return jsonResponse({ error: 'Failed to process request' }, 500);
+  }
+}
+
+/**
+ * POST /reset-password - Reset password with token
+ */
+async function handleResetPassword(request, env) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    const { token, new_password } = await request.json();
+
+    if (!token || !new_password) {
+      return jsonResponse({ error: 'Token and new password are required' }, 400);
+    }
+
+    if (new_password.length < 6) {
+      return jsonResponse({ error: 'Password must be at least 6 characters' }, 400);
+    }
+
+    // Find user with this reset token
+    const user = await findUserByResetToken(token, env);
+    if (!user) {
+      return jsonResponse({ error: 'Invalid or expired reset token' }, 400);
+    }
+
+    // Check if token is expired
+    if (new Date(user.reset_expires) < new Date()) {
+      return jsonResponse({ error: 'Reset token has expired' }, 400);
+    }
+
+    // Hash new password
+    const passwordHash = await hashPassword(new_password);
+
+    // Update password and clear reset token (set to null to clear)
+    await updateUser(user.id, {
+      password_hash: passwordHash,
+      reset_token: null,
+      reset_expires: null,
+    }, env);
+
+    return jsonResponse({ message: 'Password reset successfully' });
+
+  } catch (error) {
+    console.error('[ResetPassword] Error:', error);
+    return jsonResponse({ error: 'Failed to reset password' }, 500);
+  }
+}
+
+/**
+ * POST /verify-email - Verify email with token
+ */
+async function handleVerifyEmail(request, env) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    const { token } = await request.json();
+
+    if (!token) {
+      return jsonResponse({ error: 'Verification token is required' }, 400);
+    }
+
+    // Find user with this verification token
+    const user = await findUserByVerificationToken(token, env);
+    if (!user) {
+      return jsonResponse({ error: 'Invalid or expired verification token' }, 400);
+    }
+
+    // Check if token is expired
+    if (new Date(user.verification_expires) < new Date()) {
+      return jsonResponse({ error: 'Verification token has expired' }, 400);
+    }
+
+    // Mark email as verified and clear token (set to null to clear)
+    await updateUser(user.id, {
+      email_verified: 1,
+      verification_token: null,
+      verification_expires: null,
+    }, env);
+
+    // Generate new JWT token with verified status
+    const jwtToken = await generateJWT({
+      userId: user.id,
+      email: user.email,
+    }, env);
+
+    return jsonResponse({
+      message: 'Email verified successfully',
+      token: jwtToken,
+      user: sanitizeUser({ ...user, email_verified: true }),
+    });
+
+  } catch (error) {
+    console.error('[VerifyEmail] Error:', error);
+    return jsonResponse({ error: 'Failed to verify email' }, 500);
+  }
+}
+
+/**
+ * POST /resend-verification - Resend verification email
+ */
+async function handleResendVerification(request, env) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    const { email, locale } = await request.json();
+
+    if (!email) {
+      return jsonResponse({ error: 'Email is required' }, 400);
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await findUserByEmail(normalizedEmail, env);
+
+    // Always return success to prevent email enumeration
+    if (!user) {
+      return jsonResponse({ message: 'If the email exists and is unverified, a new verification link has been sent' });
+    }
+
+    // Check if already verified
+    if (user.email_verified === 1) {
+      return jsonResponse({ message: 'Email is already verified' });
+    }
+
+    // Generate new verification token
+    const verificationToken = generateToken();
+    const verificationExpires = formatMySQLDatetime(new Date(Date.now() + parseInt(env.TOKEN_EXPIRES_IN || '86400') * 1000));
+
+    // Update user with new token
+    await updateUser(user.id, {
+      verification_token: verificationToken,
+      verification_expires: verificationExpires,
+    }, env);
+
+    // Send verification email
+    await sendVerificationEmail(normalizedEmail, verificationToken, locale || user.locale || 'en', user.first_name, env);
+
+    return jsonResponse({ message: 'If the email exists and is unverified, a new verification link has been sent' });
+
+  } catch (error) {
+    console.error('[ResendVerification] Error:', error);
+    return jsonResponse({ error: 'Failed to send verification email' }, 500);
+  }
+}
+
+/**
+ * GET /validate-token - Validate JWT token
+ */
+async function handleValidateToken(request, env) {
+  if (request.method !== 'GET') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    // Extract token from Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return jsonResponse({ error: 'No token provided' }, 401);
+    }
+
+    const token = authHeader.substring(7);
+    const payload = await verifyJWT(token, env);
+
+    if (!payload) {
+      return jsonResponse({ error: 'Invalid or expired token' }, 401);
+    }
+
+    // Get fresh user data
+    const user = await findUserById(payload.userId, env);
+    if (!user) {
+      return jsonResponse({ error: 'User not found' }, 401);
+    }
+
+    if (user.status !== 'active') {
+      return jsonResponse({ error: 'Account is not active' }, 401);
+    }
+
+    return jsonResponse({
+      message: 'Token is valid',
+      user: sanitizeUser(user),
+    });
+
+  } catch (error) {
+    console.error('[ValidateToken] Error:', error);
+    return jsonResponse({ error: 'Token validation failed' }, 401);
+  }
+}
+
+/**
+ * POST /refresh-token - Refresh JWT token
+ */
+async function handleRefreshToken(request, env) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    // Extract token from Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return jsonResponse({ error: 'No token provided' }, 401);
+    }
+
+    const token = authHeader.substring(7);
+    const payload = await verifyJWT(token, env);
+
+    if (!payload) {
+      return jsonResponse({ error: 'Invalid or expired token' }, 401);
+    }
+
+    // Get fresh user data
+    const user = await findUserById(payload.userId, env);
+    if (!user || user.status !== 'active') {
+      return jsonResponse({ error: 'User not found or inactive' }, 401);
+    }
+
+    // Generate new token
+    const newToken = await generateJWT({
+      userId: user.id,
+      email: user.email,
+    }, env);
+
+    return jsonResponse({
+      message: 'Token refreshed',
+      token: newToken,
+      user: sanitizeUser(user),
+    });
+
+  } catch (error) {
+    console.error('[RefreshToken] Error:', error);
+    return jsonResponse({ error: 'Token refresh failed' }, 401);
+  }
+}
+
+/**
+ * PATCH /profile - Update user profile
+ */
+async function handleProfile(request, env) {
+  if (request.method !== 'PATCH') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    // Extract and verify token
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return jsonResponse({ error: 'No token provided' }, 401);
+    }
+
+    const token = authHeader.substring(7);
+    const payload = await verifyJWT(token, env);
+
+    if (!payload) {
+      return jsonResponse({ error: 'Invalid or expired token' }, 401);
+    }
+
+    const { first_name, locale } = await request.json();
+
+    // Build update object with only provided fields
+    const updates = {};
+    if (first_name !== undefined) updates.first_name = first_name?.trim() || null;
+    if (locale !== undefined) updates.locale = locale;
+
+    if (Object.keys(updates).length === 0) {
+      return jsonResponse({ error: 'No fields to update' }, 400);
+    }
+
+    // Update user
+    await updateUser(payload.userId, updates, env);
+
+    // Get updated user
+    const user = await findUserById(payload.userId, env);
+
+    return jsonResponse({
+      message: 'Profile updated',
+      user: sanitizeUser(user),
+    });
+
+  } catch (error) {
+    console.error('[Profile] Error:', error);
+    return jsonResponse({ error: 'Failed to update profile' }, 500);
+  }
+}
+
+/**
+ * DELETE /account - Delete user account
+ */
+async function handleDeleteAccount(request, env) {
+  if (request.method !== 'DELETE') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    // Extract and verify token
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return jsonResponse({ error: 'No token provided' }, 401);
+    }
+
+    const token = authHeader.substring(7);
+    const payload = await verifyJWT(token, env);
+
+    if (!payload) {
+      return jsonResponse({ error: 'Invalid or expired token' }, 401);
+    }
+
+    const { password } = await request.json();
+
+    if (!password) {
+      return jsonResponse({ error: 'Password is required to delete account' }, 400);
+    }
+
+    // Get user and verify password
+    const user = await findUserById(payload.userId, env);
+    if (!user) {
+      return jsonResponse({ error: 'User not found' }, 404);
+    }
+
+    const passwordValid = await verifyPassword(password, user.password_hash);
+    if (!passwordValid) {
+      return jsonResponse({ error: 'Incorrect password' }, 401);
+    }
+
+    // Soft delete - mark as deleted
+    await updateUser(user.id, {
+      status: 'deleted',
+      email: `deleted_${user.id}_${user.email}`, // Prevent email reuse issues
+    }, env);
+
+    return jsonResponse({ message: 'Account deleted successfully' });
+
+  } catch (error) {
+    console.error('[DeleteAccount] Error:', error);
+    return jsonResponse({ error: 'Failed to delete account' }, 500);
+  }
+}
+
+// ============================================
+// DATABASE HELPERS (NoCodeBackend)
+// ============================================
+
+/**
+ * Create a new user in NoCodeBackend
+ */
+async function createUser(userData, env) {
+  const instance = env.NOCODEBACKEND_INSTANCE || '36905_activation_codes';
+  const response = await fetch(`${env.NOCODEBACKEND_API_URL}/create/users?Instance=${instance}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`,
+    },
+    body: JSON.stringify(userData),
+  });
+
+  const result = await response.json();
+  if (result.status === 'success') {
+    return { id: result.id, ...userData };
+  }
+  throw new Error(result.message || 'Failed to create user');
+}
+
+/**
+ * Find user by email
+ */
+async function findUserByEmail(email, env) {
+  const instance = env.NOCODEBACKEND_INSTANCE || '36905_activation_codes';
+  const response = await fetch(`${env.NOCODEBACKEND_API_URL}/search/users?Instance=${instance}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`,
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  const result = await response.json();
+  if (result.status === 'success' && result.data && result.data.length > 0) {
+    return result.data[0];
+  }
+  return null;
+}
+
+/**
+ * Find user by ID
+ */
+async function findUserById(id, env) {
+  const instance = env.NOCODEBACKEND_INSTANCE || '36905_activation_codes';
+  const response = await fetch(`${env.NOCODEBACKEND_API_URL}/read/users/${id}?Instance=${instance}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`,
+    },
+  });
+
+  const result = await response.json();
+  if (result.status === 'success' && result.data) {
+    return result.data;
+  }
+  return null;
+}
+
+/**
+ * Find user by reset token
+ */
+async function findUserByResetToken(token, env) {
+  const instance = env.NOCODEBACKEND_INSTANCE || '36905_activation_codes';
+  const response = await fetch(`${env.NOCODEBACKEND_API_URL}/search/users?Instance=${instance}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`,
+    },
+    body: JSON.stringify({ reset_token: token }),
+  });
+
+  const result = await response.json();
+  if (result.status === 'success' && result.data && result.data.length > 0) {
+    return result.data[0];
+  }
+  return null;
+}
+
+/**
+ * Find user by verification token
+ */
+async function findUserByVerificationToken(token, env) {
+  const instance = env.NOCODEBACKEND_INSTANCE || '36905_activation_codes';
+  const response = await fetch(`${env.NOCODEBACKEND_API_URL}/search/users?Instance=${instance}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`,
+    },
+    body: JSON.stringify({ verification_token: token }),
+  });
+
+  const result = await response.json();
+  if (result.status === 'success' && result.data && result.data.length > 0) {
+    return result.data[0];
+  }
+  return null;
+}
+
+/**
+ * Update user by ID
+ */
+async function updateUser(id, updates, env) {
+  const instance = env.NOCODEBACKEND_INSTANCE || '36905_activation_codes';
+  const response = await fetch(`${env.NOCODEBACKEND_API_URL}/update/users/${id}?Instance=${instance}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`,
+    },
+    body: JSON.stringify(updates),
+  });
+
+  const result = await response.json();
+  return result.status === 'success';
+}
+
+// ============================================
+// CRYPTO & JWT HELPERS
+// ============================================
+
+/**
+ * Hash password using PBKDF2
+ */
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const passwordData = encoder.encode(password);
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    passwordData,
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      salt: salt,
+      iterations: 100000,
+      hash: 'SHA-256',
+    },
+    key,
+    256
+  );
+
+  const hashArray = new Uint8Array(derivedBits);
+  const combined = new Uint8Array(salt.length + hashArray.length);
+  combined.set(salt);
+  combined.set(hashArray, salt.length);
+
+  return btoa(String.fromCharCode(...combined));
+}
+
+/**
+ * Verify password against hash
+ */
+async function verifyPassword(password, storedHash) {
+  try {
+    const combined = Uint8Array.from(atob(storedHash), c => c.charCodeAt(0));
+    const salt = combined.slice(0, 16);
+    const storedHashBytes = combined.slice(16);
+
+    const encoder = new TextEncoder();
+    const passwordData = encoder.encode(password);
+
+    const key = await crypto.subtle.importKey(
+      'raw',
+      passwordData,
+      'PBKDF2',
+      false,
+      ['deriveBits']
+    );
+
+    const derivedBits = await crypto.subtle.deriveBits(
+      {
+        name: 'PBKDF2',
+        salt: salt,
+        iterations: 100000,
+        hash: 'SHA-256',
+      },
+      key,
+      256
+    );
+
+    const computedHash = new Uint8Array(derivedBits);
+
+    // Constant-time comparison
+    if (computedHash.length !== storedHashBytes.length) return false;
+    let result = 0;
+    for (let i = 0; i < computedHash.length; i++) {
+      result |= computedHash[i] ^ storedHashBytes[i];
+    }
+    return result === 0;
+  } catch (error) {
+    console.error('[VerifyPassword] Error:', error);
+    return false;
+  }
+}
+
+/**
+ * Format date to MySQL datetime format (YYYY-MM-DD HH:MM:SS)
+ */
+function formatMySQLDatetime(date) {
+  if (!date) return '';
+  const d = new Date(date);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+}
+
+/**
+ * Generate random token
+ */
+function generateToken() {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Generate JWT token
+ */
+async function generateJWT(payload, env) {
+  const header = {
+    alg: 'HS256',
+    typ: 'JWT',
+  };
+
+  const now = Math.floor(Date.now() / 1000);
+  const expiresIn = parseInt(env.JWT_EXPIRES_IN || '604800');
+
+  const jwtPayload = {
+    ...payload,
+    iat: now,
+    exp: now + expiresIn,
+  };
+
+  const encodedHeader = base64UrlEncode(JSON.stringify(header));
+  const encodedPayload = base64UrlEncode(JSON.stringify(jwtPayload));
+  const signatureInput = `${encodedHeader}.${encodedPayload}`;
+
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(env.JWT_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const signature = await crypto.subtle.sign(
+    'HMAC',
+    key,
+    encoder.encode(signatureInput)
+  );
+
+  const encodedSignature = base64UrlEncode(String.fromCharCode(...new Uint8Array(signature)));
+
+  return `${signatureInput}.${encodedSignature}`;
+}
+
+/**
+ * Verify JWT token
+ */
+async function verifyJWT(token, env) {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+
+    const [encodedHeader, encodedPayload, encodedSignature] = parts;
+    const signatureInput = `${encodedHeader}.${encodedPayload}`;
+
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(env.JWT_SECRET),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify']
+    );
+
+    const signatureBytes = Uint8Array.from(
+      base64UrlDecode(encodedSignature),
+      c => c.charCodeAt(0)
+    );
+
+    const valid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      signatureBytes,
+      encoder.encode(signatureInput)
+    );
+
+    if (!valid) return null;
+
+    const payload = JSON.parse(base64UrlDecode(encodedPayload));
+
+    // Check expiration
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+      return null;
+    }
+
+    return payload;
+  } catch (error) {
+    console.error('[VerifyJWT] Error:', error);
+    return null;
+  }
+}
+
+/**
+ * Base64 URL encode
+ */
+function base64UrlEncode(str) {
+  return btoa(str)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+}
+
+/**
+ * Base64 URL decode
+ */
+function base64UrlDecode(str) {
+  let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (base64.length % 4) {
+    base64 += '=';
+  }
+  return atob(base64);
+}
+
+// ============================================
+// EMAIL HELPERS
+// ============================================
+
+/**
+ * Send verification email
+ */
+async function sendVerificationEmail(email, token, locale, firstName, env) {
+  const verifyUrl = `${env.APP_URL_WEB}/verify-email?token=${token}`;
+
+  const templates = {
+    en: {
+      subject: 'Verify Your Email - Everyday Christian',
+      body: `
+        <h2>Welcome to Everyday Christian${firstName ? `, ${firstName}` : ''}!</h2>
+        <p>Please verify your email address by clicking the button below:</p>
+        <p><a href="${verifyUrl}" style="display: inline-block; padding: 12px 24px; background-color: #C9A227; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">Verify Email</a></p>
+        <p>Or copy and paste this link: ${verifyUrl}</p>
+        <p>This link expires in 24 hours.</p>
+        <p>If you didn't create an account, you can safely ignore this email.</p>
+        <p>Blessings,<br>The Everyday Christian Team</p>
+      `,
+    },
+    es: {
+      subject: 'Verifique su Correo - Cristiano Cada Día',
+      body: `
+        <h2>¡Bienvenido a Cristiano Cada Día${firstName ? `, ${firstName}` : ''}!</h2>
+        <p>Por favor verifique su correo electrónico haciendo clic en el botón a continuación:</p>
+        <p><a href="${verifyUrl}" style="display: inline-block; padding: 12px 24px; background-color: #C9A227; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">Verificar Correo</a></p>
+        <p>O copie y pegue este enlace: ${verifyUrl}</p>
+        <p>Este enlace expira en 24 horas.</p>
+        <p>Si no creó una cuenta, puede ignorar este correo.</p>
+        <p>Bendiciones,<br>El Equipo de Cristiano Cada Día</p>
+      `,
+    },
+  };
+
+  const template = templates[locale] || templates.en;
+  return sendEmail(email, template.subject, template.body, env);
+}
+
+/**
+ * Send password reset email
+ */
+async function sendPasswordResetEmail(email, token, locale, firstName, env) {
+  const resetUrl = `${env.APP_URL_WEB}/reset-password?token=${token}`;
+
+  const templates = {
+    en: {
+      subject: 'Reset Your Password - Everyday Christian',
+      body: `
+        <h2>Password Reset Request</h2>
+        <p>Hi${firstName ? ` ${firstName}` : ''},</p>
+        <p>We received a request to reset your password. Click the button below to create a new password:</p>
+        <p><a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #C9A227; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">Reset Password</a></p>
+        <p>Or copy and paste this link: ${resetUrl}</p>
+        <p>This link expires in 24 hours.</p>
+        <p>If you didn't request a password reset, you can safely ignore this email.</p>
+        <p>Blessings,<br>The Everyday Christian Team</p>
+      `,
+    },
+    es: {
+      subject: 'Restablecer Contraseña - Cristiano Cada Día',
+      body: `
+        <h2>Solicitud de Restablecimiento de Contraseña</h2>
+        <p>Hola${firstName ? ` ${firstName}` : ''},</p>
+        <p>Recibimos una solicitud para restablecer su contraseña. Haga clic en el botón a continuación para crear una nueva contraseña:</p>
+        <p><a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #C9A227; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">Restablecer Contraseña</a></p>
+        <p>O copie y pegue este enlace: ${resetUrl}</p>
+        <p>Este enlace expira en 24 horas.</p>
+        <p>Si no solicitó restablecer su contraseña, puede ignorar este correo.</p>
+        <p>Bendiciones,<br>El Equipo de Cristiano Cada Día</p>
+      `,
+    },
+  };
+
+  const template = templates[locale] || templates.en;
+  return sendEmail(email, template.subject, template.body, env);
+}
+
+/**
+ * Send email via EmailIt
+ */
+async function sendEmail(to, subject, htmlBody, env) {
+  try {
+    const response = await fetch('https://api.emailit.com/v1/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${env.EMAILIT_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'Everyday Christian <noreply@everydaychristian.app>',
+        to: [to],
+        subject: subject,
+        html: htmlBody,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('[SendEmail] EmailIt error:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('[SendEmail] Error:', error);
+    return false;
+  }
+}
+
+// ============================================
+// UTILITY HELPERS
+// ============================================
+
+/**
+ * Validate email format
+ */
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/**
+ * Remove sensitive fields from user object
+ */
+function sanitizeUser(user) {
+  const { password_hash, verification_token, verification_expires, reset_token, reset_expires, ...safeUser } = user;
+  return {
+    ...safeUser,
+    email_verified: Boolean(safeUser.email_verified),
+  };
+}
+
+/**
+ * JSON response helper
+ */
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'application/json',
+    },
+  });
+}

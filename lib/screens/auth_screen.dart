@@ -11,6 +11,7 @@ import '../core/navigation/app_routes.dart';
 import '../utils/responsive_utils.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../l10n/app_localizations.dart';
+import 'forgot_password_screen.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -125,7 +126,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   BlurFade(
                     delay: const Duration(milliseconds: 300),
                     isVisible: _showContent,
-                    child: const AuthForm(),
+                    child: AuthForm(
+                      onForgotPassword: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const ForgotPasswordScreen(),
+                          ),
+                        );
+                      },
+                    ),
                   ),
 
                   const SizedBox(height: AppSpacing.xl),

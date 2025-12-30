@@ -1,0 +1,24 @@
+# Auth Service Worker Configuration
+# Deploy with: wrangler deploy -c wrangler-auth.toml
+
+name = "auth-service"
+main = "src/auth-service.js"
+compatibility_date = "2024-01-01"
+
+# Environment variables
+[vars]
+NOCODEBACKEND_API_URL = "https://api.nocodebackend.com"
+NOCODEBACKEND_INSTANCE = "36905_activation_codes"
+# JWT expires in 7 days (in seconds)
+JWT_EXPIRES_IN = "604800"
+# Token expiry for reset/verification (24 hours in seconds)
+TOKEN_EXPIRES_IN = "86400"
+# App URLs for email links
+APP_URL_WEB = "https://everydaychristian.app"
+APP_URL_MOBILE = "everydaychristian://"
+
+# Secrets (set via: wrangler secret put SECRET_NAME -c wrangler-auth.toml)
+# Required secrets:
+# - NOCODEBACKEND_API_KEY: API key for NoCodeBackend
+# - JWT_SECRET: Secret for signing JWT tokens (generate with: openssl rand -hex 32)
+# - EMAILIT_API_KEY: API key for EmailIt email service

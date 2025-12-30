@@ -4,9 +4,15 @@ import '../services/auth_service.dart';
 import '../../../theme/app_theme.dart';
 import '../../../components/frosted_glass.dart';
 import '../../../components/glass_button.dart';
+import '../../../l10n/app_localizations.dart';
 
 class AuthForm extends ConsumerStatefulWidget {
-  const AuthForm({super.key});
+  final VoidCallback? onForgotPassword;
+
+  const AuthForm({
+    super.key,
+    this.onForgotPassword,
+  });
 
   @override
   ConsumerState<AuthForm> createState() => _AuthFormState();
@@ -60,34 +66,31 @@ class _AuthFormState extends ConsumerState<AuthForm> {
   }
 
   String? _validateEmail(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Please enter your email';
+      return l10n.pleaseEnterEmail;
     }
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return l10n.pleaseEnterValidEmail;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Please enter your password';
+      return l10n.pleaseEnterPassword;
     }
     if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    return null;
-  }
-
-  String? _validateName(String? value) {
-    if (_isSignUp && (value == null || value.trim().isEmpty)) {
-      return 'Please enter your name';
+      return l10n.passwordMinLength;
     }
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return FrostedGlass(
       child: Form(
         key: _formKey,
@@ -109,7 +112,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                       ),
                     ),
                     child: Text(
-                      'Sign In',
+                      l10n.signIn,
                       style: TextStyle(
                         color: !_isSignUp ? AppTheme.goldColor : Colors.white.withValues(alpha: 0.7),
                         fontWeight: !_isSignUp ? FontWeight.w600 : FontWeight.normal,
@@ -130,7 +133,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                       ),
                     ),
                     child: Text(
-                      'Sign Up',
+                      l10n.signUp,
                       style: TextStyle(
                         color: _isSignUp ? AppTheme.goldColor : Colors.white.withValues(alpha: 0.7),
                         fontWeight: _isSignUp ? FontWeight.w600 : FontWeight.normal,
@@ -143,12 +146,12 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
             const SizedBox(height: 24),
 
-            // Name field (only for sign up)
+            // Name field (only for sign up - OPTIONAL)
             if (_isSignUp) ...[
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'Full Name',
+                  labelText: l10n.firstNameOptional,
                   labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
                   prefixIcon: const Icon(Icons.person_outline, color: AppTheme.goldColor),
                   filled: true,
@@ -163,8 +166,8 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                   ),
                 ),
                 style: const TextStyle(color: Colors.white),
-                validator: _validateName,
                 textInputAction: TextInputAction.next,
+                textCapitalization: TextCapitalization.words,
               ),
               const SizedBox(height: 16),
             ],
@@ -173,7 +176,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
             TextFormField(
               controller: _emailController,
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: l10n.email,
                 labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
                 prefixIcon: const Icon(Icons.email_outlined, color: AppTheme.goldColor),
                 filled: true,
@@ -199,7 +202,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
             TextFormField(
               controller: _passwordController,
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: l10n.password,
                 labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
                 prefixIcon: const Icon(Icons.lock_outline, color: AppTheme.goldColor),
                 suffixIcon: IconButton(
@@ -229,11 +232,35 @@ class _AuthFormState extends ConsumerState<AuthForm> {
               onFieldSubmitted: (_) => _submitForm(),
             ),
 
+            // Forgot password link (only for sign in)
+            if (!_isSignUp) ...[
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: widget.onForgotPassword,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    l10n.forgotPassword,
+                    style: TextStyle(
+                      color: AppTheme.goldColor.withValues(alpha: 0.9),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+
             const SizedBox(height: 24),
 
             // Submit button
             GlassButton(
-              text: _isSignUp ? 'Create Account' : 'Sign In',
+              text: _isSignUp ? l10n.createAccount : l10n.signIn,
               onPressed: _submitForm,
               isLoading: _isLoading,
             ),
@@ -256,7 +283,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 16),
                                   child: Text(
-                                    'or',
+                                    l10n.or,
                                     style: TextStyle(
                                       color: Colors.white.withValues(alpha: 0.5),
                                       fontSize: 12,
@@ -276,9 +303,9 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                                 );
                               },
                               icon: const Icon(Icons.fingerprint, color: AppTheme.primaryColor),
-                              label: const Text(
-                                'Use Biometric',
-                                style: TextStyle(color: AppTheme.primaryColor),
+                              label: Text(
+                                l10n.useBiometric,
+                                style: const TextStyle(color: AppTheme.primaryColor),
                               ),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(color: AppTheme.primaryColor.withValues(alpha: 0.5)),
@@ -298,11 +325,11 @@ class _AuthFormState extends ConsumerState<AuthForm> {
               ),
             ],
 
-            // Additional options for sign up
+            // Additional info for sign up
             if (_isSignUp) ...[
               const SizedBox(height: 16),
               Text(
-                'By creating an account, you agree to keep your spiritual journey private and secure.',
+                l10n.signUpTermsNote,
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.6),
                   fontSize: 12,

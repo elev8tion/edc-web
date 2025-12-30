@@ -1,25 +1,67 @@
 import 'dart:convert';
-import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import '../models/user_model.dart';
+import 'auth_api_service.dart';
 import 'secure_storage_service.dart';
 import 'biometric_service.dart';
 import '../../../core/database/database_helper.dart';
+import '../../../core/services/preferences_service.dart';
 
+/// Auth Service with NoCodeBackend API integration
+/// Handles authentication state, token management, and user sessions
 class AuthService extends StateNotifier<AuthState> {
   final SecureStorageService _secureStorage;
   final BiometricService _biometric;
   final DatabaseHelper _database;
+  final AuthApiService _api;
+
+  // Current JWT token (in-memory for quick access)
+  String? _currentToken;
+
+  // Device ID for this device
+  String? _deviceId;
 
   AuthService(this._secureStorage, this._biometric, this._database)
-      : super(const AuthState.initial());
+      : _api = AuthApiService(),
+        super(const AuthState.initial());
 
-  /// Initialize auth service
+  /// Initialize auth service - check for existing session
   Future<void> initialize() async {
     state = const AuthState.loading();
 
     try {
-      // Check for existing user session
+      // Get or create device ID
+      _deviceId = await _getOrCreateDeviceId();
+
+      // Check for existing token
+      final token = await _secureStorage.getSessionToken();
+      if (token == null) {
+        state = const AuthState.unauthenticated();
+        return;
+      }
+
+      // Validate token with backend
+      final response = await _api.validateToken(token: token);
+      if (response.success && response.user != null) {
+        _currentToken = token;
+
+        // Load local user data and update with API response
+        final userData = await _secureStorage.getUserData();
+        final user = userData != null
+            ? User.fromJson(userData)
+            : _authUserToUser(response.user!);
+
+        state = AuthState.authenticated(user);
+      } else {
+        // Token invalid - clear and require re-auth
+        await _secureStorage.clearUserData();
+        state = const AuthState.unauthenticated();
+      }
+    } catch (e) {
+      debugPrint('Auth initialization error: $e');
+      // On network error, check for cached user data
       final userData = await _secureStorage.getUserData();
       if (userData != null) {
         final user = User.fromJson(userData);
@@ -27,12 +69,10 @@ class AuthService extends StateNotifier<AuthState> {
       } else {
         state = const AuthState.unauthenticated();
       }
-    } catch (e) {
-      state = AuthState.error('Failed to initialize auth: $e');
     }
   }
 
-  /// Sign up with email and password
+  /// Sign up with email and password (backend API)
   Future<bool> signUp({
     required String email,
     required String password,
@@ -54,41 +94,56 @@ class AuthService extends StateNotifier<AuthState> {
         return false;
       }
 
-      // Check if user already exists
-      final existingUser = await _secureStorage.getUserByEmail(email);
-      if (existingUser != null) {
-        state = const AuthState.error('An account with this email already exists');
+      // Get locale
+      final prefs = await PreferencesService.getInstance();
+      final locale = prefs.getLocale() ?? 'en';
+
+      // Call API
+      final response = await _api.signUp(
+        email: email,
+        password: password,
+        firstName: name,
+        locale: locale,
+        deviceId: _deviceId!,
+      );
+
+      if (!response.success) {
+        state = AuthState.error(response.error ?? 'Sign up failed');
         return false;
       }
 
-      // Create new user
+      // Store token
+      if (response.token != null) {
+        _currentToken = response.token;
+        await _secureStorage.storeSessionToken(response.token!);
+      }
+
+      // Create local user from API response
       final user = User(
-        id: _generateUserId(),
+        id: response.user?.id.toString() ?? _generateUserId(),
         email: email,
         name: name,
         denomination: denomination,
         preferredVerseThemes: preferredThemes ?? ['hope', 'strength', 'comfort'],
         dateJoined: DateTime.now(),
         profile: const UserProfile(),
+        isAnonymous: false,
       );
 
-      // Hash password and store securely
-      final hashedPassword = _hashPassword(password);
-      await _secureStorage.storeUserCredentials(email, hashedPassword);
+      // Store user data locally
       await _secureStorage.storeUserData(user.toJson());
-
-      // Update user settings in database
       await _updateUserSettings(user);
 
       state = AuthState.authenticated(user);
       return true;
     } catch (e) {
+      debugPrint('Sign up error: $e');
       state = AuthState.error('Sign up failed: $e');
       return false;
     }
   }
 
-  /// Sign in with email and password
+  /// Sign in with email and password (backend API)
   Future<bool> signIn({
     required String email,
     required String password,
@@ -101,36 +156,40 @@ class AuthService extends StateNotifier<AuthState> {
         return await _signInWithBiometric();
       }
 
-      // Validate credentials
-      final storedPassword = await _secureStorage.getStoredPassword(email);
-      if (storedPassword == null) {
-        state = const AuthState.error('No account found with this email');
+      // Call API
+      final response = await _api.signIn(
+        email: email,
+        password: password,
+        deviceId: _deviceId!,
+      );
+
+      if (!response.success) {
+        state = AuthState.error(response.error ?? 'Sign in failed');
         return false;
       }
 
-      final hashedPassword = _hashPassword(password);
-      if (storedPassword != hashedPassword) {
-        state = const AuthState.error('Incorrect password');
-        return false;
+      // Store token
+      if (response.token != null) {
+        _currentToken = response.token;
+        await _secureStorage.storeSessionToken(response.token!);
       }
 
-      // Load user data
-      final userData = await _secureStorage.getUserData();
-      if (userData == null) {
-        state = const AuthState.error('User data not found');
-        return false;
-      }
+      // Create/update local user
+      final user = _authUserToUser(response.user!);
+      await _secureStorage.storeUserData(user.toJson());
+      await _secureStorage.setLastLogin();
+      await _updateUserSettings(user);
 
-      final user = User.fromJson(userData);
       state = AuthState.authenticated(user);
       return true;
     } catch (e) {
+      debugPrint('Sign in error: $e');
       state = AuthState.error('Sign in failed: $e');
       return false;
     }
   }
 
-  /// Sign in with biometric authentication
+  /// Sign in with biometric authentication (uses cached credentials)
   Future<bool> _signInWithBiometric() async {
     try {
       final canUseBiometric = await _biometric.canCheckBiometrics();
@@ -145,35 +204,32 @@ class AuthService extends StateNotifier<AuthState> {
         return false;
       }
 
-      // Load user data after successful biometric auth
+      // Load cached user data after successful biometric auth
       final userData = await _secureStorage.getUserData();
       if (userData == null) {
-        state = const AuthState.error('User data not found');
+        state = const AuthState.error('No saved session found');
         return false;
       }
 
+      // Validate token is still valid
+      final token = await _secureStorage.getSessionToken();
+      if (token != null) {
+        final response = await _api.validateToken(token: token);
+        if (!response.success) {
+          state = const AuthState.error('Session expired. Please sign in again.');
+          return false;
+        }
+        _currentToken = token;
+      }
+
       final user = User.fromJson(userData);
+      await _secureStorage.setLastLogin();
       state = AuthState.authenticated(user);
       return true;
     } catch (e) {
+      debugPrint('Biometric sign in error: $e');
       state = AuthState.error('Biometric sign in failed: $e');
       return false;
-    }
-  }
-
-  /// Continue as guest (anonymous user)
-  Future<void> continueAsGuest() async {
-    state = const AuthState.loading();
-
-    try {
-      final user = User.anonymous();
-
-      // Store anonymous user data temporarily
-      await _secureStorage.storeUserData(user.toJson());
-
-      state = AuthState.authenticated(user);
-    } catch (e) {
-      state = AuthState.error('Failed to continue as guest: $e');
     }
   }
 
@@ -182,27 +238,113 @@ class AuthService extends StateNotifier<AuthState> {
     state = const AuthState.loading();
 
     try {
-      // Clear secure storage
+      // Call API to invalidate token
+      if (_currentToken != null) {
+        await _api.signOut(token: _currentToken!);
+      }
+
+      // Clear local session
+      _currentToken = null;
       await _secureStorage.clearUserData();
 
       state = const AuthState.unauthenticated();
     } catch (e) {
-      state = AuthState.error('Sign out failed: $e');
+      debugPrint('Sign out error: $e');
+      // Even on error, clear local session
+      _currentToken = null;
+      await _secureStorage.clearUserData();
+      state = const AuthState.unauthenticated();
+    }
+  }
+
+  /// Request password reset email
+  Future<bool> forgotPassword({required String email}) async {
+    try {
+      final prefs = await PreferencesService.getInstance();
+      final locale = prefs.getLocale() ?? 'en';
+
+      final response = await _api.forgotPassword(
+        email: email,
+        locale: locale,
+      );
+
+      return response.success;
+    } catch (e) {
+      debugPrint('Forgot password error: $e');
+      return false;
+    }
+  }
+
+  /// Reset password with token
+  Future<bool> resetPassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    try {
+      if (newPassword.length < 6) {
+        return false;
+      }
+
+      final response = await _api.resetPassword(
+        token: token,
+        newPassword: newPassword,
+      );
+
+      return response.success;
+    } catch (e) {
+      debugPrint('Reset password error: $e');
+      return false;
+    }
+  }
+
+  /// Verify email with token
+  Future<bool> verifyEmail({required String token}) async {
+    try {
+      final response = await _api.verifyEmail(token: token);
+      return response.success;
+    } catch (e) {
+      debugPrint('Verify email error: $e');
+      return false;
+    }
+  }
+
+  /// Resend verification email
+  Future<bool> resendVerification({required String email}) async {
+    try {
+      final prefs = await PreferencesService.getInstance();
+      final locale = prefs.getLocale() ?? 'en';
+
+      final response = await _api.resendVerification(
+        email: email,
+        locale: locale,
+      );
+
+      return response.success;
+    } catch (e) {
+      debugPrint('Resend verification error: $e');
+      return false;
     }
   }
 
   /// Update user profile
   Future<bool> updateUserProfile(User updatedUser) async {
     try {
-      // Store updated user data
+      // Update locally first
       await _secureStorage.storeUserData(updatedUser.toJson());
-
-      // Update settings in database
       await _updateUserSettings(updatedUser);
+
+      // Update on backend if we have a token
+      if (_currentToken != null) {
+        await _api.updateProfile(
+          token: _currentToken!,
+          firstName: updatedUser.name,
+        );
+      }
 
       state = AuthState.authenticated(updatedUser);
       return true;
     } catch (e) {
+      debugPrint('Update profile error: $e');
       state = AuthState.error('Failed to update profile: $e');
       return false;
     }
@@ -224,6 +366,7 @@ class AuthService extends StateNotifier<AuthState> {
       }
       return false;
     } catch (e) {
+      debugPrint('Enable biometric error: $e');
       state = AuthState.error('Failed to enable biometric: $e');
       return false;
     }
@@ -234,6 +377,7 @@ class AuthService extends StateNotifier<AuthState> {
     try {
       await _database.setSetting('biometric_enabled', false);
     } catch (e) {
+      debugPrint('Disable biometric error: $e');
       state = AuthState.error('Failed to disable biometric: $e');
     }
   }
@@ -248,55 +392,33 @@ class AuthService extends StateNotifier<AuthState> {
   }
 
   /// Delete user account
-  Future<bool> deleteAccount() async {
+  Future<bool> deleteAccount({required String password}) async {
     state = const AuthState.loading();
 
     try {
-      // Clear all user data
-      await _secureStorage.clearAllData();
+      // Call API to delete account
+      if (_currentToken != null) {
+        final response = await _api.deleteAccount(
+          token: _currentToken!,
+          password: password,
+        );
 
-      // Clear database (keep structure, remove personal data)
-      await _database.deleteOldChatMessages(0); // Delete all chat messages
+        if (!response.success) {
+          state = AuthState.error(response.error ?? 'Failed to delete account');
+          return false;
+        }
+      }
+
+      // Clear all local data
+      _currentToken = null;
+      await _secureStorage.clearAllData();
+      await _database.deleteOldChatMessages(0);
 
       state = const AuthState.unauthenticated();
       return true;
     } catch (e) {
+      debugPrint('Delete account error: $e');
       state = AuthState.error('Failed to delete account: $e');
-      return false;
-    }
-  }
-
-  /// Reset password (for local auth, this means creating a new password)
-  Future<bool> resetPassword({
-    required String email,
-    required String newPassword,
-  }) async {
-    try {
-      if (newPassword.length < 6) {
-        state = const AuthState.error('Password must be at least 6 characters');
-        return false;
-      }
-
-      // Check if user exists
-      final userData = await _secureStorage.getUserData();
-      if (userData == null) {
-        state = const AuthState.error('User not found');
-        return false;
-      }
-
-      final user = User.fromJson(userData);
-      if (user.email != email) {
-        state = const AuthState.error('Email does not match current user');
-        return false;
-      }
-
-      // Update password
-      final hashedPassword = _hashPassword(newPassword);
-      await _secureStorage.storeUserCredentials(email, hashedPassword);
-
-      return true;
-    } catch (e) {
-      state = AuthState.error('Failed to reset password: $e');
       return false;
     }
   }
@@ -307,28 +429,49 @@ class AuthService extends StateNotifier<AuthState> {
       await _database.setSetting('preferred_translation', user.preferredTranslation);
       await _database.setSetting('preferred_verse_themes', jsonEncode(user.preferredVerseThemes));
 
-      if (!user.isAnonymous) {
-        await _database.setSetting('user_name', user.name ?? '');
-        await _database.setSetting('user_email', user.email ?? '');
-        await _database.setSetting('user_denomination', user.denomination ?? '');
+      if (user.name != null) {
+        await _database.setSetting('user_name', user.name!);
+      }
+      if (user.email != null) {
+        await _database.setSetting('user_email', user.email!);
+      }
+      if (user.denomination != null) {
+        await _database.setSetting('user_denomination', user.denomination!);
       }
     } catch (e) {
-      // Log error but don't fail auth
+      debugPrint('Update user settings error: $e');
     }
   }
 
-  /// Generate unique user ID
-  String _generateUserId() {
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final random = timestamp.toString() + DateTime.now().microsecond.toString();
-    return sha256.convert(utf8.encode(random)).toString().substring(0, 16);
+  /// Convert AuthUser to User model
+  User _authUserToUser(AuthUser authUser) {
+    return User(
+      id: authUser.id.toString(),
+      email: authUser.email,
+      name: authUser.firstName,
+      dateJoined: authUser.createdAt,
+      isAnonymous: false,
+      preferredVerseThemes: ['hope', 'strength', 'comfort'],
+      profile: const UserProfile(),
+    );
   }
 
-  /// Hash password with salt
-  String _hashPassword(String password) {
-    const salt = 'everyday_christian_salt_2024'; // In production, use random salt per user
-    final bytes = utf8.encode(password + salt);
-    return sha256.convert(bytes).toString();
+  /// Generate unique user ID (fallback)
+  String _generateUserId() {
+    return const Uuid().v4().substring(0, 16);
+  }
+
+  /// Get or create device ID
+  Future<String> _getOrCreateDeviceId() async {
+    final prefs = await PreferencesService.getInstance();
+    var deviceId = prefs.getDeviceId();
+
+    if (deviceId == null) {
+      deviceId = const Uuid().v4();
+      await prefs.setDeviceId(deviceId);
+    }
+
+    return deviceId;
   }
 
   /// Validate email format
@@ -344,6 +487,12 @@ class AuthService extends StateNotifier<AuthState> {
     );
   }
 
+  /// Get current JWT token
+  String? get token => _currentToken;
+
+  /// Get device ID
+  String? get deviceId => _deviceId;
+
   /// Check if user is authenticated
   bool get isAuthenticated {
     return state.maybeWhen(
@@ -352,10 +501,8 @@ class AuthService extends StateNotifier<AuthState> {
     );
   }
 
-  /// Check if user is anonymous
-  bool get isAnonymous {
-    return currentUser?.isAnonymous ?? false;
-  }
+  /// Check if user is anonymous (always false now - no guest mode)
+  bool get isAnonymous => false;
 }
 
 /// Auth state management

@@ -3,6 +3,7 @@ class AppRoutes {
   static const String legalAgreements = '/legal-agreements';
   static const String onboarding = '/onboarding';
   static const String auth = '/auth';
+  static const String verifyEmail = '/verify-email';
   static const String home = '/home';
   static const String chat = '/chat';
   static const String settings = '/settings';
@@ -33,6 +34,7 @@ class AppRoutes {
     legalAgreements,
     onboarding,
     auth,
+    verifyEmail,
     checkoutComplete,
   ];
 
