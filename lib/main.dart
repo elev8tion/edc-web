@@ -86,6 +86,11 @@ Future<void> main() async {
     // Initialize app update service to detect service worker updates
     await AppUpdateService.instance.initialize();
 
+    // Sync subscription status with Stripe on app start
+    // This ensures local state matches Stripe (handles cancellations, renewals, etc.)
+    // Run async to not block app startup
+    subscriptionService.syncWithStripe();
+
     // Note: Install prompt handling moved to PWAInstallWrapper
     // which shows a dialog when ?install=true is in the URL
   }

@@ -151,6 +151,8 @@ Future<bool> startSubscription({
         customerId: customerId ?? status['customerId'],
         subscriptionId: status['subscriptionId'],
         trialEnd: eligibleForTrial ? status['trialEnd'] : null,
+        currentPeriodEnd: status['currentPeriodEnd'],
+        isYearly: isYearly,
       );
 
       if (context.mounted) {
@@ -563,6 +565,8 @@ Future<void> _saveSubscription({
   required String? customerId,
   required String? subscriptionId,
   int? trialEnd,
+  int? currentPeriodEnd,
+  bool isYearly = true,
 }) async {
   if (customerId == null || subscriptionId == null) return;
 
@@ -572,12 +576,22 @@ Future<void> _saveSubscription({
   await prefs.setString(_keySubscriptionId, subscriptionId);
   if (trialEnd != null) {
     await prefs.setInt(_keyTrialEnd, trialEnd);
-    await prefs.setBool('trial_blocked', true);
   }
 
   _customerId = customerId;
   _subscriptionId = subscriptionId;
   _trialEnd = trialEnd;
 
-  debugPrint('[StripeService] Subscription saved (customerId: $customerId)');
+  // CRITICAL: Activate premium in SubscriptionService
+  // This ensures isPremium returns true and user has access
+  final subscriptionService = SubscriptionService.instance;
+  await subscriptionService.activateFromStripe(
+    subscriptionId: subscriptionId,
+    customerId: customerId,
+    trialEnd: trialEnd,
+    currentPeriodEnd: currentPeriodEnd,
+    isYearly: isYearly,
+  );
+
+  debugPrint('[StripeService] Subscription saved and premium activated (customerId: $customerId)');
 }

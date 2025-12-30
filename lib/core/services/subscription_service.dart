@@ -607,6 +607,174 @@ class SubscriptionService {
   }
 
   // ============================================================================
+  // STRIPE INTEGRATION - Sync with Stripe subscription status
+  // ============================================================================
+
+  /// Activate premium from Stripe checkout completion
+  /// Called after successful Stripe checkout to sync local state
+  Future<void> activateFromStripe({
+    required String subscriptionId,
+    required String customerId,
+    int? trialEnd,
+    int? currentPeriodEnd,
+    bool isYearly = true,
+  }) async {
+    debugPrint('📊 [SubscriptionService] Activating premium from Stripe checkout');
+
+    // Set premium active
+    await _prefs?.setBool(_keyPremiumActive, true);
+
+    // Set expiry date from Stripe's current_period_end
+    if (currentPeriodEnd != null) {
+      final expiryDate = DateTime.fromMillisecondsSinceEpoch(currentPeriodEnd * 1000);
+      await _prefs?.setString(_keyPremiumExpiryDate, expiryDate.toIso8601String());
+    }
+
+    // Set product ID
+    await _prefs?.setString(_keyPurchasedProductId,
+        isYearly ? premiumYearlyProductId : premiumMonthlyProductId);
+
+    // Store Stripe IDs
+    await _prefs?.setString('stripe_subscription_id', subscriptionId);
+    await _prefs?.setString('stripe_customer_id', customerId);
+
+    // Set auto-renew to true
+    await _prefs?.setBool(_keyAutoRenewStatus, true);
+
+    // Reset message counter
+    await _prefs?.setInt(_keyPremiumMessagesUsed, 0);
+    await _prefs?.setString(_keyPremiumLastResetDate,
+        DateTime.now().toIso8601String().substring(0, 7));
+
+    // If trial, mark as used (prevents trial abuse)
+    if (trialEnd != null) {
+      await markTrialAsUsed();
+      await _prefs?.setBool('trial_blocked', true);
+    }
+
+    debugPrint('✅ [SubscriptionService] Premium activated from Stripe (subscriptionId: $subscriptionId)');
+  }
+
+  /// Sync subscription status with Stripe
+  /// Call this on app start and periodically to ensure local state matches Stripe
+  Future<void> syncWithStripe() async {
+    try {
+      final subscriptionId = _prefs?.getString('stripe_subscription_id');
+      final customerId = _prefs?.getString('stripe_customer_id');
+
+      if (subscriptionId == null && customerId == null) {
+        debugPrint('📊 [SubscriptionService] No Stripe subscription to sync');
+        return;
+      }
+
+      debugPrint('📊 [SubscriptionService] Syncing with Stripe...');
+
+      // Import and call stripe service to get current status
+      final status = await _fetchStripeSubscriptionStatus(
+        subscriptionId: subscriptionId,
+        customerId: customerId,
+      );
+
+      if (status == null) {
+        debugPrint('📊 [SubscriptionService] Could not fetch Stripe status');
+        return;
+      }
+
+      final found = status['found'] as bool? ?? false;
+
+      if (!found) {
+        // No active subscription found in Stripe - deactivate locally
+        debugPrint('📊 [SubscriptionService] No active subscription in Stripe - deactivating');
+        await deactivatePremium();
+        return;
+      }
+
+      final stripeStatus = status['status'] as String?;
+      final cancelAtPeriodEnd = status['cancelAtPeriodEnd'] as bool? ?? false;
+      final currentPeriodEnd = status['currentPeriodEnd'] as int?;
+      final trialEnd = status['trialEnd'] as int?;
+
+      debugPrint('📊 [SubscriptionService] Stripe status: $stripeStatus, cancelAtPeriodEnd: $cancelAtPeriodEnd');
+
+      // Handle different Stripe statuses
+      if (stripeStatus == 'active' || stripeStatus == 'trialing') {
+        // Subscription is active - ensure premium is enabled
+        if (!isPremium) {
+          await _prefs?.setBool(_keyPremiumActive, true);
+        }
+
+        // Update expiry date
+        if (currentPeriodEnd != null) {
+          final expiryDate = DateTime.fromMillisecondsSinceEpoch(currentPeriodEnd * 1000);
+          await _prefs?.setString(_keyPremiumExpiryDate, expiryDate.toIso8601String());
+        }
+
+        // Update auto-renew status
+        await _prefs?.setBool(_keyAutoRenewStatus, !cancelAtPeriodEnd);
+
+        // If in trial, update trial end
+        if (stripeStatus == 'trialing' && trialEnd != null) {
+          await _prefs?.setInt('stripe_trial_end', trialEnd);
+        }
+
+        debugPrint('✅ [SubscriptionService] Synced - subscription active');
+      } else if (stripeStatus == 'canceled' || stripeStatus == 'unpaid' || stripeStatus == 'incomplete_expired') {
+        // Subscription is cancelled/failed - deactivate
+        debugPrint('📊 [SubscriptionService] Subscription $stripeStatus - deactivating');
+        await deactivatePremium();
+      } else if (stripeStatus == 'past_due') {
+        // Payment failed but still in grace period - keep active but mark
+        debugPrint('⚠️ [SubscriptionService] Subscription past_due - keeping active');
+        await _prefs?.setBool(_keyAutoRenewStatus, false);
+      }
+    } catch (e) {
+      debugPrint('📊 [SubscriptionService] Error syncing with Stripe: $e');
+      // Don't deactivate on error - fail open to avoid blocking paying users
+    }
+  }
+
+  /// Deactivate premium subscription
+  /// Called when subscription is cancelled or expired in Stripe
+  Future<void> deactivatePremium() async {
+    debugPrint('📊 [SubscriptionService] Deactivating premium');
+
+    await _prefs?.setBool(_keyPremiumActive, false);
+    await _prefs?.setBool(_keyAutoRenewStatus, false);
+
+    // Keep Stripe IDs for potential reactivation
+    // Keep trial_blocked to prevent trial abuse
+
+    debugPrint('📊 [SubscriptionService] Premium deactivated');
+  }
+
+  /// Fetch subscription status from Stripe via Cloudflare Worker
+  Future<Map<String, dynamic>?> _fetchStripeSubscriptionStatus({
+    String? subscriptionId,
+    String? customerId,
+  }) async {
+    try {
+      const workerUrl = 'https://edc-stripe-subscription.connect-2a2.workers.dev';
+
+      final response = await http.post(
+        Uri.parse('$workerUrl/get-subscription'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'subscriptionId': subscriptionId,
+          'customerId': customerId,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      debugPrint('📊 [SubscriptionService] Error fetching Stripe status: $e');
+      return null;
+    }
+  }
+
+  // ============================================================================
   // DEBUG / TESTING
   // ============================================================================
 
