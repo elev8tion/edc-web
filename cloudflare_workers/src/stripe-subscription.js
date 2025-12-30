@@ -11,8 +11,9 @@ const CORS_HEADERS = {
 };
 
 // Price IDs from Stripe Dashboard (LIVE MODE)
-const YEARLY_PRICE_ID = 'price_1SiF64IFwav1xmJDtExdlpSZ';  // $35.99/year
-const MONTHLY_PRICE_ID = 'price_1SiF64IFwav1xmJD04g0Vto2'; // $5.99/month
+const YEARLY_TRIAL_PRICE_ID = 'price_1SiF65IFwav1xmJDUpzR9qJD';  // $35.99/year WITH 3-day trial
+const YEARLY_PRICE_ID = 'price_1SiF64IFwav1xmJDtExdlpSZ';         // $35.99/year NO trial
+const MONTHLY_PRICE_ID = 'price_1SiF64IFwav1xmJD04g0Vto2';        // $5.99/month NO trial
 
 export default {
   async fetch(request, env) {
@@ -170,7 +171,18 @@ async function createSubscription(request, env) {
     }),
   });
 
-  const priceId = isYearly ? YEARLY_PRICE_ID : MONTHLY_PRICE_ID;
+  // Select price based on plan and trial eligibility
+  // Trial is ONLY available on yearly plan (built into the price itself)
+  let priceId;
+  const isTrial = isYearly && trialDays > 0;
+
+  if (isTrial) {
+    priceId = YEARLY_TRIAL_PRICE_ID;  // $35.99/year with 3-day trial built-in
+  } else if (isYearly) {
+    priceId = YEARLY_PRICE_ID;         // $35.99/year, charges immediately
+  } else {
+    priceId = MONTHLY_PRICE_ID;        // $5.99/month, charges immediately
+  }
 
   // Build subscription params
   const params = new URLSearchParams({
@@ -179,7 +191,7 @@ async function createSubscription(request, env) {
     default_payment_method: paymentMethodId,
     // Track device and trial info in metadata
     'metadata[device_id]': deviceId || '',
-    'metadata[is_trial]': trialDays > 0 ? 'true' : 'false',
+    'metadata[is_trial]': isTrial ? 'true' : 'false',
     'metadata[plan_type]': isYearly ? 'yearly' : 'monthly',
     'metadata[created_at]': new Date().toISOString(),
     'metadata[source]': 'edc_pwa',
@@ -188,10 +200,7 @@ async function createSubscription(request, env) {
     'expand[]': 'latest_invoice.payment_intent',
   });
 
-  // Only add trial if trialDays > 0
-  if (trialDays > 0) {
-    params.append('trial_period_days', trialDays.toString());
-  }
+  // Note: Trial is built into YEARLY_TRIAL_PRICE_ID - no need for trial_period_days
 
   // Create subscription
   const response = await fetch('https://api.stripe.com/v1/subscriptions', {
@@ -389,7 +398,19 @@ async function createEmbeddedCheckout(request, env) {
     console.log(`Created new Stripe customer: ${customer}`);
   }
 
-  const priceId = isYearly ? YEARLY_PRICE_ID : MONTHLY_PRICE_ID;
+  // Select price based on plan and trial eligibility
+  // Trial is ONLY available on yearly plan (built into the price itself)
+  let priceId;
+  let isTrial = false;
+
+  if (isYearly && withTrial) {
+    priceId = YEARLY_TRIAL_PRICE_ID;  // $35.99/year with 3-day trial built-in
+    isTrial = true;
+  } else if (isYearly) {
+    priceId = YEARLY_PRICE_ID;         // $35.99/year, charges immediately
+  } else {
+    priceId = MONTHLY_PRICE_ID;        // $5.99/month, charges immediately (no trial)
+  }
 
   // Build checkout session params for embedded mode
   const params = new URLSearchParams({
@@ -403,20 +424,17 @@ async function createEmbeddedCheckout(request, env) {
     'metadata[user_id]': userId || '',
     'metadata[device_id]': deviceId || '',
     'metadata[plan_type]': isYearly ? 'yearly' : 'monthly',
-    'metadata[is_trial]': withTrial ? 'true' : 'false',
+    'metadata[is_trial]': isTrial ? 'true' : 'false',
     'metadata[source]': 'edc_pwa_web',
     // Subscription data
     'subscription_data[metadata][user_id]': userId || '',
     'subscription_data[metadata][device_id]': deviceId || '',
     'subscription_data[metadata][plan_type]': isYearly ? 'yearly' : 'monthly',
+    'subscription_data[metadata][is_trial]': isTrial ? 'true' : 'false',
     'subscription_data[metadata][source]': 'edc_pwa_web',
   });
 
-  // Add trial if eligible
-  if (withTrial) {
-    params.append('subscription_data[trial_period_days]', '3');
-    params.append('subscription_data[metadata][is_trial]', 'true');
-  }
+  // Note: Trial is built into YEARLY_TRIAL_PRICE_ID - no need for trial_period_days
 
   // Create checkout session
   const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {

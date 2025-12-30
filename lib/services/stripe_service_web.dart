@@ -262,7 +262,7 @@ class _StripeEmbeddedCheckoutDialogState extends State<StripeEmbeddedCheckoutDia
 
   @override
   Widget build(BuildContext context) {
-    final priceText = widget.isYearly ? r'$49.99/year' : r'$6.99/month';
+    final priceText = widget.isYearly ? r'$35.99/year' : r'$5.99/month';
     final title = widget.isTrial ? 'Start Free Trial' : 'Subscribe Now';
     final subtitle = widget.isTrial
         ? "Add payment method. You won't be charged until trial ends."
