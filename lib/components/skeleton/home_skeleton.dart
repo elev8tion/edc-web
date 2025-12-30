@@ -15,30 +15,29 @@ class HomeScreenSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: AppSkeletonTheme.wrap(
-        enabled: true,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(
-            top: AppSpacing.xl,
-            bottom: AppSpacing.xxxl,
-          ),
-          physics: const NeverScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 56 + AppSpacing.lg + 32),
-              _buildStatsRowSkeleton(context),
-              const SizedBox(height: AppSpacing.xxl),
-              _buildMainFeaturesSkeleton(context),
-              const SizedBox(height: AppSpacing.xxl),
-              _buildQuickActionsSkeleton(context),
-              const SizedBox(height: AppSpacing.xxl),
-              _buildDailyVerseSkeleton(context),
-              const SizedBox(height: AppSpacing.xxl),
-              _buildStartChatButtonSkeleton(),
-            ],
-          ),
+    // Note: SafeArea is provided by parent screen - don't duplicate
+    return AppSkeletonTheme.wrap(
+      enabled: true,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(
+          top: AppSpacing.xl,
+          bottom: AppSpacing.xxxl,
+        ),
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 56 + AppSpacing.lg + 32),
+            _buildStatsRowSkeleton(context),
+            const SizedBox(height: AppSpacing.xxl),
+            _buildMainFeaturesSkeleton(context),
+            const SizedBox(height: AppSpacing.xxl),
+            _buildQuickActionsSkeleton(context),
+            const SizedBox(height: AppSpacing.xxl),
+            _buildDailyVerseSkeleton(context),
+            const SizedBox(height: AppSpacing.xxl),
+            _buildStartChatButtonSkeleton(),
+          ],
         ),
       ),
     );

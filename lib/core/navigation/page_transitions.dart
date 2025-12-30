@@ -1,4 +1,91 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+/// Dark page route that prevents white screen during iOS swipe-back gestures
+/// Uses a dark barrier color instead of the default white
+class DarkPageRoute<T> extends PageRoute<T> {
+  DarkPageRoute({
+    required this.builder,
+    this.maintainState = true,
+    super.settings,
+    this.fullscreenDialog = false,
+  });
+
+  final WidgetBuilder builder;
+
+  @override
+  final bool maintainState;
+
+  @override
+  final bool fullscreenDialog;
+
+  @override
+  Color? get barrierColor => const Color(0xFF121212); // Dark background
+
+  @override
+  String? get barrierLabel => null;
+
+  @override
+  bool get opaque => true;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 300);
+
+  @override
+  Duration get reverseTransitionDuration => const Duration(milliseconds: 300);
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    return builder(context);
+  }
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    // Use platform-specific transitions
+    final platform = Theme.of(context).platform;
+    if (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS) {
+      return CupertinoPageTransition(
+        primaryRouteAnimation: animation,
+        secondaryRouteAnimation: secondaryAnimation,
+        linearTransition: false,
+        child: child,
+      );
+    }
+    // Android/other: fade + slide
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(1.0, 0.0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+      )),
+      child: FadeTransition(
+        opacity: animation,
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
+    return nextRoute is DarkPageRoute || nextRoute is MaterialPageRoute || nextRoute is CupertinoPageRoute;
+  }
+
+  @override
+  bool canTransitionFrom(TransitionRoute<dynamic> previousRoute) {
+    return previousRoute is DarkPageRoute || previousRoute is MaterialPageRoute || previousRoute is CupertinoPageRoute;
+  }
+}
 
 /// Custom page transitions for the app
 ///

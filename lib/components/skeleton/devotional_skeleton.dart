@@ -13,10 +13,10 @@ class DevotionalScreenSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: AppSkeletonTheme.wrap(
-        enabled: true,
-        child: SingleChildScrollView(
+    // Note: SafeArea is provided by parent screen - don't duplicate
+    return AppSkeletonTheme.wrap(
+      enabled: true,
+      child: SingleChildScrollView(
           padding: const EdgeInsets.only(
             top: AppSpacing.xl,
             left: AppSpacing.xl,
@@ -49,8 +49,7 @@ class DevotionalScreenSkeleton extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildHeaderSkeleton(BuildContext context) {

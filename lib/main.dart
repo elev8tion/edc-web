@@ -4,6 +4,7 @@ import 'package:everyday_christian/components/pwa_install_wrapper.dart';
 import 'package:everyday_christian/core/config/env_validator.dart';
 import 'package:everyday_christian/core/navigation/app_routes.dart';
 import 'package:everyday_christian/core/navigation/navigation_service.dart';
+import 'package:everyday_christian/core/navigation/page_transitions.dart';
 import 'package:everyday_christian/core/providers/app_providers.dart';
 import 'package:everyday_christian/core/services/app_update_service.dart';
 import 'package:everyday_christian/core/services/subscription_service.dart';
@@ -161,7 +162,8 @@ class MyApp extends ConsumerWidget {
       onGenerateRoute: (settings) {
         // Handle root route with platform-specific wrapping
         if (settings.name == '/' || settings.name == '') {
-          return MaterialPageRoute(
+          return DarkPageRoute(
+            settings: settings,
             builder: (_) => kIsWeb
                 ? const SplashScreen()
                 : UpgradeAlert(
@@ -175,39 +177,41 @@ class MyApp extends ConsumerWidget {
         }
         switch (settings.name) {
           case AppRoutes.splash:
-            return MaterialPageRoute(builder: (_) => const SplashScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const SplashScreen());
           case AppRoutes.auth:
-            return MaterialPageRoute(builder: (_) => const AuthScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const AuthScreen());
           case AppRoutes.verifyEmail:
             final args = settings.arguments as Map<String, dynamic>?;
-            return MaterialPageRoute(
+            return DarkPageRoute(
+              settings: settings,
               builder: (_) => VerifyEmailScreen(
                 email: args?['email'] ?? '',
               ),
             );
           case AppRoutes.onboarding:
-            return MaterialPageRoute(builder: (_) => const UnifiedInteractiveOnboardingScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const UnifiedInteractiveOnboardingScreen());
           case AppRoutes.home:
-            return MaterialPageRoute(builder: (_) => const HomeScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const HomeScreen());
           case AppRoutes.chat:
-            return MaterialPageRoute(builder: (_) => const ChatScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const ChatScreen());
           case AppRoutes.settings:
-            return MaterialPageRoute(builder: (_) => const SettingsScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const SettingsScreen());
           case AppRoutes.prayerJournal:
-            return MaterialPageRoute(builder: (_) => const PrayerJournalScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const PrayerJournalScreen());
           case AppRoutes.profile:
-            return MaterialPageRoute(builder: (_) => const ProfileScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const ProfileScreen());
           case AppRoutes.devotional:
-            return MaterialPageRoute(builder: (_) => const DevotionalScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const DevotionalScreen());
           case AppRoutes.readingPlan:
-            return MaterialPageRoute(builder: (_) => const ReadingPlanScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const ReadingPlanScreen());
           case AppRoutes.bibleBrowser:
-            return MaterialPageRoute(builder: (_) => const BibleBrowserScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const BibleBrowserScreen());
           case AppRoutes.verseLibrary:
-            return MaterialPageRoute(builder: (_) => const VerseLibraryScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const VerseLibraryScreen());
           case AppRoutes.chapterReading:
             final args = settings.arguments as Map<String, dynamic>?;
-            return MaterialPageRoute(
+            return DarkPageRoute(
+              settings: settings,
               builder: (_) => ChapterReadingScreen(
                 book: args?['book'] ?? '',
                 startChapter: args?['startChapter'] ?? 1,
@@ -216,14 +220,14 @@ class MyApp extends ConsumerWidget {
               ),
             );
           case AppRoutes.checkoutComplete:
-            return MaterialPageRoute(builder: (_) => const CheckoutCompleteScreen());
+            return DarkPageRoute(settings: settings, builder: (_) => const CheckoutCompleteScreen());
           default:
             return null;
         }
       },
       // Handle unknown routes by redirecting to splash (prevents PWA crash on unknown URLs)
       onUnknownRoute: (settings) {
-        return MaterialPageRoute(builder: (_) => const SplashScreen());
+        return DarkPageRoute(settings: settings, builder: (_) => const SplashScreen());
       },
     );
   }
