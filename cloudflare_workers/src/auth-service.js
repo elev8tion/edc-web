@@ -4,7 +4,7 @@
  * Endpoints:
  * - POST /signup - Register new user
  * - POST /login - Authenticate user
- * - POST /logout - Invalidate token (stateless - client handles)
+ * - POST /logout - Invalidate token (blacklists token)
  * - POST /forgot-password - Send password reset email
  * - POST /reset-password - Reset password with token
  * - POST /verify-email - Verify email with token
@@ -13,21 +13,221 @@
  * - POST /refresh-token - Refresh JWT token
  * - PATCH /profile - Update user profile
  * - DELETE /account - Delete user account
+ *
+ * Security Features:
+ * - Rate limiting (IP-based for login/signup, email-based for forgot-password)
+ * - Token blacklisting for logout
+ * - Dynamic CORS origin validation
  */
 
-// CORS headers for PWA/mobile access
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+// ============================================
+// SECURITY: Rate Limiting (In-Memory)
+// ============================================
+
+// Rate limit stores: Map<key, { count: number, resetTime: number }>
+const loginRateLimits = new Map();
+const signupRateLimits = new Map();
+const forgotPasswordRateLimits = new Map();
+
+// Rate limit configuration
+const RATE_LIMITS = {
+  login: { maxAttempts: 5, windowMs: 15 * 60 * 1000 }, // 5 attempts per 15 minutes
+  signup: { maxAttempts: 3, windowMs: 60 * 60 * 1000 }, // 3 attempts per hour
+  forgotPassword: { maxAttempts: 3, windowMs: 60 * 60 * 1000 }, // 3 attempts per hour
 };
+
+// Cleanup interval for rate limit maps (runs every 5 minutes)
+const RATE_LIMIT_CLEANUP_INTERVAL = 5 * 60 * 1000;
+let lastRateLimitCleanup = Date.now();
+
+/**
+ * Clean expired entries from rate limit maps
+ */
+function cleanupRateLimits() {
+  const now = Date.now();
+  if (now - lastRateLimitCleanup < RATE_LIMIT_CLEANUP_INTERVAL) return;
+
+  lastRateLimitCleanup = now;
+
+  for (const [key, value] of loginRateLimits) {
+    if (now > value.resetTime) loginRateLimits.delete(key);
+  }
+  for (const [key, value] of signupRateLimits) {
+    if (now > value.resetTime) signupRateLimits.delete(key);
+  }
+  for (const [key, value] of forgotPasswordRateLimits) {
+    if (now > value.resetTime) forgotPasswordRateLimits.delete(key);
+  }
+}
+
+/**
+ * Check and update rate limit for a given key
+ * Returns { allowed: boolean, remaining: number, resetTime: number }
+ */
+function checkRateLimit(store, key, config) {
+  cleanupRateLimits();
+
+  const now = Date.now();
+  const record = store.get(key);
+
+  if (!record || now > record.resetTime) {
+    // First request or window expired - create new record
+    const resetTime = now + config.windowMs;
+    store.set(key, { count: 1, resetTime });
+    return {
+      allowed: true,
+      remaining: config.maxAttempts - 1,
+      resetTime,
+      limit: config.maxAttempts,
+    };
+  }
+
+  if (record.count >= config.maxAttempts) {
+    // Rate limit exceeded
+    return {
+      allowed: false,
+      remaining: 0,
+      resetTime: record.resetTime,
+      limit: config.maxAttempts,
+    };
+  }
+
+  // Increment count
+  record.count++;
+  store.set(key, record);
+
+  return {
+    allowed: true,
+    remaining: config.maxAttempts - record.count,
+    resetTime: record.resetTime,
+    limit: config.maxAttempts,
+  };
+}
+
+/**
+ * Get client IP from request
+ */
+function getClientIP(request) {
+  return request.headers.get('CF-Connecting-IP') ||
+         request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() ||
+         request.headers.get('X-Real-IP') ||
+         'unknown';
+}
+
+/**
+ * Add rate limit headers to response
+ */
+function addRateLimitHeaders(headers, rateLimitResult) {
+  headers['X-RateLimit-Limit'] = String(rateLimitResult.limit);
+  headers['X-RateLimit-Remaining'] = String(rateLimitResult.remaining);
+  headers['X-RateLimit-Reset'] = String(Math.ceil(rateLimitResult.resetTime / 1000));
+  return headers;
+}
+
+// ============================================
+// SECURITY: Token Blacklist (In-Memory)
+// ============================================
+
+// Token blacklist: Map<token, expirationTime>
+const tokenBlacklist = new Map();
+
+// Cleanup interval for blacklist (runs every 10 minutes)
+const BLACKLIST_CLEANUP_INTERVAL = 10 * 60 * 1000;
+let lastBlacklistCleanup = Date.now();
+
+/**
+ * Clean expired entries from token blacklist
+ */
+function cleanupBlacklist() {
+  const now = Date.now();
+  if (now - lastBlacklistCleanup < BLACKLIST_CLEANUP_INTERVAL) return;
+
+  lastBlacklistCleanup = now;
+
+  for (const [token, expirationTime] of tokenBlacklist) {
+    if (now > expirationTime) tokenBlacklist.delete(token);
+  }
+}
+
+/**
+ * Add token to blacklist
+ */
+function blacklistToken(token, expirationTime) {
+  cleanupBlacklist();
+  tokenBlacklist.set(token, expirationTime);
+}
+
+/**
+ * Check if token is blacklisted
+ */
+function isTokenBlacklisted(token) {
+  cleanupBlacklist();
+  const expirationTime = tokenBlacklist.get(token);
+  if (!expirationTime) return false;
+
+  // If token's blacklist entry has expired, remove it and return false
+  if (Date.now() > expirationTime) {
+    tokenBlacklist.delete(token);
+    return false;
+  }
+
+  return true;
+}
+
+// ============================================
+// SECURITY: Dynamic CORS
+// ============================================
+
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://everydaychristian.app',
+  'https://www.everydaychristian.app',
+];
+
+/**
+ * Check if origin is allowed
+ */
+function isOriginAllowed(origin) {
+  if (!origin) return false;
+
+  // Check exact match for production origins
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+
+  // Allow localhost for development (any port)
+  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
+
+  return false;
+}
+
+/**
+ * Get CORS headers based on request origin
+ */
+function getCorsHeaders(request) {
+  const origin = request.headers.get('Origin');
+
+  if (isOriginAllowed(origin)) {
+    return {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
+    };
+  }
+
+  // For requests without valid origin, return restrictive headers
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+}
 
 // Main entry point
 export default {
   async fetch(request, env, ctx) {
     // Handle CORS preflight
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { headers: getCorsHeaders(request) });
     }
 
     const url = new URL(request.url);
@@ -59,13 +259,13 @@ export default {
         case '/account':
           return await handleDeleteAccount(request, env);
         case '/health':
-          return jsonResponse({ status: 'ok', service: 'auth-service' });
+          return jsonResponse({ status: 'ok', service: 'auth-service' }, 200, request);
         default:
-          return jsonResponse({ error: 'Not found' }, 404);
+          return jsonResponse({ error: 'Not found' }, 404, request);
       }
     } catch (error) {
       console.error('[Auth Service] Unhandled error:', error);
-      return jsonResponse({ error: 'Internal server error' }, 500);
+      return jsonResponse({ error: 'Internal server error' }, 500, request);
     }
   }
 };
@@ -79,7 +279,22 @@ export default {
  */
 async function handleSignup(request, env) {
   if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
+  }
+
+  // Rate limiting by IP
+  const clientIP = getClientIP(request);
+  const rateLimitResult = checkRateLimit(signupRateLimits, clientIP, RATE_LIMITS.signup);
+
+  if (!rateLimitResult.allowed) {
+    const retryAfter = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+    return jsonResponse(
+      { error: 'Too many signup attempts. Please try again later.' },
+      429,
+      request,
+      rateLimitResult,
+      { 'Retry-After': String(retryAfter) }
+    );
   }
 
   try {
@@ -87,17 +302,17 @@ async function handleSignup(request, env) {
 
     // Validate required fields
     if (!email || !password) {
-      return jsonResponse({ error: 'Email and password are required' }, 400);
+      return jsonResponse({ error: 'Email and password are required' }, 400, request, rateLimitResult);
     }
 
     // Validate email format
     if (!isValidEmail(email)) {
-      return jsonResponse({ error: 'Invalid email format' }, 400);
+      return jsonResponse({ error: 'Invalid email format' }, 400, request, rateLimitResult);
     }
 
     // Validate password strength
     if (password.length < 6) {
-      return jsonResponse({ error: 'Password must be at least 6 characters' }, 400);
+      return jsonResponse({ error: 'Password must be at least 6 characters' }, 400, request, rateLimitResult);
     }
 
     const normalizedEmail = email.toLowerCase().trim();
@@ -105,7 +320,7 @@ async function handleSignup(request, env) {
     // Check if user already exists
     const existingUser = await findUserByEmail(normalizedEmail, env);
     if (existingUser) {
-      return jsonResponse({ error: 'An account with this email already exists' }, 409);
+      return jsonResponse({ error: 'An account with this email already exists' }, 409, request, rateLimitResult);
     }
 
     // Hash password
@@ -135,7 +350,7 @@ async function handleSignup(request, env) {
     const newUser = await createUser(userData, env);
 
     if (!newUser || !newUser.id) {
-      return jsonResponse({ error: 'Failed to create account' }, 500);
+      return jsonResponse({ error: 'Failed to create account' }, 500, request, rateLimitResult);
     }
 
     // Send verification email
@@ -160,11 +375,11 @@ async function handleSignup(request, env) {
         created_at: new Date().toISOString(),
         status: 'active',
       }),
-    }, 201);
+    }, 201, request, rateLimitResult);
 
   } catch (error) {
     console.error('[Signup] Error:', error);
-    return jsonResponse({ error: 'Failed to create account' }, 500);
+    return jsonResponse({ error: 'Failed to create account' }, 500, request);
   }
 }
 
@@ -173,14 +388,29 @@ async function handleSignup(request, env) {
  */
 async function handleLogin(request, env) {
   if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
+  }
+
+  // Rate limiting by IP
+  const clientIP = getClientIP(request);
+  const rateLimitResult = checkRateLimit(loginRateLimits, clientIP, RATE_LIMITS.login);
+
+  if (!rateLimitResult.allowed) {
+    const retryAfter = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+    return jsonResponse(
+      { error: 'Too many login attempts. Please try again later.' },
+      429,
+      request,
+      rateLimitResult,
+      { 'Retry-After': String(retryAfter) }
+    );
   }
 
   try {
     const { email, password, device_id } = await request.json();
 
     if (!email || !password) {
-      return jsonResponse({ error: 'Email and password are required' }, 400);
+      return jsonResponse({ error: 'Email and password are required' }, 400, request, rateLimitResult);
     }
 
     const normalizedEmail = email.toLowerCase().trim();
@@ -188,22 +418,22 @@ async function handleLogin(request, env) {
     // Find user
     const user = await findUserByEmail(normalizedEmail, env);
     if (!user) {
-      return jsonResponse({ error: 'Invalid email or password' }, 401);
+      return jsonResponse({ error: 'Invalid email or password' }, 401, request, rateLimitResult);
     }
 
     // Check account status
     if (user.status === 'suspended') {
-      return jsonResponse({ error: 'Account has been suspended' }, 403);
+      return jsonResponse({ error: 'Account has been suspended' }, 403, request, rateLimitResult);
     }
 
     if (user.status === 'deleted') {
-      return jsonResponse({ error: 'Account not found' }, 401);
+      return jsonResponse({ error: 'Account not found' }, 401, request, rateLimitResult);
     }
 
     // Verify password
     const passwordValid = await verifyPassword(password, user.password_hash);
     if (!passwordValid) {
-      return jsonResponse({ error: 'Invalid email or password' }, 401);
+      return jsonResponse({ error: 'Invalid email or password' }, 401, request, rateLimitResult);
     }
 
     // Update device IDs and last login
@@ -232,25 +462,42 @@ async function handleLogin(request, env) {
       message: 'Login successful',
       token,
       user: sanitizeUser(user),
-    });
+    }, 200, request, rateLimitResult);
 
   } catch (error) {
     console.error('[Login] Error:', error);
-    return jsonResponse({ error: 'Login failed' }, 500);
+    return jsonResponse({ error: 'Login failed' }, 500, request);
   }
 }
 
 /**
- * POST /logout - Logout (stateless - client handles token removal)
+ * POST /logout - Logout (blacklists token)
  */
 async function handleLogout(request, env) {
   if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
   }
 
-  // With stateless JWT, logout is handled client-side
-  // Server just acknowledges the request
-  return jsonResponse({ message: 'Logged out successfully' });
+  try {
+    // Extract token from Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const payload = await verifyJWT(token, env);
+
+      if (payload && payload.exp) {
+        // Blacklist the token until it expires
+        const expirationTime = payload.exp * 1000; // Convert to milliseconds
+        blacklistToken(token, expirationTime);
+      }
+    }
+
+    return jsonResponse({ message: 'Logged out successfully' }, 200, request);
+  } catch (error) {
+    console.error('[Logout] Error:', error);
+    // Still return success - logout should always "succeed" from user perspective
+    return jsonResponse({ message: 'Logged out successfully' }, 200, request);
+  }
 }
 
 /**
@@ -258,22 +505,37 @@ async function handleLogout(request, env) {
  */
 async function handleForgotPassword(request, env) {
   if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
   }
 
   try {
     const { email, locale } = await request.json();
 
     if (!email) {
-      return jsonResponse({ error: 'Email is required' }, 400);
+      return jsonResponse({ error: 'Email is required' }, 400, request);
     }
 
     const normalizedEmail = email.toLowerCase().trim();
+
+    // Rate limiting by email (prevents abuse against specific accounts)
+    const rateLimitResult = checkRateLimit(forgotPasswordRateLimits, normalizedEmail, RATE_LIMITS.forgotPassword);
+
+    if (!rateLimitResult.allowed) {
+      const retryAfter = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+      return jsonResponse(
+        { error: 'Too many password reset requests. Please try again later.' },
+        429,
+        request,
+        rateLimitResult,
+        { 'Retry-After': String(retryAfter) }
+      );
+    }
+
     const user = await findUserByEmail(normalizedEmail, env);
 
     // Always return success to prevent email enumeration
     if (!user) {
-      return jsonResponse({ message: 'If an account exists, a reset link has been sent' });
+      return jsonResponse({ message: 'If an account exists, a reset link has been sent' }, 200, request, rateLimitResult);
     }
 
     // Generate reset token
@@ -289,11 +551,11 @@ async function handleForgotPassword(request, env) {
     // Send reset email
     await sendPasswordResetEmail(normalizedEmail, resetToken, locale || user.locale || 'en', user.first_name, env);
 
-    return jsonResponse({ message: 'If an account exists, a reset link has been sent' });
+    return jsonResponse({ message: 'If an account exists, a reset link has been sent' }, 200, request, rateLimitResult);
 
   } catch (error) {
     console.error('[ForgotPassword] Error:', error);
-    return jsonResponse({ error: 'Failed to process request' }, 500);
+    return jsonResponse({ error: 'Failed to process request' }, 500, request);
   }
 }
 
@@ -302,29 +564,29 @@ async function handleForgotPassword(request, env) {
  */
 async function handleResetPassword(request, env) {
   if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
   }
 
   try {
     const { token, new_password } = await request.json();
 
     if (!token || !new_password) {
-      return jsonResponse({ error: 'Token and new password are required' }, 400);
+      return jsonResponse({ error: 'Token and new password are required' }, 400, request);
     }
 
     if (new_password.length < 6) {
-      return jsonResponse({ error: 'Password must be at least 6 characters' }, 400);
+      return jsonResponse({ error: 'Password must be at least 6 characters' }, 400, request);
     }
 
     // Find user with this reset token
     const user = await findUserByResetToken(token, env);
     if (!user) {
-      return jsonResponse({ error: 'Invalid or expired reset token' }, 400);
+      return jsonResponse({ error: 'Invalid or expired reset token' }, 400, request);
     }
 
     // Check if token is expired
     if (new Date(user.reset_expires) < new Date()) {
-      return jsonResponse({ error: 'Reset token has expired' }, 400);
+      return jsonResponse({ error: 'Reset token has expired' }, 400, request);
     }
 
     // Hash new password
@@ -337,11 +599,11 @@ async function handleResetPassword(request, env) {
       reset_expires: null,
     }, env);
 
-    return jsonResponse({ message: 'Password reset successfully' });
+    return jsonResponse({ message: 'Password reset successfully' }, 200, request);
 
   } catch (error) {
     console.error('[ResetPassword] Error:', error);
-    return jsonResponse({ error: 'Failed to reset password' }, 500);
+    return jsonResponse({ error: 'Failed to reset password' }, 500, request);
   }
 }
 
@@ -350,25 +612,25 @@ async function handleResetPassword(request, env) {
  */
 async function handleVerifyEmail(request, env) {
   if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
   }
 
   try {
     const { token } = await request.json();
 
     if (!token) {
-      return jsonResponse({ error: 'Verification token is required' }, 400);
+      return jsonResponse({ error: 'Verification token is required' }, 400, request);
     }
 
     // Find user with this verification token
     const user = await findUserByVerificationToken(token, env);
     if (!user) {
-      return jsonResponse({ error: 'Invalid or expired verification token' }, 400);
+      return jsonResponse({ error: 'Invalid or expired verification token' }, 400, request);
     }
 
     // Check if token is expired
     if (new Date(user.verification_expires) < new Date()) {
-      return jsonResponse({ error: 'Verification token has expired' }, 400);
+      return jsonResponse({ error: 'Verification token has expired' }, 400, request);
     }
 
     // Mark email as verified and clear token (set to null to clear)
@@ -388,11 +650,11 @@ async function handleVerifyEmail(request, env) {
       message: 'Email verified successfully',
       token: jwtToken,
       user: sanitizeUser({ ...user, email_verified: true }),
-    });
+    }, 200, request);
 
   } catch (error) {
     console.error('[VerifyEmail] Error:', error);
-    return jsonResponse({ error: 'Failed to verify email' }, 500);
+    return jsonResponse({ error: 'Failed to verify email' }, 500, request);
   }
 }
 
@@ -401,14 +663,14 @@ async function handleVerifyEmail(request, env) {
  */
 async function handleResendVerification(request, env) {
   if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
   }
 
   try {
     const { email, locale } = await request.json();
 
     if (!email) {
-      return jsonResponse({ error: 'Email is required' }, 400);
+      return jsonResponse({ error: 'Email is required' }, 400, request);
     }
 
     const normalizedEmail = email.toLowerCase().trim();
@@ -416,12 +678,12 @@ async function handleResendVerification(request, env) {
 
     // Always return success to prevent email enumeration
     if (!user) {
-      return jsonResponse({ message: 'If the email exists and is unverified, a new verification link has been sent' });
+      return jsonResponse({ message: 'If the email exists and is unverified, a new verification link has been sent' }, 200, request);
     }
 
     // Check if already verified
     if (user.email_verified === 1) {
-      return jsonResponse({ message: 'Email is already verified' });
+      return jsonResponse({ message: 'Email is already verified' }, 200, request);
     }
 
     // Generate new verification token
@@ -437,11 +699,11 @@ async function handleResendVerification(request, env) {
     // Send verification email
     await sendVerificationEmail(normalizedEmail, verificationToken, locale || user.locale || 'en', user.first_name, env);
 
-    return jsonResponse({ message: 'If the email exists and is unverified, a new verification link has been sent' });
+    return jsonResponse({ message: 'If the email exists and is unverified, a new verification link has been sent' }, 200, request);
 
   } catch (error) {
     console.error('[ResendVerification] Error:', error);
-    return jsonResponse({ error: 'Failed to send verification email' }, 500);
+    return jsonResponse({ error: 'Failed to send verification email' }, 500, request);
   }
 }
 
@@ -450,41 +712,47 @@ async function handleResendVerification(request, env) {
  */
 async function handleValidateToken(request, env) {
   if (request.method !== 'GET') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
   }
 
   try {
     // Extract token from Authorization header
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return jsonResponse({ error: 'No token provided' }, 401);
+      return jsonResponse({ error: 'No token provided' }, 401, request);
     }
 
     const token = authHeader.substring(7);
+
+    // Check if token is blacklisted (logged out)
+    if (isTokenBlacklisted(token)) {
+      return jsonResponse({ error: 'Token has been invalidated' }, 401, request);
+    }
+
     const payload = await verifyJWT(token, env);
 
     if (!payload) {
-      return jsonResponse({ error: 'Invalid or expired token' }, 401);
+      return jsonResponse({ error: 'Invalid or expired token' }, 401, request);
     }
 
     // Get fresh user data
     const user = await findUserById(payload.userId, env);
     if (!user) {
-      return jsonResponse({ error: 'User not found' }, 401);
+      return jsonResponse({ error: 'User not found' }, 401, request);
     }
 
     if (user.status !== 'active') {
-      return jsonResponse({ error: 'Account is not active' }, 401);
+      return jsonResponse({ error: 'Account is not active' }, 401, request);
     }
 
     return jsonResponse({
       message: 'Token is valid',
       user: sanitizeUser(user),
-    });
+    }, 200, request);
 
   } catch (error) {
     console.error('[ValidateToken] Error:', error);
-    return jsonResponse({ error: 'Token validation failed' }, 401);
+    return jsonResponse({ error: 'Token validation failed' }, 401, request);
   }
 }
 
@@ -493,27 +761,33 @@ async function handleValidateToken(request, env) {
  */
 async function handleRefreshToken(request, env) {
   if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
   }
 
   try {
     // Extract token from Authorization header
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return jsonResponse({ error: 'No token provided' }, 401);
+      return jsonResponse({ error: 'No token provided' }, 401, request);
     }
 
     const token = authHeader.substring(7);
+
+    // Check if token is blacklisted (logged out)
+    if (isTokenBlacklisted(token)) {
+      return jsonResponse({ error: 'Token has been invalidated' }, 401, request);
+    }
+
     const payload = await verifyJWT(token, env);
 
     if (!payload) {
-      return jsonResponse({ error: 'Invalid or expired token' }, 401);
+      return jsonResponse({ error: 'Invalid or expired token' }, 401, request);
     }
 
     // Get fresh user data
     const user = await findUserById(payload.userId, env);
     if (!user || user.status !== 'active') {
-      return jsonResponse({ error: 'User not found or inactive' }, 401);
+      return jsonResponse({ error: 'User not found or inactive' }, 401, request);
     }
 
     // Generate new token
@@ -522,15 +796,20 @@ async function handleRefreshToken(request, env) {
       email: user.email,
     }, env);
 
+    // Blacklist the old token (optional, prevents reuse)
+    if (payload.exp) {
+      blacklistToken(token, payload.exp * 1000);
+    }
+
     return jsonResponse({
       message: 'Token refreshed',
       token: newToken,
       user: sanitizeUser(user),
-    });
+    }, 200, request);
 
   } catch (error) {
     console.error('[RefreshToken] Error:', error);
-    return jsonResponse({ error: 'Token refresh failed' }, 401);
+    return jsonResponse({ error: 'Token refresh failed' }, 401, request);
   }
 }
 
@@ -539,21 +818,27 @@ async function handleRefreshToken(request, env) {
  */
 async function handleProfile(request, env) {
   if (request.method !== 'PATCH') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
   }
 
   try {
     // Extract and verify token
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return jsonResponse({ error: 'No token provided' }, 401);
+      return jsonResponse({ error: 'No token provided' }, 401, request);
     }
 
     const token = authHeader.substring(7);
+
+    // Check if token is blacklisted (logged out)
+    if (isTokenBlacklisted(token)) {
+      return jsonResponse({ error: 'Token has been invalidated' }, 401, request);
+    }
+
     const payload = await verifyJWT(token, env);
 
     if (!payload) {
-      return jsonResponse({ error: 'Invalid or expired token' }, 401);
+      return jsonResponse({ error: 'Invalid or expired token' }, 401, request);
     }
 
     const { first_name, locale } = await request.json();
@@ -564,7 +849,7 @@ async function handleProfile(request, env) {
     if (locale !== undefined) updates.locale = locale;
 
     if (Object.keys(updates).length === 0) {
-      return jsonResponse({ error: 'No fields to update' }, 400);
+      return jsonResponse({ error: 'No fields to update' }, 400, request);
     }
 
     // Update user
@@ -576,11 +861,11 @@ async function handleProfile(request, env) {
     return jsonResponse({
       message: 'Profile updated',
       user: sanitizeUser(user),
-    });
+    }, 200, request);
 
   } catch (error) {
     console.error('[Profile] Error:', error);
-    return jsonResponse({ error: 'Failed to update profile' }, 500);
+    return jsonResponse({ error: 'Failed to update profile' }, 500, request);
   }
 }
 
@@ -589,38 +874,44 @@ async function handleProfile(request, env) {
  */
 async function handleDeleteAccount(request, env) {
   if (request.method !== 'DELETE') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405, request);
   }
 
   try {
     // Extract and verify token
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return jsonResponse({ error: 'No token provided' }, 401);
+      return jsonResponse({ error: 'No token provided' }, 401, request);
     }
 
     const token = authHeader.substring(7);
+
+    // Check if token is blacklisted (logged out)
+    if (isTokenBlacklisted(token)) {
+      return jsonResponse({ error: 'Token has been invalidated' }, 401, request);
+    }
+
     const payload = await verifyJWT(token, env);
 
     if (!payload) {
-      return jsonResponse({ error: 'Invalid or expired token' }, 401);
+      return jsonResponse({ error: 'Invalid or expired token' }, 401, request);
     }
 
     const { password } = await request.json();
 
     if (!password) {
-      return jsonResponse({ error: 'Password is required to delete account' }, 400);
+      return jsonResponse({ error: 'Password is required to delete account' }, 400, request);
     }
 
     // Get user and verify password
     const user = await findUserById(payload.userId, env);
     if (!user) {
-      return jsonResponse({ error: 'User not found' }, 404);
+      return jsonResponse({ error: 'User not found' }, 404, request);
     }
 
     const passwordValid = await verifyPassword(password, user.password_hash);
     if (!passwordValid) {
-      return jsonResponse({ error: 'Incorrect password' }, 401);
+      return jsonResponse({ error: 'Incorrect password' }, 401, request);
     }
 
     // Soft delete - mark as deleted
@@ -629,11 +920,16 @@ async function handleDeleteAccount(request, env) {
       email: `deleted_${user.id}_${user.email}`, // Prevent email reuse issues
     }, env);
 
-    return jsonResponse({ message: 'Account deleted successfully' });
+    // Blacklist the token to prevent further use
+    if (payload.exp) {
+      blacklistToken(token, payload.exp * 1000);
+    }
+
+    return jsonResponse({ message: 'Account deleted successfully' }, 200, request);
 
   } catch (error) {
     console.error('[DeleteAccount] Error:', error);
-    return jsonResponse({ error: 'Failed to delete account' }, 500);
+    return jsonResponse({ error: 'Failed to delete account' }, 500, request);
   }
 }
 
@@ -1214,14 +1510,19 @@ function sanitizeUser(user) {
 }
 
 /**
- * JSON response helper
+ * JSON response helper with dynamic CORS and rate limit headers
  */
-function jsonResponse(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      ...corsHeaders,
-      'Content-Type': 'application/json',
-    },
-  });
+function jsonResponse(data, status = 200, request = null, rateLimitResult = null, extraHeaders = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(request ? getCorsHeaders(request) : { 'Access-Control-Allow-Origin': ALLOWED_ORIGINS[0] }),
+    ...extraHeaders,
+  };
+
+  // Add rate limit headers if provided
+  if (rateLimitResult) {
+    addRateLimitHeaders(headers, rateLimitResult);
+  }
+
+  return new Response(JSON.stringify(data), { status, headers });
 }
