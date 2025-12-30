@@ -38,10 +38,95 @@
 
   <title>Everyday Christian</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Offline fallback styles */
+    #offline-fallback {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 24px;
+      z-index: 9999;
+    }
+    #offline-fallback.show { display: flex; }
+    #offline-fallback .icon {
+      font-size: 64px;
+      margin-bottom: 24px;
+      opacity: 0.9;
+    }
+    #offline-fallback h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      color: #d4af37;
+    }
+    #offline-fallback p {
+      font-size: 16px;
+      opacity: 0.8;
+      margin: 0 0 32px 0;
+      max-width: 320px;
+      line-height: 1.5;
+    }
+    #offline-fallback button {
+      background: #d4af37;
+      color: #1a1a2e;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    #offline-fallback button:hover {
+      transform: scale(1.02);
+    }
+    #offline-fallback button:active {
+      opacity: 0.9;
+    }
+  </style>
 </head>
 <body>
+  <!-- Offline fallback shown when app can't load -->
+  <div id="offline-fallback">
+    <div class="icon">📶</div>
+    <h1>No Internet Connection</h1>
+    <p>Please connect to the internet to use Everyday Christian. The app requires an initial download before offline features are available.</p>
+    <button onclick="location.reload()">Try Again</button>
+  </div>
+
   <!-- Stripe.js for payment processing (must load from js.stripe.com for PCI compliance) -->
   <script src="https://js.stripe.com/v3/"></script>
+
+  <script>
+    // Show offline fallback if app fails to load within timeout
+    var offlineTimeout = setTimeout(function() {
+      if (!navigator.onLine) {
+        document.getElementById('offline-fallback').classList.add('show');
+      }
+    }, 3000);
+
+    // Hide fallback when Flutter loads successfully
+    window.addEventListener('flutter-first-frame', function() {
+      clearTimeout(offlineTimeout);
+      document.getElementById('offline-fallback').classList.remove('show');
+    });
+
+    // Also check online status changes
+    window.addEventListener('online', function() {
+      document.getElementById('offline-fallback').classList.remove('show');
+    });
+  </script>
 
   <script src="flutter_bootstrap.js" async></script>
 </body>

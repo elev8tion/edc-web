@@ -1,6 +1,5 @@
 import 'package:everyday_christian/components/app_update_wrapper.dart';
 import 'package:everyday_christian/components/offline_indicator.dart';
-import 'package:everyday_christian/components/offline_preparation_overlay.dart';
 import 'package:everyday_christian/components/pwa_install_wrapper.dart';
 import 'package:everyday_christian/core/config/env_validator.dart';
 import 'package:everyday_christian/core/navigation/app_routes.dart';
@@ -128,7 +127,6 @@ class MyApp extends ConsumerWidget {
         if (kIsWeb) {
           content = AppUpdateWrapper(child: content);
           content = PWAInstallWrapper(child: content);
-          content = OfflinePreparationOverlay(child: content);
         }
 
         return content;
