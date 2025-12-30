@@ -5,10 +5,11 @@ name = "auth-service"
 main = "src/auth-service.js"
 compatibility_date = "2024-01-01"
 
-# Custom domain - Cloudflare will automatically set up DNS and SSL
-routes = [
-  { pattern = "auth.everydaychristian.app", custom_domain = true }
-]
+# Enable workers.dev subdomain (required for CNAME from external DNS)
+workers_dev = true
+
+# Custom domain is handled via Netlify DNS CNAME pointing to workers.dev
+# auth.everydaychristian.app -> auth-service.connect-2a2.workers.dev
 
 # Environment variables
 [vars]
