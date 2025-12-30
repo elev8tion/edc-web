@@ -50,29 +50,11 @@ class DarkPageRoute<T> extends PageRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    // Use platform-specific transitions
-    final platform = Theme.of(context).platform;
-    if (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS) {
-      return CupertinoPageTransition(
-        primaryRouteAnimation: animation,
-        secondaryRouteAnimation: secondaryAnimation,
-        linearTransition: false,
-        child: child,
-      );
-    }
-    // Android/other: fade + slide
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1.0, 0.0),
-        end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeOutCubic,
-      )),
-      child: FadeTransition(
-        opacity: animation,
-        child: child,
-      ),
+    // Use a simple FadeTransition for all platforms.
+    // This is much faster on the web and prevents the white screen flash.
+    return FadeTransition(
+      opacity: animation,
+      child: child,
     );
   }
 
