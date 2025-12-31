@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_pwa_install/flutter_pwa_install.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:web/web.dart' as web;
 import 'package:shimmer/shimmer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_scalify/flutter_scalify.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_gradients.dart';
+import '../components/pwa_install_dialog.dart';
 import '../components/dark_main_feature_card.dart';
 import '../components/clear_glass_card.dart';
 import '../components/glass_button.dart';
@@ -109,8 +110,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ).show(context);
   }
 
-  /// Show PWA install prompt immediately after tutorial clears (web only)
-  /// Then shows trial welcome dialog (LAST in onboarding flow)
+  /// Show PWA install dialog after tutorial (web only)
+  /// Uses custom dialog that handles both iOS (manual instructions) and Android (native prompt)
   Future<void> _showPwaInstallIfNeeded() async {
     // Only run PWA logic on web, but still show trial dialog on all platforms
     if (!kIsWeb) {
@@ -124,48 +125,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (!mounted) return;
 
     try {
-      final pwa = FlutterPWAInstall.instance;
+      // Detect iOS for showing manual instructions vs native prompt
+      final isIOS = _detectIOS();
+      debugPrint('[PWA] Showing install dialog (iOS: $isIOS)');
 
-      // Debug: Print full installability report to see what's failing
-      final report = await pwa.getInstallabilityReport();
-      debugPrint('[PWA] Installability Report:\n$report');
-
-      // Check if install prompt is available (browser captured beforeinstallprompt event)
-      final canInstall = await pwa.canInstall();
-
-      if (!canInstall) {
-        debugPrint('[PWA] Install prompt not available - app may already be installed or not eligible');
-        // Still show trial dialog even if PWA install not available
-        _showTrialWelcomeIfNeeded();
-        return;
-      }
-
-      debugPrint('[PWA] Showing install prompt immediately after tutorial');
-
-      // Show install prompt immediately
-      final result = await pwa.promptInstall(
-        options: PromptOptions(
-          onAccepted: () {
-            debugPrint('[PWA] User accepted install prompt');
-          },
-          onDismissed: () {
-            debugPrint('[PWA] User dismissed install prompt');
-          },
-          onError: (error) {
-            debugPrint('[PWA] Install prompt error: $error');
-          },
-        ),
-      );
-
-      debugPrint('[PWA] Install result: ${result.outcome.name}');
+      // Show custom install dialog (handles iOS instructions + Android native prompt)
+      await showPWAInstallDialog(context, isIOS: isIOS);
     } catch (e) {
-      // flutter_pwa_install package may throw on some browsers
-      // due to navigator.standalone access issues
-      debugPrint('[PWA] Install check failed (expected on some browsers): $e');
+      debugPrint('[PWA] Install dialog failed: $e');
     }
 
     // Show trial welcome dialog LAST (after all other dialogs cleared)
     _showTrialWelcomeIfNeeded();
+  }
+
+  /// Detect iOS for manual install instructions
+  bool _detectIOS() {
+    try {
+      final userAgent = web.window.navigator.userAgent.toLowerCase();
+      return userAgent.contains('iphone') ||
+          userAgent.contains('ipad') ||
+          userAgent.contains('ipod');
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
