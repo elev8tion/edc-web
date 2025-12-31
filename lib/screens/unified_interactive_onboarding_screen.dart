@@ -1,11 +1,14 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/physics.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:web/web.dart' as web;
 import '../components/gradient_background.dart';
 import '../components/glass_button.dart';
 import '../components/glass_card.dart';
 import '../components/dark_glass_container.dart';
+import '../components/pwa_install_dialog.dart';
 import '../core/services/preferences_service.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/navigation/app_routes.dart';
@@ -51,9 +54,37 @@ class _UnifiedInteractiveOnboardingScreenState
     // Mark onboarding as completed
     await prefsService.setOnboardingCompleted();
 
+    // Show PWA install prompt on web (after user is fully authenticated)
+    // This ensures cookies/session are copied when user installs
+    if (kIsWeb && mounted) {
+      await _showPWAInstallPrompt();
+    }
+
     // Navigate to home using IMMEDIATE navigation (bypasses debounce)
     if (mounted) {
       await NavigationService.pushAndRemoveUntilImmediate(AppRoutes.home);
+    }
+  }
+
+  /// Show PWA install prompt if available
+  Future<void> _showPWAInstallPrompt() async {
+    try {
+      final isIOS = _detectIOS();
+      await showPWAInstallDialog(context, isIOS: isIOS);
+    } catch (e) {
+      debugPrint('[PWA Install] Error showing dialog: $e');
+    }
+  }
+
+  /// Detect iOS for manual install instructions
+  bool _detectIOS() {
+    try {
+      final userAgent = web.window.navigator.userAgent.toLowerCase();
+      return userAgent.contains('iphone') ||
+          userAgent.contains('ipad') ||
+          userAgent.contains('ipod');
+    } catch (e) {
+      return false;
     }
   }
 
