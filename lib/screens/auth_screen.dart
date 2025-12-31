@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/auth/services/auth_service.dart';
 import '../features/auth/widgets/auth_form.dart';
-import '../theme/app_theme.dart';
 import '../components/gradient_background.dart';
 import '../components/animations/blur_fade.dart';
 import '../components/glass/static_liquid_glass_lens.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/navigation/app_routes.dart';
+import '../core/services/preferences_service.dart';
 import '../utils/responsive_utils.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../l10n/app_localizations.dart';
@@ -51,8 +51,25 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       next.when(
         initial: () {},
         loading: () {},
-        authenticated: (user) {
-          // Navigate to home on successful authentication
+        authenticated: (user) async {
+          // Check the user's state to determine navigation
+          if (user.isNewUser && !user.isEmailVerified) {
+            // New signup - wait for email verification
+            NavigationService.pushAndRemoveUntil(AppRoutes.waitForVerification);
+            return;
+          }
+
+          // Check if onboarding is completed
+          final prefsService = await PreferencesService.getInstance();
+          final hasCompletedOnboarding = prefsService.hasCompletedOnboarding();
+
+          if (!hasCompletedOnboarding) {
+            // User needs to complete onboarding
+            NavigationService.pushAndRemoveUntil(AppRoutes.onboarding);
+            return;
+          }
+
+          // All checks passed - go to home
           NavigationService.pushAndRemoveUntil(AppRoutes.home);
         },
         unauthenticated: () {},

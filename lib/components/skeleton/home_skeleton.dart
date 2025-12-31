@@ -7,7 +7,6 @@ import '../dark_main_feature_card.dart';
 import '../clear_glass_card.dart';
 import '../dark_glass_container.dart';
 import 'skeleton_theme.dart';
-import '../../theme/app_theme_extensions.dart';
 
 /// Skeleton loading state for the Home Screen
 /// Matches the actual layout structure for seamless transition
@@ -86,7 +85,7 @@ class HomeScreenSkeleton extends StatelessWidget {
               color: color.withValues(alpha: 0.2),
               borderRadius: AppRadius.mediumRadius,
             ),
-            child: Bone.circle(size: 20),
+            child: const Bone.circle(size: 20),
           ),
           SizedBox(height: 4.s),
           const Bone.text(words: 1, fontSize: 20),
