@@ -14,6 +14,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../services/stripe_service.dart';
+import '../../services/token_manager.dart';
+import '../../features/auth/services/auth_api_service.dart';
 
 /// Represents the current subscription state of the user
 enum SubscriptionStatus {
@@ -259,11 +261,40 @@ class SubscriptionService {
       return;
     }
 
-    await _prefs?.setString(
-        _keyTrialStartDate, DateTime.now().toIso8601String());
+    final now = DateTime.now();
+    await _prefs?.setString(_keyTrialStartDate, now.toIso8601String());
     await _prefs?.setInt(_keyTrialMessagesUsed, 0);
 
     debugPrint('📊 [SubscriptionService] Trial started');
+
+    // Sync trial start to backend (fire and forget, don't block UI)
+    _syncTrialStartToBackend(now);
+  }
+
+  /// Sync trial start date to backend database
+  Future<void> _syncTrialStartToBackend(DateTime trialStartedAt) async {
+    try {
+      final token = await TokenManager.instance.getAccessToken();
+      if (token == null) {
+        debugPrint(
+            '📊 [SubscriptionService] Cannot sync trial - no auth token');
+        return;
+      }
+
+      final response = await AuthApiService().updateProfile(
+        token: token,
+        trialStartedAt: trialStartedAt,
+      );
+
+      if (response.success) {
+        debugPrint('📊 [SubscriptionService] Trial synced to backend');
+      } else {
+        debugPrint(
+            '📊 [SubscriptionService] Trial sync failed: ${response.error}');
+      }
+    } catch (e) {
+      debugPrint('📊 [SubscriptionService] Trial sync error: $e');
+    }
   }
 
   // ============================================================================

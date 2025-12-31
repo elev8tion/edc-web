@@ -842,12 +842,13 @@ async function handleProfile(request, env) {
       return jsonResponse({ error: 'Invalid or expired token' }, 401, request);
     }
 
-    const { first_name, locale } = await request.json();
+    const { first_name, locale, trial_started_at } = await request.json();
 
     // Build update object with only provided fields
     const updates = {};
     if (first_name !== undefined) updates.first_name = first_name?.trim() || null;
     if (locale !== undefined) updates.locale = locale;
+    if (trial_started_at !== undefined) updates.trial_started_at = trial_started_at;
 
     if (Object.keys(updates).length === 0) {
       return jsonResponse({ error: 'No fields to update' }, 400, request);

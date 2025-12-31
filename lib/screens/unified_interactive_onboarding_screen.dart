@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/physics.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:local_auth/local_auth.dart';
 import '../components/gradient_background.dart';
 import '../components/glass_button.dart';
 import '../components/glass_card.dart';
@@ -12,7 +10,6 @@ import '../core/services/preferences_service.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/navigation/app_routes.dart';
 import '../theme/app_theme.dart';
-import '../utils/responsive_utils.dart';
 import '../utils/motion_character.dart';
 import '../utils/ui_audio.dart';
 import '../l10n/app_localizations.dart';
@@ -29,98 +26,18 @@ class UnifiedInteractiveOnboardingScreen extends StatefulWidget {
 
 class _UnifiedInteractiveOnboardingScreenState
     extends State<UnifiedInteractiveOnboardingScreen> {
-  final PageController _pageController = PageController();
   final GlobalKey _backgroundKey = GlobalKey();
-  final TextEditingController _nameController = TextEditingController();
   final UIAudio _audio = UIAudio();
 
-  // Page 0: Legal agreements
+  // Legal agreements
   bool _termsChecked = false;
   bool _privacyChecked = false;
   bool _ageChecked = false;
 
-  // Page 1: Personalization
-  bool _appLockEnabled = false;
-
   // Navigation state
   bool _isNavigating = false;
-  int _currentPage = 0;
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  bool get _canProceedFromLegal =>
-      _termsChecked && _privacyChecked && _ageChecked;
-
-  Future<void> _toggleAppLock(bool enabled) async {
-    final l10n = AppLocalizations.of(context);
-    final localAuth = LocalAuthentication();
-
-    try {
-      // Check if device supports biometrics
-      final canCheckBiometrics = await localAuth.canCheckBiometrics;
-      final isDeviceSupported = await localAuth.isDeviceSupported();
-
-      if (!canCheckBiometrics || !isDeviceSupported) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.biometricNotAvailable),
-            backgroundColor: Colors.red.shade700,
-          ),
-        );
-        return;
-      }
-
-      if (enabled) {
-        // Verify user can authenticate before enabling
-        final authenticated = await localAuth.authenticate(
-          localizedReason: l10n.enableAppLockPrompt,
-          options: const AuthenticationOptions(
-            useErrorDialogs: true,
-            stickyAuth: true,
-            biometricOnly: false,
-          ),
-        );
-
-        if (authenticated) {
-          setState(() {
-            _appLockEnabled = true;
-          });
-          HapticFeedback.mediumImpact();
-        }
-      } else {
-        setState(() {
-          _appLockEnabled = false;
-        });
-        HapticFeedback.lightImpact();
-      }
-    } catch (e) {
-      debugPrint('App lock toggle error: $e');
-    }
-  }
-
-  void _nextPage() {
-    if (_currentPage < 1) {
-      _pageController.nextPage(
-        duration: AppAnimations.normal,
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  void _previousPage() {
-    if (_currentPage > 0) {
-      _pageController.previousPage(
-        duration: AppAnimations.normal,
-        curve: Curves.easeInOut,
-      );
-    }
-  }
+  bool get _canProceed => _termsChecked && _privacyChecked && _ageChecked;
 
   Future<void> _completeOnboarding() async {
     if (_isNavigating) return;
@@ -130,16 +47,6 @@ class _UnifiedInteractiveOnboardingScreenState
 
     // Save legal agreements
     await prefsService.saveLegalAgreementAcceptance(true);
-
-    // Save name if provided
-    final firstName = _nameController.text.trim();
-    if (firstName.isNotEmpty) {
-      await prefsService.saveFirstName(firstName);
-    }
-
-    // Save app lock preference
-    await prefsService.setAppLockEnabled(_appLockEnabled);
-    await prefsService.setBiometricSetupCompleted();
 
     // Mark onboarding as completed
     await prefsService.setOnboardingCompleted();
@@ -161,57 +68,7 @@ class _UnifiedInteractiveOnboardingScreenState
             child: const GradientBackground(),
           ),
           SafeArea(
-            child: Column(
-              children: [
-                // Header with back button (hidden on first page)
-                if (_currentPage > 0)
-                  Padding(
-                    padding: AppSpacing.screenPadding,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back_ios,
-                              color: AppColors.primaryText),
-                          onPressed: _previousPage,
-                        ),
-                        const SizedBox(width: 48), // Balance layout
-                      ],
-                    ),
-                  ),
-
-                // PageView
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    onPageChanged: (index) {
-                      setState(() => _currentPage = index);
-                    },
-                    children: [
-                      _buildLegalPage(l10n),
-                      _buildPersonalizationPage(l10n),
-                    ],
-                  ),
-                ),
-
-                // Page indicator
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-                  child: SmoothPageIndicator(
-                    controller: _pageController,
-                    count: 2,
-                    effect: WormEffect(
-                      dotColor: AppColors.primaryText.withValues(alpha: 0.3),
-                      activeDotColor: AppTheme.goldColor,
-                      dotHeight: 8,
-                      dotWidth: 8,
-                      spacing: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            child: _buildLegalPage(l10n),
           ),
         ],
       ),
@@ -374,10 +231,10 @@ class _UnifiedInteractiveOnboardingScreenState
 
           const SizedBox(height: AppSpacing.xxl),
 
-          // Next button
+          // Complete onboarding button
           GlassButton(
-            text: l10n.acceptAndContinue,
-            onPressed: _canProceedFromLegal ? _nextPage : null,
+            text: l10n.beginYourJourney,
+            onPressed: _canProceed ? _completeOnboarding : null,
           ),
 
           const SizedBox(height: AppSpacing.xl),
@@ -435,215 +292,12 @@ class _UnifiedInteractiveOnboardingScreenState
   }
 
   Future<void> _openLegalDoc(String type) async {
-    // Open legal documents (simplified - you can enhance this)
     final url = type == 'terms'
         ? 'https://everydaychristian.app/terms'
         : 'https://everydaychristian.app/privacy';
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     }
-  }
-
-  // PAGE 1: Personalization
-  Widget _buildPersonalizationPage(AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: AppSpacing.screenPadding,
-      child: Column(
-        children: [
-          const SizedBox(height: AppSpacing.xxl),
-
-          // Logo with FAB menu style
-          RepaintBoundary(
-            child: GlassContainer(
-              width: 150,
-              height: 150,
-              padding: const EdgeInsets.all(12.0),
-              borderRadius: 30,
-              blurStrength: 15.0,
-              gradientColors: [
-                Colors.white.withValues(alpha: 0.05),
-                Colors.white.withValues(alpha: 0.02),
-              ],
-              border: Border.all(
-                color: AppTheme.goldColor,
-                width: 1.5,
-              ),
-              child: Center(
-                child: Image.asset(
-                  l10n.localeName == 'es'
-                      ? 'assets/images/logo_spanish.png'
-                      : 'assets/images/logo_cropped.png',
-                  width: 120,
-                  height: 120,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    // Fallback to icon if logo fails to load
-                    return const Icon(
-                      Icons.church,
-                      color: Colors.white,
-                      size: 80,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: AppSpacing.md),
-
-          // Subtitle
-          Text(
-            l10n.dailyScriptureGuidance,
-            style: const TextStyle(
-              fontSize: 16,
-              color: AppTheme.goldColor,
-              fontWeight: FontWeight.w400,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-          const SizedBox(height: AppSpacing.xxl),
-
-          Text(
-            l10n.whatShouldWeCallYou,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primaryText,
-            ),
-          ),
-
-          const SizedBox(height: AppSpacing.lg),
-
-          // Name input (styled like your existing onboarding)
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.white.withValues(alpha: 0.2),
-                  Colors.white.withValues(alpha: 0.1),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(AppRadius.xl + 1),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
-            child: TextField(
-              controller: _nameController,
-              style: TextStyle(
-                color: AppColors.primaryText,
-                fontSize: ResponsiveUtils.fontSize(context, 15,
-                    minSize: 13, maxSize: 17),
-              ),
-              decoration: InputDecoration(
-                hintText: l10n.firstNameOptional,
-                hintStyle: TextStyle(
-                  color: AppColors.tertiaryText,
-                  fontSize: ResponsiveUtils.fontSize(context, 15,
-                      minSize: 13, maxSize: 17),
-                ),
-                border: InputBorder.none,
-                filled: true,
-                fillColor: Colors.transparent,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 15,
-                ),
-              ),
-              textCapitalization: TextCapitalization.words,
-              maxLength: 20,
-              buildCounter: (context,
-                      {required currentLength,
-                      required isFocused,
-                      maxLength}) =>
-                  null,
-            ),
-          ),
-
-          const SizedBox(height: AppSpacing.xl + AppSpacing.xl + 22),
-
-          // App Lock Toggle
-          DarkGlassContainer(
-            child: Row(
-              children: [
-                // Icon
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppTheme.goldColor.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: AppTheme.goldColor.withValues(alpha: 0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.lock,
-                    color: AppTheme.goldColor,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                // Text
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.appLock,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryText,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        l10n.appLockDesc,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.tertiaryText,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Toggle
-                Switch(
-                  value: _appLockEnabled,
-                  onChanged: _toggleAppLock,
-                  activeTrackColor: Colors.white.withValues(alpha: 0.5),
-                  thumbColor: WidgetStateProperty.resolveWith<Color>(
-                    (Set<WidgetState> states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return AppTheme.goldColor;
-                      }
-                      return Colors.white.withValues(alpha: 0.7);
-                    },
-                  ),
-                  inactiveTrackColor: Colors.white.withValues(alpha: 0.2),
-                  trackOutlineColor:
-                      WidgetStateProperty.all(Colors.transparent),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: AppSpacing.xxxl),
-
-          // Get started button
-          GlassButton(
-            text: l10n.beginYourJourney,
-            onPressed: _completeOnboarding,
-          ),
-
-          const SizedBox(height: AppSpacing.xl),
-        ],
-      ),
-    );
   }
 }
 

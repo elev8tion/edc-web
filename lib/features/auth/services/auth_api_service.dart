@@ -217,16 +217,18 @@ class AuthApiService {
     }
   }
 
-  /// Update user profile (first name, locale)
+  /// Update user profile (first name, locale, trial start)
   Future<AuthResponse> updateProfile({
     required String token,
     String? firstName,
     String? locale,
+    DateTime? trialStartedAt,
   }) async {
     try {
       final body = <String, dynamic>{};
       if (firstName != null) body['first_name'] = firstName.trim();
       if (locale != null) body['locale'] = locale;
+      if (trialStartedAt != null) body['trial_started_at'] = trialStartedAt.toIso8601String();
 
       final response = await http.patch(
         Uri.parse('$_baseUrl/profile'),
