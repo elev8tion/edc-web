@@ -132,7 +132,32 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
           _buildFeature(
               context, Icons.home_outlined, l10n.pwaFeatureHomeScreen),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+
+          // Private browsing warning (applies to all browsers)
+          Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 16,
+                color: AppColors.secondaryText.withValues(alpha: 0.7),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.pwaPrivateModeWarning,
+                  style: TextStyle(
+                    color: AppColors.secondaryText.withValues(alpha: 0.7),
+                    fontSize: ResponsiveUtils.fontSize(context, 11,
+                        minSize: 10, maxSize: 12),
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
 
           // Show different content for iOS vs Android/Desktop
           if (widget.isIOS) ...[

@@ -5985,6 +5985,12 @@ abstract class AppLocalizations {
   /// **'Got It'**
   String get pwaGotIt;
 
+  /// Warning that private browsing mode blocks PWA installation
+  ///
+  /// In en, this message translates to:
+  /// **'Private/Incognito mode doesn\'t support app installation.'**
+  String get pwaPrivateModeWarning;
+
   /// Title for chat lockout when user hasn't started trial
   ///
   /// In en, this message translates to:

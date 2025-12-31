@@ -3408,6 +3408,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pwaGotIt => 'Entendido';
 
   @override
+  String get pwaPrivateModeWarning =>
+      'El modo privado/incógnito no permite la instalación de apps.';
+
+  @override
   String get lockoutNoTrialTitle => 'Comienza Tu\nPrueba Gratis';
 
   @override

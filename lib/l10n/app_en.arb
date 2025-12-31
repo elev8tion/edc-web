@@ -4511,6 +4511,10 @@
   "@pwaGotIt": {
     "description": "Button to dismiss iOS instructions"
   },
+  "pwaPrivateModeWarning": "Private/Incognito mode doesn't support app installation.",
+  "@pwaPrivateModeWarning": {
+    "description": "Warning that private browsing mode blocks PWA installation"
+  },
   "lockoutNoTrialTitle": "Start Your\nFree Trial",
   "@lockoutNoTrialTitle": {
     "description": "Title for chat lockout when user hasn't started trial"

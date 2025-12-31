@@ -1125,6 +1125,7 @@
   "pwaIOSAddToHomeScreen": "Añadir a Inicio",
   "pwaExitBrowserInstruction": "Luego cierra completamente este navegador y abre la app desde el icono en tu pantalla de inicio para continuar registrándote.",
   "pwaGotIt": "Entendido",
+  "pwaPrivateModeWarning": "El modo privado/incógnito no permite la instalación de apps.",
   "lockoutNoTrialTitle": "Comienza Tu\nPrueba Gratis",
   "lockoutNoTrialMessage": "Experimenta 3 días de orientación bíblica impulsada por IA completamente gratis. Obtén perspectivas personalizadas de las Escrituras y apoyo espiritual.",
   "lockoutTrialExpiredTitle": "Chat Premium\nde Escrituras",

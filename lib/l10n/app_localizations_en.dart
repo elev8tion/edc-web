@@ -3362,6 +3362,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pwaGotIt => 'Got It';
 
   @override
+  String get pwaPrivateModeWarning =>
+      'Private/Incognito mode doesn\'t support app installation.';
+
+  @override
   String get lockoutNoTrialTitle => 'Start Your\nFree Trial';
 
   @override
