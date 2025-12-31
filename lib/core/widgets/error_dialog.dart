@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../error/app_error.dart';
-import '../../theme/app_theme.dart';
 import '../../utils/blur_dialog_utils.dart';
 import '../../theme/app_theme_extensions.dart';
 

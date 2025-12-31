@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/physics.dart';
 import '../core/models/prayer_category.dart';
-import '../theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/motion_character.dart';
 import '../utils/ui_audio.dart';

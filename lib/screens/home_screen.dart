@@ -21,7 +21,6 @@ import '../core/services/preferences_service.dart';
 import '../core/services/navigation_debouncer.dart';
 import '../l10n/app_localizations.dart';
 import '../core/utils/simple_coach_mark.dart';
-import '../core/utils/theme_extensions.dart';
 import '../theme/app_theme_extensions.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -184,7 +183,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             backgroundColor: Colors.transparent,
             child: SafeArea(
               child: SingleChildScrollView(
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                   top: AppSpacing.xl,
                   bottom: AppSpacing.xxxl, // Extra bottom padding for button visibility
                 ),
@@ -193,20 +192,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                         height: 56 +
                             AppSpacing.lg +
                             32), // Space for FAB + spacing + 32px padding
                     _buildStatsRow(),
-                    SizedBox(height: AppSpacing.xxl),
+                    const SizedBox(height: AppSpacing.xxl),
                     _buildMainFeatures(),
-                    SizedBox(height: AppSpacing.xxl),
+                    const SizedBox(height: AppSpacing.xxl),
                     _buildQuickActions(),
-                    SizedBox(height: AppSpacing.xxl),
+                    const SizedBox(height: AppSpacing.xxl),
                     _buildDailyVerse(),
-                    SizedBox(height: AppSpacing.xxl),
+                    const SizedBox(height: AppSpacing.xxl),
                     _buildStartChatButton(),
-                    SizedBox(
+                    const SizedBox(
                         height: AppSpacing.xl), // Extra space at bottom
                   ],
                 ),
@@ -269,7 +268,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 delay: AppAnimations.homeStatsCardDelay,
               ),
             ),
-            SizedBox(width: AppSpacing.lg),
+            const SizedBox(width: AppSpacing.lg),
             prayersCountAsync.when(
               data: (count) => _buildStatCard(
                 value: "$count",
@@ -292,7 +291,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialMedium,
               ),
             ),
-            SizedBox(width: AppSpacing.lg),
+            const SizedBox(width: AppSpacing.lg),
             versesCountAsync.when(
               data: (count) => _buildStatCard(
                 value: "$count",
@@ -315,7 +314,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialLong,
               ),
             ),
-            SizedBox(width: AppSpacing.lg),
+            const SizedBox(width: AppSpacing.lg),
             totalCompletedAsync.when(
               data: (total) => _buildStatCard(
                 value: "$total",
@@ -531,7 +530,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             color: AppColors.primaryText,
                           ),
                         ),
-                        SizedBox(height: AppSpacing.sm),
+                        const SizedBox(height: AppSpacing.sm),
                         AutoSizeText(
                           l10n.biblicalChat,
                           group: _mainFeatureTitlesGroup,
@@ -562,7 +561,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: AppSpacing.md),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: DarkMainFeatureCard(
                     padding: EdgeInsets.all(14.s),
@@ -581,7 +580,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             color: AppColors.primaryText,
                           ),
                         ),
-                        SizedBox(height: AppSpacing.sm),
+                        const SizedBox(height: AppSpacing.sm),
                         AutoSizeText(
                           l10n.dailyDevotional,
                           group: _mainFeatureTitlesGroup,
@@ -618,7 +617,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               .animate()
               .fadeIn(delay: AppAnimations.homeMainFeatureDelay1)
               .slideX(begin: -0.3, delay: AppAnimations.homeMainFeatureDelay1),
-          SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           SizedBox(
             height: cardHeight,
             child: Row(
@@ -642,7 +641,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             color: AppColors.primaryText,
                           ),
                         ),
-                        SizedBox(height: AppSpacing.sm),
+                        const SizedBox(height: AppSpacing.sm),
                         AutoSizeText(
                           l10n.prayerJournal,
                           group: _mainFeatureTitlesGroup,
@@ -673,7 +672,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: AppSpacing.md),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: DarkMainFeatureCard(
                     padding: EdgeInsets.all(14.s),
@@ -692,7 +691,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             color: AppColors.primaryText,
                           ),
                         ),
-                        SizedBox(height: AppSpacing.sm),
+                        const SizedBox(height: AppSpacing.sm),
                         AutoSizeText(
                           l10n.readingPlans,
                           group: _mainFeatureTitlesGroup,
@@ -755,7 +754,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
         ).animate().fadeIn(delay: AppAnimations.homeQuickActionsHeaderDelay).slideX(begin: -0.3, delay: AppAnimations.homeQuickActionsHeaderDelay),
-        SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.lg),
         LayoutBuilder(
           builder: (context, constraints) => SizedBox(
             height: scaledHeight.clamp(88.0, 165.0), // Min 88px, max 165px
@@ -774,7 +773,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       NavigationService.pushNamedImmediate(
                           AppRoutes.bibleBrowser)),
                 ),
-                SizedBox(width: AppSpacing.lg),
+                const SizedBox(width: AppSpacing.lg),
                 _buildQuickActionCard(
                   label: useShortLabel
                       ? l10n.verseLibraryShort
@@ -785,7 +784,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       NavigationService.pushNamedImmediate(
                           AppRoutes.verseLibrary)),
                 ),
-                SizedBox(width: AppSpacing.lg),
+                const SizedBox(width: AppSpacing.lg),
                 _buildQuickActionCard(
                   label: useShortLabel ? l10n.addPrayerShort : l10n.addPrayer,
                   icon: Icons.add,
@@ -794,7 +793,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       NavigationService.pushNamedImmediate(
                           AppRoutes.prayerJournal)),
                 ),
-                SizedBox(width: AppSpacing.lg),
+                const SizedBox(width: AppSpacing.lg),
                 _buildQuickActionCard(
                   label: l10n.settings,
                   icon: Icons.settings,
@@ -802,7 +801,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () => _navDebouncer.navigate(() =>
                       NavigationService.pushNamedImmediate(AppRoutes.settings)),
                 ),
-                SizedBox(width: AppSpacing.lg),
+                const SizedBox(width: AppSpacing.lg),
                 _buildQuickActionCard(
                   label: l10n.profile,
                   icon: Icons.person,
@@ -862,7 +861,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   color: AppColors.secondaryText,
                 ),
               ),
-              SizedBox(height: AppSpacing.sm),
+              const SizedBox(height: AppSpacing.sm),
               Expanded(
                 child: Align(
                   alignment: Alignment.center,
@@ -929,7 +928,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         size: 20.iz,
                       ),
                     ),
-                    SizedBox(width: AppSpacing.lg),
+                    const SizedBox(width: AppSpacing.lg),
                     Expanded(
                       child: Text(
                         l10n.verseOfTheDay,
@@ -943,7 +942,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.xl),
                 DarkGlassContainer(
                   borderRadius: AppRadius.md,
                   child: Column(
@@ -963,7 +962,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         maxFontSize: 16,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: AppSpacing.md),
+                      const SizedBox(height: AppSpacing.md),
                       // Verse text
                       AutoSizeText(
                         text,

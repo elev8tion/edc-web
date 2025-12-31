@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import '../components/glassmorphic_fab_menu.dart';
-import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import '../theme/app_theme_extensions.dart';
 

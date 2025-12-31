@@ -7,7 +7,6 @@ import '../components/animations/blur_fade.dart';
 import '../components/glass_button.dart';
 import '../components/glass/static_liquid_glass_lens.dart';
 import '../components/biometric_setup_dialog.dart';
-import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme_extensions.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../features/auth/services/secure_storage_service.dart';
 import '../theme/app_theme.dart';
 
 /// Dialog to create a new app PIN with confirmation
@@ -37,7 +36,6 @@ class _PinSetupDialogContent extends StatefulWidget {
 }
 
 class _PinSetupDialogContentState extends State<_PinSetupDialogContent> {
-  final SecureStorageService _secureStorage = const SecureStorageService();
   final TextEditingController _pinController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
 
@@ -173,8 +171,6 @@ class _PinSetupDialogContentState extends State<_PinSetupDialogContent> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(

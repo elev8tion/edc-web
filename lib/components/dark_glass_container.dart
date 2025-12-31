@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import '../widgets/noise_overlay.dart';
 import '../theme/app_theme_extensions.dart';
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import '../../theme/app_theme.dart';
 import '../../theme/app_theme_extensions.dart';
 import '../dark_glass_container.dart';
 import 'skeleton_theme.dart';
@@ -29,13 +28,13 @@ class VerseLibraryTabSkeleton extends StatelessWidget {
   }
 
   Widget _buildVerseCardSkeleton() {
-    return DarkGlassContainer(
-      padding: const EdgeInsets.all(16),
+    return const DarkGlassContainer(
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Reference row
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Bone.text(words: 2, fontSize: 14),
@@ -44,10 +43,10 @@ class VerseLibraryTabSkeleton extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.md),
           // Verse text
-          const Bone.multiText(lines: 3, fontSize: 16),
+          Bone.multiText(lines: 3, fontSize: 16),
           SizedBox(height: AppSpacing.md),
           // Footer row
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Bone.text(words: 2, fontSize: 12),

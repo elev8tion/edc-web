@@ -64,9 +64,6 @@ final todaysVerseProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
   final locale = ref.read(languageProvider);
   final language = locale.languageCode; // Extract 'es' or 'en' from Locale
 
-  // Determine translation based on language
-  final translation = language == 'es' ? 'RVR1909' : 'WEB';
-
   // Get day of year (1-365/366) to use as seed for consistent daily verse
   final now = DateTime.now();
   final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays + 1;

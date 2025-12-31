@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'base_shader.dart';
 import 'shader_painter.dart';
-import '../../theme/app_theme.dart';
 import '../../theme/app_theme_extensions.dart';
 
 class BackgroundCaptureWidget extends StatefulWidget {

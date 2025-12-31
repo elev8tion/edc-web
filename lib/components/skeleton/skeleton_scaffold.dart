@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../gradient_background.dart';
 import '../glassmorphic_fab_menu.dart';
-import '../../theme/app_theme.dart';
 import '../../theme/app_theme_extensions.dart';
 
 /// A scaffold wrapper that maintains the gradient background during loading states.
