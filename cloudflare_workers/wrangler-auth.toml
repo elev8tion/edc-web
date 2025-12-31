@@ -20,7 +20,7 @@ JWT_EXPIRES_IN = "604800"
 # Token expiry for reset/verification (24 hours in seconds)
 TOKEN_EXPIRES_IN = "86400"
 # App URLs for email links
-APP_URL_WEB = "https://everydaychristian.app"
+APP_URL_WEB = "https://app.everydaychristian.app"
 APP_URL_MOBILE = "everydaychristian://"
 
 # Secrets (set via: wrangler secret put SECRET_NAME -c wrangler-auth.toml)
