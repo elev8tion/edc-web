@@ -3,7 +3,7 @@
   "info": {
     "title": "API documentation for 36905_activation_codes",
     "version": "1.0.0",
-    "description": "API documentation for 36905_activation_codes"
+    "description": "API documentation for 36905_activation_codes (Users table only)"
   },
   "servers": [
     {
@@ -11,914 +11,12 @@
     }
   ],
   "paths": {
-    "/create/activation_codes?Instance=36905_activation_codes": {
-      "post": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Create a new record in activation_codes",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string"
-                  },
-                  "customer_id": {
-                    "type": "string"
-                  },
-                  "subscription_id": {
-                    "type": "string"
-                  },
-                  "tier": {
-                    "type": "string"
-                  },
-                  "status": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "used_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "device_id": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Successfully created the record",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Record created successfully"
-                    },
-                    "id": {
-                      "type": "integer",
-                      "description": "ID of the newly created record"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/read/activation_codes?Instance=36905_activation_codes": {
-      "get": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Retrieve all records from activation_codes",
-        "description": "### Filtering and query options\n\nUse query parameters to filter results. Operators use bracket notation:\n\n| Operator | Example | Meaning |\n|---|---|---|\n| `field` | `?status=active` | Equal (default) |\n| `field[ne]` | `?status[ne]=inactive` | Not equal |\n| `field[gt]` | `?price[gt]=100` | Greater than |\n| `field[gte]` | `?date[gte]=2024-05-01` | Greater than or equal |\n| `field[lt]` | `?score[lt]=500` | Less than |\n| `field[lte]` | `?score[lte]=800` | Less than or equal |\n| `field[in]` | `?type[in]=a,b,c` | In list (comma-separated) |\n| `field[like]` | `?name[like]=john` | Partial match |\n\n**Examples**\n- `?price[gte]=100&price[lte]=200`\n- `?name[like]=john`\n- `?status=active`\n\n**Additional helpers**\n- **Pagination**: `page`, `limit` (defaults 1, 10)\n- **Totals**: `includeTotal=true` adds `total` and `totalPages`\n- **Sorting**: `sort=colA,colB`, `order=asc,desc`\n- **Single record**: `only=latest` or `only=oldest` (optional `by=column`, defaults `id`)",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved records",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "code": {
-                            "type": "string"
-                          },
-                          "customer_id": {
-                            "type": "string"
-                          },
-                          "subscription_id": {
-                            "type": "string"
-                          },
-                          "tier": {
-                            "type": "string"
-                          },
-                          "status": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "expires_at": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "used_at": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "device_id": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/read/activation_codes/{id}?Instance=36905_activation_codes": {
-      "get": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Retrieve a record by ID from activation_codes",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          },
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "The ID of the record to retrieve"
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved the record",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "customer_id": {
-                          "type": "string"
-                        },
-                        "subscription_id": {
-                          "type": "string"
-                        },
-                        "tier": {
-                          "type": "string"
-                        },
-                        "status": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "expires_at": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "used_at": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "device_id": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Record Not Found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/search/activation_codes?Instance=36905_activation_codes": {
-      "post": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Search for records in activation_codes",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string"
-                  },
-                  "customer_id": {
-                    "type": "string"
-                  },
-                  "subscription_id": {
-                    "type": "string"
-                  },
-                  "tier": {
-                    "type": "string"
-                  },
-                  "status": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "used_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "device_id": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved matching records",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "code": {
-                            "type": "string"
-                          },
-                          "customer_id": {
-                            "type": "string"
-                          },
-                          "subscription_id": {
-                            "type": "string"
-                          },
-                          "tier": {
-                            "type": "string"
-                          },
-                          "status": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "expires_at": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "used_at": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "device_id": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/update/activation_codes/{id}?Instance=36905_activation_codes": {
-      "put": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Update a record in activation_codes",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          },
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "The ID of the record to update"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string"
-                  },
-                  "customer_id": {
-                    "type": "string"
-                  },
-                  "subscription_id": {
-                    "type": "string"
-                  },
-                  "tier": {
-                    "type": "string"
-                  },
-                  "status": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "used_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "device_id": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully updated the record"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/delete/activation_codes/{id}?Instance=36905_activation_codes": {
-      "delete": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Delete a record from activation_codes",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          },
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "The ID of the record to delete"
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully deleted the record"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Record Not Found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/create/trial_tracking?Instance=36905_activation_codes": {
-      "post": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Create a new record in trial_tracking",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "ip_hash": {
-                    "type": "string"
-                  },
-                  "fingerprint_hash": {
-                    "type": "string"
-                  },
-                  "trial_started_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string"
-                  },
-                  "messages_used": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Successfully created the record",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Record created successfully"
-                    },
-                    "id": {
-                      "type": "integer",
-                      "description": "ID of the newly created record"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/read/trial_tracking?Instance=36905_activation_codes": {
-      "get": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Retrieve all records from trial_tracking",
-        "description": "### Filtering and query options\n\nUse query parameters to filter results. Operators use bracket notation:\n\n| Operator | Example | Meaning |\n|---|---|---|\n| `field` | `?status=active` | Equal (default) |\n| `field[ne]` | `?status[ne]=inactive` | Not equal |\n| `field[gt]` | `?price[gt]=100` | Greater than |\n| `field[gte]` | `?date[gte]=2024-05-01` | Greater than or equal |\n| `field[lt]` | `?score[lt]=500` | Less than |\n| `field[lte]` | `?score[lte]=800` | Less than or equal |\n| `field[in]` | `?type[in]=a,b,c` | In list (comma-separated) |\n| `field[like]` | `?name[like]=john` | Partial match |\n\n**Examples**\n- `?price[gte]=100&price[lte]=200`\n- `?name[like]=john`\n- `?status=active`\n\n**Additional helpers**\n- **Pagination**: `page`, `limit` (defaults 1, 10)\n- **Totals**: `includeTotal=true` adds `total` and `totalPages`\n- **Sorting**: `sort=colA,colB`, `order=asc,desc`\n- **Single record**: `only=latest` or `only=oldest` (optional `by=column`, defaults `id`)",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved records",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "ip_hash": {
-                            "type": "string"
-                          },
-                          "fingerprint_hash": {
-                            "type": "string"
-                          },
-                          "trial_started_at": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "status": {
-                            "type": "string"
-                          },
-                          "messages_used": {
-                            "type": "integer"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/read/trial_tracking/{id}?Instance=36905_activation_codes": {
-      "get": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Retrieve a record by ID from trial_tracking",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          },
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "The ID of the record to retrieve"
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved the record",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "ip_hash": {
-                          "type": "string"
-                        },
-                        "fingerprint_hash": {
-                          "type": "string"
-                        },
-                        "trial_started_at": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "status": {
-                          "type": "string"
-                        },
-                        "messages_used": {
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Record Not Found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/search/trial_tracking?Instance=36905_activation_codes": {
-      "post": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Search for records in trial_tracking",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "ip_hash": {
-                    "type": "string"
-                  },
-                  "fingerprint_hash": {
-                    "type": "string"
-                  },
-                  "trial_started_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string"
-                  },
-                  "messages_used": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved matching records",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "ip_hash": {
-                            "type": "string"
-                          },
-                          "fingerprint_hash": {
-                            "type": "string"
-                          },
-                          "trial_started_at": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "status": {
-                            "type": "string"
-                          },
-                          "messages_used": {
-                            "type": "integer"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/update/trial_tracking/{id}?Instance=36905_activation_codes": {
-      "put": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Update a record in trial_tracking",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          },
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "The ID of the record to update"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "ip_hash": {
-                    "type": "string"
-                  },
-                  "fingerprint_hash": {
-                    "type": "string"
-                  },
-                  "trial_started_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string"
-                  },
-                  "messages_used": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully updated the record"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/delete/trial_tracking/{id}?Instance=36905_activation_codes": {
-      "delete": {
-        "tags": [
-          "Endpoints"
-        ],
-        "summary": "Delete a record from trial_tracking",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Instance"
-          },
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "The ID of the record to delete"
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully deleted the record"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Record Not Found"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
     "/create/users?Instance=36905_activation_codes": {
       "post": {
         "tags": [
-          "Endpoints"
+          "Users"
         ],
-        "summary": "Create a new record in users",
+        "summary": "Create a new user",
         "parameters": [
           {
             "$ref": "#/components/parameters/Instance"
@@ -929,55 +27,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string"
-                  },
-                  "password_hash": {
-                    "type": "string"
-                  },
-                  "first_name": {
-                    "type": "string"
-                  },
-                  "locale": {
-                    "type": "string"
-                  },
-                  "stripe_customer_id": {
-                    "type": "string"
-                  },
-                  "device_ids": {
-                    "type": "string"
-                  },
-                  "email_verified": {
-                    "type": "integer"
-                  },
-                  "verification_token": {
-                    "type": "string"
-                  },
-                  "verification_expires": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "reset_token": {
-                    "type": "string"
-                  },
-                  "reset_expires": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "last_login": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/UserInput"
               }
             }
           }
@@ -1024,10 +74,10 @@
     "/read/users?Instance=36905_activation_codes": {
       "get": {
         "tags": [
-          "Endpoints"
+          "Users"
         ],
-        "summary": "Retrieve all records from users",
-        "description": "### Filtering and query options\n\nUse query parameters to filter results. Operators use bracket notation:\n\n| Operator | Example | Meaning |\n|---|---|---|\n| `field` | `?status=active` | Equal (default) |\n| `field[ne]` | `?status[ne]=inactive` | Not equal |\n| `field[gt]` | `?price[gt]=100` | Greater than |\n| `field[gte]` | `?date[gte]=2024-05-01` | Greater than or equal |\n| `field[lt]` | `?score[lt]=500` | Less than |\n| `field[lte]` | `?score[lte]=800` | Less than or equal |\n| `field[in]` | `?type[in]=a,b,c` | In list (comma-separated) |\n| `field[like]` | `?name[like]=john` | Partial match |\n\n**Examples**\n- `?price[gte]=100&price[lte]=200`\n- `?name[like]=john`\n- `?status=active`\n\n**Additional helpers**\n- **Pagination**: `page`, `limit` (defaults 1, 10)\n- **Totals**: `includeTotal=true` adds `total` and `totalPages`\n- **Sorting**: `sort=colA,colB`, `order=asc,desc`\n- **Single record**: `only=latest` or `only=oldest` (optional `by=column`, defaults `id`)",
+        "summary": "Retrieve all users",
+        "description": "### Filtering and query options\n\nUse query parameters to filter results. Operators use bracket notation:\n\n| Operator | Example | Meaning |\n|---|---|---|\n| `field` | `?status=active` | Equal (default) |\n| `field[ne]` | `?status[ne]=inactive` | Not equal |\n| `field[gt]` | `?price[gt]=100` | Greater than |\n| `field[gte]` | `?date[gte]=2024-05-01` | Greater than or equal |\n| `field[lt]` | `?score[lt]=500` | Less than |\n| `field[lte]` | `?score[lte]=800` | Less than or equal |\n| `field[in]` | `?type[in]=a,b,c` | In list (comma-separated) |\n| `field[like]` | `?name[like]=john` | Partial match |\n\n**Additional helpers**\n- **Pagination**: `page`, `limit` (defaults 1, 10)\n- **Totals**: `includeTotal=true` adds `total` and `totalPages`\n- **Sorting**: `sort=colA,colB`, `order=asc,desc`\n- **Single record**: `only=latest` or `only=oldest` (optional `by=column`, defaults `id`)",
         "parameters": [
           {
             "$ref": "#/components/parameters/Instance"
@@ -1052,55 +102,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "email": {
-                            "type": "string"
-                          },
-                          "password_hash": {
-                            "type": "string"
-                          },
-                          "first_name": {
-                            "type": "string"
-                          },
-                          "locale": {
-                            "type": "string"
-                          },
-                          "stripe_customer_id": {
-                            "type": "string"
-                          },
-                          "device_ids": {
-                            "type": "string"
-                          },
-                          "email_verified": {
-                            "type": "integer"
-                          },
-                          "verification_token": {
-                            "type": "string"
-                          },
-                          "verification_expires": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "reset_token": {
-                            "type": "string"
-                          },
-                          "reset_expires": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "created_at": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "last_login": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "status": {
-                            "type": "string"
-                          }
-                        }
+                        "$ref": "#/components/schemas/User"
                       }
                     }
                   }
@@ -1120,9 +122,9 @@
     "/read/users/{id}?Instance=36905_activation_codes": {
       "get": {
         "tags": [
-          "Endpoints"
+          "Users"
         ],
-        "summary": "Retrieve a record by ID from users",
+        "summary": "Retrieve a user by ID",
         "parameters": [
           {
             "$ref": "#/components/parameters/Instance"
@@ -1134,7 +136,7 @@
             "schema": {
               "type": "integer"
             },
-            "description": "The ID of the record to retrieve"
+            "description": "The ID of the user to retrieve"
           }
         ],
         "security": [
@@ -1154,55 +156,7 @@
                       "type": "string"
                     },
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "email": {
-                          "type": "string"
-                        },
-                        "password_hash": {
-                          "type": "string"
-                        },
-                        "first_name": {
-                          "type": "string"
-                        },
-                        "locale": {
-                          "type": "string"
-                        },
-                        "stripe_customer_id": {
-                          "type": "string"
-                        },
-                        "device_ids": {
-                          "type": "string"
-                        },
-                        "email_verified": {
-                          "type": "integer"
-                        },
-                        "verification_token": {
-                          "type": "string"
-                        },
-                        "verification_expires": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "reset_token": {
-                          "type": "string"
-                        },
-                        "reset_expires": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "created_at": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "last_login": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "status": {
-                          "type": "string"
-                        }
-                      }
+                      "$ref": "#/components/schemas/User"
                     }
                   }
                 }
@@ -1224,9 +178,9 @@
     "/search/users?Instance=36905_activation_codes": {
       "post": {
         "tags": [
-          "Endpoints"
+          "Users"
         ],
-        "summary": "Search for records in users",
+        "summary": "Search for users",
         "parameters": [
           {
             "$ref": "#/components/parameters/Instance"
@@ -1237,55 +191,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string"
-                  },
-                  "password_hash": {
-                    "type": "string"
-                  },
-                  "first_name": {
-                    "type": "string"
-                  },
-                  "locale": {
-                    "type": "string"
-                  },
-                  "stripe_customer_id": {
-                    "type": "string"
-                  },
-                  "device_ids": {
-                    "type": "string"
-                  },
-                  "email_verified": {
-                    "type": "integer"
-                  },
-                  "verification_token": {
-                    "type": "string"
-                  },
-                  "verification_expires": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "reset_token": {
-                    "type": "string"
-                  },
-                  "reset_expires": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "last_login": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/UserInput"
               }
             }
           }
@@ -1309,55 +215,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "email": {
-                            "type": "string"
-                          },
-                          "password_hash": {
-                            "type": "string"
-                          },
-                          "first_name": {
-                            "type": "string"
-                          },
-                          "locale": {
-                            "type": "string"
-                          },
-                          "stripe_customer_id": {
-                            "type": "string"
-                          },
-                          "device_ids": {
-                            "type": "string"
-                          },
-                          "email_verified": {
-                            "type": "integer"
-                          },
-                          "verification_token": {
-                            "type": "string"
-                          },
-                          "verification_expires": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "reset_token": {
-                            "type": "string"
-                          },
-                          "reset_expires": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "created_at": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "last_login": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "status": {
-                            "type": "string"
-                          }
-                        }
+                        "$ref": "#/components/schemas/User"
                       }
                     }
                   }
@@ -1377,9 +235,9 @@
     "/update/users/{id}?Instance=36905_activation_codes": {
       "put": {
         "tags": [
-          "Endpoints"
+          "Users"
         ],
-        "summary": "Update a record in users",
+        "summary": "Update a user",
         "parameters": [
           {
             "$ref": "#/components/parameters/Instance"
@@ -1391,7 +249,7 @@
             "schema": {
               "type": "integer"
             },
-            "description": "The ID of the record to update"
+            "description": "The ID of the user to update"
           }
         ],
         "requestBody": {
@@ -1399,55 +257,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string"
-                  },
-                  "password_hash": {
-                    "type": "string"
-                  },
-                  "first_name": {
-                    "type": "string"
-                  },
-                  "locale": {
-                    "type": "string"
-                  },
-                  "stripe_customer_id": {
-                    "type": "string"
-                  },
-                  "device_ids": {
-                    "type": "string"
-                  },
-                  "email_verified": {
-                    "type": "integer"
-                  },
-                  "verification_token": {
-                    "type": "string"
-                  },
-                  "verification_expires": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "reset_token": {
-                    "type": "string"
-                  },
-                  "reset_expires": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "last_login": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/UserInput"
               }
             }
           }
@@ -1473,9 +283,9 @@
     "/delete/users/{id}?Instance=36905_activation_codes": {
       "delete": {
         "tags": [
-          "Endpoints"
+          "Users"
         ],
-        "summary": "Delete a record from users",
+        "summary": "Delete a user",
         "parameters": [
           {
             "$ref": "#/components/parameters/Instance"
@@ -1487,7 +297,7 @@
             "schema": {
               "type": "integer"
             },
-            "description": "The ID of the record to delete"
+            "description": "The ID of the user to delete"
           }
         ],
         "security": [
@@ -1513,6 +323,113 @@
     }
   },
   "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password_hash": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "stripe_customer_id": {
+            "type": "string"
+          },
+          "device_ids": {
+            "type": "string"
+          },
+          "email_verified": {
+            "type": "integer"
+          },
+          "verification_token": {
+            "type": "string"
+          },
+          "verification_expires": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reset_token": {
+            "type": "string"
+          },
+          "reset_expires": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_login": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "UserInput": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password_hash": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "stripe_customer_id": {
+            "type": "string"
+          },
+          "device_ids": {
+            "type": "string"
+          },
+          "email_verified": {
+            "type": "integer"
+          },
+          "verification_token": {
+            "type": "string"
+          },
+          "verification_expires": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reset_token": {
+            "type": "string"
+          },
+          "reset_expires": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_login": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
@@ -1540,12 +457,8 @@
   ],
   "tags": [
     {
-      "name": "Endpoints",
-      "description": "Operations related to the API endpoints"
-    },
-    {
-      "name": "Join Endpoints",
-      "description": "Operations related to table joins"
+      "name": "Users",
+      "description": "User management endpoints"
     }
   ]
 }

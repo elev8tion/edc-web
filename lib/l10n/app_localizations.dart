@@ -350,6 +350,36 @@ abstract class AppLocalizations {
   /// **'Verify Your Email'**
   String get verifyYourEmail;
 
+  /// Title shown while verifying email
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying Email...'**
+  String get verifyingEmail;
+
+  /// Title shown when email is verified
+  ///
+  /// In en, this message translates to:
+  /// **'Email Verified!'**
+  String get emailVerified;
+
+  /// Title shown when verification fails
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Failed'**
+  String get verificationFailed;
+
+  /// Message shown after successful verification
+  ///
+  /// In en, this message translates to:
+  /// **'Redirecting to the app...'**
+  String get redirectingToApp;
+
+  /// Generic please wait message
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait...'**
+  String get pleaseWait;
+
   /// Verify email screen subtitle
   ///
   /// In en, this message translates to:
@@ -5942,6 +5972,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add to Home Screen'**
   String get pwaIOSAddToHomeScreen;
+
+  /// Instruction to exit browser and open from home screen icon
+  ///
+  /// In en, this message translates to:
+  /// **'Then close this browser completely and open the app from your home screen icon to continue signing up.'**
+  String get pwaExitBrowserInstruction;
 
   /// Button to dismiss iOS instructions
   ///

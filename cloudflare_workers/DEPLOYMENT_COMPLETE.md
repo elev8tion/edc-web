@@ -1,6 +1,6 @@
 # ✅ Cloudflare Workers Deployed Successfully!
 
-**Date:** December 24, 2025
+**Date:** December 31, 2025
 **Status:** Workers deployed and .env updated
 
 ---
@@ -9,12 +9,12 @@
 
 ### Worker 1: Stripe Webhook Handler
 **URL:** `https://stripe-webhook-handler.connect-2a2.workers.dev`
-**Function:** Generates activation codes when Stripe payment succeeds
+**Function:** Handles Stripe subscription events and syncs with user accounts
 **Status:** ✅ Live
 
-### Worker 2: Code Validation API
-**URL:** `https://code-validation-api.connect-2a2.workers.dev`
-**Function:** Validates activation codes from Flutter app
+### Worker 2: Auth Service
+**URL:** `https://auth.everydaychristian.app`
+**Function:** User authentication (signup, login, email verification, password reset)
 **Status:** ✅ Live
 
 ---
@@ -24,9 +24,9 @@
 - [x] Installed Wrangler CLI
 - [x] Logged into Cloudflare
 - [x] Deployed stripe-webhook-handler
-- [x] Deployed code-validation-api
+- [x] Deployed auth-service
 - [x] Updated `.env` with new URLs
-- [x] Archived old Activepieces integration
+- [x] Removed activation_codes and trial_tracking tables (no longer needed)
 
 ---
 
@@ -80,22 +80,16 @@ Check worker logs:
 wrangler tail stripe-webhook-handler
 ```
 
-**Test Code Validation:**
+**Test Auth Service:**
 ```bash
-curl -X POST https://code-validation-api.connect-2a2.workers.dev \
+# Health check
+curl https://auth.everydaychristian.app/health
+
+# Test signup
+curl -X POST https://auth.everydaychristian.app/signup \
   -H "Content-Type: application/json" \
-  -d '{"code":"M-ABC-123","deviceId":"test-device-123"}'
+  -d '{"email":"test@example.com","password":"TestPass123!"}'
 ```
-
-Expected response:
-```json
-{
-  "valid": false,
-  "error": "Invalid activation code"
-}
-```
-
-(Because M-ABC-123 doesn't exist yet - this is correct!)
 
 ---
 
@@ -103,20 +97,20 @@ Expected response:
 
 **Complete End-to-End Test:**
 
-1. **Create test purchase in Stripe:**
-   - Use Stripe CLI: `stripe trigger invoice.payment_succeeded`
-   - Check worker logs: `wrangler tail stripe-webhook-handler`
-   - Look for generated code (e.g., M-A7B-92K)
+1. **Test auth flow:**
+   - Signup with email/password
+   - Check for verification email
+   - Verify email with token
+   - Login and get JWT token
 
-2. **Verify code in NoCodeBackend:**
-   - Check database at: https://api.nocodebackend.com/api-docs/?Instance=36905_activation_codes
-   - Should see new record with status: "unused"
+2. **Verify user in NoCodeBackend:**
+   - Check users table at: https://api.nocodebackend.com/api-docs/?Instance=36905_activation_codes
+   - Should see new user record
 
-3. **Test validation from Flutter app:**
+3. **Test from Flutter app:**
    - Open your app
-   - Go to activation screen
-   - Enter the generated code
-   - Should activate successfully
+   - Complete signup/login flow
+   - Verify token is stored correctly
 
 ---
 
@@ -127,8 +121,8 @@ Expected response:
 # Stripe webhook handler
 wrangler tail stripe-webhook-handler
 
-# Code validation API
-wrangler tail code-validation-api
+# Auth service
+wrangler tail auth-service
 ```
 
 **Cloudflare Dashboard:**
@@ -145,13 +139,9 @@ After making code changes:
 ```bash
 cd /Users/kcdacre8tor/edc_web/cloudflare_workers
 
-# Deploy both
+# Deploy workers
 wrangler deploy src/stripe-webhook.js --name stripe-webhook-handler
-wrangler deploy src/code-validation.js --name code-validation-api
-
-# Or deploy individually
-npm run deploy:stripe
-npm run deploy:validation
+wrangler deploy -c wrangler-auth.toml
 ```
 
 Changes deploy instantly (no downtime).
@@ -190,11 +180,11 @@ This is more than enough for your app.
 
 **NoCodeBackend errors?**
 - Verify API key in wrangler.toml
-- Check database has all 9 columns
+- Check users table schema matches expected fields
 
 **Email not sending?**
-- Add RESEND_API_KEY (step 1 above)
-- Verify sending domain in Resend dashboard
+- Verify EMAILIT_API_KEY is set
+- Check email templates in auth-service.js
 
 ---
 
@@ -212,11 +202,11 @@ This is more than enough for your app.
 **After:** Cloudflare Workers (simple, unlimited, fast)
 
 **What changed:**
-- ❌ Deleted: Activepieces flows, table configuration
-- ✅ Added: 2 simple JavaScript workers
+- ❌ Removed: activation_codes and trial_tracking tables (replaced with Stripe-based subscription)
+- ✅ Added: Auth service worker with full user management
 - ✅ Updated: `.env` with new URLs
 - ✅ Improved: Faster, more reliable, full control
 
 ---
 
-**Next:** Complete steps 1-3 above, then test your app! 🚀
+**Database:** Only the `users` table is now used in NoCodeBackend.

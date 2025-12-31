@@ -442,6 +442,9 @@ class AuthService extends StateNotifier<AuthState> {
 
       if (user.name != null) {
         await _database.setSetting('user_name', user.name!);
+        // Also save to SharedPreferences for profile screen compatibility
+        final prefs = await PreferencesService.getInstance();
+        await prefs.saveFirstName(user.name!);
       }
       if (user.email != null) {
         await _database.setSetting('user_email', user.email!);

@@ -326,18 +326,6 @@ class _AuthFormState extends ConsumerState<AuthForm> {
               ),
             ],
 
-            // Additional info for sign up
-            if (_isSignUp) ...[
-              const SizedBox(height: 16),
-              Text(
-                l10n.signUpTermsNote,
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.6),
-                  fontSize: 12,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
           ],
         ),
       ),

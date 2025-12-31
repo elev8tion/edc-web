@@ -168,6 +168,26 @@
   "@verifyYourEmail": {
     "description": "Verify email screen title"
   },
+  "verifyingEmail": "Verifying Email...",
+  "@verifyingEmail": {
+    "description": "Title shown while verifying email"
+  },
+  "emailVerified": "Email Verified!",
+  "@emailVerified": {
+    "description": "Title shown when email is verified"
+  },
+  "verificationFailed": "Verification Failed",
+  "@verificationFailed": {
+    "description": "Title shown when verification fails"
+  },
+  "redirectingToApp": "Redirecting to the app...",
+  "@redirectingToApp": {
+    "description": "Message shown after successful verification"
+  },
+  "pleaseWait": "Please wait...",
+  "@pleaseWait": {
+    "description": "Generic please wait message"
+  },
   "verifyEmailSubtitle": "We've sent a verification link to your email. Please check your inbox and click the link to verify your account.",
   "@verifyEmailSubtitle": {
     "description": "Verify email screen subtitle"
@@ -4482,6 +4502,10 @@
   "pwaIOSAddToHomeScreen": "Add to Home Screen",
   "@pwaIOSAddToHomeScreen": {
     "description": "iOS add to home screen instruction"
+  },
+  "pwaExitBrowserInstruction": "Then close this browser completely and open the app from your home screen icon to continue signing up.",
+  "@pwaExitBrowserInstruction": {
+    "description": "Instruction to exit browser and open from home screen icon"
   },
   "pwaGotIt": "Got It",
   "@pwaGotIt": {

@@ -127,9 +127,6 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
           const SizedBox(height: 20),
 
           // Features list
-          _buildFeature(
-              context, Icons.offline_bolt_outlined, l10n.pwaFeatureOffline),
-          const SizedBox(height: 10),
           _buildFeature(context, Icons.speed_outlined, l10n.pwaFeatureFast),
           const SizedBox(height: 10),
           _buildFeature(
@@ -162,6 +159,7 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
+                  // Step 1: Tap share and add to home screen
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -180,6 +178,18 @@ class _PWAInstallDialogContentState extends State<_PWAInstallDialogContent> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+                  // Step 2: Exit browser and open from icon
+                  Text(
+                    l10n.pwaExitBrowserInstruction,
+                    style: TextStyle(
+                      color: AppColors.secondaryText,
+                      fontSize: ResponsiveUtils.fontSize(context, 12,
+                          minSize: 10, maxSize: 14),
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),

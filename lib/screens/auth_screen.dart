@@ -155,18 +155,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: AppSpacing.xl),
-
-                  // Privacy note
-                  Text(
-                    l10n.privacyNote,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: ResponsiveUtils.fontSize(context, 12, minSize: 10, maxSize: 14),
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
                 ],
               ),
             ),

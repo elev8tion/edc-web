@@ -147,6 +147,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get verifyYourEmail => 'Verifique su Correo';
 
   @override
+  String get verifyingEmail => 'Verificando Correo...';
+
+  @override
+  String get emailVerified => 'Correo Verificado!';
+
+  @override
+  String get verificationFailed => 'Verificación Fallida';
+
+  @override
+  String get redirectingToApp => 'Redirigiendo a la aplicación...';
+
+  @override
+  String get pleaseWait => 'Por favor espere...';
+
+  @override
   String get verifyEmailSubtitle =>
       'Hemos enviado un enlace de verificación a su correo electrónico. Por favor revise su bandeja de entrada y haga clic en el enlace para verificar su cuenta.';
 
@@ -3384,6 +3399,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get pwaIOSAddToHomeScreen => 'Añadir a Inicio';
+
+  @override
+  String get pwaExitBrowserInstruction =>
+      'Luego cierra completamente este navegador y abre la app desde el icono en tu pantalla de inicio para continuar registrándote.';
 
   @override
   String get pwaGotIt => 'Entendido';

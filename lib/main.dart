@@ -24,6 +24,7 @@ import 'package:everyday_christian/screens/checkout_complete_screen.dart';
 import 'package:everyday_christian/screens/auth_screen.dart';
 import 'package:everyday_christian/screens/verify_email_screen.dart';
 import 'package:everyday_christian/screens/wait_for_verification_screen.dart';
+import 'package:everyday_christian/screens/email_verification_handler_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
@@ -182,6 +183,14 @@ class MyApp extends ConsumerWidget {
           case AppRoutes.auth:
             return DarkPageRoute(settings: settings, builder: (_) => const AuthScreen());
           case AppRoutes.verifyEmail:
+            // On web, use the handler screen to process verification token from URL
+            if (kIsWeb) {
+              return DarkPageRoute(
+                settings: settings,
+                builder: (_) => const EmailVerificationHandlerScreen(),
+              );
+            }
+            // On mobile, show the verify email screen with email argument
             final args = settings.arguments as Map<String, dynamic>?;
             return DarkPageRoute(
               settings: settings,
