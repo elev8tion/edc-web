@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/auth_service.dart';
 import '../../../theme/app_theme.dart';
 import '../../../components/frosted_glass.dart';
 import '../../../components/glass_button.dart';
+import '../../../components/dark_glass_container.dart';
+import '../../../core/services/preferences_service.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_theme_extensions.dart';
 
@@ -29,6 +33,13 @@ class _AuthFormState extends ConsumerState<AuthForm> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
+  // Legal agreement checkboxes (for signup only)
+  bool _termsChecked = false;
+  bool _privacyChecked = false;
+  bool _ageChecked = false;
+
+  bool get _canSignUp => _termsChecked && _privacyChecked && _ageChecked;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -40,12 +51,20 @@ class _AuthFormState extends ConsumerState<AuthForm> {
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // For signup, ensure all legal checkboxes are checked
+    if (_isSignUp && !_canSignUp) return;
+
     setState(() => _isLoading = true);
 
     final authService = ref.read(authServiceProvider.notifier);
 
     bool success;
     if (_isSignUp) {
+      // Save legal agreements before signup
+      final prefsService = await PreferencesService.getInstance();
+      await prefsService.saveLegalAgreementAcceptance(true);
+      await prefsService.setOnboardingCompleted();
+
       success = await authService.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
@@ -63,6 +82,15 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
     if (success && mounted) {
       // Success is handled by the auth state listener in AuthScreen
+    }
+  }
+
+  Future<void> _openLegalDoc(String type) async {
+    final url = type == 'terms'
+        ? 'https://everydaychristian.app/terms'
+        : 'https://everydaychristian.app/privacy';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
     }
   }
 
@@ -257,12 +285,91 @@ class _AuthFormState extends ConsumerState<AuthForm> {
               ),
             ],
 
+            // Legal agreements (only for sign up)
+            if (_isSignUp) ...[
+              const SizedBox(height: 20),
+
+              // Terms of Service
+              _buildCheckboxRow(
+                value: _termsChecked,
+                onChanged: (value) {
+                  setState(() => _termsChecked = value ?? false);
+                  HapticFeedback.selectionClick();
+                },
+                label: l10n.acceptTermsOfService,
+                onViewTapped: () => _openLegalDoc('terms'),
+                l10n: l10n,
+              ),
+              const SizedBox(height: 8),
+
+              // Privacy Policy
+              _buildCheckboxRow(
+                value: _privacyChecked,
+                onChanged: (value) {
+                  setState(() => _privacyChecked = value ?? false);
+                  HapticFeedback.selectionClick();
+                },
+                label: l10n.acceptPrivacyPolicy,
+                onViewTapped: () => _openLegalDoc('privacy'),
+                l10n: l10n,
+              ),
+              const SizedBox(height: 8),
+
+              // Age confirmation
+              _buildCheckboxRow(
+                value: _ageChecked,
+                onChanged: (value) {
+                  setState(() => _ageChecked = value ?? false);
+                  HapticFeedback.selectionClick();
+                },
+                label: l10n.confirmAge13Plus,
+                l10n: l10n,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Crisis resources (collapsible)
+              DarkGlassContainer(
+                child: ExpansionTile(
+                  title: Row(
+                    children: [
+                      const Icon(Icons.health_and_safety,
+                          color: AppTheme.goldColor, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        l10n.crisisResources,
+                        style: const TextStyle(
+                          color: AppColors.primaryText,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                  iconColor: AppColors.primaryText,
+                  collapsedIconColor: AppColors.secondaryText,
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 12),
+                  childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                  children: [
+                    Text(
+                      l10n.crisisResourcesText,
+                      style: TextStyle(
+                        color: AppColors.secondaryText,
+                        fontSize: 12,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
             const SizedBox(height: 24),
 
             // Submit button
             GlassButton(
               text: _isSignUp ? l10n.createAccount : l10n.signIn,
-              onPressed: _submitForm,
+              onPressed: (_isSignUp && !_canSignUp) ? null : _submitForm,
               isLoading: _isLoading,
             ),
 
@@ -329,6 +436,67 @@ class _AuthFormState extends ConsumerState<AuthForm> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCheckboxRow({
+    required bool value,
+    required ValueChanged<bool?>? onChanged,
+    required String label,
+    VoidCallback? onViewTapped,
+    required AppLocalizations l10n,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: Checkbox(
+            value: value,
+            onChanged: onChanged,
+            activeColor: AppTheme.goldColor,
+            checkColor: Colors.white,
+            side: BorderSide(
+              color: value ? AppTheme.goldColor : Colors.white.withValues(alpha: 0.5),
+              width: 1.5,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              if (onViewTapped != null) ...[
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: onViewTapped,
+                  child: Text(
+                    l10n.view,
+                    style: const TextStyle(
+                      color: AppTheme.goldColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

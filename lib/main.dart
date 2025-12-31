@@ -13,7 +13,8 @@ import 'package:everyday_christian/screens/chapter_reading_screen.dart';
 import 'package:everyday_christian/screens/chat_screen.dart';
 import 'package:everyday_christian/screens/devotional_screen.dart';
 import 'package:everyday_christian/screens/home_screen.dart';
-import 'package:everyday_christian/screens/unified_interactive_onboarding_screen.dart';
+// Onboarding screen deprecated - legal agreements now in signup form
+// import 'package:everyday_christian/screens/unified_interactive_onboarding_screen.dart';
 import 'package:everyday_christian/screens/prayer_journal_screen.dart';
 import 'package:everyday_christian/screens/profile_screen.dart';
 import 'package:everyday_christian/screens/reading_plan_screen.dart';
@@ -199,7 +200,8 @@ class MyApp extends ConsumerWidget {
               ),
             );
           case AppRoutes.onboarding:
-            return DarkPageRoute(settings: settings, builder: (_) => const UnifiedInteractiveOnboardingScreen());
+            // Legacy: Onboarding moved to signup form. Redirect to home for backward compatibility.
+            return DarkPageRoute(settings: settings, builder: (_) => const HomeScreen());
           case AppRoutes.waitForVerification:
             return DarkPageRoute(settings: settings, builder: (_) => const WaitForVerificationScreen());
           case AppRoutes.home:

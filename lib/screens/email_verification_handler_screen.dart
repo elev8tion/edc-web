@@ -63,11 +63,11 @@ class _EmailVerificationHandlerScreenState
         final authService = ref.read(authServiceProvider.notifier);
         await authService.initialize();
 
-        // Wait briefly then navigate to onboarding/home
+        // Wait briefly then navigate to home
         await Future.delayed(const Duration(seconds: 2));
 
         if (mounted) {
-          NavigationService.pushAndRemoveUntilImmediate(AppRoutes.onboarding);
+          NavigationService.pushAndRemoveUntilImmediate(AppRoutes.home);
         }
       } else {
         setState(() {

@@ -90,20 +90,10 @@ class SplashScreen extends HookConsumerWidget {
           return;
         }
 
-        // User is authenticated - check if they completed onboarding
-        final prefsService = await PreferencesService.getInstance();
-        final hasCompletedOnboarding = prefsService.hasCompletedOnboarding();
-
-        if (!hasCompletedOnboarding) {
-          // Authenticated but not onboarded - show onboarding
-          if (_hasNavigated) return;
-          _hasNavigated = true;
-          NavigationService.pushReplacementNamed(AppRoutes.onboarding);
-          return;
-        }
-
-        // Returning user - check if app lock is enabled (skip on web)
+        // User is authenticated - check if app lock is enabled (skip on web)
+        // Note: Legal agreements are now handled during signup in auth_form.dart
         if (!kIsWeb) {
+          final prefsService = await PreferencesService.getInstance();
           final isAppLockEnabled = prefsService.isAppLockEnabled();
 
           if (isAppLockEnabled) {
