@@ -119,6 +119,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return;
     }
 
+    // Skip if already running as installed PWA (standalone mode)
+    if (_isRunningAsInstalledPwa()) {
+      debugPrint('[PWA] Already running as installed PWA, skipping install prompt');
+      _showTrialWelcomeIfNeeded();
+      return;
+    }
+
     // Minimal delay to let tutorial animation complete
     await Future.delayed(const Duration(milliseconds: 100));
 
@@ -147,6 +154,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           userAgent.contains('ipad') ||
           userAgent.contains('ipod');
     } catch (e) {
+      return false;
+    }
+  }
+
+  /// Detect if running as installed PWA (standalone mode)
+  /// Returns true if opened from home screen icon, false if in browser tab
+  bool _isRunningAsInstalledPwa() {
+    try {
+      // Check display-mode: standalone (works on most browsers)
+      final standaloneQuery = web.window.matchMedia('(display-mode: standalone)');
+      if (standaloneQuery.matches) {
+        return true;
+      }
+
+      // Check display-mode: fullscreen (some PWAs use this)
+      final fullscreenQuery = web.window.matchMedia('(display-mode: fullscreen)');
+      if (fullscreenQuery.matches) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      debugPrint('[PWA] Error detecting standalone mode: $e');
       return false;
     }
   }
