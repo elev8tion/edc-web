@@ -20,6 +20,7 @@ import '../utils/responsive_utils.dart';
 import '../utils/reading_reference_parser.dart';
 import '../utils/blur_dialog_utils.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 class ReadingPlanScreen extends ConsumerStatefulWidget {
   const ReadingPlanScreen({super.key});

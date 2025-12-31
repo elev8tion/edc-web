@@ -5,6 +5,7 @@ import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
 import 'glass_card.dart';
 import 'glass_effects/glass_dialog.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Shows the PWA install prompt dialog
 /// Returns true if user initiated install, false if dismissed

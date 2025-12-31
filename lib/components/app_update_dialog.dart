@@ -6,6 +6,7 @@ import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import 'glass_card.dart';
 import 'glass_effects/glass_dialog.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Shows the app update dialog
 /// Returns true if user chose to refresh, false if dismissed

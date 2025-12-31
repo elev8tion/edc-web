@@ -4,6 +4,7 @@ import '../theme/app_theme.dart';
 import 'glass/static_liquid_glass_lens.dart';
 import 'category_badge.dart';
 import 'dark_glass_container.dart';
+import '../theme/app_theme_extensions.dart';
 
 class DailyVerseWithGlassDecoration extends HookWidget {
   final String verse;

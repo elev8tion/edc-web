@@ -399,6 +399,9 @@ class AuthUser {
     return email[0].toUpperCase();
   }
 
+  /// Getter for email verification status (alias for consistency with User model)
+  bool get isEmailVerified => emailVerified;
+
   /// Copy with updated fields
   AuthUser copyWith({
     int? id,

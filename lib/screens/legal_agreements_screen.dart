@@ -8,6 +8,7 @@ import '../components/frosted_glass_card.dart';
 import '../components/gradient_background.dart';
 import '../components/glass_button.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Combined legal agreements screen showing crisis disclaimer and terms/privacy acceptance
 /// Uses clickwrap method (checkboxes) for legally strong consent

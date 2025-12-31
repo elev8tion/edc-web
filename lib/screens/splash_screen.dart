@@ -14,6 +14,7 @@ import '../features/auth/services/auth_service.dart';
 import '../hooks/animation_hooks.dart';
 import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 class SplashScreen extends HookConsumerWidget {
   const SplashScreen({super.key});

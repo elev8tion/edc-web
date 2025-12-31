@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dark_glass_container.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// A tooltip that appears above or below a UI element to guide first-time users
 ///

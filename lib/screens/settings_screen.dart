@@ -32,6 +32,7 @@ import '../utils/blur_dialog_utils.dart';
 import '../l10n/app_localizations.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../services/auth_service.dart';
+import '../theme/app_theme_extensions.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});

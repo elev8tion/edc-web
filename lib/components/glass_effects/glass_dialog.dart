@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/app_theme.dart';
 import '../../utils/responsive_utils.dart';
+import '../../theme/app_theme_extensions.dart';
 
 /// Shows a glass morphism style dialog
 ///

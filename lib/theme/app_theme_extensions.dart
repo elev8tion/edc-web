@@ -101,6 +101,7 @@ class AppSpacing {
   static const double gapLg = lg;
   static const double gapXl = xl;
   static const double gapXxl = xxl;
+
 }
 
 /// Semantic color tokens for consistent color usage

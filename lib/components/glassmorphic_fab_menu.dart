@@ -11,6 +11,7 @@ import '../utils/ui_audio.dart';
 import '../l10n/app_localizations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'glass_card.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Glassmorphic Floating Action Button Menu
 ///

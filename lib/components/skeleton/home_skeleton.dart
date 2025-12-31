@@ -7,6 +7,7 @@ import '../dark_main_feature_card.dart';
 import '../clear_glass_card.dart';
 import '../dark_glass_container.dart';
 import 'skeleton_theme.dart';
+import '../../theme/app_theme_extensions.dart';
 
 /// Skeleton loading state for the Home Screen
 /// Matches the actual layout structure for seamless transition

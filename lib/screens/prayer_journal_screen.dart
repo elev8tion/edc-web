@@ -29,6 +29,7 @@ import '../utils/blur_dialog_utils.dart';
 import '../services/prayer_share_service.dart';
 import '../l10n/app_localizations.dart';
 import '../core/utils/simple_coach_mark.dart';
+import '../theme/app_theme_extensions.dart';
 
 class PrayerJournalScreen extends ConsumerStatefulWidget {
   const PrayerJournalScreen({super.key});

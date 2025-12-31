@@ -37,7 +37,8 @@ class PrayerJournalTabSkeleton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
@@ -55,13 +56,13 @@ class PrayerJournalTabSkeleton extends StatelessWidget {
           const Bone.multiText(lines: 2, fontSize: 14),
           const SizedBox(height: 12),
           // Footer row with actions
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Bone.circle(size: 24),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Bone.circle(size: 24),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Bone.circle(size: 24),
             ],
           ),

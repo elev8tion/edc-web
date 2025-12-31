@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import 'glassmorphic_fab_menu.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Persistent header delegate for chat action buttons that sticks to the top
 class ChatActionButtonsDelegate extends SliverPersistentHeaderDelegate {

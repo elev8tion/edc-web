@@ -4,6 +4,7 @@ import '../components/frosted_glass_card.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Widget displaying reading plan progress statistics
 class ReadingProgressStatsWidget extends StatelessWidget {

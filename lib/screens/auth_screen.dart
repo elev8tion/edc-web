@@ -12,6 +12,7 @@ import '../utils/responsive_utils.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../l10n/app_localizations.dart';
 import 'forgot_password_screen.dart';
+import '../theme/app_theme_extensions.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});

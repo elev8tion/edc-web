@@ -11,6 +11,7 @@ import '../components/glass_button.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 enum LockoutReason {
   noTrial,         // Never started trial - must sign up first

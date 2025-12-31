@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Data model for popup menu items
 class BlurPopupMenuItem {

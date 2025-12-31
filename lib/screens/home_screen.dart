@@ -22,6 +22,7 @@ import '../core/services/navigation_debouncer.dart';
 import '../l10n/app_localizations.dart';
 import '../core/utils/simple_coach_mark.dart';
 import '../core/utils/theme_extensions.dart';
+import '../theme/app_theme_extensions.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -184,9 +185,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: SafeArea(
               child: SingleChildScrollView(
                 padding: EdgeInsets.only(
-                  top: context.theme.appSpacing.xl,
-                  bottom: context.theme.appSpacing
-                      .xxxl, // Extra bottom padding for button visibility
+                  top: AppSpacing.xl,
+                  bottom: AppSpacing.xxxl, // Extra bottom padding for button visibility
                 ),
                 // Optimize scrolling performance
                 physics: const BouncingScrollPhysics(),
@@ -195,19 +195,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   children: [
                     SizedBox(
                         height: 56 +
-                            context.theme.appSpacing.lg +
+                            AppSpacing.lg +
                             32), // Space for FAB + spacing + 32px padding
                     _buildStatsRow(),
-                    SizedBox(height: context.theme.appSpacing.xxl),
+                    SizedBox(height: AppSpacing.xxl),
                     _buildMainFeatures(),
-                    SizedBox(height: context.theme.appSpacing.xxl),
+                    SizedBox(height: AppSpacing.xxl),
                     _buildQuickActions(),
-                    SizedBox(height: context.theme.appSpacing.xxl),
+                    SizedBox(height: AppSpacing.xxl),
                     _buildDailyVerse(),
-                    SizedBox(height: context.theme.appSpacing.xxl),
+                    SizedBox(height: AppSpacing.xxl),
                     _buildStartChatButton(),
                     SizedBox(
-                        height: context.theme.appSpacing.xl), // Extra space at bottom
+                        height: AppSpacing.xl), // Extra space at bottom
                   ],
                 ),
               ),
@@ -215,8 +215,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           // Pinned FAB
           Positioned(
-            top: MediaQuery.of(context).padding.top + context.theme.appSpacing.xl,
-            left: context.theme.appSpacing.xl,
+            top: MediaQuery.of(context).padding.top + AppSpacing.xl,
+            left: AppSpacing.xl,
             child: GlassmorphicFABMenu(key: _fabMenuKey),
           ),
         ],
@@ -242,7 +242,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         height: scaledHeight.clamp(88.0, 165.0), // Min 88px, max 165px
         child: ListView(
           scrollDirection: Axis.horizontal,
-          padding: context.theme.appSpacing.horizontalXl,
+          padding: AppSpacing.horizontalXl,
           // Optimize horizontal scrolling performance
           physics: const BouncingScrollPhysics(),
           cacheExtent: 300,
@@ -253,89 +253,89 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 label: l10n.dayStreak,
                 icon: Icons.local_fire_department,
                 color: Colors.orange,
-                delay: context.theme.appAnimations.homeStatsCardDelay,
+                delay: AppAnimations.homeStatsCardDelay,
               ),
               loading: () => _buildStatCardLoading(
                 label: l10n.dayStreak,
                 icon: Icons.local_fire_department,
                 color: Colors.orange,
-                delay: context.theme.appAnimations.homeStatsCardDelay,
+                delay: AppAnimations.homeStatsCardDelay,
               ),
               error: (_, __) => _buildStatCard(
                 value: "0",
                 label: l10n.dayStreak,
                 icon: Icons.local_fire_department,
                 color: Colors.orange,
-                delay: context.theme.appAnimations.homeStatsCardDelay,
+                delay: AppAnimations.homeStatsCardDelay,
               ),
             ),
-            SizedBox(width: context.theme.appSpacing.lg),
+            SizedBox(width: AppSpacing.lg),
             prayersCountAsync.when(
               data: (count) => _buildStatCard(
                 value: "$count",
                 label: l10n.prayers,
                 icon: Icons.favorite,
                 color: Colors.red,
-                delay: context.theme.appAnimations.homeStatsCardDelay + context.theme.appAnimations.sequentialMedium,
+                delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialMedium,
               ),
               loading: () => _buildStatCardLoading(
                 label: l10n.prayers,
                 icon: Icons.favorite,
                 color: Colors.red,
-                delay: context.theme.appAnimations.homeStatsCardDelay + context.theme.appAnimations.sequentialMedium,
+                delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialMedium,
               ),
               error: (_, __) => _buildStatCard(
                 value: "0",
                 label: l10n.prayers,
                 icon: Icons.favorite,
                 color: Colors.red,
-                delay: context.theme.appAnimations.homeStatsCardDelay + context.theme.appAnimations.sequentialMedium,
+                delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialMedium,
               ),
             ),
-            SizedBox(width: context.theme.appSpacing.lg),
+            SizedBox(width: AppSpacing.lg),
             versesCountAsync.when(
               data: (count) => _buildStatCard(
                 value: "$count",
                 label: l10n.savedVerses,
                 icon: Icons.menu_book,
                 color: AppTheme.goldColor,
-                delay: context.theme.appAnimations.homeStatsCardDelay + context.theme.appAnimations.sequentialLong,
+                delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialLong,
               ),
               loading: () => _buildStatCardLoading(
                 label: l10n.savedVerses,
                 icon: Icons.menu_book,
                 color: AppTheme.goldColor,
-                delay: context.theme.appAnimations.homeStatsCardDelay + context.theme.appAnimations.sequentialLong,
+                delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialLong,
               ),
               error: (_, __) => _buildStatCard(
                 value: "0",
                 label: l10n.savedVerses,
                 icon: Icons.menu_book,
                 color: AppTheme.goldColor,
-                delay: context.theme.appAnimations.homeStatsCardDelay + context.theme.appAnimations.sequentialLong,
+                delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialLong,
               ),
             ),
-            SizedBox(width: context.theme.appSpacing.lg),
+            SizedBox(width: AppSpacing.lg),
             totalCompletedAsync.when(
               data: (total) => _buildStatCard(
                 value: "$total",
                 label: l10n.devotionals,
                 icon: Icons.auto_stories,
                 color: Colors.green,
-                delay: context.theme.appAnimations.homeStatsCardDelay + context.theme.appAnimations.sequentialLong + context.theme.appAnimations.sequentialShort,
+                delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialLong + AppAnimations.sequentialShort,
               ),
               loading: () => _buildStatCardLoading(
                 label: l10n.devotionals,
                 icon: Icons.auto_stories,
                 color: Colors.green,
-                delay: context.theme.appAnimations.homeStatsCardDelay + context.theme.appAnimations.sequentialLong + context.theme.appAnimations.sequentialShort,
+                delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialLong + AppAnimations.sequentialShort,
               ),
               error: (_, __) => _buildStatCard(
                 value: "0",
                 label: l10n.devotionals,
                 icon: Icons.auto_stories,
                 color: Colors.green,
-                delay: context.theme.appAnimations.homeStatsCardDelay + context.theme.appAnimations.sequentialLong + context.theme.appAnimations.sequentialShort,
+                delay: AppAnimations.homeStatsCardDelay + AppAnimations.sequentialLong + AppAnimations.sequentialShort,
               ),
             ),
           ],
@@ -357,7 +357,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         padding: EdgeInsets.symmetric(horizontal: 6.s, vertical: 12.s),
         decoration: BoxDecoration(
           gradient: AppGradients.glassMedium,
-          borderRadius: context.theme.appRadius.cardRadius,
+          borderRadius: AppRadius.cardRadius,
           border: Border.all(
             color: Colors.white.withOpacity(0.2),
             width: 1,
@@ -382,14 +382,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: EdgeInsets.all(6.s),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.2),
-                  borderRadius: context.theme.appRadius.mediumRadius,
+                  borderRadius: AppRadius.mediumRadius,
                 ),
                 child: ExcludeSemantics(
                   child: Icon(
                     icon,
                     size:
                         20, // Fixed size for consistent display in fixed container
-                    color: context.theme.appColors.secondaryText,
+                    color: AppColors.secondaryText,
                   ),
                 ),
               ),
@@ -400,7 +400,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 style: TextStyle(
                   fontSize: 20.fz,
                   fontWeight: FontWeight.w800,
-                  color: context.theme.appColors.primaryText,
+                  color: AppColors.primaryText,
                   shadows: AppTheme.textShadowStrong,
                 ),
                 maxLines: 1,
@@ -446,7 +446,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           padding: EdgeInsets.symmetric(horizontal: 6.s, vertical: 12.s),
           decoration: BoxDecoration(
             gradient: AppGradients.glassMedium,
-            borderRadius: context.theme.appRadius.cardRadius,
+            borderRadius: AppRadius.cardRadius,
             border: Border.all(
               color: Colors.white.withOpacity(0.2),
               width: 1,
@@ -461,12 +461,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: EdgeInsets.all(6.s),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.2),
-                  borderRadius: context.theme.appRadius.mediumRadius,
+                  borderRadius: AppRadius.mediumRadius,
                 ),
                 child: Icon(
                   icon,
                   size: 20,
-                  color: context.theme.appColors.secondaryText.withOpacity(0.5),
+                  color: AppColors.secondaryText.withOpacity(0.5),
                 ),
               ),
               6.sbh,
@@ -506,7 +506,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final cardHeight = 160.s;
 
     return Padding(
-      padding: context.theme.appSpacing.horizontalXl,
+      padding: AppSpacing.horizontalXl,
       child: Column(
         children: [
           SizedBox(
@@ -528,10 +528,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: Icon(
                             Icons.chat_bubble_outline,
                             size: 20.iz,
-                            color: context.theme.appColors.primaryText,
+                            color: AppColors.primaryText,
                           ),
                         ),
-                        SizedBox(height: context.theme.appSpacing.sm),
+                        SizedBox(height: AppSpacing.sm),
                         AutoSizeText(
                           l10n.biblicalChat,
                           group: _mainFeatureTitlesGroup,
@@ -550,7 +550,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             l10n.biblicalChatDesc,
                             style: TextStyle(
                               fontSize: 12.fz,
-                              color: context.theme.appColors.secondaryText,
+                              color: AppColors.secondaryText,
                               height: 1.3,
                             ),
                             maxLines: 3,
@@ -562,7 +562,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: context.theme.appSpacing.md),
+                SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: DarkMainFeatureCard(
                     padding: EdgeInsets.all(14.s),
@@ -578,10 +578,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: Icon(
                             Icons.auto_stories,
                             size: 20.iz,
-                            color: context.theme.appColors.primaryText,
+                            color: AppColors.primaryText,
                           ),
                         ),
-                        SizedBox(height: context.theme.appSpacing.sm),
+                        SizedBox(height: AppSpacing.sm),
                         AutoSizeText(
                           l10n.dailyDevotional,
                           group: _mainFeatureTitlesGroup,
@@ -600,7 +600,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             l10n.dailyDevotionalDesc,
                             style: TextStyle(
                               fontSize: 12.fz,
-                              color: context.theme.appColors.secondaryText,
+                              color: AppColors.secondaryText,
                               height: 1.3,
                             ),
                             maxLines: 3,
@@ -616,9 +616,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           )
               .animate()
-              .fadeIn(delay: context.theme.appAnimations.homeMainFeatureDelay1)
-              .slideX(begin: -0.3, delay: context.theme.appAnimations.homeMainFeatureDelay1),
-          SizedBox(height: context.theme.appSpacing.md),
+              .fadeIn(delay: AppAnimations.homeMainFeatureDelay1)
+              .slideX(begin: -0.3, delay: AppAnimations.homeMainFeatureDelay1),
+          SizedBox(height: AppSpacing.md),
           SizedBox(
             height: cardHeight,
             child: Row(
@@ -639,10 +639,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: Icon(
                             Icons.favorite_outline,
                             size: 20.iz,
-                            color: context.theme.appColors.primaryText,
+                            color: AppColors.primaryText,
                           ),
                         ),
-                        SizedBox(height: context.theme.appSpacing.sm),
+                        SizedBox(height: AppSpacing.sm),
                         AutoSizeText(
                           l10n.prayerJournal,
                           group: _mainFeatureTitlesGroup,
@@ -661,7 +661,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             l10n.prayerJournalDesc,
                             style: TextStyle(
                               fontSize: 12.fz,
-                              color: context.theme.appColors.secondaryText,
+                              color: AppColors.secondaryText,
                               height: 1.3,
                             ),
                             maxLines: 3,
@@ -673,7 +673,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: context.theme.appSpacing.md),
+                SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: DarkMainFeatureCard(
                     padding: EdgeInsets.all(14.s),
@@ -689,10 +689,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: Icon(
                             Icons.library_books_outlined,
                             size: 20.iz,
-                            color: context.theme.appColors.primaryText,
+                            color: AppColors.primaryText,
                           ),
                         ),
-                        SizedBox(height: context.theme.appSpacing.sm),
+                        SizedBox(height: AppSpacing.sm),
                         AutoSizeText(
                           l10n.readingPlans,
                           group: _mainFeatureTitlesGroup,
@@ -711,7 +711,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             l10n.readingPlansDesc,
                             style: TextStyle(
                               fontSize: 12.fz,
-                              color: context.theme.appColors.secondaryText,
+                              color: AppColors.secondaryText,
                               height: 1.3,
                             ),
                             maxLines: 3,
@@ -725,7 +725,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ],
             ),
-          ).animate().fadeIn(delay: context.theme.appAnimations.homeMainFeatureDelay2).slideX(begin: 0.3, delay: context.theme.appAnimations.homeMainFeatureDelay2),
+          ).animate().fadeIn(delay: AppAnimations.homeMainFeatureDelay2).slideX(begin: 0.3, delay: AppAnimations.homeMainFeatureDelay2),
         ],
       ),
     );
@@ -744,24 +744,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: context.theme.appSpacing.horizontalXl,
+          padding: AppSpacing.horizontalXl,
           child: Text(
             l10n.quickActions,
             style: TextStyle(
               fontSize: 20.fz,
               fontWeight: FontWeight.w700,
-              color: context.theme.appColors.primaryText,
+              color: AppColors.primaryText,
               shadows: AppTheme.textShadowStrong,
             ),
           ),
-        ).animate().fadeIn(delay: context.theme.appAnimations.homeQuickActionsHeaderDelay).slideX(begin: -0.3, delay: context.theme.appAnimations.homeQuickActionsHeaderDelay),
-        SizedBox(height: context.theme.appSpacing.lg),
+        ).animate().fadeIn(delay: AppAnimations.homeQuickActionsHeaderDelay).slideX(begin: -0.3, delay: AppAnimations.homeQuickActionsHeaderDelay),
+        SizedBox(height: AppSpacing.lg),
         LayoutBuilder(
           builder: (context, constraints) => SizedBox(
             height: scaledHeight.clamp(88.0, 165.0), // Min 88px, max 165px
             child: ListView(
               scrollDirection: Axis.horizontal,
-              padding: context.theme.appSpacing.horizontalXl,
+              padding: AppSpacing.horizontalXl,
               // Optimize horizontal scrolling performance
               physics: const BouncingScrollPhysics(),
               cacheExtent: 200,
@@ -774,7 +774,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       NavigationService.pushNamedImmediate(
                           AppRoutes.bibleBrowser)),
                 ),
-                SizedBox(width: context.theme.appSpacing.lg),
+                SizedBox(width: AppSpacing.lg),
                 _buildQuickActionCard(
                   label: useShortLabel
                       ? l10n.verseLibraryShort
@@ -785,7 +785,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       NavigationService.pushNamedImmediate(
                           AppRoutes.verseLibrary)),
                 ),
-                SizedBox(width: context.theme.appSpacing.lg),
+                SizedBox(width: AppSpacing.lg),
                 _buildQuickActionCard(
                   label: useShortLabel ? l10n.addPrayerShort : l10n.addPrayer,
                   icon: Icons.add,
@@ -794,7 +794,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       NavigationService.pushNamedImmediate(
                           AppRoutes.prayerJournal)),
                 ),
-                SizedBox(width: context.theme.appSpacing.lg),
+                SizedBox(width: AppSpacing.lg),
                 _buildQuickActionCard(
                   label: l10n.settings,
                   icon: Icons.settings,
@@ -802,7 +802,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () => _navDebouncer.navigate(() =>
                       NavigationService.pushNamedImmediate(AppRoutes.settings)),
                 ),
-                SizedBox(width: context.theme.appSpacing.lg),
+                SizedBox(width: AppSpacing.lg),
                 _buildQuickActionCard(
                   label: l10n.profile,
                   icon: Icons.person,
@@ -813,7 +813,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
           ),
-        ).animate().fadeIn(delay: context.theme.appAnimations.homeQuickActionsRowDelay).slideX(begin: 0.3, delay: context.theme.appAnimations.homeQuickActionsRowDelay),
+        ).animate().fadeIn(delay: AppAnimations.homeQuickActionsRowDelay).slideX(begin: 0.3, delay: AppAnimations.homeQuickActionsRowDelay),
       ],
     );
   }
@@ -832,7 +832,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           padding: EdgeInsets.symmetric(horizontal: 6.s, vertical: 8.s),
           decoration: BoxDecoration(
             gradient: AppGradients.glassMedium,
-            borderRadius: context.theme.appRadius.md.br,
+            borderRadius: AppRadius.md.br,
             border: Border.all(
               color: Colors.white.withOpacity(0.2),
               width: 1,
@@ -854,15 +854,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: EdgeInsets.all(10.s),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.2),
-                  borderRadius: context.theme.appRadius.mediumRadius,
+                  borderRadius: AppRadius.mediumRadius,
                 ),
                 child: Icon(
                   icon,
                   size: 24.iz,
-                  color: context.theme.appColors.secondaryText,
+                  color: AppColors.secondaryText,
                 ),
               ),
-              SizedBox(height: context.theme.appSpacing.sm),
+              SizedBox(height: AppSpacing.sm),
               Expanded(
                 child: Align(
                   alignment: Alignment.center,
@@ -905,9 +905,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final text = verseData['text'] as String? ?? '';
 
         return Padding(
-          padding: context.theme.appSpacing.horizontalXl,
+          padding: AppSpacing.horizontalXl,
           child: Container(
-            padding: context.theme.appSpacing.screenPaddingLarge,
+            padding: AppSpacing.screenPaddingLarge,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -917,7 +917,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: EdgeInsets.all(10.s),
                       decoration: BoxDecoration(
                         gradient: AppGradients.goldAccent,
-                        borderRadius: context.theme.appRadius.mediumRadius,
+                        borderRadius: AppRadius.mediumRadius,
                         border: Border.all(
                           color: AppTheme.goldColor.withOpacity(0.4),
                           width: 1,
@@ -925,27 +925,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       child: Icon(
                         Icons.auto_awesome,
-                        color: context.theme.appColors.primaryText,
+                        color: AppColors.primaryText,
                         size: 20.iz,
                       ),
                     ),
-                    SizedBox(width: context.theme.appSpacing.lg),
+                    SizedBox(width: AppSpacing.lg),
                     Expanded(
                       child: Text(
                         l10n.verseOfTheDay,
                         style: TextStyle(
                           fontSize: 18.fz,
                           fontWeight: FontWeight.w700,
-                          color: context.theme.appColors.primaryText,
+                          color: AppColors.primaryText,
                           shadows: AppTheme.textShadowStrong,
                         ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: context.theme.appSpacing.xl),
+                SizedBox(height: AppSpacing.xl),
                 DarkGlassContainer(
-                  borderRadius: context.theme.appRadius.md,
+                  borderRadius: AppRadius.md,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -963,7 +963,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         maxFontSize: 16,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: context.theme.appSpacing.md),
+                      SizedBox(height: AppSpacing.md),
                       // Verse text
                       AutoSizeText(
                         text,
@@ -986,15 +986,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
           ),
-        ).animate().fadeIn(delay: context.theme.appAnimations.homeDailyVerseDelay).slideX(begin: -0.3, delay: context.theme.appAnimations.homeDailyVerseDelay);
+        ).animate().fadeIn(delay: AppAnimations.homeDailyVerseDelay).slideX(begin: -0.3, delay: AppAnimations.homeDailyVerseDelay);
       },
       loading: () => Padding(
-        padding: context.theme.appSpacing.horizontalXl,
+        padding: AppSpacing.horizontalXl,
         child: Container(
           height: 200,
           decoration: BoxDecoration(
             gradient: AppGradients.glassStrong,
-            borderRadius: context.theme.appRadius.cardRadius,
+            borderRadius: AppRadius.cardRadius,
           ),
           child: const Center(
             child: CircularProgressIndicator(
@@ -1019,6 +1019,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onPressed: () => _navDebouncer.navigate(
             () => NavigationService.pushNamedImmediate(AppRoutes.chat)),
       ),
-    ).animate().fadeIn(delay: context.theme.appAnimations.homeStartChatDelay).slideX(begin: 0.3, delay: context.theme.appAnimations.homeStartChatDelay);
+    ).animate().fadeIn(delay: AppAnimations.homeStartChatDelay).slideX(begin: 0.3, delay: AppAnimations.homeStartChatDelay);
   }
 }

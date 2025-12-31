@@ -4,6 +4,7 @@ import '../theme/app_theme.dart';
 import '../components/frosted_glass_card.dart';
 import 'responsive_utils.dart';
 import 'blur_dialog_utils.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Reusable utility for displaying legal documents (Terms of Service, Privacy Policy)
 /// across the app. Extracted from duplicated code in multiple screens.

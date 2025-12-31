@@ -6,6 +6,7 @@ import '../../../theme/app_theme.dart';
 import '../../../components/glass_card.dart';
 import '../../../components/category_badge.dart';
 import '../../../utils/responsive_utils.dart';
+import '../../../theme/app_theme_extensions.dart';
 
 /// Beautiful card widget for displaying Bible verses
 class VerseCard extends StatelessWidget {

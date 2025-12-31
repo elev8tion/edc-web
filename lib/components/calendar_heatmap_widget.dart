@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Calendar heatmap widget showing reading activity over time
 /// Similar to GitHub's contribution graph

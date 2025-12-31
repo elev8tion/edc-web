@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Progress ring that wraps the send button to show remaining messages
 /// Displays as a circular progress indicator with message count

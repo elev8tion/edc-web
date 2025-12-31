@@ -10,6 +10,7 @@ import '../../theme/app_theme.dart';
 import '../../components/frosted_glass_card.dart';
 import '../../utils/responsive_utils.dart';
 import '../../utils/blur_dialog_utils.dart';
+import '../../theme/app_theme_extensions.dart';
 
 /// Non-dismissible crisis intervention dialog
 class CrisisDialog extends StatelessWidget {

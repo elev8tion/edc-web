@@ -17,6 +17,7 @@ import '../core/widgets/app_snackbar.dart';
 import '../utils/responsive_utils.dart';
 import '../utils/blur_dialog_utils.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});

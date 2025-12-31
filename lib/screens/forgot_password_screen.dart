@@ -8,6 +8,7 @@ import '../components/glass_button.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../utils/responsive_utils.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/blur_dialog_utils.dart';
 import '../widgets/noise_overlay.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Enhanced BaseBottomSheet with realistic glass surface
 ///

@@ -15,6 +15,7 @@ import 'screens/profile_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/splash_screen.dart';
+import 'theme/app_theme_extensions.dart';
 
 class DebugScreenGallery extends ConsumerStatefulWidget {
   const DebugScreenGallery({super.key});

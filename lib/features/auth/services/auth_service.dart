@@ -50,8 +50,14 @@ class AuthService extends StateNotifier<AuthState> {
         // Load local user data and update with API response
         final userData = await _secureStorage.getUserData();
         final user = userData != null
-            ? User.fromJson(userData)
-            : _authUserToUser(response.user!);
+            ? User.fromJson(userData).copyWith(
+                isNewUser: false,
+                isEmailVerified: response.user?.emailVerified ?? false,
+              )
+            : _authUserToUser(response.user!).copyWith(
+                isNewUser: false,
+                isEmailVerified: response.user?.emailVerified ?? false,
+              );
 
         state = AuthState.authenticated(user);
       } else {
@@ -128,6 +134,8 @@ class AuthService extends StateNotifier<AuthState> {
         dateJoined: DateTime.now(),
         profile: const UserProfile(),
         isAnonymous: false,
+        isNewUser: true,
+        isEmailVerified: false,
       );
 
       // Store user data locally
@@ -175,7 +183,10 @@ class AuthService extends StateNotifier<AuthState> {
       }
 
       // Create/update local user
-      final user = _authUserToUser(response.user!);
+      final user = _authUserToUser(response.user!).copyWith(
+        isNewUser: false,
+        isEmailVerified: response.user?.emailVerified ?? false,
+      );
       await _secureStorage.storeUserData(user.toJson());
       await _secureStorage.setLastLogin();
       await _updateUserSettings(user);
@@ -444,7 +455,7 @@ class AuthService extends StateNotifier<AuthState> {
   }
 
   /// Convert AuthUser to User model
-  User _authUserToUser(AuthUser authUser) {
+  User _authUserToUser(AuthUser authUser, {bool isNewUser = false, bool isEmailVerified = false}) {
     return User(
       id: authUser.id.toString(),
       email: authUser.email,
@@ -453,6 +464,8 @@ class AuthService extends StateNotifier<AuthState> {
       isAnonymous: false,
       preferredVerseThemes: ['hope', 'strength', 'comfort'],
       profile: const UserProfile(),
+      isNewUser: isNewUser,
+      isEmailVerified: isEmailVerified,
     );
   }
 
@@ -503,6 +516,51 @@ class AuthService extends StateNotifier<AuthState> {
 
   /// Check if user is anonymous (always false now - no guest mode)
   bool get isAnonymous => false;
+
+  /// Check if the current user's email is verified
+  bool isEmailVerified() {
+    return state.maybeWhen(
+      authenticated: (user) => user.isEmailVerified,
+      orElse: () => false,
+    );
+  }
+
+  /// Refresh user data from the backend to update verification status
+  Future<void> refreshUser() async {
+    final currentToken = _currentToken;
+    if (currentToken == null) {
+      debugPrint('RefreshUser: No token found, cannot refresh.');
+      return;
+    }
+
+    try {
+      final response = await _api.validateToken(token: currentToken);
+      if (response.success && response.user != null) {
+        // Preserve existing local user data while updating from backend
+        final existingUser = currentUser;
+        final updatedUser = existingUser?.copyWith(
+          // Update from backend response
+          email: response.user!.email,
+          name: response.user!.firstName ?? existingUser.name,
+          isEmailVerified: response.user?.emailVerified ?? false,
+          // Preserve local-only fields
+          isNewUser: existingUser.isNewUser,
+        ) ?? _authUserToUser(response.user!).copyWith(
+          isEmailVerified: response.user?.emailVerified ?? false,
+        );
+
+        await _secureStorage.storeUserData(updatedUser.toJson());
+        state = AuthState.authenticated(updatedUser);
+        debugPrint('RefreshUser: User data refreshed. Email verified: ${updatedUser.isEmailVerified}');
+      } else {
+        debugPrint('RefreshUser: Token invalid or user not found.');
+        await signOut(); // Force sign out if token is invalid
+      }
+    } catch (e) {
+      debugPrint('RefreshUser error: $e');
+      // Handle network errors gracefully, keep current state
+    }
+  }
 }
 
 /// Auth state management

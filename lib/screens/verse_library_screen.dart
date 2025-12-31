@@ -26,6 +26,7 @@ import '../services/verse_share_service.dart';
 import '../core/services/database_service.dart';
 import '../core/services/achievement_service.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 // Provider for all saved verses
 final filteredVersesProvider =

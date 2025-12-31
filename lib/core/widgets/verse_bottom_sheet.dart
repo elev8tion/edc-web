@@ -13,6 +13,7 @@ import 'app_snackbar.dart';
 import '../../models/bible_verse.dart' as app_models;
 import '../../utils/blur_dialog_utils.dart';
 import '../../widgets/noise_overlay.dart';
+import '../../theme/app_theme_extensions.dart';
 
 /// Model for parsed verse reference
 class VerseReference {

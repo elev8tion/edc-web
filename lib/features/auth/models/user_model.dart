@@ -11,6 +11,8 @@ class User {
   final DateTime? dateJoined;
   final bool isAnonymous;
   final UserProfile? profile;
+  final bool isNewUser;
+  final bool isEmailVerified;
 
   const User({
     required this.id,
@@ -23,6 +25,8 @@ class User {
     this.dateJoined,
     this.isAnonymous = false,
     this.profile,
+    this.isNewUser = false,
+    this.isEmailVerified = false,
   });
 
   /// Create User from JSON map
@@ -42,6 +46,8 @@ class User {
       profile: json['profile'] != null
           ? UserProfile.fromJson(json['profile'] as Map<String, dynamic>)
           : null,
+      isNewUser: json['is_new_user'] as bool? ?? false,
+      isEmailVerified: json['is_email_verified'] as bool? ?? false,
     );
   }
 
@@ -58,6 +64,8 @@ class User {
       'date_joined': dateJoined?.millisecondsSinceEpoch,
       'is_anonymous': isAnonymous,
       'profile': profile?.toJson(),
+      'is_new_user': isNewUser,
+      'is_email_verified': isEmailVerified,
     };
   }
 
@@ -140,6 +148,8 @@ class User {
     DateTime? dateJoined,
     bool? isAnonymous,
     UserProfile? profile,
+    bool? isNewUser,
+    bool? isEmailVerified,
   }) {
     return User(
       id: id ?? this.id,
@@ -152,6 +162,8 @@ class User {
       dateJoined: dateJoined ?? this.dateJoined,
       isAnonymous: isAnonymous ?? this.isAnonymous,
       profile: profile ?? this.profile,
+      isNewUser: isNewUser ?? this.isNewUser,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
     );
   }
 
@@ -166,7 +178,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, anonymous: $isAnonymous)';
+    return 'User(id: $id, name: $name, email: $email, anonymous: $isAnonymous, isNewUser: $isNewUser, isEmailVerified: $isEmailVerified)';
   }
 }
 

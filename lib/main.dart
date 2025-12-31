@@ -23,6 +23,7 @@ import 'package:everyday_christian/screens/verse_library_screen.dart';
 import 'package:everyday_christian/screens/checkout_complete_screen.dart';
 import 'package:everyday_christian/screens/auth_screen.dart';
 import 'package:everyday_christian/screens/verify_email_screen.dart';
+import 'package:everyday_christian/screens/wait_for_verification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
@@ -190,6 +191,8 @@ class MyApp extends ConsumerWidget {
             );
           case AppRoutes.onboarding:
             return DarkPageRoute(settings: settings, builder: (_) => const UnifiedInteractiveOnboardingScreen());
+          case AppRoutes.waitForVerification:
+            return DarkPageRoute(settings: settings, builder: (_) => const WaitForVerificationScreen());
           case AppRoutes.home:
             return DarkPageRoute(settings: settings, builder: (_) => const HomeScreen());
           case AppRoutes.chat:

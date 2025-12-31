@@ -5,6 +5,7 @@ import '../../../theme/app_theme.dart';
 import '../../../components/frosted_glass.dart';
 import '../../../components/glass_button.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/app_theme_extensions.dart';
 
 class AuthForm extends ConsumerStatefulWidget {
   final VoidCallback? onForgotPassword;

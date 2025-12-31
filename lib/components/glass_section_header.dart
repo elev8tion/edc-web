@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'glass_icon_avatar.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Glass-styled section header with optional icon and action button
 ///

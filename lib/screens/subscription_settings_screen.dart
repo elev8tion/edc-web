@@ -25,6 +25,7 @@ import '../core/providers/app_providers.dart';
 import '../utils/responsive_utils.dart';
 import '../services/stripe_service.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 class SubscriptionSettingsScreen extends ConsumerWidget {
   const SubscriptionSettingsScreen({Key? key}) : super(key: key);

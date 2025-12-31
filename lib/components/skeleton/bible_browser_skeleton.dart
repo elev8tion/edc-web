@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/app_theme_extensions.dart';
 import 'skeleton_theme.dart';
 
 /// Skeleton loading state for the Bible Browser Screen
@@ -48,10 +49,10 @@ class BibleBrowserSkeleton extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           // Book name and chapter count
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Bone.text(words: 2, fontSize: 16),
                 SizedBox(height: 4),
                 Bone.text(words: 2, fontSize: 12),

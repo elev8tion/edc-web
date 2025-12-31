@@ -4,6 +4,7 @@ import '../core/services/database_service.dart';
 import '../core/services/bible_config.dart';
 import '../theme/app_theme.dart';
 import '../core/widgets/app_snackbar.dart';
+import '../theme/app_theme_extensions.dart';
 
 class VersePreferencesWidget extends StatefulWidget {
   const VersePreferencesWidget({super.key});

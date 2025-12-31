@@ -25,6 +25,7 @@ import '../components/glass_card.dart';
 import '../theme/app_theme.dart';
 import '../core/providers/app_providers.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 class PaywallScreen extends ConsumerStatefulWidget {
   /// Optional: show trial info (true) or expired message (false)

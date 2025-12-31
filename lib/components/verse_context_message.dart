@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/verse_context.dart';
 import '../utils/responsive_utils.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// System message component that displays verse context at the top of chat
 /// Shows when user navigates from Bible reading to discuss a specific verse

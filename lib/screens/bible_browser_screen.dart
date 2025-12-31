@@ -21,6 +21,7 @@ import '../utils/bible_reference_parser.dart';
 import '../utils/blur_dialog_utils.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/noise_overlay.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Free Bible Browser - allows users to browse and read any Bible chapter
 class BibleBrowserScreen extends ConsumerStatefulWidget {

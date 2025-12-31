@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../../theme/app_theme.dart';
 import '../../../components/glass_card.dart';
 import '../../../utils/responsive_utils.dart';
+import '../../../theme/app_theme_extensions.dart';
 
 /// Widget for chat message input with suggestions and controls
 class ChatInput extends StatefulWidget {

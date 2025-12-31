@@ -40,6 +40,7 @@ import '../services/chat_share_service.dart';
 import '../l10n/app_localizations.dart';
 import '../models/verse_context.dart';
 import '../services/stripe_service.dart';
+import '../theme/app_theme_extensions.dart';
 
 class ChatScreen extends HookConsumerWidget {
   final VerseContext?

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import '../components/frosted_glass_card.dart';
+import '../../theme/app_theme_extensions.dart';
 
 /// Dialog for selecting themes when favoriting a verse
 /// Max 2 themes can be selected, with option to skip

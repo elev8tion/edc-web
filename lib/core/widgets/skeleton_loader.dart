@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../theme/app_theme.dart';
 import '../../components/dark_glass_container.dart';
+import '../../theme/app_theme_extensions.dart';
 
 class SkeletonLoader extends StatelessWidget {
   final double width;

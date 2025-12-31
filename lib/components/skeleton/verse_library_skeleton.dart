@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/app_theme_extensions.dart';
 import '../dark_glass_container.dart';
 import 'skeleton_theme.dart';
 
@@ -13,7 +14,8 @@ class VerseLibraryTabSkeleton extends StatelessWidget {
     return AppSkeletonTheme.wrap(
       enabled: true,
       child: ListView.builder(
-        padding: const EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
         physics: const NeverScrollableScrollPhysics(),
         itemCount: 5,
         itemBuilder: (context, index) {
@@ -33,26 +35,26 @@ class VerseLibraryTabSkeleton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Reference row
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Bone.text(words: 2, fontSize: 14),
+              Bone.text(words: 2, fontSize: 14),
               Bone.circle(size: 24),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: AppSpacing.md),
           // Verse text
           const Bone.multiText(lines: 3, fontSize: 16),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: AppSpacing.md),
           // Footer row
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Bone.text(words: 2, fontSize: 12),
+              Bone.text(words: 2, fontSize: 12),
               Row(
                 children: [
                   Bone.circle(size: 20),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Bone.circle(size: 20),
                 ],
               ),

@@ -23,6 +23,7 @@ import '../core/widgets/app_snackbar.dart';
 import '../components/base_bottom_sheet.dart';
 import '../core/navigation/navigation_service.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 class DevotionalScreen extends ConsumerStatefulWidget {
   const DevotionalScreen({super.key});

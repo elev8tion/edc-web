@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/app_theme_extensions.dart';
 import '../dark_glass_container.dart';
 import '../standard_screen_header.dart';
 import '../glass_card.dart';
@@ -17,39 +18,39 @@ class DevotionalScreenSkeleton extends StatelessWidget {
     return AppSkeletonTheme.wrap(
       enabled: true,
       child: SingleChildScrollView(
-          padding: const EdgeInsets.only(
-            top: AppSpacing.xl,
-            left: AppSpacing.xl,
-            right: AppSpacing.xl,
-            bottom: AppSpacing.xxl * 2,
-          ),
-          physics: const NeverScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeaderSkeleton(context),
-              const SizedBox(height: AppSpacing.xxl),
-              _buildTitleSkeleton(),
-              const SizedBox(height: AppSpacing.xl),
-              _buildScriptureSectionSkeleton(),
-              _buildSectionDivider(),
-              _buildKeyVerseSkeleton(),
-              _buildSectionDivider(),
-              _buildReflectionSkeleton(),
-              _buildSectionDivider(),
-              _buildLifeApplicationSkeleton(),
-              _buildSectionDivider(),
-              _buildPrayerSkeleton(),
-              _buildSectionDivider(),
-              _buildActionStepSkeleton(),
-              const SizedBox(height: AppSpacing.xl),
-              _buildCompletionButtonSkeleton(),
-              const SizedBox(height: AppSpacing.xl),
-              _buildNavigationButtonsSkeleton(),
-            ],
-          ),
+        padding: EdgeInsets.only(
+          top: AppSpacing.xl,
+          left: AppSpacing.xl,
+          right: AppSpacing.xl,
+          bottom: AppSpacing.xxl * 2,
         ),
-      );
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeaderSkeleton(context),
+            SizedBox(height: AppSpacing.xxl),
+            _buildTitleSkeleton(),
+            SizedBox(height: AppSpacing.xl),
+            _buildScriptureSectionSkeleton(),
+            _buildSectionDivider(),
+            _buildKeyVerseSkeleton(),
+            _buildSectionDivider(),
+            _buildReflectionSkeleton(),
+            _buildSectionDivider(),
+            _buildLifeApplicationSkeleton(),
+            _buildSectionDivider(),
+            _buildPrayerSkeleton(),
+            _buildSectionDivider(),
+            _buildActionStepSkeleton(),
+            SizedBox(height: AppSpacing.xl),
+            _buildCompletionButtonSkeleton(),
+            SizedBox(height: AppSpacing.xl),
+            _buildNavigationButtonsSkeleton(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildHeaderSkeleton(BuildContext context) {
@@ -108,9 +109,9 @@ class DevotionalScreenSkeleton extends StatelessWidget {
   }
 
   Widget _buildTitleSkeleton() {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.only(bottom: AppSpacing.xl),
-      child: Bone.text(words: 4, fontSize: 24),
+      child: const Bone.text(words: 4, fontSize: 24),
     );
   }
 
@@ -127,18 +128,18 @@ class DevotionalScreenSkeleton extends StatelessWidget {
                 color: AppTheme.goldColor.withValues(alpha: 0.5),
                 size: 20,
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: AppSpacing.sm),
               const Bone.text(words: 2, fontSize: 14),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: AppSpacing.md),
           DarkGlassContainer(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Bone.multiText(lines: 3, fontSize: 16),
+              children: [
+                const Bone.multiText(lines: 3, fontSize: 16),
                 SizedBox(height: AppSpacing.md),
-                Bone.text(words: 2, fontSize: 14),
+                const Bone.text(words: 2, fontSize: 14),
               ],
             ),
           ),
@@ -160,18 +161,18 @@ class DevotionalScreenSkeleton extends StatelessWidget {
                 color: AppTheme.goldColor.withValues(alpha: 0.5),
                 size: 20,
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: AppSpacing.sm),
               const Bone.text(words: 3, fontSize: 14),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: AppSpacing.md),
           DarkGlassContainer(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Bone.multiText(lines: 2, fontSize: 17),
+              children: [
+                const Bone.multiText(lines: 2, fontSize: 17),
                 SizedBox(height: AppSpacing.md),
-                Bone.text(words: 2, fontSize: 14),
+                const Bone.text(words: 2, fontSize: 14),
               ],
             ),
           ),
@@ -185,10 +186,10 @@ class DevotionalScreenSkeleton extends StatelessWidget {
       padding: AppSpacing.screenPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Bone.text(words: 1, fontSize: 18),
+        children: [
+          const Bone.text(words: 1, fontSize: 18),
           SizedBox(height: AppSpacing.md),
-          Bone.multiText(lines: 5, fontSize: 15),
+          const Bone.multiText(lines: 5, fontSize: 15),
         ],
       ),
     );
@@ -207,13 +208,13 @@ class DevotionalScreenSkeleton extends StatelessWidget {
                 color: Colors.blue.shade300.withValues(alpha: 0.5),
                 size: 20,
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: AppSpacing.sm),
               const Bone.text(words: 2, fontSize: 16),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
-          DarkGlassContainer(
-            child: const Bone.multiText(lines: 3, fontSize: 15),
+          SizedBox(height: AppSpacing.md),
+          const DarkGlassContainer(
+            child: Bone.multiText(lines: 3, fontSize: 15),
           ),
         ],
       ),
@@ -233,13 +234,13 @@ class DevotionalScreenSkeleton extends StatelessWidget {
                 color: Colors.purple.shade200.withValues(alpha: 0.5),
                 size: 20,
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: AppSpacing.sm),
               const Bone.text(words: 1, fontSize: 16),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
-          DarkGlassContainer(
-            child: const Bone.multiText(lines: 3, fontSize: 15),
+          SizedBox(height: AppSpacing.md),
+          const DarkGlassContainer(
+            child: Bone.multiText(lines: 3, fontSize: 15),
           ),
         ],
       ),
@@ -269,11 +270,11 @@ class DevotionalScreenSkeleton extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 12),
-                Bone.text(
+                const Bone.text(
                   words: 3,
                   fontSize: 14,
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                SizedBox(height: AppSpacing.sm),
                 const Bone.multiText(lines: 2, fontSize: 15),
               ],
             ),
@@ -319,7 +320,7 @@ class DevotionalScreenSkeleton extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: AppSpacing.lg),
+        SizedBox(width: AppSpacing.lg),
         Expanded(
           child: Container(
             height: 48,

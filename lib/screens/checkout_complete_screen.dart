@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../components/gradient_background.dart';
 import '../core/navigation/app_routes.dart';
+import '../theme/app_theme_extensions.dart';
 
 class CheckoutCompleteScreen extends StatefulWidget {
   const CheckoutCompleteScreen({super.key});

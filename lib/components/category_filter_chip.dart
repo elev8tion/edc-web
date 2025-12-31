@@ -6,6 +6,7 @@ import '../theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/motion_character.dart';
 import '../utils/ui_audio.dart';
+import '../theme/app_theme_extensions.dart';
 
 class CategoryFilterChip extends StatefulWidget {
   final PrayerCategory category;

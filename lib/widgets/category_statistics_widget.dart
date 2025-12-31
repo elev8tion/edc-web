@@ -6,6 +6,7 @@ import '../core/models/prayer_category.dart';
 import '../core/providers/category_providers.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
+import '../theme/app_theme_extensions.dart';
 
 class CategoryStatisticsWidget extends ConsumerWidget {
   const CategoryStatisticsWidget({super.key});

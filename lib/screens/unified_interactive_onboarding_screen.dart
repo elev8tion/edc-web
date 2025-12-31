@@ -16,6 +16,7 @@ import '../utils/responsive_utils.dart';
 import '../utils/motion_character.dart';
 import '../utils/ui_audio.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Unified interactive onboarding screen combini1ng legal agreements and feature tour
 class UnifiedInteractiveOnboardingScreen extends StatefulWidget {

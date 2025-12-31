@@ -8,6 +8,7 @@ import '../core/widgets/app_snackbar.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import '../utils/blur_dialog_utils.dart';
+import '../theme/app_theme_extensions.dart';
 
 class CategoryManagementDialog extends ConsumerStatefulWidget {
   const CategoryManagementDialog({super.key});

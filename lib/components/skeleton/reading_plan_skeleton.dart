@@ -45,10 +45,10 @@ class ReadingPlanTabSkeleton extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           // Reading content
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Bone.text(words: 3, fontSize: 16),
                 SizedBox(height: 6),
                 Bone.text(words: 4, fontSize: 13),
@@ -102,7 +102,8 @@ class ReadingPlanListSkeleton extends StatelessWidget {
               const Expanded(child: Bone.text(words: 3, fontSize: 18)),
               const SizedBox(width: 16),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),

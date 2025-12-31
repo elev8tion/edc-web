@@ -22,6 +22,7 @@ import '../core/services/book_name_service.dart';
 import '../core/services/bible_config.dart';
 import 'chat_screen.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme_extensions.dart';
 
 /// Chapter Reading Screen - displays Bible chapters with verse-by-verse reading
 class ChapterReadingScreen extends ConsumerStatefulWidget {
