@@ -26,6 +26,7 @@ import 'package:everyday_christian/screens/auth_screen.dart';
 import 'package:everyday_christian/screens/verify_email_screen.dart';
 import 'package:everyday_christian/screens/wait_for_verification_screen.dart';
 import 'package:everyday_christian/screens/email_verification_handler_screen.dart';
+import 'package:everyday_christian/screens/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
@@ -199,6 +200,16 @@ class MyApp extends ConsumerWidget {
                 email: args?['email'] ?? '',
               ),
             );
+          case AppRoutes.resetPassword:
+            // Web only: Handle password reset token from email link
+            if (kIsWeb) {
+              return DarkPageRoute(
+                settings: settings,
+                builder: (_) => const ResetPasswordScreen(),
+              );
+            }
+            // On mobile, redirect to auth (mobile handles deep links differently)
+            return DarkPageRoute(settings: settings, builder: (_) => const AuthScreen());
           case AppRoutes.onboarding:
             // Legacy: Onboarding moved to signup form. Redirect to home for backward compatibility.
             return DarkPageRoute(settings: settings, builder: (_) => const HomeScreen());

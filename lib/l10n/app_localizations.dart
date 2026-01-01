@@ -338,6 +338,66 @@ abstract class AppLocalizations {
   /// **'Failed to send reset email. Please try again.'**
   String get forgotPasswordError;
 
+  /// Reset password screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Your Password'**
+  String get resetYourPassword;
+
+  /// Reset password screen subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new password below.'**
+  String get enterNewPassword;
+
+  /// New password field label
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// Confirm new password field label
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get confirmNewPassword;
+
+  /// Reset password button text
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPassword;
+
+  /// Password reset success title
+  ///
+  /// In en, this message translates to:
+  /// **'Password Reset Successfully!'**
+  String get passwordResetSuccess;
+
+  /// Redirecting after password reset
+  ///
+  /// In en, this message translates to:
+  /// **'Redirecting to sign in...'**
+  String get redirectingToSignIn;
+
+  /// Invalid reset link title
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Reset Link'**
+  String get invalidResetLink;
+
+  /// Confirm password validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your password'**
+  String get pleaseConfirmPassword;
+
+  /// Password mismatch validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
   /// Sign up terms note
   ///
   /// In en, this message translates to:

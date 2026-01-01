@@ -139,6 +139,36 @@ class AppLocalizationsEn extends AppLocalizations {
       'Failed to send reset email. Please try again.';
 
   @override
+  String get resetYourPassword => 'Reset Your Password';
+
+  @override
+  String get enterNewPassword => 'Enter your new password below.';
+
+  @override
+  String get newPassword => 'New Password';
+
+  @override
+  String get confirmNewPassword => 'Confirm New Password';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
+  String get passwordResetSuccess => 'Password Reset Successfully!';
+
+  @override
+  String get redirectingToSignIn => 'Redirecting to sign in...';
+
+  @override
+  String get invalidResetLink => 'Invalid Reset Link';
+
+  @override
+  String get pleaseConfirmPassword => 'Please confirm your password';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
   String get signUpTermsNote =>
       'By creating an account, you agree to keep your spiritual journey private and secure.';
 

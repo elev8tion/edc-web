@@ -160,6 +160,46 @@
   "@forgotPasswordError": {
     "description": "Forgot password error message"
   },
+  "resetYourPassword": "Reset Your Password",
+  "@resetYourPassword": {
+    "description": "Reset password screen title"
+  },
+  "enterNewPassword": "Enter your new password below.",
+  "@enterNewPassword": {
+    "description": "Reset password screen subtitle"
+  },
+  "newPassword": "New Password",
+  "@newPassword": {
+    "description": "New password field label"
+  },
+  "confirmNewPassword": "Confirm New Password",
+  "@confirmNewPassword": {
+    "description": "Confirm new password field label"
+  },
+  "resetPassword": "Reset Password",
+  "@resetPassword": {
+    "description": "Reset password button text"
+  },
+  "passwordResetSuccess": "Password Reset Successfully!",
+  "@passwordResetSuccess": {
+    "description": "Password reset success title"
+  },
+  "redirectingToSignIn": "Redirecting to sign in...",
+  "@redirectingToSignIn": {
+    "description": "Redirecting after password reset"
+  },
+  "invalidResetLink": "Invalid Reset Link",
+  "@invalidResetLink": {
+    "description": "Invalid reset link title"
+  },
+  "pleaseConfirmPassword": "Please confirm your password",
+  "@pleaseConfirmPassword": {
+    "description": "Confirm password validation error"
+  },
+  "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Password mismatch validation error"
+  },
   "signUpTermsNote": "By creating an account, you agree to keep your spiritual journey private and secure.",
   "@signUpTermsNote": {
     "description": "Sign up terms note"

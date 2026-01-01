@@ -140,6 +140,36 @@ class AppLocalizationsEs extends AppLocalizations {
       'Error al enviar el correo. Por favor intente de nuevo.';
 
   @override
+  String get resetYourPassword => 'Restablecer Contraseña';
+
+  @override
+  String get enterNewPassword => 'Ingrese su nueva contraseña a continuación.';
+
+  @override
+  String get newPassword => 'Nueva Contraseña';
+
+  @override
+  String get confirmNewPassword => 'Confirmar Nueva Contraseña';
+
+  @override
+  String get resetPassword => 'Restablecer Contraseña';
+
+  @override
+  String get passwordResetSuccess => '¡Contraseña Restablecida!';
+
+  @override
+  String get redirectingToSignIn => 'Redirigiendo a iniciar sesión...';
+
+  @override
+  String get invalidResetLink => 'Enlace Inválido';
+
+  @override
+  String get pleaseConfirmPassword => 'Por favor confirme su contraseña';
+
+  @override
+  String get passwordsDoNotMatch => 'Las contraseñas no coinciden';
+
+  @override
   String get signUpTermsNote =>
       'Al crear una cuenta, usted acepta mantener su jornada espiritual privada y segura.';
 
