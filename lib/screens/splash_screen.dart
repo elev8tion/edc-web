@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../theme/app_theme.dart';
 import '../components/gradient_background.dart';
 import '../components/glass_card.dart';
+import '../components/dancing_logo_loader.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/navigation/app_routes.dart';
 import '../core/widgets/app_initializer.dart';
@@ -64,52 +65,55 @@ class SplashScreen extends HookConsumerWidget {
       if (_hasNavigated) return null;
 
       // Only navigate when initialization completes successfully
-      initializationAsync.whenData((_) async {
-        if (_hasNavigated) return;
-
-        // Check if we're still on splash screen before navigating
-        // On web, currentRoute may be null - allow navigation in that case
-        if (currentRoute != null && currentRoute != AppRoutes.splash && currentRoute != '/') return;
-
-        // Initialize auth service and check authentication status
-        final authService = ref.read(authServiceProvider.notifier);
-        await authService.initialize();
-        final authState = ref.read(authServiceProvider);
-
-        // Check if user is authenticated
-        final isAuthenticated = authState.maybeWhen(
-          authenticated: (_) => true,
-          orElse: () => false,
-        );
-
-        if (!isAuthenticated) {
-          // User not authenticated - show auth screen
+      initializationAsync.whenData((_) {
+        // Wrap in Future to avoid modifying provider during build
+        Future(() async {
           if (_hasNavigated) return;
-          _hasNavigated = true;
-          NavigationService.pushReplacementNamed(AppRoutes.auth);
-          return;
-        }
 
-        // User is authenticated - check if app lock is enabled (skip on web)
-        // Note: Legal agreements are now handled during signup in auth_form.dart
-        if (!kIsWeb) {
-          final prefsService = await PreferencesService.getInstance();
-          final isAppLockEnabled = prefsService.isAppLockEnabled();
+          // Check if we're still on splash screen before navigating
+          // On web, currentRoute may be null - allow navigation in that case
+          if (currentRoute != null && currentRoute != AppRoutes.splash && currentRoute != '/') return;
 
-          if (isAppLockEnabled) {
-            // App lock is enabled - show custom app lock screen (mobile only)
+          // Initialize auth service and check authentication status
+          final authService = ref.read(authServiceProvider.notifier);
+          await authService.initialize();
+          final authState = ref.read(authServiceProvider);
+
+          // Check if user is authenticated
+          final isAuthenticated = authState.maybeWhen(
+            authenticated: (_) => true,
+            orElse: () => false,
+          );
+
+          if (!isAuthenticated) {
+            // User not authenticated - show auth screen
             if (_hasNavigated) return;
             _hasNavigated = true;
-            // App lock not available on web - go to home instead
-            NavigationService.pushReplacementNamed(AppRoutes.home);
+            NavigationService.pushReplacementNamed(AppRoutes.auth);
             return;
           }
-        }
 
-        // Go directly to home
-        if (_hasNavigated) return;
-        _hasNavigated = true;
-        NavigationService.pushReplacementNamed(AppRoutes.home);
+          // User is authenticated - check if app lock is enabled (skip on web)
+          // Note: Legal agreements are now handled during signup in auth_form.dart
+          if (!kIsWeb) {
+            final prefsService = await PreferencesService.getInstance();
+            final isAppLockEnabled = prefsService.isAppLockEnabled();
+
+            if (isAppLockEnabled) {
+              // App lock is enabled - show custom app lock screen (mobile only)
+              if (_hasNavigated) return;
+              _hasNavigated = true;
+              // App lock not available on web - go to home instead
+              NavigationService.pushReplacementNamed(AppRoutes.home);
+              return;
+            }
+          }
+
+          // Go directly to home
+          if (_hasNavigated) return;
+          _hasNavigated = true;
+          NavigationService.pushReplacementNamed(AppRoutes.home);
+        });
       });
 
       return null;
@@ -192,21 +196,14 @@ class SplashScreen extends HookConsumerWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 80),
+                        const SizedBox(height: 60),
 
-                        // Simple loading indicator
-                        const SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppTheme.goldColor,
-                            ),
-                            strokeWidth: 3,
-                          ),
+                        // Dancing logo loader (matches AppInitializer)
+                        const DancingLogoLoader(
+                          size: 120.0,
                         ),
 
-                        const SizedBox(height: AppSpacing.xxl),
+                        const SizedBox(height: AppSpacing.lg),
 
                         // Loading text (simplified)
                         Text(
