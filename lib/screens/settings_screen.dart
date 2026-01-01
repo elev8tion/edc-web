@@ -36,7 +36,6 @@ import '../services/auth_service.dart';
 import '../services/token_manager.dart';
 import '../theme/app_theme_extensions.dart';
 import '../core/services/web_push_notification_service.dart';
-import '../core/services/badge_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
