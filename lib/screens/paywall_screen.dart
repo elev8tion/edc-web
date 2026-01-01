@@ -221,27 +221,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
-                  // Have an activation code? Link
-                  GestureDetector(
-                    onTap: _navigateToActivation,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.md,
-                      ),
-                      child: Center(
-                        child: Text(
-                          l10n.paywallHaveActivationCode,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.goldColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-
                   // Terms of Use & Privacy Policy
                   FrostedGlassCard(
                     padding: const EdgeInsets.all(AppSpacing.md),
@@ -518,11 +497,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         setState(() => _isProcessing = false);
       }
     }
-  }
-
-  /// Navigate to activation screen
-  void _navigateToActivation() {
-    Navigator.of(context).pushNamed('/activation');
   }
 
   /// Build plan selector (yearly vs monthly)

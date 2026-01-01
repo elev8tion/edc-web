@@ -420,8 +420,10 @@ async function createEmbeddedCheckout(request, env) {
     'line_items[0][price]': priceId,
     'line_items[0][quantity]': '1',
     'return_url': returnUrl || 'https://everydaychristian.app/checkout-complete?session_id={CHECKOUT_SESSION_ID}',
-    // Enable promo codes (EDC-YEAR-XXX, EDC-FREE-XXX)
+    // Enable promo codes (EDC-YEAR-XXX, EDC-FREE-XXX, EDC-VIP-XXX)
     'allow_promotion_codes': 'true',
+    // Skip card collection if total is $0 (for forever-free VIP codes)
+    'payment_method_collection': 'if_required',
     // Metadata for tracking
     'metadata[user_id]': userId || '',
     'metadata[device_id]': deviceId || '',
