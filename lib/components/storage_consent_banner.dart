@@ -260,8 +260,6 @@ class _StorageConsentBannerState extends State<StorageConsentBanner>
                           style: const TextStyle(
                             fontSize: 13,
                             color: AppTheme.goldColor,
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppTheme.goldColor,
                           ),
                         ),
                       ),
