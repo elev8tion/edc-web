@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import '../core/services/badge_service.dart';
 import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/clear_glass_card.dart';
@@ -1003,11 +1002,6 @@ class _DevotionalScreenState extends ConsumerState<DevotionalScreen> {
               ref.invalidate(devotionalStreakProvider);
               ref.invalidate(totalDevotionalsCompletedProvider);
               ref.invalidate(completedDevotionalsProvider);
-              // Clear app badge (web PWA only)
-              if (kIsWeb && BadgeService.isSupported) {
-                await BadgeService.clearBadge();
-                debugPrint('[Badge] Cleared badge after completing devotional');
-              }
             },
           )
         : Container(

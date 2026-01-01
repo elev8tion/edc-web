@@ -34,7 +34,6 @@ import '../core/widgets/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../services/stripe_service.dart';
 import '../theme/app_theme_extensions.dart';
-import '../core/services/web_push_notification_service.dart';
 import '../core/services/storage_consent_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -109,62 +108,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAppBar(),
-          const SizedBox(height: AppSpacing.xxl),
-          _buildSettingsSection(
-            l10n.notifications,
-            Icons.notifications,
-            [
-              _buildNotificationTile(
-                context: context,
-                icon: Icons.wb_sunny_outlined,
-                title: l10n.dailyDevotional,
-                subtitle: l10n.dailyDevotionalNotificationDesc,
-                isEnabled: ref.watch(dailyNotificationsProvider),
-                currentTime: ref.watch(devotionalTimeProvider),
-                onToggle: (value) =>
-                    ref.read(dailyNotificationsProvider.notifier).toggle(value),
-                onTimeChange: (time) =>
-                    ref.read(devotionalTimeProvider.notifier).setTime(time),
-              ),
-              _buildNotificationTile(
-                context: context,
-                icon: Icons.favorite_border,
-                title: l10n.prayerReminders,
-                subtitle: l10n.prayerRemindersNotificationDesc,
-                isEnabled: ref.watch(prayerRemindersProvider),
-                currentTime: ref.watch(prayerTimeProvider),
-                onToggle: (value) =>
-                    ref.read(prayerRemindersProvider.notifier).toggle(value),
-                onTimeChange: (time) =>
-                    ref.read(prayerTimeProvider.notifier).setTime(time),
-              ),
-              _buildNotificationTile(
-                context: context,
-                icon: Icons.auto_awesome,
-                title: l10n.verseOfTheDaySetting,
-                subtitle: l10n.verseOfTheDayNotificationDesc,
-                isEnabled: ref.watch(verseOfTheDayProvider),
-                currentTime: ref.watch(verseTimeProvider),
-                onToggle: (value) =>
-                    ref.read(verseOfTheDayProvider.notifier).toggle(value),
-                onTimeChange: (time) =>
-                    ref.read(verseTimeProvider.notifier).setTime(time),
-              ),
-              _buildNotificationTile(
-                context: context,
-                icon: Icons.menu_book_outlined,
-                title: l10n.readingPlan,
-                subtitle: l10n.readingPlanNotificationDesc,
-                isEnabled: ref.watch(readingPlanRemindersProvider),
-                currentTime: ref.watch(readingPlanTimeProvider),
-                onToggle: (value) => ref
-                    .read(readingPlanRemindersProvider.notifier)
-                    .toggle(value),
-                onTimeChange: (time) =>
-                    ref.read(readingPlanTimeProvider.notifier).setTime(time),
-              ),
-            ],
-          ),
           const SizedBox(height: AppSpacing.xxl),
           _buildSettingsSection(
             l10n.subscription,
@@ -434,163 +377,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onChanged: onChanged,
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNotificationTile({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool isEnabled,
-    required String currentTime,
-    required Function(bool) onToggle,
-    required Function(String) onTimeChange,
-  }) {
-    final l10n = AppLocalizations.of(context);
-    // Updated color scheme: amber for icons and toggles, white for time text
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        children: [
-          // Main notification row with toggle
-          Row(
-            children: [
-              // Icon with gradient background
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.sm),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.toggleActiveColor.withValues(alpha: 0.3),
-                      AppTheme.toggleActiveColor.withValues(alpha: 0.1),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: AppRadius.smallRadius,
-                ),
-                child: Icon(
-                  icon,
-                  color: Colors.white,
-                  size: ResponsiveUtils.iconSize(context, 22),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              // Title and subtitle
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: ResponsiveUtils.fontSize(context, 16,
-                            minSize: 14, maxSize: 18),
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryText,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: ResponsiveUtils.fontSize(context, 13,
-                            minSize: 11, maxSize: 15),
-                        color: AppColors.tertiaryText,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Toggle switch
-              Switch(
-                value: isEnabled,
-                onChanged: onToggle,
-                activeTrackColor: Colors.white.withValues(alpha: 0.5),
-                thumbColor: WidgetStateProperty.resolveWith<Color>(
-                  (Set<WidgetState> states) {
-                    if (states.contains(WidgetState.selected)) {
-                      return AppTheme.secondaryColor;
-                    }
-                    return AppTheme.secondaryColor;
-                  },
-                ),
-                trackOutlineColor: WidgetStateProperty.resolveWith<Color>(
-                  (Set<WidgetState> states) {
-                    if (states.contains(WidgetState.selected)) {
-                      return AppTheme.secondaryColor;
-                    }
-                    return AppTheme.secondaryColor;
-                  },
-                ),
-              ),
-            ],
-          ),
-          // Time picker (shown when enabled)
-          if (isEnabled) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => _showTimePicker(currentTime, onTimeChange),
-                borderRadius: AppRadius.mediumRadius,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    borderRadius: AppRadius.mediumRadius,
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.access_time_rounded,
-                        color:
-                            AppTheme.toggleActiveColor.withValues(alpha: 0.8),
-                        size: ResponsiveUtils.iconSize(context, 18),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Text(
-                          l10n.notificationTime,
-                          style: TextStyle(
-                            fontSize: ResponsiveUtils.fontSize(context, 14,
-                                minSize: 12, maxSize: 16),
-                            color: Colors.white.withValues(alpha: 0.7),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        _formatTimeTo12Hour(currentTime),
-                        style: TextStyle(
-                          fontSize: ResponsiveUtils.fontSize(context, 15,
-                              minSize: 13, maxSize: 17),
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Icon(
-                        Icons.chevron_right,
-                        color: AppColors.tertiaryText,
-                        size: ResponsiveUtils.iconSize(context, 18),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -902,100 +688,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     pinController.dispose();
     return result ?? false;
-  }
-
-  String _formatTimeTo12Hour(String time24) {
-    final parts = time24.split(':');
-    final hour = int.parse(parts[0]);
-    final minute = int.parse(parts[1]);
-
-    final period = hour >= 12 ? 'PM' : 'AM';
-    final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-    final minuteStr = minute.toString().padLeft(2, '0');
-
-    return '$hour12:$minuteStr $period';
-  }
-
-  Future<void> _showTimePicker(
-      String currentTime, Function(String) onChanged) async {
-    final l10n = AppLocalizations.of(context);
-    final parts = currentTime.split(':');
-    final initialTime = TimeOfDay(
-      hour: int.parse(parts[0]),
-      minute: int.parse(parts[1]),
-    );
-
-    // Get text scale factor to adjust dimensions dynamically for accessibility
-    final textScaleFactor = MediaQuery.textScalerOf(context).scale(1.0);
-    final safeBottomPadding = MediaQuery.of(context).padding.bottom;
-
-    // Custom glassmorphic time picker style matching app theme components
-    final customStyle = TimeRangeSheetStyle(
-      // Match GlassBottomSheet - transparent background (blur from wrapper)
-      sheetBackgroundColor: Colors.transparent,
-
-      // Button styling matching GlassButton component
-      buttonColor:
-          Colors.transparent, // GlassButton uses gradient, not solid color
-      cancelButtonColor: Colors.transparent,
-      buttonTextColor: Colors.white,
-      cancelButtonTextColor: Colors.white.withValues(alpha: 0.7),
-
-      // Text colors for visibility
-      labelTextColor: Colors.white.withValues(alpha: 0.9),
-      selectedTimeTextColor: Colors.white,
-      pickerTextColor: Colors.white.withValues(alpha: 0.3),
-      selectedPickerTextColor: Colors.white,
-
-      // Corner radius matching GlassButton (28) and GlassBottomSheet (24)
-      cornerRadius: 24, // Sheet corner radius
-      buttonCornerRadius: 28, // Button corner radius like GlassButton
-
-      // Sheet dimensions - dynamically scaled for text size and bottom safe area
-      // Increased height to accommodate 1.5x text scale + extra bottom padding
-      sheetHeight: 500 +
-          (textScaleFactor > 1.0 ? (textScaleFactor - 1.0) * 100 : 0) +
-          safeBottomPadding,
-      // Scale picker item height with text scale factor for proper spacing at 150%
-      pickerItemHeight: (45 * textScaleFactor).clamp(45, 70),
-      buttonHeight: 56, // Match GlassButton height
-
-      // Padding and spacing - add substantial bottom padding for scaled text
-      // Ensures bottom numbers (07, 08, 09, 10) are fully visible at 150% scale
-      padding: EdgeInsets.only(
-        left: AppSpacing.lg,
-        right: AppSpacing.lg,
-        top: AppSpacing.lg,
-        bottom:
-            AppSpacing.lg + 50 + safeBottomPadding, // Extra 50px + safe area
-      ),
-      buttonPadding: const EdgeInsets.all(AppSpacing.md),
-
-      // Use 12-hour format to match display
-      use24HourFormat: false,
-
-      // Custom button text
-      confirmButtonText: l10n.setTime,
-      cancelButtonText: l10n.cancel,
-
-      // Enable haptic feedback
-      enableHapticFeedback: true,
-    );
-
-    final result = await showTimeRangeSheet(
-      context: context,
-      initialStartTime: initialTime,
-      style: customStyle,
-      singlePicker: true,
-      allowInvalidRange: true,
-    );
-
-    if (result != null) {
-      final picked = result.startTime; // In single picker mode, use startTime
-      final hour = picked.hour.toString().padLeft(2, '0');
-      final minute = picked.minute.toString().padLeft(2, '0');
-      onChanged('$hour:$minute');
-    }
   }
 
   Widget _buildActionTile(
@@ -2067,8 +1759,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     // Check if user has active subscription
     final hasActiveSubscription = ref.read(isPremiumProvider);
-    // Check if web push is enabled (web only)
-    final webPushEnabled = kIsWeb && ref.read(webPushEnabledProvider);
 
     showBlurredDialog(
       context: context,
@@ -2146,8 +1836,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     _buildDeleteItem(l10n.deleteAccountClearLocal),
                     if (hasActiveSubscription)
                       _buildDeleteItem(l10n.deleteAccountCancelSubscription),
-                    if (webPushEnabled)
-                      _buildDeleteItem(l10n.deleteAccountUnsubscribePush),
                     _buildDeleteItem(l10n.deleteAccountRemovePremium),
                     const SizedBox(height: AppSpacing.lg),
 
@@ -2357,27 +2045,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                         }
                                       }
 
-                                      // Step 2: Unsubscribe from web push if enabled
-                                      if (webPushEnabled) {
-                                        setDialogState(() {
-                                          loadingStatus =
-                                              l10n.unsubscribingNotifications;
-                                        });
-                                        try {
-                                          await WebPushNotificationService
-                                              .unsubscribe();
-                                          ref
-                                              .read(webPushEnabledProvider
-                                                  .notifier)
-                                              .setEnabled(false);
-                                        } catch (e) {
-                                          debugPrint(
-                                              '[DeleteAccount] Push unsubscribe failed: $e');
-                                          // Continue with deletion even if unsubscribe fails
-                                        }
-                                      }
-
-                                      // Step 3: Delete account with hard delete flag
+                                      // Step 2: Delete account with hard delete flag
                                       setDialogState(() {
                                         loadingStatus = l10n.deletingServerData;
                                       });
@@ -2386,7 +2054,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                               hardDelete: hardDelete);
 
                                       if (success) {
-                                        // Step 4: Clear local data
+                                        // Step 3: Clear local data
                                         setDialogState(() {
                                           loadingStatus =
                                               l10n.clearingLocalData;
@@ -2537,12 +2205,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           _FAQItem(question: l10n.faqQ14, answer: l10n.faqA14),
                           _FAQItem(question: l10n.faqQ15, answer: l10n.faqA15),
                           _FAQItem(question: l10n.faqQ16, answer: l10n.faqA16),
-                        ]),
-                        const SizedBox(height: AppSpacing.lg),
-                        _buildFAQSection(l10n.faqNotifications, [
-                          _FAQItem(question: l10n.faqQ17, answer: l10n.faqA17),
-                          _FAQItem(question: l10n.faqQ18, answer: l10n.faqA18),
-                          _FAQItem(question: l10n.faqQ19, answer: l10n.faqA19),
                         ]),
                         const SizedBox(height: AppSpacing.lg),
                         _buildFAQSection(l10n.faqSettingsCustomization, [
