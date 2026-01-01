@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 /// Dark page route that prevents white screen during iOS swipe-back gestures
 /// Uses a dark barrier color instead of the default white
+/// Also disables the iOS swipe-back gesture for consistent navigation
 class DarkPageRoute<T> extends PageRoute<T> {
   DarkPageRoute({
     required this.builder,
@@ -28,6 +29,10 @@ class DarkPageRoute<T> extends PageRoute<T> {
   @override
   bool get opaque => true;
 
+  /// Disable iOS swipe-back gesture to prevent accidental navigation
+  @override
+  bool get popGestureEnabled => false;
+
   @override
   Duration get transitionDuration => const Duration(milliseconds: 300);
 
@@ -40,7 +45,12 @@ class DarkPageRoute<T> extends PageRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    return builder(context);
+    // Wrap all pages with PopScope to prevent back navigation on all platforms
+    // This blocks: iOS swipe, Android back button/gesture, web browser back
+    return PopScope(
+      canPop: false,
+      child: builder(context),
+    );
   }
 
   @override

@@ -4567,6 +4567,10 @@
   "@lockoutFreeFeatures": {
     "description": "Note about features that remain free"
   },
+  "backToHome": "Back to Home",
+  "@backToHome": {
+    "description": "Button text to navigate back to home screen"
+  },
   "lockoutSuspensionTimeRemaining": "Time Remaining: {time}",
   "@lockoutSuspensionTimeRemaining": {
     "description": "Suspension time remaining display",

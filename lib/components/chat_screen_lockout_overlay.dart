@@ -22,6 +22,7 @@ enum LockoutReason {
 
 class ChatScreenLockoutOverlay extends StatelessWidget {
   final VoidCallback onSubscribePressed;
+  final VoidCallback? onHomePressed; // Navigate back to home
   final LockoutReason reason;
   final String? suspensionMessage; // For suspension: custom message with end date
   final Duration? remainingSuspension; // For suspension: remaining time
@@ -29,6 +30,7 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
   const ChatScreenLockoutOverlay({
     Key? key,
     required this.onSubscribePressed,
+    this.onHomePressed,
     this.reason = LockoutReason.trialExpired,
     this.suspensionMessage,
     this.remainingSuspension,
@@ -222,6 +224,27 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                         ),
                         textAlign: TextAlign.center,
                       ),
+
+                      // Home button - allows user to navigate back
+                      if (onHomePressed != null) ...[
+                        SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.lg)),
+                        TextButton.icon(
+                          onPressed: onHomePressed,
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: AppColors.secondaryText,
+                            size: ResponsiveUtils.iconSize(context, 18),
+                          ),
+                          label: Text(
+                            l10n.backToHome,
+                            style: TextStyle(
+                              fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
+                              color: AppColors.secondaryText,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

@@ -6069,6 +6069,12 @@ abstract class AppLocalizations {
   /// **'Prayer journal, Bible reading, and verses remain free and unlimited'**
   String get lockoutFreeFeatures;
 
+  /// Button text to navigate back to home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Home'**
+  String get backToHome;
+
   /// Suspension time remaining display
   ///
   /// In en, this message translates to:

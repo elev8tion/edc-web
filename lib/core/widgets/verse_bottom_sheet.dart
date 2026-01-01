@@ -8,6 +8,7 @@ import '../../core/database/models/bible_verse.dart';
 import '../../core/database/database_helper.dart';
 import '../../theme/app_theme.dart';
 import '../../screens/chapter_reading_screen.dart';
+import '../../core/navigation/page_transitions.dart';
 import '../providers/app_providers.dart';
 import 'app_snackbar.dart';
 import '../../models/bible_verse.dart' as app_models;
@@ -475,7 +476,7 @@ class VerseBottomSheet extends ConsumerWidget {
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  DarkPageRoute(
                     builder: (_) => ChapterReadingScreen(
                       book: parsed.book,
                       startChapter: parsed.chapter,

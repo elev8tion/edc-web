@@ -20,6 +20,7 @@ import '../components/frosted_glass_card.dart';
 import '../components/glassmorphic_fab_menu.dart';
 import '../components/standard_screen_header.dart';
 import '../core/navigation/navigation_service.dart';
+import '../core/navigation/page_transitions.dart';
 import '../core/providers/app_providers.dart';
 import '../utils/responsive_utils.dart';
 import '../widgets/time_picker/time_range_sheet.dart';
@@ -173,7 +174,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Icons.arrow_forward_ios,
                 () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    DarkPageRoute(
                       builder: (context) => const PaywallScreen(
                         showTrialInfo: true,
                       ),

@@ -12,6 +12,7 @@ import '../core/providers/app_providers.dart';
 import '../models/chat_message.dart';
 import '../providers/ai_provider.dart';
 import '../components/gradient_background.dart';
+import '../core/navigation/page_transitions.dart';
 import '../components/base_bottom_sheet.dart';
 import '../components/glass_effects/glass_dialog.dart';
 import '../components/glass_card.dart';
@@ -41,6 +42,8 @@ import '../l10n/app_localizations.dart';
 import '../models/verse_context.dart';
 import '../services/stripe_service.dart';
 import '../theme/app_theme_extensions.dart';
+import '../core/navigation/navigation_service.dart';
+import '../core/navigation/app_routes.dart';
 
 class ChatScreen extends HookConsumerWidget {
   final VerseContext?
@@ -246,7 +249,7 @@ class ChatScreen extends HookConsumerWidget {
         if (context.mounted) {
           await Navigator.push(
             context,
-            MaterialPageRoute(
+            DarkPageRoute(
               builder: (_) => const PaywallScreen(showTrialInfo: false),
             ),
           );
@@ -286,7 +289,7 @@ class ChatScreen extends HookConsumerWidget {
             // User clicked "Subscribe Now"
             final upgraded = await Navigator.push(
               context,
-              MaterialPageRoute(
+              DarkPageRoute(
                 builder: (_) => PaywallScreen(
                   showTrialInfo:
                       subscriptionStatus == SubscriptionStatus.inTrial,
@@ -651,7 +654,7 @@ class ChatScreen extends HookConsumerWidget {
         if (context.mounted) {
           final result = await Navigator.push(
             context,
-            MaterialPageRoute(
+            DarkPageRoute(
               builder: (context) => PaywallScreen(
                 showTrialInfo: subscriptionService.isInTrial,
                 showMessageStats: true,
@@ -1455,6 +1458,9 @@ class ChatScreen extends HookConsumerWidget {
                 // For suspensions, button is hidden, but callback required
                 // User cannot subscribe out of suspension
               },
+              onHomePressed: () {
+                NavigationService.pushReplacementNamed(AppRoutes.home);
+              },
             ),
           ],
         ),
@@ -1486,6 +1492,9 @@ class ChatScreen extends HookConsumerWidget {
                   isYearly: true,
                 );
               },
+              onHomePressed: () {
+                NavigationService.pushReplacementNamed(AppRoutes.home);
+              },
             ),
           ],
         ),
@@ -1509,10 +1518,13 @@ class ChatScreen extends HookConsumerWidget {
               onSubscribePressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  DarkPageRoute(
                     builder: (_) => const PaywallScreen(showTrialInfo: false),
                   ),
                 );
+              },
+              onHomePressed: () {
+                NavigationService.pushReplacementNamed(AppRoutes.home);
               },
             ),
           ],

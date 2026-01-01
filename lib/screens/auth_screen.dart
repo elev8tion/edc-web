@@ -7,6 +7,7 @@ import '../components/animations/blur_fade.dart';
 import '../components/glass/static_liquid_glass_lens.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/navigation/app_routes.dart';
+import '../core/navigation/page_transitions.dart';
 import '../core/services/preferences_service.dart';
 import '../utils/responsive_utils.dart';
 import '../core/widgets/app_snackbar.dart';
@@ -147,7 +148,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     child: AuthForm(
                       onForgotPassword: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(
+                          DarkPageRoute(
                             builder: (_) => const ForgotPasswordScreen(),
                           ),
                         );

@@ -9,6 +9,7 @@ import '../components/glass_button.dart';
 import '../components/audio_control_pill.dart';
 import '../theme/app_theme.dart';
 import '../core/navigation/navigation_service.dart';
+import '../core/navigation/page_transitions.dart';
 import '../core/providers/app_providers.dart';
 import '../core/services/preferences_service.dart';
 import '../core/services/database_service.dart';
@@ -1149,7 +1150,7 @@ class _ChapterReadingScreenState extends ConsumerState<ChapterReadingScreen>
 
     final result = await Navigator.push<VerseContext>(
       context,
-      MaterialPageRoute(
+      DarkPageRoute(
         builder: (context) => ChatScreen(
           verseContext: verseContext,
         ),

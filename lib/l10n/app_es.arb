@@ -1139,6 +1139,7 @@
   "lockoutBenefitHistory": "Acceso a todo tu historial de chat",
   "lockoutBenefitGuidance": "Orientación bíblica personalizada",
   "lockoutFreeFeatures": "Diario de oración, lectura bíblica y versículos permanecen gratis e ilimitados",
+  "backToHome": "Volver al Inicio",
   "lockoutSuspensionTimeRemaining": "Tiempo Restante: {time}",
   "lockoutSuspensionContactInfo": "Si crees que esta suspensión fue emitida por error, por favor contacta:"
 }

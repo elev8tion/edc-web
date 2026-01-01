@@ -22,6 +22,7 @@ import '../core/services/achievement_service.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../components/base_bottom_sheet.dart';
 import '../core/navigation/navigation_service.dart';
+import '../core/navigation/page_transitions.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme_extensions.dart';
 
@@ -1461,7 +1462,7 @@ class _DevotionalScreenState extends ConsumerState<DevotionalScreen> {
       // Navigate to ChapterReadingScreen with auto-scroll to verse
       Navigator.push(
         context,
-        MaterialPageRoute(
+        DarkPageRoute(
           builder: (context) => ChapterReadingScreen(
             book: book,
             startChapter: chapterNumber,

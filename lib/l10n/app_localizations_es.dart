@@ -3456,6 +3456,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Diario de oración, lectura bíblica y versículos permanecen gratis e ilimitados';
 
   @override
+  String get backToHome => 'Volver al Inicio';
+
+  @override
   String lockoutSuspensionTimeRemaining(String time) {
     return 'Tiempo Restante: $time';
   }

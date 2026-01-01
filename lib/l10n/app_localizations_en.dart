@@ -3410,6 +3410,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Prayer journal, Bible reading, and verses remain free and unlimited';
 
   @override
+  String get backToHome => 'Back to Home';
+
+  @override
   String lockoutSuspensionTimeRemaining(String time) {
     return 'Time Remaining: $time';
   }
