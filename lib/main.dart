@@ -1,6 +1,7 @@
 import 'package:everyday_christian/components/app_update_wrapper.dart';
 import 'package:everyday_christian/components/offline_indicator.dart';
 import 'package:everyday_christian/components/pwa_install_wrapper.dart';
+import 'package:everyday_christian/components/storage_consent_banner.dart';
 import 'package:everyday_christian/core/config/env_validator.dart';
 import 'package:everyday_christian/core/navigation/app_routes.dart';
 import 'package:everyday_christian/core/navigation/navigation_service.dart';
@@ -27,6 +28,7 @@ import 'package:everyday_christian/screens/verify_email_screen.dart';
 import 'package:everyday_christian/screens/wait_for_verification_screen.dart';
 import 'package:everyday_christian/screens/email_verification_handler_screen.dart';
 import 'package:everyday_christian/screens/reset_password_screen.dart';
+import 'package:everyday_christian/screens/accessibility_statement_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
@@ -135,10 +137,11 @@ class MyApp extends ConsumerWidget {
           child: OfflineIndicator(child: child!),
         );
 
-        // Wrap with web-specific wrappers for update and install dialogs
+        // Wrap with web-specific wrappers for update, install dialogs, and consent banner
         if (kIsWeb) {
           content = AppUpdateWrapper(child: content);
           content = PWAInstallWrapper(child: content);
+          content = StorageConsentBanner(child: content);
         }
 
         return content;
@@ -246,6 +249,8 @@ class MyApp extends ConsumerWidget {
             );
           case AppRoutes.checkoutComplete:
             return DarkPageRoute(settings: settings, builder: (_) => const CheckoutCompleteScreen());
+          case AppRoutes.accessibilityStatement:
+            return DarkPageRoute(settings: settings, builder: (_) => const AccessibilityStatementScreen());
           default:
             return null;
         }

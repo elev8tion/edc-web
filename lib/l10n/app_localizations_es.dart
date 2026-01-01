@@ -3530,4 +3530,261 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get lockoutSuspensionContactInfo =>
       'Si crees que esta suspensión fue emitida por error, por favor contacta:';
+
+  @override
+  String get storageConsentTitle => 'Usamos cookies y almacenamiento local';
+
+  @override
+  String get storageConsentMessage =>
+      'Usamos IndexedDB y almacenamiento local para guardar tus oraciones, preferencias y datos de la app en tu dispositivo. Parte del almacenamiento es esencial para que la app funcione.';
+
+  @override
+  String get storageConsentLearnMore =>
+      'Más información en nuestra Política de Privacidad';
+
+  @override
+  String get acceptAllStorage => 'Aceptar Todo';
+
+  @override
+  String get essentialOnly => 'Solo Esencial';
+
+  @override
+  String get manageStoragePreferences =>
+      'Gestionar Preferencias de Almacenamiento';
+
+  @override
+  String get storagePreferencesTitle => 'Preferencias de Almacenamiento';
+
+  @override
+  String get storagePreferencesDescription =>
+      'Elige cómo almacenamos datos en tu dispositivo. El almacenamiento esencial es necesario para que la app funcione.';
+
+  @override
+  String currentStorageConsent(String status) {
+    return 'Configuración actual: $status';
+  }
+
+  @override
+  String get resetStorageConsent => 'Restablecer Preferencias';
+
+  @override
+  String get storageConsentReset =>
+      'Las preferencias de almacenamiento se han restablecido';
+
+  @override
+  String get storagePreferencesDialogDescription =>
+      'Controla cómo Everyday Christian almacena datos en tu dispositivo. El almacenamiento esencial es necesario para el funcionamiento básico.';
+
+  @override
+  String get currentConsentAll => 'Actual: Todo el almacenamiento habilitado';
+
+  @override
+  String get currentConsentEssential => 'Actual: Solo almacenamiento esencial';
+
+  @override
+  String get currentConsentNone => 'Sin preferencia establecida';
+
+  @override
+  String get changePreference => 'Elige tu preferencia:';
+
+  @override
+  String get acceptAllStorageDesc =>
+      'Habilitar todas las funciones incluyendo preferencias guardadas y personalización';
+
+  @override
+  String get essentialOnlyDesc =>
+      'Solo almacenar datos necesarios para el funcionamiento de la app';
+
+  @override
+  String get savePreferences => 'Guardar Preferencias';
+
+  @override
+  String get storagePreferencesSaved =>
+      'Preferencias de almacenamiento guardadas';
+
+  @override
+  String get clearLocalData => 'Borrar Datos Locales';
+
+  @override
+  String get clearLocalDataDescription =>
+      'Borra datos en caché y almacenamiento local de este dispositivo. Tu cuenta y datos en la nube no se verán afectados.';
+
+  @override
+  String get clearLocalDataWarning =>
+      'Esto borrará lo siguiente de tu dispositivo:';
+
+  @override
+  String get accountNotDeleted => 'Tu cuenta NO será eliminada';
+
+  @override
+  String get whatStaysTheSame => 'Lo que permanece igual:';
+
+  @override
+  String get clearDataKeepsAccount =>
+      '• Tu cuenta y credenciales de inicio de sesión\n• Tu estado de suscripción\n• Cualquier dato sincronizado en la nube';
+
+  @override
+  String get typeClearToConfirm => 'Escribe BORRAR para confirmar:';
+
+  @override
+  String get typeClearPlaceholder => 'Escribe BORRAR aquí';
+
+  @override
+  String get mustTypeClearToConfirm =>
+      'Por favor escribe BORRAR para confirmar';
+
+  @override
+  String get clearData => 'Borrar Datos';
+
+  @override
+  String get localDataCleared => 'Datos locales borrados exitosamente';
+
+  @override
+  String get accessibilityStatement => 'Declaración de Accesibilidad';
+
+  @override
+  String get accessibilityCommitment =>
+      'Everyday Christian está comprometido a garantizar la accesibilidad digital para personas con discapacidades. Mejoramos continuamente la experiencia del usuario y aplicamos los estándares de accesibilidad relevantes.';
+
+  @override
+  String get accessibilityConformance =>
+      'Nuestro objetivo es cumplir con los estándares WCAG 2.1 Nivel AA. Estas pautas explican cómo hacer el contenido web más accesible para personas con discapacidades.';
+
+  @override
+  String get accessibilityMeasures => 'Medidas que Tomamos';
+
+  @override
+  String get accessibilityLimitations => 'Limitaciones Conocidas';
+
+  @override
+  String get accessibilityFeedback =>
+      'Agradecemos tus comentarios sobre la accesibilidad de Everyday Christian.';
+
+  @override
+  String get accessibilityContact =>
+      'Contáctanos en: support@everydaychristian.app';
+
+  @override
+  String get deleteAccount => 'Eliminar Cuenta';
+
+  @override
+  String get deleteAccountWarning => 'ESTA ACCIÓN NO SE PUEDE DESHACER';
+
+  @override
+  String get deleteAccountWillDo => 'Eliminar tu cuenta hará:';
+
+  @override
+  String get deleteAccountRemoveServer =>
+      'Eliminar tu cuenta de nuestros servidores';
+
+  @override
+  String get deleteAccountClearLocal =>
+      'Borrar todos tus datos locales de la app';
+
+  @override
+  String get deleteAccountCancelSubscription =>
+      'Cancelar tu suscripción activa';
+
+  @override
+  String get deleteAccountUnsubscribePush => 'Cancelar las notificaciones push';
+
+  @override
+  String get deleteAccountRemovePremium =>
+      'Eliminar acceso a funciones premium';
+
+  @override
+  String get permanentDeleteServerData =>
+      'Eliminar datos del servidor permanentemente (GDPR)';
+
+  @override
+  String get permanentDeleteExplanation =>
+      'Tus datos serán completamente eliminados de nuestros servidores. Esto es recomendado para cumplimiento total con GDPR.';
+
+  @override
+  String get softDeleteExplanation =>
+      'Tus datos serán marcados como eliminados pero pueden ser retenidos por un período de tiempo para propósitos de recuperación.';
+
+  @override
+  String get enterPasswordToConfirm => 'Ingresa tu contraseña para confirmar:';
+
+  @override
+  String get passwordRequired => 'La contraseña es requerida';
+
+  @override
+  String get deleting => 'Eliminando...';
+
+  @override
+  String get deletingAccount => 'Preparando para eliminar cuenta...';
+
+  @override
+  String get cancellingSubscription => 'Cancelando suscripción...';
+
+  @override
+  String get unsubscribingNotifications => 'Cancelando notificaciones...';
+
+  @override
+  String get deletingServerData => 'Eliminando datos del servidor...';
+
+  @override
+  String get clearingLocalData => 'Borrando datos locales...';
+
+  @override
+  String get accountDeletedSuccess => 'Cuenta eliminada exitosamente';
+
+  @override
+  String get failedToDeleteAccount => 'Error al eliminar la cuenta';
+
+  @override
+  String get incorrectPassword => 'Contraseña incorrecta';
+
+  @override
+  String get accessibilityCommitmentTitle => 'Nuestro Compromiso';
+
+  @override
+  String get accessibilityConformanceTitle => 'Estado de Conformidad';
+
+  @override
+  String get measureSemanticHtml =>
+      'Estructura HTML semántica para lectores de pantalla';
+
+  @override
+  String get measureColorContrast =>
+      'Ratios de contraste de color altos (mínimo 4.5:1)';
+
+  @override
+  String get measureTouchTargets =>
+      'Objetivos táctiles de al menos 44x44 píxeles';
+
+  @override
+  String get measureKeyboardNav => 'Soporte para navegación por teclado';
+
+  @override
+  String get measureAltText => 'Texto alternativo para imágenes';
+
+  @override
+  String get measureScalableText =>
+      'Tamaños de texto escalables para legibilidad';
+
+  @override
+  String get limitationStripeCheckout =>
+      'El pago de terceros (Stripe) puede tener soporte de accesibilidad variable';
+
+  @override
+  String get limitationComplexCharts =>
+      'Las visualizaciones de datos complejas pueden no ser totalmente accesibles para lectores de pantalla';
+
+  @override
+  String get feedbackTitle => 'Comentarios';
+
+  @override
+  String lastUpdated(String date) {
+    return 'Última Actualización: $date';
+  }
+
+  @override
+  String get backToSettings => 'Volver a Ajustes';
+
+  @override
+  String get accessibilityStatementDesc =>
+      'Ver nuestro compromiso de accesibilidad';
 }

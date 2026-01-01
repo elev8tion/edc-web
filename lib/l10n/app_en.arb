@@ -4668,5 +4668,314 @@
   "lockoutSuspensionContactInfo": "If you believe this suspension was issued in error, please contact:",
   "@lockoutSuspensionContactInfo": {
     "description": "Contact info text for suspended accounts"
+  },
+
+  "storageConsentTitle": "We use cookies and local storage",
+  "@storageConsentTitle": {
+    "description": "Title for storage consent banner"
+  },
+  "storageConsentMessage": "We use IndexedDB and local storage to save your prayers, preferences, and app data on your device. Some storage is essential for the app to work.",
+  "@storageConsentMessage": {
+    "description": "Message explaining storage usage"
+  },
+  "storageConsentLearnMore": "Learn more in our Privacy Policy",
+  "@storageConsentLearnMore": {
+    "description": "Link text to privacy policy"
+  },
+  "acceptAllStorage": "Accept All",
+  "@acceptAllStorage": {
+    "description": "Button to accept all storage"
+  },
+  "essentialOnly": "Essential Only",
+  "@essentialOnly": {
+    "description": "Button to accept only essential storage"
+  },
+  "manageStoragePreferences": "Manage Storage Preferences",
+  "@manageStoragePreferences": {
+    "description": "Settings option to manage storage consent"
+  },
+  "storagePreferencesTitle": "Storage Preferences",
+  "@storagePreferencesTitle": {
+    "description": "Title for storage preferences dialog"
+  },
+  "storagePreferencesDescription": "Choose how we store data on your device. Essential storage is required for the app to function.",
+  "@storagePreferencesDescription": {
+    "description": "Description for storage preferences"
+  },
+  "currentStorageConsent": "Current setting: {status}",
+  "@currentStorageConsent": {
+    "description": "Shows current storage consent status",
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "example": "All storage accepted"
+      }
+    }
+  },
+  "resetStorageConsent": "Reset Preferences",
+  "@resetStorageConsent": {
+    "description": "Button to reset storage consent"
+  },
+  "storageConsentReset": "Storage preferences have been reset",
+  "@storageConsentReset": {
+    "description": "Confirmation message after resetting consent"
+  },
+  "storagePreferencesDialogDescription": "Control how Everyday Christian stores data on your device. Essential storage is required for basic functionality.",
+  "@storagePreferencesDialogDescription": {
+    "description": "Description in storage preferences dialog"
+  },
+  "currentConsentAll": "Current: All storage enabled",
+  "@currentConsentAll": {
+    "description": "Status when all storage is accepted"
+  },
+  "currentConsentEssential": "Current: Essential storage only",
+  "@currentConsentEssential": {
+    "description": "Status when only essential storage is accepted"
+  },
+  "currentConsentNone": "No preference set",
+  "@currentConsentNone": {
+    "description": "Status when no consent has been given"
+  },
+  "changePreference": "Choose your preference:",
+  "@changePreference": {
+    "description": "Label before storage options"
+  },
+  "acceptAllStorageDesc": "Enable all features including saved preferences and personalization",
+  "@acceptAllStorageDesc": {
+    "description": "Description for accept all storage option"
+  },
+  "essentialOnlyDesc": "Only store data required for the app to function",
+  "@essentialOnlyDesc": {
+    "description": "Description for essential only storage option"
+  },
+  "savePreferences": "Save Preferences",
+  "@savePreferences": {
+    "description": "Button to save storage preferences"
+  },
+  "storagePreferencesSaved": "Storage preferences saved",
+  "@storagePreferencesSaved": {
+    "description": "Confirmation message after saving preferences"
+  },
+  "clearLocalData": "Clear Local Data",
+  "@clearLocalData": {
+    "description": "Button to clear local data"
+  },
+  "clearLocalDataDescription": "Clear cached data and local storage from this device. Your account and cloud data remain unaffected.",
+  "@clearLocalDataDescription": {
+    "description": "Description for clear local data option"
+  },
+  "clearLocalDataWarning": "This will clear the following from your device:",
+  "@clearLocalDataWarning": {
+    "description": "Warning message before clearing local data"
+  },
+  "accountNotDeleted": "Your account will NOT be deleted",
+  "@accountNotDeleted": {
+    "description": "Reassurance that account is safe"
+  },
+  "whatStaysTheSame": "What stays the same:",
+  "@whatStaysTheSame": {
+    "description": "Header for things that won't change"
+  },
+  "clearDataKeepsAccount": "• Your account and login credentials\n• Your subscription status\n• Any data synced to the cloud",
+  "@clearDataKeepsAccount": {
+    "description": "List of things preserved when clearing data"
+  },
+  "typeClearToConfirm": "Type CLEAR to confirm:",
+  "@typeClearToConfirm": {
+    "description": "Instruction to type CLEAR"
+  },
+  "typeClearPlaceholder": "Type CLEAR here",
+  "@typeClearPlaceholder": {
+    "description": "Placeholder for CLEAR input"
+  },
+  "mustTypeClearToConfirm": "Please type CLEAR to confirm",
+  "@mustTypeClearToConfirm": {
+    "description": "Error when CLEAR not typed"
+  },
+  "clearData": "Clear Data",
+  "@clearData": {
+    "description": "Button to clear data"
+  },
+  "localDataCleared": "Local data cleared successfully",
+  "@localDataCleared": {
+    "description": "Success message after clearing data"
+  },
+  "accessibilityStatement": "Accessibility Statement",
+  "@accessibilityStatement": {
+    "description": "Title for accessibility statement"
+  },
+  "accessibilityCommitment": "Everyday Christian is committed to ensuring digital accessibility for people with disabilities. We continually improve the user experience for everyone and apply relevant accessibility standards.",
+  "@accessibilityCommitment": {
+    "description": "Accessibility commitment statement"
+  },
+  "accessibilityConformance": "We aim to conform to WCAG 2.1 Level AA standards. These guidelines explain how to make web content more accessible for people with disabilities.",
+  "@accessibilityConformance": {
+    "description": "WCAG conformance statement"
+  },
+  "accessibilityMeasures": "Measures We Take",
+  "@accessibilityMeasures": {
+    "description": "Section title for accessibility measures"
+  },
+  "accessibilityLimitations": "Known Limitations",
+  "@accessibilityLimitations": {
+    "description": "Section title for known limitations"
+  },
+  "accessibilityFeedback": "We welcome your feedback on the accessibility of Everyday Christian.",
+  "@accessibilityFeedback": {
+    "description": "Feedback invitation"
+  },
+  "accessibilityContact": "Contact us at: support@everydaychristian.app",
+  "@accessibilityContact": {
+    "description": "Contact information for accessibility feedback"
+  },
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Button to delete account"
+  },
+  "deleteAccountWarning": "THIS ACTION CANNOT BE UNDONE",
+  "@deleteAccountWarning": {
+    "description": "Warning about irreversible account deletion"
+  },
+  "deleteAccountWillDo": "Deleting your account will:",
+  "@deleteAccountWillDo": {
+    "description": "Introduction to deletion consequences"
+  },
+  "deleteAccountRemoveServer": "Remove your account from our servers",
+  "@deleteAccountRemoveServer": {
+    "description": "Account deletion consequence"
+  },
+  "deleteAccountClearLocal": "Delete all your local app data",
+  "@deleteAccountClearLocal": {
+    "description": "Account deletion consequence"
+  },
+  "deleteAccountCancelSubscription": "Cancel your active subscription",
+  "@deleteAccountCancelSubscription": {
+    "description": "Account deletion consequence"
+  },
+  "deleteAccountUnsubscribePush": "Unsubscribe from push notifications",
+  "@deleteAccountUnsubscribePush": {
+    "description": "Account deletion consequence"
+  },
+  "deleteAccountRemovePremium": "Remove access to premium features",
+  "@deleteAccountRemovePremium": {
+    "description": "Account deletion consequence"
+  },
+  "permanentDeleteServerData": "Permanently delete server data (GDPR)",
+  "@permanentDeleteServerData": {
+    "description": "Hard delete checkbox label"
+  },
+  "permanentDeleteExplanation": "Your data will be completely removed from our servers. This is recommended for full GDPR compliance.",
+  "@permanentDeleteExplanation": {
+    "description": "Explanation when hard delete is enabled"
+  },
+  "softDeleteExplanation": "Your data will be marked as deleted but may be retained for a period of time for recovery purposes.",
+  "@softDeleteExplanation": {
+    "description": "Explanation when soft delete is selected"
+  },
+  "enterPasswordToConfirm": "Enter your password to confirm:",
+  "@enterPasswordToConfirm": {
+    "description": "Password prompt for deletion"
+  },
+  "passwordRequired": "Password is required",
+  "@passwordRequired": {
+    "description": "Error when password is empty"
+  },
+  "deleting": "Deleting...",
+  "@deleting": {
+    "description": "Button text while deleting"
+  },
+  "deletingAccount": "Preparing to delete account...",
+  "@deletingAccount": {
+    "description": "Status message during deletion"
+  },
+  "cancellingSubscription": "Cancelling subscription...",
+  "@cancellingSubscription": {
+    "description": "Status message while cancelling subscription"
+  },
+  "unsubscribingNotifications": "Unsubscribing from notifications...",
+  "@unsubscribingNotifications": {
+    "description": "Status message while unsubscribing from push"
+  },
+  "deletingServerData": "Deleting server data...",
+  "@deletingServerData": {
+    "description": "Status message while deleting from server"
+  },
+  "clearingLocalData": "Clearing local data...",
+  "@clearingLocalData": {
+    "description": "Status message while clearing local data"
+  },
+  "accountDeletedSuccess": "Account deleted successfully",
+  "@accountDeletedSuccess": {
+    "description": "Success message after account deletion"
+  },
+  "failedToDeleteAccount": "Failed to delete account",
+  "@failedToDeleteAccount": {
+    "description": "Error message when deletion fails"
+  },
+  "incorrectPassword": "Incorrect password",
+  "@incorrectPassword": {
+    "description": "Error when password is wrong"
+  },
+  "accessibilityCommitmentTitle": "Our Commitment",
+  "@accessibilityCommitmentTitle": {
+    "description": "Title for accessibility commitment section"
+  },
+  "accessibilityConformanceTitle": "Conformance Status",
+  "@accessibilityConformanceTitle": {
+    "description": "Title for WCAG conformance section"
+  },
+  "measureSemanticHtml": "Semantic HTML structure for screen readers",
+  "@measureSemanticHtml": {
+    "description": "Accessibility measure item"
+  },
+  "measureColorContrast": "High contrast color ratios (4.5:1 minimum)",
+  "@measureColorContrast": {
+    "description": "Accessibility measure item"
+  },
+  "measureTouchTargets": "Touch targets of at least 44x44 pixels",
+  "@measureTouchTargets": {
+    "description": "Accessibility measure item"
+  },
+  "measureKeyboardNav": "Keyboard navigation support",
+  "@measureKeyboardNav": {
+    "description": "Accessibility measure item"
+  },
+  "measureAltText": "Alternative text for images",
+  "@measureAltText": {
+    "description": "Accessibility measure item"
+  },
+  "measureScalableText": "Scalable text sizes for readability",
+  "@measureScalableText": {
+    "description": "Accessibility measure item"
+  },
+  "limitationStripeCheckout": "Third-party checkout (Stripe) may have varying accessibility support",
+  "@limitationStripeCheckout": {
+    "description": "Known accessibility limitation"
+  },
+  "limitationComplexCharts": "Complex data visualizations may not be fully accessible to screen readers",
+  "@limitationComplexCharts": {
+    "description": "Known accessibility limitation"
+  },
+  "feedbackTitle": "Feedback",
+  "@feedbackTitle": {
+    "description": "Section title for feedback"
+  },
+  "lastUpdated": "Last Updated: {date}",
+  "@lastUpdated": {
+    "description": "Last updated timestamp",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "January 2026"
+      }
+    }
+  },
+  "backToSettings": "Back to Settings",
+  "@backToSettings": {
+    "description": "Button to return to settings"
+  },
+  "accessibilityStatementDesc": "View our accessibility commitment",
+  "@accessibilityStatementDesc": {
+    "description": "Description for accessibility statement link"
   }
 }

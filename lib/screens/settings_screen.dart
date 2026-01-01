@@ -33,9 +33,11 @@ import '../utils/blur_dialog_utils.dart';
 import '../l10n/app_localizations.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../services/auth_service.dart';
+import '../services/stripe_service.dart';
 import '../services/token_manager.dart';
 import '../theme/app_theme_extensions.dart';
 import '../core/services/web_push_notification_service.dart';
+import '../core/services/storage_consent_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -229,6 +231,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Icons.delete_outline,
                 () => _showClearCacheDialog(),
               ),
+              // Storage Preferences tile (web only)
+              if (kIsWeb)
+                _buildActionTile(
+                  l10n.manageStoragePreferences,
+                  l10n.storagePreferencesDescription,
+                  Icons.storage,
+                  () => _showStoragePreferencesDialog(),
+                ),
               _buildActionTile(
                 l10n.exportData,
                 l10n.exportDataDesc,
@@ -236,15 +246,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 () => _exportUserData(),
               ),
               _buildActionTile(
-                l10n.deleteAllData,
-                l10n.deleteAllDataDesc,
-                Icons.warning_amber_rounded,
-                () => _showDeleteAllDataDialog(),
-                isDestructive: true,
+                l10n.clearLocalData,
+                l10n.clearLocalDataDescription,
+                Icons.cleaning_services_outlined,
+                () => _showClearLocalDataDialog(),
               ),
               _buildActionTile(
-                'Delete Account',
-                'Permanently delete your account and all data',
+                l10n.deleteAccount,
+                l10n.deleteAccountRemoveServer,
                 Icons.person_remove,
                 () => _showDeleteAccountDialog(),
                 isDestructive: true,
@@ -295,6 +304,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 l10n.termsOfServiceDesc,
                 Icons.description,
                 () => _showTermsOfService(),
+              ),
+              _buildActionTile(
+                l10n.accessibilityStatement,
+                l10n.accessibilityStatementDesc,
+                Icons.accessibility_new,
+                () => NavigationService.goToAccessibilityStatement(),
               ),
             ],
           ),
@@ -1578,6 +1593,262 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  /// Show storage preferences dialog (web only)
+  /// Allows user to view and change their storage consent preferences
+  void _showStoragePreferencesDialog() async {
+    final l10n = AppLocalizations.of(context);
+
+    // Get current consent status
+    final consentService = await StorageConsentService.getInstance();
+    final currentLevel = consentService.getConsentLevel();
+    final hasConsented = consentService.hasConsented();
+
+    if (!mounted) return;
+
+    showBlurredDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          StorageConsentLevel selectedLevel = currentLevel;
+
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: ResponsiveUtils.maxContentWidth(context),
+              ),
+              child: FrostedGlassCard(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(AppSpacing.sm),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.goldColor.withValues(alpha: 0.3),
+                                AppTheme.goldColor.withValues(alpha: 0.1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(AppRadius.xs + 2),
+                          ),
+                          child: Icon(
+                            Icons.storage,
+                            color: AppTheme.goldColor,
+                            size: ResponsiveUtils.iconSize(context, 20),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Text(
+                            l10n.manageStoragePreferences,
+                            style: TextStyle(
+                              fontSize: ResponsiveUtils.fontSize(context, 20,
+                                  minSize: 18, maxSize: 24),
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primaryText,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Description
+                    Text(
+                      l10n.storagePreferencesDialogDescription,
+                      style: TextStyle(
+                        fontSize: ResponsiveUtils.fontSize(context, 13,
+                            minSize: 11, maxSize: 15),
+                        color: Colors.white.withValues(alpha: 0.7),
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // Current status
+                    Container(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.1),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            hasConsented ? Icons.check_circle : Icons.info_outline,
+                            color: hasConsented ? Colors.green : Colors.orange,
+                            size: 20,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              hasConsented
+                                  ? (currentLevel == StorageConsentLevel.acceptAll
+                                      ? l10n.currentConsentAll
+                                      : l10n.currentConsentEssential)
+                                  : l10n.currentConsentNone,
+                              style: TextStyle(
+                                fontSize: ResponsiveUtils.fontSize(context, 14,
+                                    minSize: 12, maxSize: 16),
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white.withValues(alpha: 0.9),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // Options
+                    Text(
+                      l10n.changePreference,
+                      style: TextStyle(
+                        fontSize: ResponsiveUtils.fontSize(context, 14,
+                            minSize: 12, maxSize: 16),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+
+                    // Accept All option
+                    _buildStorageOption(
+                      title: l10n.acceptAllStorage,
+                      description: l10n.acceptAllStorageDesc,
+                      isSelected: selectedLevel == StorageConsentLevel.acceptAll,
+                      onTap: () {
+                        setDialogState(() {
+                          selectedLevel = StorageConsentLevel.acceptAll;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+
+                    // Essential Only option
+                    _buildStorageOption(
+                      title: l10n.essentialOnly,
+                      description: l10n.essentialOnlyDesc,
+                      isSelected: selectedLevel == StorageConsentLevel.essentialOnly,
+                      onTap: () {
+                        setDialogState(() {
+                          selectedLevel = StorageConsentLevel.essentialOnly;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+
+                    // Actions
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GlassButton(
+                            text: l10n.cancel,
+                            height: 48,
+                            onPressed: () => NavigationService.pop(),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: GlassButton(
+                            text: l10n.savePreferences,
+                            height: 48,
+                            borderColor: AppTheme.goldColor,
+                            onPressed: () async {
+                              // Save the new preference
+                              if (selectedLevel == StorageConsentLevel.acceptAll) {
+                                await consentService.acceptAll();
+                              } else if (selectedLevel == StorageConsentLevel.essentialOnly) {
+                                await consentService.acceptEssentialOnly();
+                              }
+                              NavigationService.pop();
+                              _showSnackBar(l10n.storagePreferencesSaved);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// Build a storage preference option tile
+  Widget _buildStorageOption({
+    required String title,
+    required String description,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.goldColor.withValues(alpha: 0.15)
+              : Colors.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+          border: Border.all(
+            color: isSelected
+                ? AppTheme.goldColor.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.1),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+              color: isSelected ? AppTheme.goldColor : Colors.white.withValues(alpha: 0.5),
+              size: 22,
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: ResponsiveUtils.fontSize(context, 15,
+                          minSize: 13, maxSize: 17),
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? AppTheme.goldColor : Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: ResponsiveUtils.fontSize(context, 12,
+                          minSize: 10, maxSize: 14),
+                      color: Colors.white.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _exportUserData() async {
     final l10n = AppLocalizations.of(context);
     try {
@@ -1650,7 +1921,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  void _showDeleteAllDataDialog() {
+  /// Show dialog for clearing local data only (not deleting account)
+  void _showClearLocalDataDialog() {
     final l10n = AppLocalizations.of(context);
     final confirmController = TextEditingController();
 
@@ -1676,22 +1948,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.red.withValues(alpha: 0.3),
-                            Colors.red.withValues(alpha: 0.1),
+                            Colors.orange.withValues(alpha: 0.3),
+                            Colors.orange.withValues(alpha: 0.1),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(AppRadius.xs + 2),
                       ),
                       child: Icon(
-                        Icons.warning_amber_rounded,
-                        color: Colors.red,
+                        Icons.cleaning_services_outlined,
+                        color: Colors.orange,
                         size: ResponsiveUtils.iconSize(context, 20),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: Text(
-                        l10n.deleteAllData,
+                        l10n.clearLocalData,
                         style: TextStyle(
                           fontSize: ResponsiveUtils.fontSize(context, 20,
                               minSize: 18, maxSize: 24),
@@ -1706,16 +1978,39 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
-                Text(
-                  '⚠️ THIS ACTION CANNOT BE UNDONE ⚠️',
-                  style: TextStyle(
-                    fontSize: ResponsiveUtils.fontSize(context, 14,
-                        minSize: 12, maxSize: 16),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
+
+                // Important notice that account is NOT deleted
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
+                    border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.green,
+                        size: 18,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          l10n.accountNotDeleted,
+                          style: TextStyle(
+                            fontSize: ResponsiveUtils.fontSize(context, 12,
+                                minSize: 10, maxSize: 14),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.lg),
 
                 // Scrollable Content
                 Expanded(
@@ -1724,7 +2019,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          l10n.thisWillPermanentlyDelete,
+                          l10n.clearLocalDataWarning,
                           style: TextStyle(
                             fontSize: ResponsiveUtils.fontSize(context, 14,
                                 minSize: 12, maxSize: 16),
@@ -1733,39 +2028,48 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.md),
-                        _buildDeleteItem('✝️ All prayer journal entries'),
-                        _buildDeleteItem('💬 All AI chat conversations'),
-                        _buildDeleteItem('📖 Reading plan progress'),
-                        _buildDeleteItem('🌟 Favorite verses'),
-                        _buildDeleteItem('📝 Devotional completion history'),
-                        _buildDeleteItem('⚙️ All app settings and preferences'),
-                        _buildDeleteItem('👤 Profile picture'),
-                        _buildDeleteItem('📊 All statistics and progress'),
+                        _buildClearItem('Prayer journal entries'),
+                        _buildClearItem('AI chat conversations'),
+                        _buildClearItem('Reading plan progress'),
+                        _buildClearItem('Favorite verses'),
+                        _buildClearItem('Devotional history'),
+                        _buildClearItem('App preferences'),
+                        _buildClearItem('Cached images and files'),
                         const SizedBox(height: AppSpacing.lg),
                         Container(
                           padding: const EdgeInsets.all(AppSpacing.md),
                           decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.1),
+                            color: Colors.blue.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(AppRadius.sm),
                             border: Border.all(
-                                color: Colors.red.withValues(alpha: 0.3)),
+                                color: Colors.blue.withValues(alpha: 0.3)),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                l10n.deleteLocalDataWarning,
-                                style: TextStyle(
-                                  fontSize: ResponsiveUtils.fontSize(
-                                      context, 13,
-                                      minSize: 11, maxSize: 15),
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red,
-                                ),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.info_outline,
+                                    size: 16,
+                                    color: Colors.blue,
+                                  ),
+                                  const SizedBox(width: AppSpacing.sm),
+                                  Text(
+                                    l10n.whatStaysTheSame,
+                                    style: TextStyle(
+                                      fontSize: ResponsiveUtils.fontSize(
+                                          context, 13,
+                                          minSize: 11, maxSize: 15),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: AppSpacing.sm),
                               Text(
-                                l10n.deleteDataBulletList,
+                                l10n.clearDataKeepsAccount,
                                 style: TextStyle(
                                   fontSize: ResponsiveUtils.fontSize(
                                       context, 12,
@@ -1774,48 +2078,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   height: 1.4,
                                 ),
                               ),
-                              const SizedBox(height: AppSpacing.md),
-                              Container(
-                                padding: const EdgeInsets.all(AppSpacing.sm),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue.withValues(alpha: 0.15),
-                                  borderRadius:
-                                      BorderRadius.circular(AppRadius.xs),
-                                  border: Border.all(
-                                      color:
-                                          Colors.blue.withValues(alpha: 0.3)),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.info_outline,
-                                      size: 16,
-                                      color: Colors.blue.withValues(alpha: 0.9),
-                                    ),
-                                    const SizedBox(width: AppSpacing.sm),
-                                    Expanded(
-                                      child: Text(
-                                        l10n.subscriptionWillRestore,
-                                        style: TextStyle(
-                                          fontSize: ResponsiveUtils.fontSize(
-                                              context, 11,
-                                              minSize: 9, maxSize: 13),
-                                          color: Colors.white
-                                              .withValues(alpha: 0.9),
-                                          height: 1.3,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ],
                           ),
                         ),
                         const SizedBox(height: AppSpacing.lg),
                         Text(
-                          l10n.typeDeleteToConfirm,
+                          l10n.typeClearToConfirm,
                           style: TextStyle(
                             fontSize: ResponsiveUtils.fontSize(context, 13,
                                 minSize: 11, maxSize: 15),
@@ -1832,7 +2100,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 minSize: 12, maxSize: 16),
                           ),
                           decoration: InputDecoration(
-                            hintText: l10n.typeDeletePlaceholder,
+                            hintText: l10n.typeClearPlaceholder,
                             hintStyle: TextStyle(
                               color: Colors.white.withValues(alpha: 0.3),
                               fontSize: ResponsiveUtils.fontSize(context, 14,
@@ -1845,7 +2113,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide:
-                                  const BorderSide(color: Colors.red, width: 2),
+                                  const BorderSide(color: Colors.orange, width: 2),
                               borderRadius: BorderRadius.circular(AppRadius.sm),
                             ),
                             contentPadding: const EdgeInsets.all(AppSpacing.md),
@@ -1873,16 +2141,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: GlassButton(
-                        text: l10n.delete,
+                        text: l10n.clearData,
                         height: 48,
-                        borderColor: Colors.red.withValues(alpha: 0.8),
+                        borderColor: Colors.orange.withValues(alpha: 0.8),
                         onPressed: () async {
-                          if (confirmController.text.trim() == 'DELETE') {
+                          if (confirmController.text.trim().toUpperCase() == 'CLEAR') {
                             confirmController.dispose();
                             NavigationService.pop();
-                            await _deleteAllData();
+                            await _clearLocalData();
                           } else {
-                            _showSnackBar(l10n.mustTypeDeleteToConfirm);
+                            _showSnackBar(l10n.mustTypeClearToConfirm);
                           }
                         },
                       ),
@@ -1893,6 +2161,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Build an item for the clear local data list
+  Widget _buildClearItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, bottom: 6),
+      child: Row(
+        children: [
+          Icon(Icons.remove_circle_outline, color: Colors.orange, size: 16),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: ResponsiveUtils.fontSize(context, 13),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1918,7 +2208,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  Future<void> _deleteAllData() async {
+  /// Clear local data from device (does NOT delete account)
+  Future<void> _clearLocalData() async {
     final l10n = AppLocalizations.of(context);
     try {
       // Show loading indicator
@@ -1936,11 +2227,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: [
                   const CircularProgressIndicator(
                     valueColor:
-                        AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                        AlwaysStoppedAnimation<Color>(Colors.orange),
                   ),
                   const SizedBox(width: AppSpacing.lg),
                   Text(
-                    l10n.deletingAllData,
+                    l10n.clearingLocalData,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: ResponsiveUtils.fontSize(context, 14,
@@ -1958,7 +2249,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final dbService = DatabaseService();
       await dbService.resetDatabase();
 
-      // 2. Clear SharedPreferences (all app settings)
+      // 2. Clear SharedPreferences (all app settings except auth tokens)
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
 
@@ -1986,12 +2277,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
 
       // Show success message
-      _showSnackBar(l10n.allDataDeleted);
+      _showSnackBar(l10n.localDataCleared);
 
-      // Wait a moment then exit the app (user needs to restart)
+      // Wait a moment then refresh the app state
       await Future.delayed(const Duration(seconds: 2));
       if (mounted) {
-        // Reset the app state by navigating to home
+        // Navigate to home to reset the app state
         NavigationService.goToHome();
       }
     } catch (e) {
@@ -2004,9 +2295,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showDeleteAccountDialog() {
+    final l10n = AppLocalizations.of(context);
     final passwordController = TextEditingController();
     bool isLoading = false;
     String? errorText;
+    bool hardDelete = true; // Default ON for GDPR compliance
+    String loadingStatus = '';
+
+    // Check if user has active subscription
+    final hasActiveSubscription = ref.read(isPremiumProvider);
+    // Check if web push is enabled (web only)
+    final webPushEnabled = kIsWeb && ref.read(webPushEnabledProvider);
 
     showBlurredDialog(
       context: context,
@@ -2016,202 +2315,340 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Container(
             constraints: BoxConstraints(
               maxWidth: ResponsiveUtils.maxContentWidth(context),
+              maxHeight: MediaQuery.of(context).size.height * 0.85,
             ),
             child: FrostedGlassCard(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.sm),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.red.withValues(alpha: 0.3),
-                              Colors.red.withValues(alpha: 0.1),
-                            ],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(AppSpacing.sm),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.red.withValues(alpha: 0.3),
+                                Colors.red.withValues(alpha: 0.1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(AppRadius.xs + 2),
                           ),
-                          borderRadius: BorderRadius.circular(AppRadius.xs + 2),
-                        ),
-                        child: Icon(
-                          Icons.person_remove,
-                          color: Colors.red,
-                          size: ResponsiveUtils.iconSize(context, 20),
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: Text(
-                          'Delete Account',
-                          style: TextStyle(
-                            fontSize: ResponsiveUtils.fontSize(context, 20,
-                                minSize: 18, maxSize: 24),
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primaryText,
+                          child: Icon(
+                            Icons.person_remove,
+                            color: Colors.red,
+                            size: ResponsiveUtils.iconSize(context, 20),
                           ),
                         ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Text(
+                            l10n.deleteAccount,
+                            style: TextStyle(
+                              fontSize: ResponsiveUtils.fontSize(context, 20,
+                                  minSize: 18, maxSize: 24),
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primaryText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Text(
+                      '⚠️ ${l10n.deleteAccountWarning}',
+                      style: TextStyle(
+                        fontSize: ResponsiveUtils.fontSize(context, 14,
+                            minSize: 12, maxSize: 16),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    '⚠️ THIS ACTION CANNOT BE UNDONE',
-                    style: TextStyle(
-                      fontSize: ResponsiveUtils.fontSize(context, 14,
-                          minSize: 12, maxSize: 16),
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    'Deleting your account will:',
-                    style: TextStyle(
-                      fontSize: ResponsiveUtils.fontSize(context, 14,
-                          minSize: 12, maxSize: 16),
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                    const SizedBox(height: AppSpacing.lg),
+                    Text(
+                      l10n.deleteAccountWillDo,
+                      style: TextStyle(
+                        fontSize: ResponsiveUtils.fontSize(context, 14,
+                            minSize: 12, maxSize: 16),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  _buildDeleteItem('Remove your account from our servers'),
-                  _buildDeleteItem('Delete all your local app data'),
-                  _buildDeleteItem('Cancel any active subscription'),
-                  _buildDeleteItem('Remove access to premium features'),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    'Enter your password to confirm:',
-                    style: TextStyle(
-                      fontSize: ResponsiveUtils.fontSize(context, 13,
-                          minSize: 11, maxSize: 15),
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                    const SizedBox(height: AppSpacing.sm),
+                    _buildDeleteItem(l10n.deleteAccountRemoveServer),
+                    _buildDeleteItem(l10n.deleteAccountClearLocal),
+                    if (hasActiveSubscription)
+                      _buildDeleteItem(l10n.deleteAccountCancelSubscription),
+                    if (webPushEnabled)
+                      _buildDeleteItem(l10n.deleteAccountUnsubscribePush),
+                    _buildDeleteItem(l10n.deleteAccountRemovePremium),
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // GDPR Hard Delete checkbox
+                    Container(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      decoration: BoxDecoration(
+                        color: hardDelete
+                            ? Colors.green.withValues(alpha: 0.1)
+                            : Colors.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        border: Border.all(
+                          color: hardDelete
+                              ? Colors.green.withValues(alpha: 0.3)
+                              : Colors.orange.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                            value: hardDelete,
+                            onChanged: isLoading
+                                ? null
+                                : (value) {
+                                    setDialogState(() {
+                                      hardDelete = value ?? true;
+                                    });
+                                  },
+                            activeColor: Colors.green,
+                            checkColor: Colors.white,
+                            side: BorderSide(
+                              color: hardDelete ? Colors.green : Colors.orange,
+                              width: 2,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.permanentDeleteServerData,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveUtils.fontSize(context, 14,
+                                        minSize: 12, maxSize: 16),
+                                    fontWeight: FontWeight.w600,
+                                    color: hardDelete ? Colors.green : Colors.orange,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  hardDelete
+                                      ? l10n.permanentDeleteExplanation
+                                      : l10n.softDeleteExplanation,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveUtils.fontSize(context, 12,
+                                        minSize: 10, maxSize: 14),
+                                    color: Colors.white.withValues(alpha: 0.7),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  TextField(
-                    controller: passwordController,
-                    obscureText: true,
-                    enabled: !isLoading,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: ResponsiveUtils.fontSize(context, 14,
-                          minSize: 12, maxSize: 16),
+                    const SizedBox(height: AppSpacing.lg),
+
+                    Text(
+                      l10n.enterPasswordToConfirm,
+                      style: TextStyle(
+                        fontSize: ResponsiveUtils.fontSize(context, 13,
+                            minSize: 11, maxSize: 15),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
-                    decoration: InputDecoration(
-                      hintText: 'Password',
-                      hintStyle: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.3),
+                    const SizedBox(height: AppSpacing.sm),
+                    TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      enabled: !isLoading,
+                      style: TextStyle(
+                        color: Colors.white,
                         fontSize: ResponsiveUtils.fontSize(context, 14,
                             minSize: 12, maxSize: 16),
                       ),
-                      errorText: errorText,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.white.withValues(alpha: 0.3)),
-                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                      decoration: InputDecoration(
+                        hintText: l10n.password,
+                        hintStyle: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.3),
+                          fontSize: ResponsiveUtils.fontSize(context, 14,
+                              minSize: 12, maxSize: 16),
+                        ),
+                        errorText: errorText,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.white.withValues(alpha: 0.3)),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.red, width: 2),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.red),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.red, width: 2),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                        ),
+                        contentPadding: const EdgeInsets.all(AppSpacing.md),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.red, width: 2),
-                        borderRadius: BorderRadius.circular(AppRadius.sm),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.red),
-                        borderRadius: BorderRadius.circular(AppRadius.sm),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.red, width: 2),
-                        borderRadius: BorderRadius.circular(AppRadius.sm),
-                      ),
-                      contentPadding: const EdgeInsets.all(AppSpacing.md),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
 
-                  // Actions
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GlassButton(
-                          text: 'Cancel',
-                          height: 48,
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  passwordController.dispose();
-                                  NavigationService.pop();
-                                },
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: GlassButton(
-                          text: isLoading ? 'Deleting...' : 'Delete Account',
-                          height: 48,
-                          borderColor: Colors.red.withValues(alpha: 0.8),
-                          onPressed: isLoading
-                              ? null
-                              : () async {
-                                  final password =
-                                      passwordController.text.trim();
-                                  if (password.isEmpty) {
-                                    setDialogState(() {
-                                      errorText = 'Password is required';
-                                    });
-                                    return;
-                                  }
-
-                                  setDialogState(() {
-                                    isLoading = true;
-                                    errorText = null;
-                                  });
-
-                                  try {
-                                    final success = await AuthService.instance
-                                        .deleteAccount(password);
-
-                                    if (success) {
-                                      // Also clear local data
-                                      final dbService = DatabaseService();
-                                      await dbService.resetDatabase();
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      await prefs.clear();
-
-                                      passwordController.dispose();
-                                      if (mounted) {
-                                        NavigationService.pop();
-                                        _showSnackBar(
-                                            '✅ Account deleted successfully');
-                                        await Future.delayed(
-                                            const Duration(seconds: 2));
-                                        NavigationService.goToHome();
-                                      }
-                                    } else {
-                                      setDialogState(() {
-                                        isLoading = false;
-                                        errorText = 'Failed to delete account';
-                                      });
-                                    }
-                                  } catch (e) {
-                                    setDialogState(() {
-                                      isLoading = false;
-                                      errorText = e.toString().contains('password')
-                                          ? 'Incorrect password'
-                                          : 'Failed to delete account';
-                                    });
-                                  }
-                                },
-                        ),
+                    // Loading status text
+                    if (isLoading && loadingStatus.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppTheme.goldColor),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Text(
+                            loadingStatus,
+                            style: TextStyle(
+                              fontSize: ResponsiveUtils.fontSize(context, 12,
+                                  minSize: 10, maxSize: 14),
+                              color: AppTheme.goldColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                ],
+                    const SizedBox(height: AppSpacing.xl),
+
+                    // Actions
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GlassButton(
+                            text: l10n.cancel,
+                            height: 48,
+                            onPressed: isLoading
+                                ? null
+                                : () {
+                                    passwordController.dispose();
+                                    NavigationService.pop();
+                                  },
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: GlassButton(
+                            text: isLoading ? l10n.deleting : l10n.deleteAccount,
+                            height: 48,
+                            borderColor: Colors.red.withValues(alpha: 0.8),
+                            onPressed: isLoading
+                                ? null
+                                : () async {
+                                    final password =
+                                        passwordController.text.trim();
+                                    if (password.isEmpty) {
+                                      setDialogState(() {
+                                        errorText = l10n.passwordRequired;
+                                      });
+                                      return;
+                                    }
+
+                                    setDialogState(() {
+                                      isLoading = true;
+                                      errorText = null;
+                                      loadingStatus = l10n.deletingAccount;
+                                    });
+
+                                    try {
+                                      // Step 1: Cancel Stripe subscription if active
+                                      if (hasActiveSubscription) {
+                                        setDialogState(() {
+                                          loadingStatus = l10n.cancellingSubscription;
+                                        });
+                                        try {
+                                          // Cancel immediately (not at period end)
+                                          await cancelSubscription(cancelAtPeriodEnd: false);
+                                        } catch (e) {
+                                          debugPrint('[DeleteAccount] Subscription cancel failed: $e');
+                                          // Continue with deletion even if cancel fails
+                                        }
+                                      }
+
+                                      // Step 2: Unsubscribe from web push if enabled
+                                      if (webPushEnabled) {
+                                        setDialogState(() {
+                                          loadingStatus = l10n.unsubscribingNotifications;
+                                        });
+                                        try {
+                                          await WebPushNotificationService.unsubscribe();
+                                          ref.read(webPushEnabledProvider.notifier).setEnabled(false);
+                                        } catch (e) {
+                                          debugPrint('[DeleteAccount] Push unsubscribe failed: $e');
+                                          // Continue with deletion even if unsubscribe fails
+                                        }
+                                      }
+
+                                      // Step 3: Delete account with hard delete flag
+                                      setDialogState(() {
+                                        loadingStatus = l10n.deletingServerData;
+                                      });
+                                      final success = await AuthService.instance
+                                          .deleteAccount(password, hardDelete: hardDelete);
+
+                                      if (success) {
+                                        // Step 4: Clear local data
+                                        setDialogState(() {
+                                          loadingStatus = l10n.clearingLocalData;
+                                        });
+                                        final dbService = DatabaseService();
+                                        await dbService.resetDatabase();
+                                        final prefs =
+                                            await SharedPreferences.getInstance();
+                                        await prefs.clear();
+
+                                        passwordController.dispose();
+                                        if (mounted) {
+                                          NavigationService.pop();
+                                          _showSnackBar(
+                                              '✅ ${l10n.accountDeletedSuccess}');
+                                          await Future.delayed(
+                                              const Duration(seconds: 2));
+                                          NavigationService.goToHome();
+                                        }
+                                      } else {
+                                        setDialogState(() {
+                                          isLoading = false;
+                                          loadingStatus = '';
+                                          errorText = l10n.failedToDeleteAccount;
+                                        });
+                                      }
+                                    } catch (e) {
+                                      setDialogState(() {
+                                        isLoading = false;
+                                        loadingStatus = '';
+                                        errorText = e.toString().contains('password')
+                                            ? l10n.incorrectPassword
+                                            : l10n.failedToDeleteAccount;
+                                      });
+                                    }
+                                  },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

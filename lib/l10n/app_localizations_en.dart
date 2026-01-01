@@ -3484,4 +3484,253 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get lockoutSuspensionContactInfo =>
       'If you believe this suspension was issued in error, please contact:';
+
+  @override
+  String get storageConsentTitle => 'We use cookies and local storage';
+
+  @override
+  String get storageConsentMessage =>
+      'We use IndexedDB and local storage to save your prayers, preferences, and app data on your device. Some storage is essential for the app to work.';
+
+  @override
+  String get storageConsentLearnMore => 'Learn more in our Privacy Policy';
+
+  @override
+  String get acceptAllStorage => 'Accept All';
+
+  @override
+  String get essentialOnly => 'Essential Only';
+
+  @override
+  String get manageStoragePreferences => 'Manage Storage Preferences';
+
+  @override
+  String get storagePreferencesTitle => 'Storage Preferences';
+
+  @override
+  String get storagePreferencesDescription =>
+      'Choose how we store data on your device. Essential storage is required for the app to function.';
+
+  @override
+  String currentStorageConsent(String status) {
+    return 'Current setting: $status';
+  }
+
+  @override
+  String get resetStorageConsent => 'Reset Preferences';
+
+  @override
+  String get storageConsentReset => 'Storage preferences have been reset';
+
+  @override
+  String get storagePreferencesDialogDescription =>
+      'Control how Everyday Christian stores data on your device. Essential storage is required for basic functionality.';
+
+  @override
+  String get currentConsentAll => 'Current: All storage enabled';
+
+  @override
+  String get currentConsentEssential => 'Current: Essential storage only';
+
+  @override
+  String get currentConsentNone => 'No preference set';
+
+  @override
+  String get changePreference => 'Choose your preference:';
+
+  @override
+  String get acceptAllStorageDesc =>
+      'Enable all features including saved preferences and personalization';
+
+  @override
+  String get essentialOnlyDesc =>
+      'Only store data required for the app to function';
+
+  @override
+  String get savePreferences => 'Save Preferences';
+
+  @override
+  String get storagePreferencesSaved => 'Storage preferences saved';
+
+  @override
+  String get clearLocalData => 'Clear Local Data';
+
+  @override
+  String get clearLocalDataDescription =>
+      'Clear cached data and local storage from this device. Your account and cloud data remain unaffected.';
+
+  @override
+  String get clearLocalDataWarning =>
+      'This will clear the following from your device:';
+
+  @override
+  String get accountNotDeleted => 'Your account will NOT be deleted';
+
+  @override
+  String get whatStaysTheSame => 'What stays the same:';
+
+  @override
+  String get clearDataKeepsAccount =>
+      '• Your account and login credentials\n• Your subscription status\n• Any data synced to the cloud';
+
+  @override
+  String get typeClearToConfirm => 'Type CLEAR to confirm:';
+
+  @override
+  String get typeClearPlaceholder => 'Type CLEAR here';
+
+  @override
+  String get mustTypeClearToConfirm => 'Please type CLEAR to confirm';
+
+  @override
+  String get clearData => 'Clear Data';
+
+  @override
+  String get localDataCleared => 'Local data cleared successfully';
+
+  @override
+  String get accessibilityStatement => 'Accessibility Statement';
+
+  @override
+  String get accessibilityCommitment =>
+      'Everyday Christian is committed to ensuring digital accessibility for people with disabilities. We continually improve the user experience for everyone and apply relevant accessibility standards.';
+
+  @override
+  String get accessibilityConformance =>
+      'We aim to conform to WCAG 2.1 Level AA standards. These guidelines explain how to make web content more accessible for people with disabilities.';
+
+  @override
+  String get accessibilityMeasures => 'Measures We Take';
+
+  @override
+  String get accessibilityLimitations => 'Known Limitations';
+
+  @override
+  String get accessibilityFeedback =>
+      'We welcome your feedback on the accessibility of Everyday Christian.';
+
+  @override
+  String get accessibilityContact =>
+      'Contact us at: support@everydaychristian.app';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountWarning => 'THIS ACTION CANNOT BE UNDONE';
+
+  @override
+  String get deleteAccountWillDo => 'Deleting your account will:';
+
+  @override
+  String get deleteAccountRemoveServer =>
+      'Remove your account from our servers';
+
+  @override
+  String get deleteAccountClearLocal => 'Delete all your local app data';
+
+  @override
+  String get deleteAccountCancelSubscription =>
+      'Cancel your active subscription';
+
+  @override
+  String get deleteAccountUnsubscribePush =>
+      'Unsubscribe from push notifications';
+
+  @override
+  String get deleteAccountRemovePremium => 'Remove access to premium features';
+
+  @override
+  String get permanentDeleteServerData =>
+      'Permanently delete server data (GDPR)';
+
+  @override
+  String get permanentDeleteExplanation =>
+      'Your data will be completely removed from our servers. This is recommended for full GDPR compliance.';
+
+  @override
+  String get softDeleteExplanation =>
+      'Your data will be marked as deleted but may be retained for a period of time for recovery purposes.';
+
+  @override
+  String get enterPasswordToConfirm => 'Enter your password to confirm:';
+
+  @override
+  String get passwordRequired => 'Password is required';
+
+  @override
+  String get deleting => 'Deleting...';
+
+  @override
+  String get deletingAccount => 'Preparing to delete account...';
+
+  @override
+  String get cancellingSubscription => 'Cancelling subscription...';
+
+  @override
+  String get unsubscribingNotifications =>
+      'Unsubscribing from notifications...';
+
+  @override
+  String get deletingServerData => 'Deleting server data...';
+
+  @override
+  String get clearingLocalData => 'Clearing local data...';
+
+  @override
+  String get accountDeletedSuccess => 'Account deleted successfully';
+
+  @override
+  String get failedToDeleteAccount => 'Failed to delete account';
+
+  @override
+  String get incorrectPassword => 'Incorrect password';
+
+  @override
+  String get accessibilityCommitmentTitle => 'Our Commitment';
+
+  @override
+  String get accessibilityConformanceTitle => 'Conformance Status';
+
+  @override
+  String get measureSemanticHtml =>
+      'Semantic HTML structure for screen readers';
+
+  @override
+  String get measureColorContrast =>
+      'High contrast color ratios (4.5:1 minimum)';
+
+  @override
+  String get measureTouchTargets => 'Touch targets of at least 44x44 pixels';
+
+  @override
+  String get measureKeyboardNav => 'Keyboard navigation support';
+
+  @override
+  String get measureAltText => 'Alternative text for images';
+
+  @override
+  String get measureScalableText => 'Scalable text sizes for readability';
+
+  @override
+  String get limitationStripeCheckout =>
+      'Third-party checkout (Stripe) may have varying accessibility support';
+
+  @override
+  String get limitationComplexCharts =>
+      'Complex data visualizations may not be fully accessible to screen readers';
+
+  @override
+  String get feedbackTitle => 'Feedback';
+
+  @override
+  String lastUpdated(String date) {
+    return 'Last Updated: $date';
+  }
+
+  @override
+  String get backToSettings => 'Back to Settings';
+
+  @override
+  String get accessibilityStatementDesc => 'View our accessibility commitment';
 }

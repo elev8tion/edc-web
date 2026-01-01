@@ -17,6 +17,7 @@ class AppRoutes {
   static const String chapterReading = '/chapter-reading';
   static const String bibleBrowser = '/bible-browser';
   static const String checkoutComplete = '/checkout-complete';
+  static const String accessibilityStatement = '/accessibility-statement';
 
   static const List<String> authRequiredRoutes = [
     home,

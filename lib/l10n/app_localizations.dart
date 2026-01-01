@@ -6212,6 +6212,450 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If you believe this suspension was issued in error, please contact:'**
   String get lockoutSuspensionContactInfo;
+
+  /// Title for storage consent banner
+  ///
+  /// In en, this message translates to:
+  /// **'We use cookies and local storage'**
+  String get storageConsentTitle;
+
+  /// Message explaining storage usage
+  ///
+  /// In en, this message translates to:
+  /// **'We use IndexedDB and local storage to save your prayers, preferences, and app data on your device. Some storage is essential for the app to work.'**
+  String get storageConsentMessage;
+
+  /// Link text to privacy policy
+  ///
+  /// In en, this message translates to:
+  /// **'Learn more in our Privacy Policy'**
+  String get storageConsentLearnMore;
+
+  /// Button to accept all storage
+  ///
+  /// In en, this message translates to:
+  /// **'Accept All'**
+  String get acceptAllStorage;
+
+  /// Button to accept only essential storage
+  ///
+  /// In en, this message translates to:
+  /// **'Essential Only'**
+  String get essentialOnly;
+
+  /// Settings option to manage storage consent
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Storage Preferences'**
+  String get manageStoragePreferences;
+
+  /// Title for storage preferences dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Preferences'**
+  String get storagePreferencesTitle;
+
+  /// Description for storage preferences
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how we store data on your device. Essential storage is required for the app to function.'**
+  String get storagePreferencesDescription;
+
+  /// Shows current storage consent status
+  ///
+  /// In en, this message translates to:
+  /// **'Current setting: {status}'**
+  String currentStorageConsent(String status);
+
+  /// Button to reset storage consent
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Preferences'**
+  String get resetStorageConsent;
+
+  /// Confirmation message after resetting consent
+  ///
+  /// In en, this message translates to:
+  /// **'Storage preferences have been reset'**
+  String get storageConsentReset;
+
+  /// Description in storage preferences dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Control how Everyday Christian stores data on your device. Essential storage is required for basic functionality.'**
+  String get storagePreferencesDialogDescription;
+
+  /// Status when all storage is accepted
+  ///
+  /// In en, this message translates to:
+  /// **'Current: All storage enabled'**
+  String get currentConsentAll;
+
+  /// Status when only essential storage is accepted
+  ///
+  /// In en, this message translates to:
+  /// **'Current: Essential storage only'**
+  String get currentConsentEssential;
+
+  /// Status when no consent has been given
+  ///
+  /// In en, this message translates to:
+  /// **'No preference set'**
+  String get currentConsentNone;
+
+  /// Label before storage options
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your preference:'**
+  String get changePreference;
+
+  /// Description for accept all storage option
+  ///
+  /// In en, this message translates to:
+  /// **'Enable all features including saved preferences and personalization'**
+  String get acceptAllStorageDesc;
+
+  /// Description for essential only storage option
+  ///
+  /// In en, this message translates to:
+  /// **'Only store data required for the app to function'**
+  String get essentialOnlyDesc;
+
+  /// Button to save storage preferences
+  ///
+  /// In en, this message translates to:
+  /// **'Save Preferences'**
+  String get savePreferences;
+
+  /// Confirmation message after saving preferences
+  ///
+  /// In en, this message translates to:
+  /// **'Storage preferences saved'**
+  String get storagePreferencesSaved;
+
+  /// Button to clear local data
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Local Data'**
+  String get clearLocalData;
+
+  /// Description for clear local data option
+  ///
+  /// In en, this message translates to:
+  /// **'Clear cached data and local storage from this device. Your account and cloud data remain unaffected.'**
+  String get clearLocalDataDescription;
+
+  /// Warning message before clearing local data
+  ///
+  /// In en, this message translates to:
+  /// **'This will clear the following from your device:'**
+  String get clearLocalDataWarning;
+
+  /// Reassurance that account is safe
+  ///
+  /// In en, this message translates to:
+  /// **'Your account will NOT be deleted'**
+  String get accountNotDeleted;
+
+  /// Header for things that won't change
+  ///
+  /// In en, this message translates to:
+  /// **'What stays the same:'**
+  String get whatStaysTheSame;
+
+  /// List of things preserved when clearing data
+  ///
+  /// In en, this message translates to:
+  /// **'• Your account and login credentials\n• Your subscription status\n• Any data synced to the cloud'**
+  String get clearDataKeepsAccount;
+
+  /// Instruction to type CLEAR
+  ///
+  /// In en, this message translates to:
+  /// **'Type CLEAR to confirm:'**
+  String get typeClearToConfirm;
+
+  /// Placeholder for CLEAR input
+  ///
+  /// In en, this message translates to:
+  /// **'Type CLEAR here'**
+  String get typeClearPlaceholder;
+
+  /// Error when CLEAR not typed
+  ///
+  /// In en, this message translates to:
+  /// **'Please type CLEAR to confirm'**
+  String get mustTypeClearToConfirm;
+
+  /// Button to clear data
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Data'**
+  String get clearData;
+
+  /// Success message after clearing data
+  ///
+  /// In en, this message translates to:
+  /// **'Local data cleared successfully'**
+  String get localDataCleared;
+
+  /// Title for accessibility statement
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility Statement'**
+  String get accessibilityStatement;
+
+  /// Accessibility commitment statement
+  ///
+  /// In en, this message translates to:
+  /// **'Everyday Christian is committed to ensuring digital accessibility for people with disabilities. We continually improve the user experience for everyone and apply relevant accessibility standards.'**
+  String get accessibilityCommitment;
+
+  /// WCAG conformance statement
+  ///
+  /// In en, this message translates to:
+  /// **'We aim to conform to WCAG 2.1 Level AA standards. These guidelines explain how to make web content more accessible for people with disabilities.'**
+  String get accessibilityConformance;
+
+  /// Section title for accessibility measures
+  ///
+  /// In en, this message translates to:
+  /// **'Measures We Take'**
+  String get accessibilityMeasures;
+
+  /// Section title for known limitations
+  ///
+  /// In en, this message translates to:
+  /// **'Known Limitations'**
+  String get accessibilityLimitations;
+
+  /// Feedback invitation
+  ///
+  /// In en, this message translates to:
+  /// **'We welcome your feedback on the accessibility of Everyday Christian.'**
+  String get accessibilityFeedback;
+
+  /// Contact information for accessibility feedback
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us at: support@everydaychristian.app'**
+  String get accessibilityContact;
+
+  /// Button to delete account
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// Warning about irreversible account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'THIS ACTION CANNOT BE UNDONE'**
+  String get deleteAccountWarning;
+
+  /// Introduction to deletion consequences
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting your account will:'**
+  String get deleteAccountWillDo;
+
+  /// Account deletion consequence
+  ///
+  /// In en, this message translates to:
+  /// **'Remove your account from our servers'**
+  String get deleteAccountRemoveServer;
+
+  /// Account deletion consequence
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all your local app data'**
+  String get deleteAccountClearLocal;
+
+  /// Account deletion consequence
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel your active subscription'**
+  String get deleteAccountCancelSubscription;
+
+  /// Account deletion consequence
+  ///
+  /// In en, this message translates to:
+  /// **'Unsubscribe from push notifications'**
+  String get deleteAccountUnsubscribePush;
+
+  /// Account deletion consequence
+  ///
+  /// In en, this message translates to:
+  /// **'Remove access to premium features'**
+  String get deleteAccountRemovePremium;
+
+  /// Hard delete checkbox label
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete server data (GDPR)'**
+  String get permanentDeleteServerData;
+
+  /// Explanation when hard delete is enabled
+  ///
+  /// In en, this message translates to:
+  /// **'Your data will be completely removed from our servers. This is recommended for full GDPR compliance.'**
+  String get permanentDeleteExplanation;
+
+  /// Explanation when soft delete is selected
+  ///
+  /// In en, this message translates to:
+  /// **'Your data will be marked as deleted but may be retained for a period of time for recovery purposes.'**
+  String get softDeleteExplanation;
+
+  /// Password prompt for deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password to confirm:'**
+  String get enterPasswordToConfirm;
+
+  /// Error when password is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get passwordRequired;
+
+  /// Button text while deleting
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting...'**
+  String get deleting;
+
+  /// Status message during deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing to delete account...'**
+  String get deletingAccount;
+
+  /// Status message while cancelling subscription
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelling subscription...'**
+  String get cancellingSubscription;
+
+  /// Status message while unsubscribing from push
+  ///
+  /// In en, this message translates to:
+  /// **'Unsubscribing from notifications...'**
+  String get unsubscribingNotifications;
+
+  /// Status message while deleting from server
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting server data...'**
+  String get deletingServerData;
+
+  /// Status message while clearing local data
+  ///
+  /// In en, this message translates to:
+  /// **'Clearing local data...'**
+  String get clearingLocalData;
+
+  /// Success message after account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Account deleted successfully'**
+  String get accountDeletedSuccess;
+
+  /// Error message when deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete account'**
+  String get failedToDeleteAccount;
+
+  /// Error when password is wrong
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password'**
+  String get incorrectPassword;
+
+  /// Title for accessibility commitment section
+  ///
+  /// In en, this message translates to:
+  /// **'Our Commitment'**
+  String get accessibilityCommitmentTitle;
+
+  /// Title for WCAG conformance section
+  ///
+  /// In en, this message translates to:
+  /// **'Conformance Status'**
+  String get accessibilityConformanceTitle;
+
+  /// Accessibility measure item
+  ///
+  /// In en, this message translates to:
+  /// **'Semantic HTML structure for screen readers'**
+  String get measureSemanticHtml;
+
+  /// Accessibility measure item
+  ///
+  /// In en, this message translates to:
+  /// **'High contrast color ratios (4.5:1 minimum)'**
+  String get measureColorContrast;
+
+  /// Accessibility measure item
+  ///
+  /// In en, this message translates to:
+  /// **'Touch targets of at least 44x44 pixels'**
+  String get measureTouchTargets;
+
+  /// Accessibility measure item
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard navigation support'**
+  String get measureKeyboardNav;
+
+  /// Accessibility measure item
+  ///
+  /// In en, this message translates to:
+  /// **'Alternative text for images'**
+  String get measureAltText;
+
+  /// Accessibility measure item
+  ///
+  /// In en, this message translates to:
+  /// **'Scalable text sizes for readability'**
+  String get measureScalableText;
+
+  /// Known accessibility limitation
+  ///
+  /// In en, this message translates to:
+  /// **'Third-party checkout (Stripe) may have varying accessibility support'**
+  String get limitationStripeCheckout;
+
+  /// Known accessibility limitation
+  ///
+  /// In en, this message translates to:
+  /// **'Complex data visualizations may not be fully accessible to screen readers'**
+  String get limitationComplexCharts;
+
+  /// Section title for feedback
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedbackTitle;
+
+  /// Last updated timestamp
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated: {date}'**
+  String lastUpdated(String date);
+
+  /// Button to return to settings
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Settings'**
+  String get backToSettings;
+
+  /// Description for accessibility statement link
+  ///
+  /// In en, this message translates to:
+  /// **'View our accessibility commitment'**
+  String get accessibilityStatementDesc;
 }
 
 class _AppLocalizationsDelegate

@@ -187,6 +187,11 @@ class NavigationService {
     return pushNamed(AppRoutes.bibleBrowser);
   }
 
+  /// Navigate to accessibility statement screen
+  static Future<void> goToAccessibilityStatement() {
+    return pushNamed(AppRoutes.accessibilityStatement);
+  }
+
   /// Navigate to chapter reading screen with arguments
   /// Arguments should be a Map with: book, startChapter, endChapter, readingId (optional)
   static Future<void> goToChapterReading({

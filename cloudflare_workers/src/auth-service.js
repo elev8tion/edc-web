@@ -873,6 +873,14 @@ async function handleProfile(request, env) {
 
 /**
  * DELETE /account - Delete user account
+ *
+ * Supports two modes:
+ * - Soft delete (default): Marks account as deleted but retains data
+ * - Hard delete (GDPR): Permanently removes all user data from the database
+ *
+ * Request body:
+ * - password: Required for verification
+ * - hard_delete: Optional boolean (default: false). If true, permanently deletes data.
  */
 async function handleDeleteAccount(request, env) {
   if (request.method !== 'DELETE') {
@@ -899,7 +907,7 @@ async function handleDeleteAccount(request, env) {
       return jsonResponse({ error: 'Invalid or expired token' }, 401, request);
     }
 
-    const { password } = await request.json();
+    const { password, hard_delete = false } = await request.json();
 
     if (!password) {
       return jsonResponse({ error: 'Password is required to delete account' }, 400, request);
@@ -916,18 +924,43 @@ async function handleDeleteAccount(request, env) {
       return jsonResponse({ error: 'Incorrect password' }, 401, request);
     }
 
-    // Soft delete - mark as deleted
-    await updateUser(user.id, {
-      status: 'deleted',
-      email: `deleted_${user.id}_${user.email}`, // Prevent email reuse issues
-    }, env);
+    if (hard_delete) {
+      // GDPR Hard Delete - permanently remove user from database
+      console.log(`[DeleteAccount] Hard deleting user ${user.id}`);
+
+      // Delete user from main database
+      const deleted = await deleteUser(user.id, env);
+      if (!deleted) {
+        console.error('[DeleteAccount] Failed to hard delete user from database');
+        // Fall back to soft delete if hard delete fails
+        await updateUser(user.id, {
+          status: 'deleted',
+          email: `deleted_${user.id}_${user.email}`,
+        }, env);
+      }
+
+      // Also remove push subscription if exists (cleanup)
+      try {
+        await deletePushSubscription(user.id, env);
+      } catch (e) {
+        console.log('[DeleteAccount] No push subscription to delete or error:', e);
+      }
+    } else {
+      // Soft delete - mark as deleted (original behavior)
+      console.log(`[DeleteAccount] Soft deleting user ${user.id}`);
+      await updateUser(user.id, {
+        status: 'deleted',
+        email: `deleted_${user.id}_${user.email}`, // Prevent email reuse issues
+      }, env);
+    }
 
     // Blacklist the token to prevent further use
     if (payload.exp) {
       blacklistToken(token, payload.exp * 1000);
     }
 
-    return jsonResponse({ message: 'Account deleted successfully' }, 200, request);
+    const deleteType = hard_delete ? 'permanently' : 'successfully';
+    return jsonResponse({ message: `Account deleted ${deleteType}` }, 200, request);
 
   } catch (error) {
     console.error('[DeleteAccount] Error:', error);
@@ -1058,6 +1091,50 @@ async function updateUser(id, updates, env) {
 
   const result = await response.json();
   return result.status === 'success';
+}
+
+/**
+ * Permanently delete a user from NoCodeBackend (GDPR hard delete)
+ */
+async function deleteUser(id, env) {
+  const instance = env.NOCODEBACKEND_INSTANCE || '36905_activation_codes';
+  try {
+    const response = await fetch(`${env.NOCODEBACKEND_API_URL}/delete/users/${id}?Instance=${instance}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${env.NOCODEBACKEND_API_KEY}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(`[deleteUser] Result for ${id}:`, result);
+    return result.status === 'success';
+  } catch (error) {
+    console.error('[deleteUser] Error:', error);
+    return false;
+  }
+}
+
+/**
+ * Delete push subscription from KV storage (cleanup for hard delete)
+ */
+async function deletePushSubscription(userId, env) {
+  // Check if KV binding exists
+  if (!env.PUSH_SUBSCRIPTIONS) {
+    console.log('[deletePushSubscription] KV not available');
+    return false;
+  }
+
+  try {
+    // Delete subscription by user ID
+    await env.PUSH_SUBSCRIPTIONS.delete(`user:${userId}`);
+    console.log(`[deletePushSubscription] Deleted subscription for user ${userId}`);
+    return true;
+  } catch (error) {
+    console.error('[deletePushSubscription] Error:', error);
+    return false;
+  }
 }
 
 // ============================================

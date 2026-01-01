@@ -381,12 +381,15 @@ class AuthService {
   /// Delete user account
   ///
   /// [password] - Password for verification
+  /// [hardDelete] - If true, permanently removes all server data (GDPR compliance)
+  ///                If false, soft-deletes (marks as deleted but retains data)
   ///
   /// Returns true on success
   /// Throws [AuthException] on failure
-  Future<bool> deleteAccount(String password) async {
+  Future<bool> deleteAccount(String password, {bool hardDelete = true}) async {
     final response = await _delete('/account', {
       'password': password,
+      'hard_delete': hardDelete,
     }, authenticated: true);
 
     if (response['message']?.toString().contains('deleted') == true) {
