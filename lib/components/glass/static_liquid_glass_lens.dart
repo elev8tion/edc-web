@@ -117,9 +117,8 @@ class _StaticLiquidGlassLensState extends State<StaticLiquidGlassLens> {
 
       if (regionToCapture.isEmpty) return;
 
-      // Check if debugLayer is available
+      // Check if debugLayer is available (silently return if not ready)
       if (boundary.debugLayer == null) {
-        debugPrint('StaticLiquidGlassLens: debugLayer not ready yet');
         return;
       }
 
