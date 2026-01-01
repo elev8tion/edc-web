@@ -6,7 +6,7 @@
     channel = "stable"
 
 [build]
-  command = "flutter build web --release --no-tree-shake-icons"
+  command = "flutter build web --release --no-tree-shake-icons && bash scripts/post-build-cache-bust.sh"
   publish = "build/web"
 
 # Headers for JavaScript files
