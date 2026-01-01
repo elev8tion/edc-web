@@ -1086,11 +1086,9 @@ class ChatScreen extends HookConsumerWidget {
                         onTap: () async {
                           final l10n = AppLocalizations.of(context);
                           Navigator.pop(context);
-                          await SharePlus.instance.share(
-                            ShareParams(
-                              text: exportText,
-                              subject: l10n.chatExportSubject,
-                            ),
+                          await Share.share(
+                            exportText,
+                            subject: l10n.chatExportSubject,
                           );
                           if (context.mounted) {
                             AppSnackBar.show(
@@ -1149,11 +1147,9 @@ class ChatScreen extends HookConsumerWidget {
           return;
         }
 
-        await SharePlus.instance.share(
-          ShareParams(
-            text: exportText,
-            subject: l10n.chatShareSubject,
-          ),
+        await Share.share(
+          exportText,
+          subject: l10n.chatShareSubject,
         );
 
         if (context.mounted) {

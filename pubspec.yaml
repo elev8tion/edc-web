@@ -14,67 +14,67 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   # State Management
-  flutter_riverpod: ^2.4.9
-  hooks_riverpod: ^2.4.9
-  provider: ^6.0.5
+  flutter_riverpod: ^2.5.1
+  hooks_riverpod: ^2.5.1
+  provider: ^6.1.2
 
   # Database & Storage
-  sqflite: ^2.3.0
-  sqflite_common: ^2.5.0  # Common SQLite API
-  sqflite_common_ffi_web: ^1.0.2  # Web-compatible SQLite via WASM (compatible with SDK 3.9.2)
-  path: ^1.8.3111
+  sqflite: ^2.3.3
+  sqflite_common: ^2.5.3  # Common SQLite API
+  sqflite_common_ffi_web: ^1.0.2  # Web-compatible SQLite via WASM
+  path: ^1.9.0
   shared_preferences: ^2.2.3
-  flutter_secure_storage: ^9.0.0
-  path_provider: ^2.1.1
+  flutter_secure_storage: ^9.2.2
+  path_provider: ^2.1.3
   web: ^1.0.0  # Required for web platform APIs
 
   # Permissions & Notifications
-  permission_handler: ^11.0.1
-  flutter_local_notifications: ^19.5.0
+  permission_handler: ^11.3.1
+  flutter_local_notifications: ^17.2.1
   workmanager: ^0.9.0
 
   # UI & Animations
   flutter_scalify: ^2.0.0
-  flutter_animate: ^4.2.0
-  google_fonts: ^6.1.0
+  flutter_animate: ^4.5.1
+  google_fonts: ^6.2.1
   flutter_hooks: ^0.20.5
   shimmer: ^3.0.0
   auto_size_text: ^3.0.0
   responsive_framework: ^1.5.1
 
   # AI & Machine Learning
-  google_generative_ai: ^0.4.0
+  google_generative_ai: ^0.4.4
 
   # Utilities
   crypto: ^3.0.3
   convert: ^3.1.1
   intl: ^0.20.2
-  image: ^4.0.17
-  share_plus: ^12.0.0
-  http: ^1.1.0
-  upgrader: ^12.1.0
+  image: ^4.2.0
+  share_plus: ^10.0.0
+  http: ^1.2.1
+  upgrader: ^10.3.0
   # in_app_purchase removed - PWA uses Stripe Checkout directly
-  url_launcher: ^6.2.1
-  image_picker: ^1.0.4
+  url_launcher: ^6.3.0
+  image_picker: ^1.1.2
   screenshot: ^3.0.0
   qr_flutter: ^4.1.0
-  smooth_page_indicator: ^1.2.0
-  audioplayers: ^6.5.1
+  smooth_page_indicator: ^1.1.0
+  audioplayers: ^6.0.0
   springster: ^1.0.2
 
   # Stripe Payment (flutter_stripe for card collection UI)
-  flutter_stripe: ^11.4.0
+  flutter_stripe: ^10.1.0
 
   # Additional dependencies for production app
-  dio: ^5.3.2
-  connectivity_plus: ^5.0.1
+  dio: ^5.5.0
+  connectivity_plus: ^6.0.3
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
-  uuid: ^4.1.0
-  cached_network_image: ^3.3.0
-  local_auth: ^2.1.6
-  timezone: ^0.10.1
-  flutter_dotenv: ^6.0.0
+  uuid: ^4.4.0
+  cached_network_image: ^3.3.1
+  local_auth: ^2.2.0
+  timezone: ^0.9.3
+  flutter_dotenv: ^5.1.0
   flutter_tts: ^4.0.2
 
   # ==========================================
@@ -85,7 +85,7 @@ dependencies:
   # - live_activities: ^2.0.0       (iOS 16+ Dynamic Island/Live Activities)
   # - intelligence: ^0.2.0          (Apple Intelligence integration)
   # - app_links: ^6.4.1             (Deep linking - unused in PWA context)
-  # Removed by: Phase 4 cleanup (2025-12-23)
+  # - Removed by: Phase 4 cleanup (2025-12-23)
   # ==========================================
 
   # PWA Installation Support
@@ -98,14 +98,14 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
-  build_runner: ^2.4.7
-  json_serializable: ^6.7.1
-  mockito: ^5.4.2
-  sqflite_common_ffi: ^2.3.0
-  freezed: ^2.4.6
-  path_provider_platform_interface: ^2.0.0
-  plugin_platform_interface: ^2.1.2
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.9
+  json_serializable: ^6.8.0
+  mockito: ^5.4.4
+  sqflite_common_ffi: ^2.3.3
+  freezed: ^2.5.2
+  path_provider_platform_interface: ^2.1.2
+  plugin_platform_interface: ^2.1.8
   # Native build tools removed during PWA migration:
   # - flutter_native_splash: ^2.4.3    (Native splash screens)
   # - flutter_launcher_icons: ^0.14.4  (Native launcher icons)

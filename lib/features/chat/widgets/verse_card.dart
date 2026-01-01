@@ -303,11 +303,7 @@ ${verse.translation}
 
 Shared from Everyday Christian App''';
 
-    SharePlus.instance.share(
-      ShareParams(
-        text: text,
-      ),
-    );
+    Share.share(text);
   }
 }
 

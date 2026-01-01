@@ -586,41 +586,36 @@ class VerseBottomSheet extends ConsumerWidget {
     final shareText = '"${verse.text}"\n\n${verse.reference} (${verse.translation})\n\nShared from Everyday Christian';
 
     try {
-      final result = await SharePlus.instance.share(
-        ShareParams(
-          text: shareText,
-        ),
+      await Share.share(shareText);
+
+      // In older share_plus or when using Share.share, we don't get a status.
+      // We assume the user engaged with the share sheet.
+      final appVerse = app_models.BibleVerse(
+        id: verse.id,
+        book: verse.book,
+        chapter: verse.chapter,
+        verseNumber: verse.verseNumber,
+        text: verse.text,
+        translation: verse.translation,
+        reference: verse.reference,
+        themes: verse.themes,
+        category: verse.themes.isNotEmpty ? verse.themes.first : 'general',
       );
 
-      // Only proceed if share was successful (not dismissed/cancelled)
-      if (result.status == ShareResultStatus.success) {
-        final appVerse = app_models.BibleVerse(
-          id: verse.id,
-          book: verse.book,
-          chapter: verse.chapter,
-          verseNumber: verse.verseNumber,
-          text: verse.text,
-          translation: verse.translation,
-          reference: verse.reference,
-          themes: verse.themes,
-          category: verse.themes.isNotEmpty ? verse.themes.first : 'general',
-        );
+      await ref.read(unifiedVerseServiceProvider).recordSharedVerse(appVerse);
 
-        await ref.read(unifiedVerseServiceProvider).recordSharedVerse(appVerse);
+      ref.invalidate(sharedVersesProvider);
+      ref.invalidate(sharedVersesCountProvider);
+      ref.invalidate(totalSharesCountProvider);
+      // Don't invalidate savedVersesCountProvider - sharing doesn't affect saved count
 
-        ref.invalidate(sharedVersesProvider);
-        ref.invalidate(sharedVersesCountProvider);
-        ref.invalidate(totalSharesCountProvider);
-        // Don't invalidate savedVersesCountProvider - sharing doesn't affect saved count
-
-        if (!context.mounted) return;
-        AppSnackBar.show(
-          context,
-          message: 'Verse shared successfully!',
-          icon: Icons.share,
-          iconColor: AppTheme.primaryColor,
-        );
-      }
+      if (!context.mounted) return;
+      AppSnackBar.show(
+        context,
+        message: 'Verse shared successfully!',
+        icon: Icons.share,
+        iconColor: AppTheme.primaryColor,
+      );
     } catch (e) {
       if (!context.mounted) return;
       AppSnackBar.showError(

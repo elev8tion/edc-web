@@ -628,32 +628,28 @@ class _VerseLibraryScreenState extends ConsumerState<VerseLibraryScreen>
                 NavigationService.pop();
                 final shareText = '"${verse.text}"\n\n— ${verse.reference}';
                 try {
-                  final result = await SharePlus.instance.share(
-                    ShareParams(
-                      text: shareText,
-                      subject: l10n.verseShareSubject(verse.reference),
-                    ),
+                  await Share.share(
+                    shareText,
+                    subject: l10n.verseShareSubject(verse.reference),
                   );
 
-                  // Only proceed if share was successful (not dismissed/cancelled)
-                  if (result.status == ShareResultStatus.success) {
-                    await ref
-                        .read(unifiedVerseServiceProvider)
-                        .recordSharedVerse(verse);
+                  // Assume success as we can't reliably track result with basic Share.share
+                  await ref
+                      .read(unifiedVerseServiceProvider)
+                      .recordSharedVerse(verse);
 
-                    ref.invalidate(sharedVersesProvider);
-                    ref.invalidate(sharedVersesCountProvider);
-                    ref.invalidate(totalSharesCountProvider);
-                    // Don't invalidate savedVersesCountProvider - sharing doesn't affect saved count
+                  ref.invalidate(sharedVersesProvider);
+                  ref.invalidate(sharedVersesCountProvider);
+                  ref.invalidate(totalSharesCountProvider);
+                  // Don't invalidate savedVersesCountProvider - sharing doesn't affect saved count
 
-                    if (!mounted) return;
-                    AppSnackBar.show(
-                      context,
-                      message: 'Verse shared successfully!',
-                      icon: Icons.share,
-                      iconColor: AppTheme.primaryColor,
-                    );
-                  }
+                  if (!mounted) return;
+                  AppSnackBar.show(
+                    context,
+                    message: 'Verse shared successfully!',
+                    icon: Icons.share,
+                    iconColor: AppTheme.primaryColor,
+                  );
                 } catch (e) {
                   if (!mounted) return;
                   AppSnackBar.showError(

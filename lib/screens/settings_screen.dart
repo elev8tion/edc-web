@@ -22,8 +22,6 @@ import '../core/navigation/navigation_service.dart';
 import '../core/navigation/page_transitions.dart';
 import '../core/providers/app_providers.dart';
 import '../utils/responsive_utils.dart';
-import '../widgets/time_picker/time_range_sheet.dart';
-import '../widgets/time_picker/time_range_sheet_style.dart';
 import '../components/glass_button.dart';
 import '../components/dark_glass_container.dart';
 import '../components/glass_card.dart';
@@ -1360,11 +1358,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         return;
       }
 
-      await SharePlus.instance.share(
-        ShareParams(
-          text: exportText,
-          subject: 'Everyday Christian - Data Export',
-        ),
+      await Share.share(
+        exportText,
+        subject: 'Everyday Christian - Data Export',
       );
 
       final prayerCount = prayerExport.isNotEmpty ? 1 : 0;

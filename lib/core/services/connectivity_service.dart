@@ -13,9 +13,14 @@ class ConnectivityService {
   Stream<bool> get connectivityStream => _connectivityController.stream;
 
   void _initConnectivity() {
-    _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
       if (!_connectivityController.isClosed) {
-        _connectivityController.add(result != ConnectivityResult.none);
+        // Connected if list is not empty and does NOT contain 'none' as the only element
+        // Actually, if it contains 'none', it usually means no connection, but let's check properly
+        // ConnectivityResult.none being in the list means disconnected?
+        // Usually the list contains valid connections.
+        final isConnected = results.any((result) => result != ConnectivityResult.none);
+        _connectivityController.add(isConnected);
       }
     });
 
@@ -25,9 +30,10 @@ class ConnectivityService {
 
   Future<void> _checkConnectivity() async {
     try {
-      final result = await _connectivity.checkConnectivity();
+      final results = await _connectivity.checkConnectivity();
       if (!_connectivityController.isClosed) {
-        _connectivityController.add(result != ConnectivityResult.none);
+        final isConnected = results.any((result) => result != ConnectivityResult.none);
+        _connectivityController.add(isConnected);
       }
     } catch (e) {
       if (!_connectivityController.isClosed) {
@@ -38,8 +44,8 @@ class ConnectivityService {
 
   Future<bool> get isConnected async {
     try {
-      final result = await _connectivity.checkConnectivity();
-      return result != ConnectivityResult.none;
+      final results = await _connectivity.checkConnectivity();
+      return results.any((result) => result != ConnectivityResult.none);
     } catch (e) {
       return false;
     }

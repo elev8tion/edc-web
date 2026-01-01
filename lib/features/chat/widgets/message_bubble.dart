@@ -409,11 +409,7 @@ class MessageBubble extends StatelessWidget {
 
     shareText += '\n\nShared from Everyday Christian App';
 
-    SharePlus.instance.share(
-      ShareParams(
-        text: shareText,
-      ),
-    );
+    Share.share(shareText);
   }
 }
 
