@@ -20,10 +20,13 @@ extension type WebPushJS._(JSObject _) implements JSObject {
   external JSBoolean setUserId(JSString userId);
   external JSBoolean isSupported();
   external JSString getPermissionStatus();
+  external JSString getTimezone();
   external JSPromise<JSString?> init();
   external JSPromise<JSString?> getExistingSubscription();
   external JSPromise<JSBoolean> unsubscribe();
   external JSPromise<JSBoolean> fetchVapidKey();
+  external JSPromise<JSAny?> savePreferences(JSAny preferences);
+  external JSPromise<JSAny?> getPreferences();
 }
 
 class WebPushNotificationService {
@@ -189,4 +192,75 @@ class WebPushNotificationService {
 
   /// Get cached subscription JSON
   static String? get subscriptionJson => _subscriptionJson;
+
+  /// Get browser timezone
+  static String getTimezone() {
+    if (!kIsWeb) return 'UTC';
+    try {
+      final webPush = _webPush;
+      if (webPush == null) return 'UTC';
+
+      final result = webPush.getTimezone();
+      return result.toDart;
+    } catch (e) {
+      debugPrint('[WebPush] Failed to get timezone: $e');
+      return 'UTC';
+    }
+  }
+
+  /// Save notification preferences to backend
+  /// preferences should be a Map like:
+  /// {
+  ///   'verseOfTheDay': { 'enabled': true, 'time': '09:00' },
+  ///   'readingPlan': { 'enabled': false, 'time': '20:00' },
+  ///   ...
+  /// }
+  static Future<bool> savePreferences(Map<String, dynamic> preferences) async {
+    if (!kIsWeb) return false;
+
+    try {
+      final webPush = _webPush;
+      if (webPush == null) return false;
+
+      // Convert Dart Map to JS object
+      final jsPreferences = preferences.jsify()!;
+
+      final promise = webPush.savePreferences(jsPreferences);
+      final result = await promise.toDart;
+
+      if (result != null) {
+        debugPrint('[WebPush] Preferences saved successfully');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('[WebPush] Failed to save preferences: $e');
+      return false;
+    }
+  }
+
+  /// Get notification preferences from backend
+  static Future<Map<String, dynamic>?> getPreferences() async {
+    if (!kIsWeb) return null;
+
+    try {
+      final webPush = _webPush;
+      if (webPush == null) return null;
+
+      final promise = webPush.getPreferences();
+      final result = await promise.toDart;
+
+      if (result != null) {
+        // Convert JS object to Dart Map
+        final dartResult = (result as JSObject).dartify();
+        if (dartResult is Map) {
+          return Map<String, dynamic>.from(dartResult);
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('[WebPush] Failed to get preferences: $e');
+      return null;
+    }
+  }
 }

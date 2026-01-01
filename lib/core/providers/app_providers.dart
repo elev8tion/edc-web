@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/connectivity_service.dart';
+import '../services/web_push_notification_service.dart';
 import '../services/database_service.dart';
 import '../database/database_helper.dart';
 import '../services/notification_service.dart';
@@ -872,10 +873,17 @@ class DailyNotificationsNotifier extends StateNotifier<bool> {
   Future<void> toggle(bool enabled) async {
     state = enabled;
     await _preferences?.saveDailyNotificationsEnabled(enabled);
-    if (enabled) {
-      await _scheduleNotifications();
+
+    if (kIsWeb) {
+      // On web, sync preferences to web push backend
+      await _syncWebPushPreferences(_ref);
     } else {
-      await _ref.read(notificationServiceProvider).cancel(1);
+      // On mobile, use local notifications
+      if (enabled) {
+        await _scheduleNotifications();
+      } else {
+        await _ref.read(notificationServiceProvider).cancel(1);
+      }
     }
   }
 
@@ -908,10 +916,17 @@ class PrayerRemindersNotifier extends StateNotifier<bool> {
   Future<void> toggle(bool enabled) async {
     state = enabled;
     await _preferences?.savePrayerRemindersEnabled(enabled);
-    if (enabled) {
-      await _scheduleNotifications();
+
+    if (kIsWeb) {
+      // On web, sync preferences to web push backend
+      await _syncWebPushPreferences(_ref);
     } else {
-      await _ref.read(notificationServiceProvider).cancel(2);
+      // On mobile, use local notifications
+      if (enabled) {
+        await _scheduleNotifications();
+      } else {
+        await _ref.read(notificationServiceProvider).cancel(2);
+      }
     }
   }
 
@@ -944,10 +959,17 @@ class VerseOfTheDayNotifier extends StateNotifier<bool> {
   Future<void> toggle(bool enabled) async {
     state = enabled;
     await _preferences?.saveVerseOfTheDayEnabled(enabled);
-    if (enabled) {
-      await _scheduleNotifications();
+
+    if (kIsWeb) {
+      // On web, sync preferences to web push backend
+      await _syncWebPushPreferences(_ref);
     } else {
-      await _ref.read(notificationServiceProvider).cancel(3);
+      // On mobile, use local notifications
+      if (enabled) {
+        await _scheduleNotifications();
+      } else {
+        await _ref.read(notificationServiceProvider).cancel(3);
+      }
     }
   }
 
@@ -981,10 +1003,17 @@ class ReadingPlanRemindersNotifier extends StateNotifier<bool> {
   Future<void> toggle(bool enabled) async {
     state = enabled;
     await _preferences?.saveReadingPlanReminders(enabled);
-    if (enabled) {
-      await _scheduleNotifications();
+
+    if (kIsWeb) {
+      // On web, sync preferences to web push backend
+      await _syncWebPushPreferences(_ref);
     } else {
-      await _ref.read(notificationServiceProvider).cancel(4);
+      // On mobile, use local notifications
+      if (enabled) {
+        await _scheduleNotifications();
+      } else {
+        await _ref.read(notificationServiceProvider).cancel(4);
+      }
     }
   }
 
@@ -1069,13 +1098,21 @@ class DevotionalTimeNotifier extends StateNotifier<String> {
   Future<void> setTime(String time) async {
     state = time;
     await _preferences?.saveDevotionalTime(time);
-    // Reschedule devotional notification if enabled
-    if (_ref.read(dailyNotificationsProvider)) {
-      final parts = time.split(':');
-      await _ref.read(notificationServiceProvider).scheduleDailyDevotional(
-            hour: int.parse(parts[0]),
-            minute: int.parse(parts[1]),
-          );
+
+    if (kIsWeb) {
+      // On web, sync preferences to web push backend
+      if (_ref.read(dailyNotificationsProvider)) {
+        await _syncWebPushPreferences(_ref);
+      }
+    } else {
+      // Reschedule devotional notification if enabled
+      if (_ref.read(dailyNotificationsProvider)) {
+        final parts = time.split(':');
+        await _ref.read(notificationServiceProvider).scheduleDailyDevotional(
+              hour: int.parse(parts[0]),
+              minute: int.parse(parts[1]),
+            );
+      }
     }
   }
 }
@@ -1099,13 +1136,21 @@ class PrayerTimeNotifier extends StateNotifier<String> {
   Future<void> setTime(String time) async {
     state = time;
     await _preferences?.savePrayerTime(time);
-    // Reschedule prayer notification if enabled
-    if (_ref.read(prayerRemindersProvider)) {
-      final parts = time.split(':');
-      await _ref.read(notificationServiceProvider).schedulePrayerReminder(
-            hour: int.parse(parts[0]),
-            minute: int.parse(parts[1]),
-          );
+
+    if (kIsWeb) {
+      // On web, sync preferences to web push backend
+      if (_ref.read(prayerRemindersProvider)) {
+        await _syncWebPushPreferences(_ref);
+      }
+    } else {
+      // Reschedule prayer notification if enabled
+      if (_ref.read(prayerRemindersProvider)) {
+        final parts = time.split(':');
+        await _ref.read(notificationServiceProvider).schedulePrayerReminder(
+              hour: int.parse(parts[0]),
+              minute: int.parse(parts[1]),
+            );
+      }
     }
   }
 }
@@ -1129,13 +1174,21 @@ class VerseTimeNotifier extends StateNotifier<String> {
   Future<void> setTime(String time) async {
     state = time;
     await _preferences?.saveVerseTime(time);
-    // Reschedule verse notification if enabled
-    if (_ref.read(verseOfTheDayProvider)) {
-      final parts = time.split(':');
-      await _ref.read(notificationServiceProvider).scheduleDailyVerse(
-            hour: int.parse(parts[0]),
-            minute: int.parse(parts[1]),
-          );
+
+    if (kIsWeb) {
+      // On web, sync preferences to web push backend
+      if (_ref.read(verseOfTheDayProvider)) {
+        await _syncWebPushPreferences(_ref);
+      }
+    } else {
+      // Reschedule verse notification if enabled
+      if (_ref.read(verseOfTheDayProvider)) {
+        final parts = time.split(':');
+        await _ref.read(notificationServiceProvider).scheduleDailyVerse(
+              hour: int.parse(parts[0]),
+              minute: int.parse(parts[1]),
+            );
+      }
     }
   }
 }
@@ -1159,13 +1212,21 @@ class ReadingPlanTimeNotifier extends StateNotifier<String> {
   Future<void> setTime(String time) async {
     state = time;
     await _preferences?.saveReadingPlanTime(time);
-    // Reschedule reading plan notification if enabled
-    if (_ref.read(readingPlanRemindersProvider)) {
-      final parts = time.split(':');
-      await _ref.read(notificationServiceProvider).scheduleReadingPlanReminder(
-            hour: int.parse(parts[0]),
-            minute: int.parse(parts[1]),
-          );
+
+    if (kIsWeb) {
+      // On web, sync preferences to web push backend
+      if (_ref.read(readingPlanRemindersProvider)) {
+        await _syncWebPushPreferences(_ref);
+      }
+    } else {
+      // Reschedule reading plan notification if enabled
+      if (_ref.read(readingPlanRemindersProvider)) {
+        final parts = time.split(':');
+        await _ref.read(notificationServiceProvider).scheduleReadingPlanReminder(
+              hour: int.parse(parts[0]),
+              minute: int.parse(parts[1]),
+            );
+      }
     }
   }
 }
@@ -1222,6 +1283,56 @@ final initializeAppProvider = FutureProvider<void>((ref) async {
 // ============================================================================
 // WEB PUSH NOTIFICATION PROVIDERS (PWA only)
 // ============================================================================
+
+/// Helper function to sync all notification preferences to web push backend
+/// Called whenever a notification toggle or time is changed on web
+Future<void> _syncWebPushPreferences(Ref ref) async {
+  if (!kIsWeb) return;
+
+  try {
+    // Check if we have a subscription, if not try to subscribe first
+    final existingSub = await WebPushNotificationService.getExistingSubscription();
+    if (existingSub == null) {
+      // Need to subscribe first
+      debugPrint('[WebPush] No existing subscription, initializing...');
+      final subscription = await WebPushNotificationService.initialize();
+      if (subscription == null) {
+        debugPrint('[WebPush] Failed to initialize subscription');
+        return;
+      }
+    }
+
+    // Build preferences from current state
+    final preferences = <String, dynamic>{
+      'verseOfTheDay': {
+        'enabled': ref.read(verseOfTheDayProvider),
+        'time': ref.read(verseTimeProvider),
+      },
+      'readingPlan': {
+        'enabled': ref.read(readingPlanRemindersProvider),
+        'time': ref.read(readingPlanTimeProvider),
+      },
+      'prayerReminders': {
+        'enabled': ref.read(prayerRemindersProvider),
+        'time': ref.read(prayerTimeProvider),
+      },
+      'dailyDevotional': {
+        'enabled': ref.read(dailyNotificationsProvider),
+        'time': ref.read(devotionalTimeProvider),
+      },
+    };
+
+    // Save preferences to backend
+    final success = await WebPushNotificationService.savePreferences(preferences);
+    if (success) {
+      debugPrint('[WebPush] Preferences synced successfully');
+    } else {
+      debugPrint('[WebPush] Failed to sync preferences');
+    }
+  } catch (e) {
+    debugPrint('[WebPush] Error syncing preferences: $e');
+  }
+}
 
 /// Provider for web push enabled status
 final webPushEnabledProvider =

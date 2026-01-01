@@ -3,22 +3,35 @@
  *
  * Handles push subscription storage and notification sending
  * Uses Cloudflare KV for subscription storage
+ * Fetches dynamic content from NoCodeBackend
  *
  * Endpoints:
  * - POST /subscribe     - Store push subscription
  * - POST /unsubscribe   - Remove subscription
+ * - POST /preferences   - Save user notification preferences
+ * - GET  /preferences   - Get user notification preferences
  * - POST /send          - Send notification to specific user
  * - POST /send-all      - Broadcast to all subscribers
  * - GET  /status        - Check service status
  *
  * Environment Variables (Secrets):
- * - VAPID_PUBLIC_KEY    - VAPID public key (base64)
- * - VAPID_PRIVATE_KEY   - VAPID private key (base64)
- * - VAPID_SUBJECT       - mailto: or https:// contact
+ * - VAPID_PUBLIC_KEY      - VAPID public key (base64)
+ * - VAPID_PRIVATE_KEY     - VAPID private key (base64)
+ * - VAPID_SUBJECT         - mailto: or https:// contact
+ * - NOCODEBACKEND_API_KEY - API key for NoCodeBackend
  *
  * KV Namespace:
- * - PUSH_SUBSCRIPTIONS  - Stores user subscriptions
+ * - PUSH_SUBSCRIPTIONS  - Stores user subscriptions and preferences
+ *
+ * NoCodeBackend Tables (Instance: 36905_activation_codes):
+ * - notification_verses      - Daily verses (day_of_year, reference, text)
+ * - notification_devotionals - Daily devotionals (day_of_year, title, opening_scripture)
+ * - notification_reading_plans - Reading assignments (day_of_year, book, chapters)
  */
+
+// NoCodeBackend configuration
+const NOCODEBACKEND_URL = 'https://openapi.nocodebackend.com';
+const NOCODEBACKEND_INSTANCE = '36905_activation_codes';
 
 export default {
   async fetch(request, env) {
@@ -43,6 +56,11 @@ export default {
           return handleSubscribe(request, env, corsHeaders);
         case '/unsubscribe':
           return handleUnsubscribe(request, env, corsHeaders);
+        case '/preferences':
+          if (request.method === 'GET') {
+            return handleGetPreferences(request, env, corsHeaders);
+          }
+          return handleSavePreferences(request, env, corsHeaders);
         case '/send':
           return handleSend(request, env, corsHeaders);
         case '/send-all':
@@ -63,46 +81,68 @@ export default {
     }
   },
 
-  // Scheduled handler for daily devotional notifications
+  // Scheduled handler for timezone-aware notifications (runs hourly)
   async scheduled(event, env, ctx) {
-    console.log('Scheduled push notification triggered');
+    const currentUTCHour = new Date().getUTCHours();
+    const dayOfYear = getDayOfYear(new Date());
+    console.log(`Scheduled push triggered: UTC hour ${currentUTCHour}, day ${dayOfYear}`);
 
     try {
-      // Get all subscriptions and send daily devotional reminder
-      const subscriptions = await getAllSubscriptions(env);
+      // Get all subscriptions with preferences
+      const users = await getAllSubscriptionsWithPreferences(env);
 
-      if (subscriptions.length === 0) {
+      if (users.length === 0) {
         console.log('No subscriptions to notify');
         return;
       }
 
-      const payload = JSON.stringify({
-        title: 'Daily Devotional Ready',
-        body: 'Your daily devotional is waiting for you!',
-        icon: '/icons/Icon-192.png',
-        badge: '/icons/badge-72.png',
-        tag: 'daily-devotional',
-        badgeCount: 1,
-        data: {
-          url: '/devotional',
-          type: 'daily-devotional'
-        }
-      });
-
       let sent = 0;
       let failed = 0;
 
-      for (const { userId, subscription } of subscriptions) {
-        try {
-          await sendPushNotification(env, subscription, payload);
-          sent++;
-        } catch (e) {
-          console.error(`Failed to send to ${userId}:`, e.message);
-          failed++;
+      for (const user of users) {
+        const { userId, subscription, timezone, preferences } = user;
 
-          // Remove invalid subscriptions
-          if (e.message.includes('expired') || e.message.includes('unsubscribed')) {
-            await env.PUSH_SUBSCRIPTIONS.delete(`sub:${userId}`);
+        if (!preferences || !subscription) continue;
+
+        // Check each notification type
+        for (const [type, settings] of Object.entries(preferences)) {
+          if (!settings || !settings.enabled) continue;
+
+          // Convert user's local time to UTC hour
+          const userLocalHour = parseInt(settings.time.split(':')[0], 10);
+          const userUTCHour = convertLocalHourToUTC(userLocalHour, timezone);
+
+          if (userUTCHour !== currentUTCHour) continue;
+
+          try {
+            // Fetch dynamic content from NoCodeBackend
+            const content = await getNotificationContent(type, dayOfYear, env);
+
+            const payload = JSON.stringify({
+              title: content.title,
+              body: content.body,
+              icon: '/icons/Icon-192.png',
+              badge: '/icons/badge-72.png',
+              tag: type,
+              badgeCount: 1,
+              data: {
+                url: content.url,
+                type: type
+              }
+            });
+
+            await sendPushNotification(env, subscription, payload);
+            sent++;
+            console.log(`Sent ${type} to ${userId}`);
+          } catch (e) {
+            console.error(`Failed to send ${type} to ${userId}:`, e.message);
+            failed++;
+
+            // Remove invalid subscriptions
+            if (e.message.includes('expired') || e.message.includes('unsubscribed') || e.message.includes('410')) {
+              await env.PUSH_SUBSCRIPTIONS.delete(`sub:${userId}`);
+              await removeFromIndex(env, userId);
+            }
           }
         }
       }
@@ -200,6 +240,113 @@ async function handleUnsubscribe(request, env, corsHeaders) {
     console.error('Failed to remove subscription:', error);
     return jsonResponse({
       error: 'Failed to remove subscription'
+    }, 500, corsHeaders);
+  }
+}
+
+/**
+ * Save user notification preferences
+ * Body: { userId, timezone, subscription?, preferences: { verseOfTheDay: { enabled, time }, ... } }
+ */
+async function handleSavePreferences(request, env, corsHeaders) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);
+  }
+
+  const body = await request.json();
+  const { userId, timezone, subscription, preferences } = body;
+
+  if (!userId) {
+    return jsonResponse({ error: 'Missing userId' }, 400, corsHeaders);
+  }
+
+  try {
+    // Get existing data
+    const existing = await env.PUSH_SUBSCRIPTIONS.get(`sub:${userId}`);
+    const existingData = existing ? JSON.parse(existing) : {};
+
+    // Merge with new data
+    const updatedData = {
+      subscription: subscription || existingData.subscription,
+      timezone: timezone || existingData.timezone || 'UTC',
+      preferences: preferences || existingData.preferences || {},
+      createdAt: existingData.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Validate subscription exists
+    if (!updatedData.subscription) {
+      return jsonResponse({
+        error: 'No subscription found. Subscribe first or include subscription in request.'
+      }, 400, corsHeaders);
+    }
+
+    // Store updated data
+    await env.PUSH_SUBSCRIPTIONS.put(
+      `sub:${userId}`,
+      JSON.stringify(updatedData),
+      { expirationTtl: 365 * 24 * 60 * 60 }
+    );
+
+    // Ensure user is in index
+    await addToIndex(env, userId);
+
+    console.log(`Preferences saved for user: ${userId}`);
+
+    return jsonResponse({
+      success: true,
+      message: 'Preferences saved successfully',
+      preferences: updatedData.preferences,
+      timezone: updatedData.timezone
+    }, 200, corsHeaders);
+  } catch (error) {
+    console.error('Failed to save preferences:', error);
+    return jsonResponse({
+      error: 'Failed to save preferences',
+      message: error.message
+    }, 500, corsHeaders);
+  }
+}
+
+/**
+ * Get user notification preferences
+ * Query: ?userId=xxx
+ */
+async function handleGetPreferences(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const userId = url.searchParams.get('userId');
+
+  if (!userId) {
+    return jsonResponse({ error: 'Missing userId query parameter' }, 400, corsHeaders);
+  }
+
+  try {
+    const stored = await env.PUSH_SUBSCRIPTIONS.get(`sub:${userId}`);
+
+    if (!stored) {
+      return jsonResponse({
+        success: true,
+        hasSubscription: false,
+        preferences: null,
+        timezone: null
+      }, 200, corsHeaders);
+    }
+
+    const data = JSON.parse(stored);
+
+    return jsonResponse({
+      success: true,
+      hasSubscription: !!data.subscription,
+      preferences: data.preferences || {},
+      timezone: data.timezone || 'UTC',
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt
+    }, 200, corsHeaders);
+  } catch (error) {
+    console.error('Failed to get preferences:', error);
+    return jsonResponse({
+      error: 'Failed to get preferences',
+      message: error.message
     }, 500, corsHeaders);
   }
 }
@@ -691,6 +838,206 @@ async function removeFromIndex(env, userId) {
   } catch (e) {
     console.error('Failed to update index:', e);
   }
+}
+
+/**
+ * Get all subscriptions with preferences from KV
+ */
+async function getAllSubscriptionsWithPreferences(env) {
+  const users = [];
+
+  try {
+    const indexData = await env.PUSH_SUBSCRIPTIONS.get('index:users');
+    if (!indexData) return users;
+
+    const userIds = JSON.parse(indexData);
+
+    for (const userId of userIds) {
+      const stored = await env.PUSH_SUBSCRIPTIONS.get(`sub:${userId}`);
+      if (stored) {
+        const data = JSON.parse(stored);
+        users.push({
+          userId,
+          subscription: data.subscription,
+          timezone: data.timezone || 'UTC',
+          preferences: data.preferences || {}
+        });
+      }
+    }
+  } catch (e) {
+    console.error('Failed to get subscriptions with preferences:', e);
+  }
+
+  return users;
+}
+
+/**
+ * Get day of year (1-366)
+ */
+function getDayOfYear(date) {
+  const start = new Date(date.getFullYear(), 0, 0);
+  const diff = date - start;
+  const oneDay = 1000 * 60 * 60 * 24;
+  return Math.floor(diff / oneDay);
+}
+
+/**
+ * Convert local hour to UTC hour based on timezone
+ * Uses a simple offset calculation
+ */
+function convertLocalHourToUTC(localHour, timezone) {
+  try {
+    // Create a date object for today
+    const now = new Date();
+
+    // Get offset by comparing local time in timezone vs UTC
+    const utcDate = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const localDate = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
+
+    // Calculate offset in hours
+    const offsetMs = localDate - utcDate;
+    const offsetHours = Math.round(offsetMs / (1000 * 60 * 60));
+
+    // Convert local hour to UTC
+    return (localHour - offsetHours + 24) % 24;
+  } catch (e) {
+    console.error(`Failed to convert timezone ${timezone}:`, e);
+    // Default to treating local time as UTC
+    return localHour;
+  }
+}
+
+/**
+ * Fetch notification content from NoCodeBackend
+ */
+async function getNotificationContent(type, dayOfYear, env) {
+  const tableMap = {
+    verseOfTheDay: 'notification_verses',
+    dailyDevotional: 'notification_devotionals',
+    readingPlan: 'notification_reading_plans',
+    prayerReminders: null  // Static message, no DB fetch needed
+  };
+
+  // Prayer reminders use static content
+  if (type === 'prayerReminders') {
+    return {
+      title: 'Prayer Time',
+      body: 'Take a moment to connect with God in prayer.',
+      url: '/prayer-journal'
+    };
+  }
+
+  const table = tableMap[type];
+  if (!table) {
+    return {
+      title: 'Everyday Christian',
+      body: 'Check out what\'s new today!',
+      url: '/'
+    };
+  }
+
+  try {
+    const apiKey = env.NOCODEBACKEND_API_KEY;
+    if (!apiKey) {
+      console.error('NOCODEBACKEND_API_KEY not configured');
+      return getFallbackContent(type);
+    }
+
+    const response = await fetch(
+      `${NOCODEBACKEND_URL}/read/${table}?Instance=${NOCODEBACKEND_INSTANCE}&day_of_year=${dayOfYear}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`NoCodeBackend fetch failed: ${response.status}`);
+      return getFallbackContent(type);
+    }
+
+    const result = await response.json();
+    const data = result.data?.[0];
+
+    if (!data) {
+      console.log(`No content found for day ${dayOfYear} in ${table}`);
+      return getFallbackContent(type);
+    }
+
+    return formatNotificationContent(type, data);
+  } catch (error) {
+    console.error(`Failed to fetch content from NoCodeBackend:`, error);
+    return getFallbackContent(type);
+  }
+}
+
+/**
+ * Format notification content based on type
+ */
+function formatNotificationContent(type, data) {
+  switch (type) {
+    case 'verseOfTheDay':
+      const verseText = data.text || '';
+      const preview = verseText.length > 100 ? verseText.substring(0, 97) + '...' : verseText;
+      return {
+        title: 'Verse of the Day',
+        body: `${data.reference || 'Today\'s Verse'} - ${preview}`,
+        url: '/daily-verse'
+      };
+
+    case 'dailyDevotional':
+      return {
+        title: `Daily Devotional: ${data.title || 'Today\'s Reading'}`,
+        body: data.opening_scripture || 'Your daily devotional is ready.',
+        url: '/devotional'
+      };
+
+    case 'readingPlan':
+      return {
+        title: 'Bible Reading Plan',
+        body: `Today: ${data.book || 'Bible'} ${data.chapters || ''}`,
+        url: '/reading-plan'
+      };
+
+    default:
+      return getFallbackContent(type);
+  }
+}
+
+/**
+ * Get fallback content when NoCodeBackend is unavailable
+ */
+function getFallbackContent(type) {
+  const fallbacks = {
+    verseOfTheDay: {
+      title: 'Verse of the Day',
+      body: 'Your daily verse is waiting for you!',
+      url: '/daily-verse'
+    },
+    dailyDevotional: {
+      title: 'Daily Devotional',
+      body: 'Your daily devotional is ready.',
+      url: '/devotional'
+    },
+    readingPlan: {
+      title: 'Bible Reading Plan',
+      body: 'Continue your Bible reading journey today.',
+      url: '/reading-plan'
+    },
+    prayerReminders: {
+      title: 'Prayer Time',
+      body: 'Take a moment to connect with God in prayer.',
+      url: '/prayer-journal'
+    }
+  };
+
+  return fallbacks[type] || {
+    title: 'Everyday Christian',
+    body: 'Check out what\'s new today!',
+    url: '/'
+  };
 }
 
 /**

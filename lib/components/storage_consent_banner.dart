@@ -220,7 +220,7 @@ class _StorageConsentBannerState extends State<StorageConsentBanner>
                               ),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.cookie_outlined,
                               color: AppTheme.goldColor,
                               size: 20,
@@ -257,7 +257,7 @@ class _StorageConsentBannerState extends State<StorageConsentBanner>
                         onTap: _openPrivacyPolicy,
                         child: Text(
                           l10n.storageConsentLearnMore,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 13,
                             color: AppTheme.goldColor,
                             decoration: TextDecoration.underline,
@@ -275,7 +275,8 @@ class _StorageConsentBannerState extends State<StorageConsentBanner>
                             child: GlassButton(
                               text: l10n.essentialOnly,
                               height: 44,
-                              onPressed: _isLoading ? null : _handleEssentialOnly,
+                              onPressed:
+                                  _isLoading ? null : _handleEssentialOnly,
                             ),
                           ),
                           const SizedBox(width: 12),

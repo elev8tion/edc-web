@@ -258,6 +258,88 @@ function isBadgeSupported() {
   return 'setAppBadge' in navigator;
 }
 
+// Get browser timezone
+function getTimezone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch (e) {
+    console.error('[WebPush] Failed to get timezone:', e);
+    return 'UTC';
+  }
+}
+
+// Save notification preferences to server
+async function savePreferences(preferences) {
+  if (!CURRENT_USER_ID) {
+    console.warn('[WebPush] User ID not set, cannot save preferences');
+    return false;
+  }
+
+  try {
+    const timezone = getTimezone();
+
+    // Get existing subscription if available
+    let subscription = null;
+    try {
+      const registration = await navigator.serviceWorker.getRegistration('/web-push-sw.js');
+      if (registration) {
+        const sub = await registration.pushManager.getSubscription();
+        if (sub) {
+          subscription = sub.toJSON();
+        }
+      }
+    } catch (e) {
+      console.warn('[WebPush] Could not get existing subscription:', e);
+    }
+
+    const response = await fetch(`${WORKER_URL}/preferences`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: CURRENT_USER_ID,
+        timezone: timezone,
+        subscription: subscription,
+        preferences: preferences
+      })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('[WebPush] Preferences saved successfully');
+      return result;
+    } else {
+      const error = await response.text();
+      console.error('[WebPush] Failed to save preferences:', error);
+      return false;
+    }
+  } catch (error) {
+    console.error('[WebPush] Error saving preferences:', error);
+    return false;
+  }
+}
+
+// Get notification preferences from server
+async function getPreferences() {
+  if (!CURRENT_USER_ID) {
+    console.warn('[WebPush] User ID not set, cannot get preferences');
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${WORKER_URL}/preferences?userId=${encodeURIComponent(CURRENT_USER_ID)}`);
+
+    if (response.ok) {
+      return await response.json();
+    } else {
+      console.error('[WebPush] Failed to get preferences:', await response.text());
+      return null;
+    }
+  } catch (error) {
+    console.error('[WebPush] Error getting preferences:', error);
+    return null;
+  }
+}
+
 // Get Worker status
 async function getWorkerStatus() {
   try {
@@ -284,7 +366,10 @@ window.WebPush = {
   clearAppBadge: clearAppBadge,
   isBadgeSupported: isBadgeSupported,
   getWorkerStatus: getWorkerStatus,
-  fetchVapidKey: fetchVapidKey
+  fetchVapidKey: fetchVapidKey,
+  getTimezone: getTimezone,
+  savePreferences: savePreferences,
+  getPreferences: getPreferences
 };
 
 console.log('[WebPush] Client library loaded (with Cloudflare Worker backend)');

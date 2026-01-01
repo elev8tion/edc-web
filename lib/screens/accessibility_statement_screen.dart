@@ -49,7 +49,9 @@ class AccessibilityStatementScreen extends StatelessWidget {
                       ],
                     )
                         .animate()
-                        .fadeIn(duration: AppAnimations.slow, delay: AppAnimations.fast)
+                        .fadeIn(
+                            duration: AppAnimations.slow,
+                            delay: AppAnimations.fast)
                         .slideY(begin: 0.2),
                   ),
                 ),
@@ -91,7 +93,7 @@ class AccessibilityStatementScreen extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.accessibility_new,
               color: AppTheme.goldColor,
               size: 24,
@@ -150,11 +152,14 @@ class AccessibilityStatementScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _buildMeasureItem(context, Icons.code, l10n.measureSemanticHtml),
-            _buildMeasureItem(context, Icons.contrast, l10n.measureColorContrast),
-            _buildMeasureItem(context, Icons.touch_app, l10n.measureTouchTargets),
+            _buildMeasureItem(
+                context, Icons.contrast, l10n.measureColorContrast),
+            _buildMeasureItem(
+                context, Icons.touch_app, l10n.measureTouchTargets),
             _buildMeasureItem(context, Icons.keyboard, l10n.measureKeyboardNav),
             _buildMeasureItem(context, Icons.image, l10n.measureAltText),
-            _buildMeasureItem(context, Icons.text_fields, l10n.measureScalableText),
+            _buildMeasureItem(
+                context, Icons.text_fields, l10n.measureScalableText),
           ],
         ),
       ),
@@ -257,7 +262,7 @@ class AccessibilityStatementScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.email_outlined,
                   color: AppTheme.goldColor,
                   size: 28,
@@ -297,7 +302,7 @@ class AccessibilityStatementScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.mail,
                       color: AppTheme.goldColor,
                       size: 20,
@@ -392,7 +397,8 @@ class AccessibilityStatementScreen extends StatelessWidget {
   }
 
   Future<void> _launchEmail() async {
-    final uri = Uri.parse('mailto:support@everydaychristian.app?subject=Accessibility%20Feedback');
+    final uri = Uri.parse(
+        'mailto:support@everydaychristian.app?subject=Accessibility%20Feedback');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     }

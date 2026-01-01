@@ -8,17 +8,17 @@ compatibility_date = "2024-01-01"
 # Enable workers.dev subdomain
 workers_dev = true
 
-# KV Namespace for storing push subscriptions
+# KV Namespace for storing push subscriptions and preferences
 # Create with: wrangler kv:namespace create PUSH_SUBSCRIPTIONS
 # Then add the id below
 [[kv_namespaces]]
 binding = "PUSH_SUBSCRIPTIONS"
-id = "YOUR_KV_NAMESPACE_ID"  # Replace after running: wrangler kv:namespace create PUSH_SUBSCRIPTIONS
+id = "76081a3cb8634b4aa348aeeb31bbb4f7"
 
-# Optional: Scheduled trigger for daily devotional notifications
-# Runs at 6:00 AM UTC daily
+# Scheduled trigger for timezone-aware notifications
+# Runs every hour to check user preferences and send notifications at their local time
 [triggers]
-crons = ["0 6 * * *"]
+crons = ["0 * * * *"]
 
 # Environment variables
 [vars]
@@ -28,6 +28,10 @@ VAPID_SUBJECT = "mailto:support@everydaychristian.app"
 # Required secrets:
 # - VAPID_PUBLIC_KEY: Base64URL encoded public key
 # - VAPID_PRIVATE_KEY: Base64URL encoded private key
+# - NOCODEBACKEND_API_KEY: API key for NoCodeBackend (Instance: 36905_activation_codes)
+#
+# Set NOCODEBACKEND_API_KEY:
+#   wrangler secret put NOCODEBACKEND_API_KEY -c wrangler-webpush.toml
 #
 # Generate VAPID keys with:
 #   npx web-push generate-vapid-keys

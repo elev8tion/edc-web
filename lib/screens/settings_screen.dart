@@ -11,7 +11,6 @@ import 'package:local_auth/local_auth.dart';
 import '../core/services/database_service.dart';
 import '../core/services/preferences_service.dart';
 import '../core/services/bible_config.dart';
-import '../features/auth/services/secure_storage_service.dart';
 import '../components/pin_setup_dialog.dart';
 import '../services/conversation_service.dart';
 import '../theme/app_theme.dart';
@@ -34,7 +33,6 @@ import '../l10n/app_localizations.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../services/stripe_service.dart';
-import '../services/token_manager.dart';
 import '../theme/app_theme_extensions.dart';
 import '../core/services/web_push_notification_service.dart';
 import '../core/services/storage_consent_service.dart';
@@ -165,8 +163,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 onTimeChange: (time) =>
                     ref.read(readingPlanTimeProvider.notifier).setTime(time),
               ),
-              // Web Push Notifications (web only)
-              if (kIsWeb) _buildWebPushTile(),
             ],
           ),
           const SizedBox(height: AppSpacing.xxl),
@@ -681,248 +677,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  /// Build Web Push Notifications tile (web only)
-  Widget _buildWebPushTile() {
-    final l10n = AppLocalizations.of(context);
-    final isSupported = WebPushNotificationService.isSupported;
-    final permissionStatus = WebPushNotificationService.permissionStatus;
-    final isEnabled = ref.watch(webPushEnabledProvider);
-
-    // Determine status text and icon
-    String statusText;
-    IconData statusIcon;
-    Color statusColor;
-
-    if (!isSupported) {
-      statusText = l10n.webPushNotSupported;
-      statusIcon = Icons.error_outline;
-      statusColor = Colors.grey;
-    } else if (permissionStatus == 'denied') {
-      statusText = l10n.webPushBlocked;
-      statusIcon = Icons.block;
-      statusColor = Colors.red;
-    } else if (permissionStatus == 'granted' && isEnabled) {
-      statusText = l10n.webPushEnabled;
-      statusIcon = Icons.check_circle;
-      statusColor = Colors.green;
-    } else {
-      statusText = l10n.webPushDisabled;
-      statusIcon = Icons.notifications_off;
-      statusColor = Colors.orange;
-    }
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12, top: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Section divider with label
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              children: [
-                Container(
-                  width: 4,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: AppTheme.goldColor,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.webPushSectionTitle,
-                  style: TextStyle(
-                    fontSize: ResponsiveUtils.fontSize(context, 12,
-                        minSize: 10, maxSize: 14),
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.goldColor.withValues(alpha: 0.8),
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Main toggle row
-          Row(
-            children: [
-              // Icon with gradient background
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.sm),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.toggleActiveColor.withValues(alpha: 0.3),
-                      AppTheme.toggleActiveColor.withValues(alpha: 0.1),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: AppRadius.smallRadius,
-                ),
-                child: Icon(
-                  Icons.notification_add_outlined,
-                  color: Colors.white,
-                  size: ResponsiveUtils.iconSize(context, 22),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              // Title and subtitle
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.webPushTitle,
-                      style: TextStyle(
-                        fontSize: ResponsiveUtils.fontSize(context, 16,
-                            minSize: 14, maxSize: 18),
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryText,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      l10n.webPushSubtitle,
-                      style: TextStyle(
-                        fontSize: ResponsiveUtils.fontSize(context, 13,
-                            minSize: 11, maxSize: 15),
-                        color: AppColors.tertiaryText,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Toggle switch
-              Switch(
-                value: isEnabled && isSupported && permissionStatus != 'denied',
-                onChanged: isSupported && permissionStatus != 'denied'
-                    ? (value) => _toggleWebPush(value)
-                    : null,
-                activeTrackColor: Colors.white.withValues(alpha: 0.5),
-                thumbColor: WidgetStateProperty.resolveWith<Color>(
-                  (Set<WidgetState> states) {
-                    if (states.contains(WidgetState.disabled)) {
-                      return Colors.grey;
-                    }
-                    if (states.contains(WidgetState.selected)) {
-                      return AppTheme.secondaryColor;
-                    }
-                    return AppTheme.secondaryColor;
-                  },
-                ),
-                trackOutlineColor: WidgetStateProperty.resolveWith<Color>(
-                  (Set<WidgetState> states) {
-                    if (states.contains(WidgetState.disabled)) {
-                      return Colors.grey.withValues(alpha: 0.5);
-                    }
-                    if (states.contains(WidgetState.selected)) {
-                      return AppTheme.secondaryColor;
-                    }
-                    return AppTheme.secondaryColor;
-                  },
-                ),
-              ),
-            ],
-          ),
-          // Status indicator
-          const SizedBox(height: AppSpacing.sm),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.1),
-              borderRadius: AppRadius.smallRadius,
-              border: Border.all(
-                color: statusColor.withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  statusIcon,
-                  color: statusColor,
-                  size: ResponsiveUtils.iconSize(context, 14),
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  statusText,
-                  style: TextStyle(
-                    fontSize: ResponsiveUtils.fontSize(context, 12,
-                        minSize: 10, maxSize: 14),
-                    color: statusColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Toggle web push notifications
-  Future<void> _toggleWebPush(bool enabled) async {
-    final l10n = AppLocalizations.of(context);
-    if (enabled) {
-      // Get user email for subscription tracking
-      final userEmail = await TokenManager.instance.getUserEmail();
-      if (userEmail != null) {
-        WebPushNotificationService.setUserId(userEmail);
-      }
-
-      // Request permission and subscribe
-      final subscription = await WebPushNotificationService.initialize();
-      if (subscription != null) {
-        // Successfully subscribed
-        ref.read(webPushEnabledProvider.notifier).setEnabled(true);
-        if (mounted) {
-          AppSnackBar.show(
-            context,
-            message: l10n.webPushSubscribed,
-            icon: Icons.check_circle,
-            iconColor: Colors.green,
-          );
-        }
-      } else {
-        // Failed to subscribe
-        if (mounted) {
-          final status = WebPushNotificationService.permissionStatus;
-          if (status == 'denied') {
-            AppSnackBar.showError(
-              context,
-              message: l10n.webPushPermissionDenied,
-            );
-          } else {
-            AppSnackBar.showError(
-              context,
-              message: l10n.webPushFailed,
-            );
-          }
-        }
-      }
-    } else {
-      // Unsubscribe
-      await WebPushNotificationService.unsubscribe();
-      ref.read(webPushEnabledProvider.notifier).setEnabled(false);
-      if (mounted) {
-        AppSnackBar.show(
-          context,
-          message: l10n.webPushUnsubscribed,
-          icon: Icons.notifications_off,
-          iconColor: Colors.orange,
-        );
-      }
-    }
-    // Trigger rebuild to update status
-    setState(() {});
-  }
-
   Future<void> _toggleAppLock(bool enabled) async {
     final l10n = AppLocalizations.of(context);
     final localAuth = LocalAuthentication();
@@ -1024,8 +778,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   /// Handle changing existing PIN
   Future<void> _handleChangePIN() async {
-    const secureStorage = SecureStorageService();
-
     // First verify current PIN
     final verified = await _showPINVerificationDialog();
     if (!verified || !mounted) return;
@@ -1634,7 +1386,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 AppTheme.goldColor.withValues(alpha: 0.1),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(AppRadius.xs + 2),
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.xs + 2),
                           ),
                           child: Icon(
                             Icons.storage,
@@ -1684,7 +1437,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Row(
                         children: [
                           Icon(
-                            hasConsented ? Icons.check_circle : Icons.info_outline,
+                            hasConsented
+                                ? Icons.check_circle
+                                : Icons.info_outline,
                             color: hasConsented ? Colors.green : Colors.orange,
                             size: 20,
                           ),
@@ -1692,7 +1447,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           Expanded(
                             child: Text(
                               hasConsented
-                                  ? (currentLevel == StorageConsentLevel.acceptAll
+                                  ? (currentLevel ==
+                                          StorageConsentLevel.acceptAll
                                       ? l10n.currentConsentAll
                                       : l10n.currentConsentEssential)
                                   : l10n.currentConsentNone,
@@ -1725,7 +1481,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     _buildStorageOption(
                       title: l10n.acceptAllStorage,
                       description: l10n.acceptAllStorageDesc,
-                      isSelected: selectedLevel == StorageConsentLevel.acceptAll,
+                      isSelected:
+                          selectedLevel == StorageConsentLevel.acceptAll,
                       onTap: () {
                         setDialogState(() {
                           selectedLevel = StorageConsentLevel.acceptAll;
@@ -1738,7 +1495,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     _buildStorageOption(
                       title: l10n.essentialOnly,
                       description: l10n.essentialOnlyDesc,
-                      isSelected: selectedLevel == StorageConsentLevel.essentialOnly,
+                      isSelected:
+                          selectedLevel == StorageConsentLevel.essentialOnly,
                       onTap: () {
                         setDialogState(() {
                           selectedLevel = StorageConsentLevel.essentialOnly;
@@ -1765,9 +1523,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             borderColor: AppTheme.goldColor,
                             onPressed: () async {
                               // Save the new preference
-                              if (selectedLevel == StorageConsentLevel.acceptAll) {
+                              if (selectedLevel ==
+                                  StorageConsentLevel.acceptAll) {
                                 await consentService.acceptAll();
-                              } else if (selectedLevel == StorageConsentLevel.essentialOnly) {
+                              } else if (selectedLevel ==
+                                  StorageConsentLevel.essentialOnly) {
                                 await consentService.acceptEssentialOnly();
                               }
                               NavigationService.pop();
@@ -1814,7 +1574,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           children: [
             Icon(
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected ? AppTheme.goldColor : Colors.white.withValues(alpha: 0.5),
+              color: isSelected
+                  ? AppTheme.goldColor
+                  : Colors.white.withValues(alpha: 0.5),
               size: 22,
             ),
             const SizedBox(width: AppSpacing.md),
@@ -1985,12 +1747,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppRadius.sm),
-                    border: Border.all(
-                        color: Colors.green.withValues(alpha: 0.3)),
+                    border:
+                        Border.all(color: Colors.green.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.check_circle_outline,
                         color: Colors.green,
                         size: 18,
@@ -2049,7 +1811,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.info_outline,
                                     size: 16,
                                     color: Colors.blue,
@@ -2112,8 +1874,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               borderRadius: BorderRadius.circular(AppRadius.sm),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  const BorderSide(color: Colors.orange, width: 2),
+                              borderSide: const BorderSide(
+                                  color: Colors.orange, width: 2),
                               borderRadius: BorderRadius.circular(AppRadius.sm),
                             ),
                             contentPadding: const EdgeInsets.all(AppSpacing.md),
@@ -2145,7 +1907,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         height: 48,
                         borderColor: Colors.orange.withValues(alpha: 0.8),
                         onPressed: () async {
-                          if (confirmController.text.trim().toUpperCase() == 'CLEAR') {
+                          if (confirmController.text.trim().toUpperCase() ==
+                              'CLEAR') {
                             confirmController.dispose();
                             NavigationService.pop();
                             await _clearLocalData();
@@ -2171,7 +1934,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       padding: const EdgeInsets.only(left: 8, bottom: 6),
       child: Row(
         children: [
-          Icon(Icons.remove_circle_outline, color: Colors.orange, size: 16),
+          const Icon(Icons.remove_circle_outline,
+              color: Colors.orange, size: 16),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -2226,8 +1990,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.orange),
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
                   ),
                   const SizedBox(width: AppSpacing.lg),
                   Text(
@@ -2335,7 +2098,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 Colors.red.withValues(alpha: 0.1),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(AppRadius.xs + 2),
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.xs + 2),
                           ),
                           child: Icon(
                             Icons.person_remove,
@@ -2428,10 +2192,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 Text(
                                   l10n.permanentDeleteServerData,
                                   style: TextStyle(
-                                    fontSize: ResponsiveUtils.fontSize(context, 14,
+                                    fontSize: ResponsiveUtils.fontSize(
+                                        context, 14,
                                         minSize: 12, maxSize: 16),
                                     fontWeight: FontWeight.w600,
-                                    color: hardDelete ? Colors.green : Colors.orange,
+                                    color: hardDelete
+                                        ? Colors.green
+                                        : Colors.orange,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -2440,7 +2207,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                       ? l10n.permanentDeleteExplanation
                                       : l10n.softDeleteExplanation,
                                   style: TextStyle(
-                                    fontSize: ResponsiveUtils.fontSize(context, 12,
+                                    fontSize: ResponsiveUtils.fontSize(
+                                        context, 12,
                                         minSize: 10, maxSize: 14),
                                     color: Colors.white.withValues(alpha: 0.7),
                                   ),
@@ -2508,7 +2276,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       const SizedBox(height: AppSpacing.sm),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 16,
                             height: 16,
                             child: CircularProgressIndicator(
@@ -2549,7 +2317,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         const SizedBox(width: AppSpacing.md),
                         Expanded(
                           child: GlassButton(
-                            text: isLoading ? l10n.deleting : l10n.deleteAccount,
+                            text:
+                                isLoading ? l10n.deleting : l10n.deleteAccount,
                             height: 48,
                             borderColor: Colors.red.withValues(alpha: 0.8),
                             onPressed: isLoading
@@ -2574,13 +2343,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                       // Step 1: Cancel Stripe subscription if active
                                       if (hasActiveSubscription) {
                                         setDialogState(() {
-                                          loadingStatus = l10n.cancellingSubscription;
+                                          loadingStatus =
+                                              l10n.cancellingSubscription;
                                         });
                                         try {
                                           // Cancel immediately (not at period end)
-                                          await cancelSubscription(cancelAtPeriodEnd: false);
+                                          await cancelSubscription(
+                                              cancelAtPeriodEnd: false);
                                         } catch (e) {
-                                          debugPrint('[DeleteAccount] Subscription cancel failed: $e');
+                                          debugPrint(
+                                              '[DeleteAccount] Subscription cancel failed: $e');
                                           // Continue with deletion even if cancel fails
                                         }
                                       }
@@ -2588,13 +2360,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                       // Step 2: Unsubscribe from web push if enabled
                                       if (webPushEnabled) {
                                         setDialogState(() {
-                                          loadingStatus = l10n.unsubscribingNotifications;
+                                          loadingStatus =
+                                              l10n.unsubscribingNotifications;
                                         });
                                         try {
-                                          await WebPushNotificationService.unsubscribe();
-                                          ref.read(webPushEnabledProvider.notifier).setEnabled(false);
+                                          await WebPushNotificationService
+                                              .unsubscribe();
+                                          ref
+                                              .read(webPushEnabledProvider
+                                                  .notifier)
+                                              .setEnabled(false);
                                         } catch (e) {
-                                          debugPrint('[DeleteAccount] Push unsubscribe failed: $e');
+                                          debugPrint(
+                                              '[DeleteAccount] Push unsubscribe failed: $e');
                                           // Continue with deletion even if unsubscribe fails
                                         }
                                       }
@@ -2604,17 +2382,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                         loadingStatus = l10n.deletingServerData;
                                       });
                                       final success = await AuthService.instance
-                                          .deleteAccount(password, hardDelete: hardDelete);
+                                          .deleteAccount(password,
+                                              hardDelete: hardDelete);
 
                                       if (success) {
                                         // Step 4: Clear local data
                                         setDialogState(() {
-                                          loadingStatus = l10n.clearingLocalData;
+                                          loadingStatus =
+                                              l10n.clearingLocalData;
                                         });
                                         final dbService = DatabaseService();
                                         await dbService.resetDatabase();
-                                        final prefs =
-                                            await SharedPreferences.getInstance();
+                                        final prefs = await SharedPreferences
+                                            .getInstance();
                                         await prefs.clear();
 
                                         passwordController.dispose();
@@ -2630,16 +2410,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                         setDialogState(() {
                                           isLoading = false;
                                           loadingStatus = '';
-                                          errorText = l10n.failedToDeleteAccount;
+                                          errorText =
+                                              l10n.failedToDeleteAccount;
                                         });
                                       }
                                     } catch (e) {
                                       setDialogState(() {
                                         isLoading = false;
                                         loadingStatus = '';
-                                        errorText = e.toString().contains('password')
-                                            ? l10n.incorrectPassword
-                                            : l10n.failedToDeleteAccount;
+                                        errorText =
+                                            e.toString().contains('password')
+                                                ? l10n.incorrectPassword
+                                                : l10n.failedToDeleteAccount;
                                       });
                                     }
                                   },
