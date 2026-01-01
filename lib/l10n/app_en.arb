@@ -4555,6 +4555,50 @@
   "@pwaPrivateModeWarning": {
     "description": "Warning that private browsing mode blocks PWA installation"
   },
+  "webPushSectionTitle": "Push Notifications (PWA)",
+  "@webPushSectionTitle": {
+    "description": "Section header for web push notifications in settings"
+  },
+  "webPushTitle": "Push Notifications",
+  "@webPushTitle": {
+    "description": "Title for web push notification toggle"
+  },
+  "webPushSubtitle": "Get notified even when app is closed",
+  "@webPushSubtitle": {
+    "description": "Subtitle for web push notification toggle"
+  },
+  "webPushNotSupported": "Not supported in this browser",
+  "@webPushNotSupported": {
+    "description": "Status when web push is not supported"
+  },
+  "webPushBlocked": "Blocked - check browser settings",
+  "@webPushBlocked": {
+    "description": "Status when web push permission is denied"
+  },
+  "webPushEnabled": "Enabled",
+  "@webPushEnabled": {
+    "description": "Status when web push is enabled"
+  },
+  "webPushDisabled": "Disabled",
+  "@webPushDisabled": {
+    "description": "Status when web push is disabled"
+  },
+  "webPushSubscribed": "Push notifications enabled!",
+  "@webPushSubscribed": {
+    "description": "Success message when subscribed to push"
+  },
+  "webPushUnsubscribed": "Push notifications disabled",
+  "@webPushUnsubscribed": {
+    "description": "Success message when unsubscribed from push"
+  },
+  "webPushPermissionDenied": "Notification permission was denied. Enable in browser settings.",
+  "@webPushPermissionDenied": {
+    "description": "Error when push permission is denied"
+  },
+  "webPushFailed": "Failed to enable push notifications",
+  "@webPushFailed": {
+    "description": "Error when push subscription fails"
+  },
   "lockoutNoTrialTitle": "Start Your\nFree Trial",
   "@lockoutNoTrialTitle": {
     "description": "Title for chat lockout when user hasn't started trial"

@@ -1218,3 +1218,101 @@ final initializeAppProvider = FutureProvider<void>((ref) async {
     },
   );
 });
+
+// ============================================================================
+// WEB PUSH NOTIFICATION PROVIDERS (PWA only)
+// ============================================================================
+
+/// Provider for web push enabled status
+final webPushEnabledProvider =
+    StateNotifierProvider<WebPushEnabledNotifier, bool>((ref) {
+  final preferencesAsync = ref.watch(preferencesServiceProvider);
+  return WebPushEnabledNotifier(preferencesAsync, ref);
+});
+
+class WebPushEnabledNotifier extends StateNotifier<bool> {
+  final AsyncValue<PreferencesService> _preferencesAsync;
+  final Ref _ref;
+  PreferencesService? _preferences;
+
+  WebPushEnabledNotifier(this._preferencesAsync, this._ref) : super(false) {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    _preferencesAsync.whenData((prefs) {
+      _preferences = prefs;
+      state = prefs.loadWebPushEnabled();
+    });
+  }
+
+  /// Enable or disable web push notifications
+  Future<bool> setEnabled(bool enabled) async {
+    if (!kIsWeb) return false;
+
+    state = enabled;
+    await _preferences?.saveWebPushEnabled(enabled);
+    return true;
+  }
+}
+
+/// Provider for web push permission status
+/// Returns: 'granted', 'denied', 'default', or 'unsupported'
+final webPushPermissionStatusProvider = Provider<String>((ref) {
+  if (!kIsWeb) return 'unsupported';
+
+  // Import and use the service here
+  // This is a synchronous check
+  return 'default'; // Will be updated by WebPushNotificationService
+});
+
+/// Provider for badge count
+final badgeCountProvider =
+    StateNotifierProvider<BadgeCountNotifier, int>((ref) {
+  final preferencesAsync = ref.watch(preferencesServiceProvider);
+  return BadgeCountNotifier(preferencesAsync);
+});
+
+class BadgeCountNotifier extends StateNotifier<int> {
+  final AsyncValue<PreferencesService> _preferencesAsync;
+  PreferencesService? _preferences;
+
+  BadgeCountNotifier(this._preferencesAsync) : super(0) {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    _preferencesAsync.whenData((prefs) {
+      _preferences = prefs;
+      state = prefs.loadLastBadgeCount();
+    });
+  }
+
+  /// Update badge count
+  Future<void> setBadgeCount(int count) async {
+    state = count;
+    await _preferences?.saveLastBadgeCount(count);
+
+    // Update the actual badge on web
+    if (kIsWeb) {
+      // Badge update happens via BadgeService in the UI layer
+    }
+  }
+
+  /// Increment badge count by 1
+  Future<void> increment() async {
+    await setBadgeCount(state + 1);
+  }
+
+  /// Decrement badge count by 1 (minimum 0)
+  Future<void> decrement() async {
+    if (state > 0) {
+      await setBadgeCount(state - 1);
+    }
+  }
+
+  /// Clear badge count
+  Future<void> clear() async {
+    await setBadgeCount(0);
+  }
+}

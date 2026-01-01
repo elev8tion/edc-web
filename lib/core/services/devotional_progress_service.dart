@@ -258,6 +258,24 @@ class DevotionalProgressService {
     return null;
   }
 
+  /// Check if user has completed a devotional today
+  /// Returns true if today's devotional (or any devotional with today's date) is marked complete
+  Future<bool> hasCompletedDevotionalToday() async {
+    final today = DateTime.now();
+    final todayString = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+
+    final db = await _database.database;
+    final result = await db.query(
+      'devotionals',
+      columns: ['is_completed'],
+      where: 'date = ? AND is_completed = 1',
+      whereArgs: [todayString],
+      limit: 1,
+    );
+
+    return result.isNotEmpty;
+  }
+
   /// Get the most recent devotional that has a date on or before today
   Future<Devotional?> getMostRecentAvailableDevotional() async {
     final today = DateTime.now();

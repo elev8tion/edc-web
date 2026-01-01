@@ -62,6 +62,11 @@ class PreferencesService {
   static const String _biometricSetupCompletedKey = 'biometric_setup_completed';
   static const String _deviceIdKey = 'device_id';
 
+  // Web Push Notification Keys (PWA only)
+  static const String _webPushEnabledKey = 'web_push_enabled';
+  static const String _webPushSubscriptionKey = 'web_push_subscription';
+  static const String _lastBadgeCountKey = 'last_badge_count';
+
   // Default values
   static const String _defaultThemeMode = 'dark';
   static const String _defaultLanguage = 'English';
@@ -821,6 +826,92 @@ class PreferencesService {
       return result ?? false;
     } catch (e) {
       return false;
+    }
+  }
+
+  // ============================================================================
+  // WEB PUSH NOTIFICATION METHODS (PWA only)
+  // ============================================================================
+
+  /// Save web push enabled status
+  ///
+  /// Returns true if save was successful, false otherwise.
+  Future<bool> saveWebPushEnabled(bool enabled) async {
+    try {
+      final result = await _preferences?.setBool(_webPushEnabledKey, enabled);
+      return result ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Load web push enabled status
+  ///
+  /// Returns true if web push is enabled, false otherwise.
+  bool loadWebPushEnabled() {
+    try {
+      return _preferences?.getBool(_webPushEnabledKey) ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Save web push subscription JSON
+  ///
+  /// Stores the PushSubscription object as JSON string.
+  /// Returns true if save was successful, false otherwise.
+  Future<bool> saveWebPushSubscription(String subscriptionJson) async {
+    try {
+      final result = await _preferences?.setString(_webPushSubscriptionKey, subscriptionJson);
+      return result ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Load web push subscription JSON
+  ///
+  /// Returns saved subscription JSON or null if not set.
+  String? loadWebPushSubscription() {
+    try {
+      return _preferences?.getString(_webPushSubscriptionKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Clear web push subscription
+  ///
+  /// Returns true if deletion was successful, false otherwise.
+  Future<bool> clearWebPushSubscription() async {
+    try {
+      final result = await _preferences?.remove(_webPushSubscriptionKey);
+      return result ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Save last badge count
+  ///
+  /// Stores the last known badge count for restoration after app restart.
+  Future<bool> saveLastBadgeCount(int count) async {
+    try {
+      final result = await _preferences?.setInt(_lastBadgeCountKey, count);
+      return result ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Load last badge count
+  ///
+  /// Returns the last saved badge count or 0 if not set.
+  int loadLastBadgeCount() {
+    try {
+      return _preferences?.getInt(_lastBadgeCountKey) ?? 0;
+    } catch (e) {
+      return 0;
     }
   }
 

@@ -3442,6 +3442,40 @@ class AppLocalizationsEs extends AppLocalizations {
       'El modo privado/incógnito no permite la instalación de apps.';
 
   @override
+  String get webPushSectionTitle => 'Notificaciones Push (PWA)';
+
+  @override
+  String get webPushTitle => 'Notificaciones Push';
+
+  @override
+  String get webPushSubtitle => 'Recibe alertas aunque la app esté cerrada';
+
+  @override
+  String get webPushNotSupported => 'No soportado en este navegador';
+
+  @override
+  String get webPushBlocked => 'Bloqueado - revisa configuración del navegador';
+
+  @override
+  String get webPushEnabled => 'Activado';
+
+  @override
+  String get webPushDisabled => 'Desactivado';
+
+  @override
+  String get webPushSubscribed => '¡Notificaciones push activadas!';
+
+  @override
+  String get webPushUnsubscribed => 'Notificaciones push desactivadas';
+
+  @override
+  String get webPushPermissionDenied =>
+      'Permiso de notificación denegado. Actívalo en la configuración del navegador.';
+
+  @override
+  String get webPushFailed => 'Error al activar notificaciones push';
+
+  @override
   String get lockoutNoTrialTitle => 'Comienza Tu\nPrueba Gratis';
 
   @override

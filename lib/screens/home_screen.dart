@@ -6,6 +6,7 @@ import 'package:web/web.dart' as web;
 import 'package:shimmer/shimmer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_scalify/flutter_scalify.dart';
+import '../core/services/badge_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_gradients.dart';
 import '../components/pwa_install_dialog.dart';
@@ -41,6 +42,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _startOnboardingFlow();
+    // Schedule badge update after build so we can access ref
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateAppBadge();
+    });
+  }
+
+  /// Update app badge based on unread content (web PWA only)
+  Future<void> _updateAppBadge() async {
+    if (!kIsWeb) return;
+    if (!BadgeService.isSupported) return;
+    if (!mounted) return;
+
+    try {
+      // Check if today's devotional has been completed by checking the streak
+      // A streak > 0 and incremented today means devotional was completed
+      final progressService = ref.read(devotionalProgressServiceProvider);
+      final hasCompletedToday = await progressService.hasCompletedDevotionalToday();
+
+      if (!hasCompletedToday) {
+        // Show badge indicating new content available
+        await BadgeService.setBadge(1);
+        debugPrint('[Badge] Set badge to 1 (devotional not completed today)');
+      } else {
+        // Clear badge if devotional completed
+        await BadgeService.clearBadge();
+        debugPrint('[Badge] Cleared badge (devotional completed today)');
+      }
+    } catch (e) {
+      debugPrint('[Badge] Error updating badge: $e');
+    }
   }
 
   /// Onboarding flow: Tutorial first, then trial dialog

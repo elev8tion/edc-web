@@ -1,0 +1,38 @@
+# Web Push Notification Worker Configuration
+# Deploy with: wrangler deploy -c wrangler-webpush.toml
+
+name = "edc-web-push"
+main = "src/web-push.js"
+compatibility_date = "2024-01-01"
+
+# Enable workers.dev subdomain
+workers_dev = true
+
+# KV Namespace for storing push subscriptions
+# Create with: wrangler kv:namespace create PUSH_SUBSCRIPTIONS
+# Then add the id below
+[[kv_namespaces]]
+binding = "PUSH_SUBSCRIPTIONS"
+id = "YOUR_KV_NAMESPACE_ID"  # Replace after running: wrangler kv:namespace create PUSH_SUBSCRIPTIONS
+
+# Optional: Scheduled trigger for daily devotional notifications
+# Runs at 6:00 AM UTC daily
+[triggers]
+crons = ["0 6 * * *"]
+
+# Environment variables
+[vars]
+VAPID_SUBJECT = "mailto:support@everydaychristian.app"
+
+# Secrets (set via: wrangler secret put SECRET_NAME -c wrangler-webpush.toml)
+# Required secrets:
+# - VAPID_PUBLIC_KEY: Base64URL encoded public key
+# - VAPID_PRIVATE_KEY: Base64URL encoded private key
+#
+# Generate VAPID keys with:
+#   npx web-push generate-vapid-keys
+#
+# Or use OpenSSL:
+#   openssl ecparam -name prime256v1 -genkey -noout -out vapid_private.pem
+#   openssl ec -in vapid_private.pem -pubout -out vapid_public.pem
+#   openssl ec -in vapid_private.pem -outform DER | tail -c 32 | base64 | tr '/+' '_-' | tr -d '='

@@ -3396,6 +3396,40 @@ class AppLocalizationsEn extends AppLocalizations {
       'Private/Incognito mode doesn\'t support app installation.';
 
   @override
+  String get webPushSectionTitle => 'Push Notifications (PWA)';
+
+  @override
+  String get webPushTitle => 'Push Notifications';
+
+  @override
+  String get webPushSubtitle => 'Get notified even when app is closed';
+
+  @override
+  String get webPushNotSupported => 'Not supported in this browser';
+
+  @override
+  String get webPushBlocked => 'Blocked - check browser settings';
+
+  @override
+  String get webPushEnabled => 'Enabled';
+
+  @override
+  String get webPushDisabled => 'Disabled';
+
+  @override
+  String get webPushSubscribed => 'Push notifications enabled!';
+
+  @override
+  String get webPushUnsubscribed => 'Push notifications disabled';
+
+  @override
+  String get webPushPermissionDenied =>
+      'Notification permission was denied. Enable in browser settings.';
+
+  @override
+  String get webPushFailed => 'Failed to enable push notifications';
+
+  @override
   String get lockoutNoTrialTitle => 'Start Your\nFree Trial';
 
   @override

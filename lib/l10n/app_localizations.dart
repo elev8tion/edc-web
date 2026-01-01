@@ -6051,6 +6051,72 @@ abstract class AppLocalizations {
   /// **'Private/Incognito mode doesn\'t support app installation.'**
   String get pwaPrivateModeWarning;
 
+  /// Section header for web push notifications in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notifications (PWA)'**
+  String get webPushSectionTitle;
+
+  /// Title for web push notification toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notifications'**
+  String get webPushTitle;
+
+  /// Subtitle for web push notification toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified even when app is closed'**
+  String get webPushSubtitle;
+
+  /// Status when web push is not supported
+  ///
+  /// In en, this message translates to:
+  /// **'Not supported in this browser'**
+  String get webPushNotSupported;
+
+  /// Status when web push permission is denied
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked - check browser settings'**
+  String get webPushBlocked;
+
+  /// Status when web push is enabled
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get webPushEnabled;
+
+  /// Status when web push is disabled
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get webPushDisabled;
+
+  /// Success message when subscribed to push
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications enabled!'**
+  String get webPushSubscribed;
+
+  /// Success message when unsubscribed from push
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications disabled'**
+  String get webPushUnsubscribed;
+
+  /// Error when push permission is denied
+  ///
+  /// In en, this message translates to:
+  /// **'Notification permission was denied. Enable in browser settings.'**
+  String get webPushPermissionDenied;
+
+  /// Error when push subscription fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to enable push notifications'**
+  String get webPushFailed;
+
   /// Title for chat lockout when user hasn't started trial
   ///
   /// In en, this message translates to:
