@@ -12,10 +12,12 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - lib/archived/**
+    - lib/**/archived/**
     - test/archived/**
     - docs/archive/**
     - tools/**
     - status/**
+    - _archived/**
 
 linter:
   # The lint rules applied to this project can be customized in the

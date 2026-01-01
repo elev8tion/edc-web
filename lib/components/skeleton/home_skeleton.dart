@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter_scalify/flutter_scalify.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/app_theme_extensions.dart';
 import '../../theme/app_gradients.dart';
 import '../dark_main_feature_card.dart';
 import '../clear_glass_card.dart';
