@@ -33,8 +33,11 @@
   <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152x152.png">
   <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120x120.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <!-- Favicon - multiple sizes for browser compatibility -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 
   <title>Everyday Christian</title>
   <link rel="manifest" href="manifest.json">
@@ -118,6 +121,9 @@
 
   <!-- Stripe.js for payment processing (must load from js.stripe.com for PCI compliance) -->
   <script src="https://js.stripe.com/v3/"></script>
+
+  <!-- Web Push Client for native push notifications (no Firebase) -->
+  <script src="web-push-client.js" defer></script>
 
   <script>
     // Show offline fallback if app fails to load within timeout
