@@ -43,7 +43,8 @@ Everyday Christian is a pastoral counseling app that provides:
 - 🔐 **Biometric authentication** (Face ID, Touch ID)
 - 📊 **Progress tracking** (reading streaks, prayer stats)
 - 🎨 **Beautiful glassmorphic UI** with modern design language
-- 📴 **Always offline-first** (only AI chat requires internet)
+- 🌐 **PWA Ready** (Installable on iOS, Android, Desktop)
+- 📴 **Offline-first design** (Verse library, prayers, and devotionals work offline)
 
 ---
 
@@ -197,12 +198,8 @@ open coverage/html/index.html
 
 ---
 
-## 📊 Project Stats
-
 - **Lines of Code:** 44,042 (lib/)
 - **Dart Files:** 140 (lib) + 49 (test)
-- **Development Time:** 8 days (Sept 30 - Oct 8, 2025)
-- **Commits:** 50+
 - **Training Examples:** 19,750
 - **Bible Verses:** 31,103
 - **Supported Themes:** 75
