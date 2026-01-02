@@ -9,6 +9,7 @@ import 'package:everyday_christian/core/navigation/page_transitions.dart';
 import 'package:everyday_christian/core/providers/app_providers.dart';
 import 'package:everyday_christian/core/providers/secure_auth_provider.dart';
 import 'package:everyday_christian/core/services/app_update_service.dart';
+import 'package:everyday_christian/core/services/pwa_install_service.dart';
 import 'package:everyday_christian/core/services/subscription_service.dart';
 import 'package:everyday_christian/screens/bible_browser_screen.dart';
 import 'package:everyday_christian/screens/chapter_reading_screen.dart';
@@ -83,6 +84,10 @@ Future<void> main() async {
   // Initialize PWA install support (web only)
   // Note: We manually trigger the install prompt after tutorial, so no auto-delay needed
   if (kIsWeb) {
+    // Initialize our custom PWA install service early to capture beforeinstallprompt
+    final pwaService = PwaInstallService();
+    pwaService.initialize();
+
     FlutterPWAInstall.instance.setup(
       config: const PWAConfig(
         delayPrompt:
@@ -309,10 +314,8 @@ class _MyAppState extends ConsumerState<MyApp> {
             // On mobile, redirect to auth (mobile handles deep links differently)
             return DarkPageRoute(
                 settings: settings, builder: (_) => const AuthScreen());
-          case AppRoutes.onboarding:
-            // Legacy: Onboarding moved to signup form. Redirect to home for backward compatibility.
-            return DarkPageRoute(
-                settings: settings, builder: (_) => const HomeScreen());
+          // Note: Onboarding route removed - legal agreements now in signup form
+          // All navigation should go directly to home after verification
           case AppRoutes.waitForVerification:
             return DarkPageRoute(
                 settings: settings,

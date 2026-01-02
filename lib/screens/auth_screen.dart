@@ -8,7 +8,6 @@ import '../components/glass/static_liquid_glass_lens.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/navigation/app_routes.dart';
 import '../core/navigation/page_transitions.dart';
-import '../core/services/preferences_service.dart';
 import '../utils/responsive_utils.dart';
 import '../core/widgets/app_snackbar.dart';
 import '../l10n/app_localizations.dart';
@@ -60,17 +59,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             return;
           }
 
-          // Check if onboarding is completed
-          final prefsService = await PreferencesService.getInstance();
-          final hasCompletedOnboarding = prefsService.hasCompletedOnboarding();
-
-          if (!hasCompletedOnboarding) {
-            // User needs to complete onboarding
-            NavigationService.pushAndRemoveUntil(AppRoutes.onboarding);
-            return;
-          }
-
-          // All checks passed - go to home
+          // User is authenticated and verified - go directly to home
+          // (Legal agreements are now handled in signup form)
           NavigationService.pushAndRemoveUntil(AppRoutes.home);
         },
         unauthenticated: () {},

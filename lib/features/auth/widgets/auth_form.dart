@@ -60,17 +60,19 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
     bool success;
     if (_isSignUp) {
-      // Save legal agreements before signup
-      final prefsService = await PreferencesService.getInstance();
-      await prefsService.saveLegalAgreementAcceptance(true);
-      await prefsService.setOnboardingCompleted();
-
       success = await authService.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
         name: _nameController.text.trim().isEmpty ? null : _nameController.text.trim(),
         preferredThemes: ['hope', 'strength', 'comfort'],
       );
+
+      // Save legal agreements AFTER successful signup
+      if (success) {
+        final prefsService = await PreferencesService.getInstance();
+        await prefsService.saveLegalAgreementAcceptance(true);
+        await prefsService.setOnboardingCompleted();
+      }
     } else {
       success = await authService.signIn(
         email: _emailController.text.trim(),

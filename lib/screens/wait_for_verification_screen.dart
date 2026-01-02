@@ -43,8 +43,9 @@ class _WaitForVerificationScreenState
       if (isVerified) {
         timer.cancel();
         if (mounted) {
-          // Email verified - proceed to onboarding
-          NavigationService.pushAndRemoveUntilImmediate(AppRoutes.onboarding);
+          // Email verified - proceed directly to home
+          // (Legal agreements already accepted during signup)
+          NavigationService.pushAndRemoveUntilImmediate(AppRoutes.home);
         }
       }
     });

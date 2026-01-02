@@ -1,7 +1,7 @@
 class AppRoutes {
   static const String splash = '/splash';
   static const String legalAgreements = '/legal-agreements';
-  static const String onboarding = '/onboarding';
+  // Note: onboarding removed - legal agreements now handled in signup form
   static const String auth = '/auth';
   static const String verifyEmail = '/verify-email';
   static const String resetPassword = '/reset-password';
@@ -35,7 +35,6 @@ class AppRoutes {
   static const List<String> publicRoutes = [
     splash,
     legalAgreements,
-    onboarding,
     auth,
     verifyEmail,
     resetPassword,

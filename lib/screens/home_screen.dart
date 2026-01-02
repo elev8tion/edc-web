@@ -112,7 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   /// Show PWA install dialog after tutorial (web only)
   /// Uses custom dialog that handles both iOS (manual instructions) and Android (native prompt)
-  Future<void> _showPwaInstallIfNeeded() async {
+  Future<void> _showPwaInstallIfNeeded({int retryCount = 0}) async {
     // Only run PWA logic on web, but still show trial dialog on all platforms
     if (!kIsWeb) {
       _showTrialWelcomeIfNeeded();
@@ -136,13 +136,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
 
     // Check if we can prompt (handles dismissal tracking internally)
-    final canPrompt = pwaService.canPrompt;
+    var canPrompt = pwaService.canPrompt;
     final isIOS = pwaService.isIOS;
 
     // On iOS, we always show the manual instructions dialog
     // On other platforms, only show if we have a deferred prompt
     if (!canPrompt && !isIOS) {
-      debugPrint('[PWA] Cannot prompt and not iOS, skipping install dialog');
+      // Retry up to 2 times with delay - beforeinstallprompt may not have fired yet
+      if (retryCount < 2) {
+        debugPrint('[PWA] Cannot prompt yet, retrying in 3s (attempt ${retryCount + 1}/2)');
+        await Future.delayed(const Duration(seconds: 3));
+        if (mounted) {
+          return _showPwaInstallIfNeeded(retryCount: retryCount + 1);
+        }
+        return;
+      }
+      debugPrint('[PWA] Cannot prompt after retries, skipping install dialog');
       _showTrialWelcomeIfNeeded();
       return;
     }
