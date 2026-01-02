@@ -175,6 +175,24 @@ function isTokenBlacklisted(token) {
 }
 
 // ============================================
+// SECURITY: Standard Security Headers
+// ============================================
+
+/**
+ * Get standard security headers for all responses
+ * Based on OWASP recommendations and Cloudflare best practices
+ */
+function getSecurityHeaders() {
+  return {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'",
+  };
+}
+
+// ============================================
 // SECURITY: Dynamic CORS
 // ============================================
 
@@ -228,7 +246,12 @@ export default {
   async fetch(request, env, ctx) {
     // Handle CORS preflight
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: getCorsHeaders(request) });
+      return new Response(null, {
+        headers: {
+          ...getSecurityHeaders(),
+          ...getCorsHeaders(request),
+        }
+      });
     }
 
     const url = new URL(request.url);
@@ -299,7 +322,12 @@ async function handleSignup(request, env) {
   }
 
   try {
-    const { email, password, first_name, locale, device_id } = await request.json();
+    const body = await request.json();
+    const email = sanitizeString(body.email, 254); // RFC 5321 limit
+    const password = body.password; // Don't sanitize password - preserve exact input
+    const first_name = sanitizeString(body.first_name, 100);
+    const locale = sanitizeString(body.locale, 10);
+    const device_id = sanitizeString(body.device_id, 100);
 
     // Validate required fields
     if (!email || !password) {
@@ -311,12 +339,13 @@ async function handleSignup(request, env) {
       return jsonResponse({ error: 'Invalid email format' }, 400, request, rateLimitResult);
     }
 
-    // Validate password strength
-    if (password.length < 6) {
-      return jsonResponse({ error: 'Password must be at least 6 characters' }, 400, request, rateLimitResult);
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      return jsonResponse({ error: passwordValidation.error }, 400, request, rateLimitResult);
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = email.toLowerCase();
 
     // Check if user already exists
     const existingUser = await findUserByEmail(normalizedEmail, env);
@@ -408,13 +437,16 @@ async function handleLogin(request, env) {
   }
 
   try {
-    const { email, password, device_id } = await request.json();
+    const body = await request.json();
+    const email = sanitizeString(body.email, 254);
+    const password = body.password;
+    const device_id = sanitizeString(body.device_id, 100);
 
     if (!email || !password) {
       return jsonResponse({ error: 'Email and password are required' }, 400, request, rateLimitResult);
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = email.toLowerCase();
 
     // Find user
     const user = await findUserByEmail(normalizedEmail, env);
@@ -569,14 +601,17 @@ async function handleResetPassword(request, env) {
   }
 
   try {
-    const { token, new_password } = await request.json();
+    const body = await request.json();
+    const token = sanitizeString(body.token, 100);
+    const new_password = body.new_password;
 
     if (!token || !new_password) {
       return jsonResponse({ error: 'Token and new password are required' }, 400, request);
     }
 
-    if (new_password.length < 6) {
-      return jsonResponse({ error: 'Password must be at least 6 characters' }, 400, request);
+    const passwordValidation = validatePassword(new_password);
+    if (!passwordValidation.valid) {
+      return jsonResponse({ error: passwordValidation.error }, 400, request);
     }
 
     // Find user with this reset token
@@ -1606,6 +1641,32 @@ function isValidEmail(email) {
 }
 
 /**
+ * Sanitize string input - trim and limit length
+ * Prevents excessively long inputs that could cause issues
+ */
+function sanitizeString(input, maxLength = 255) {
+  if (typeof input !== 'string') return '';
+  return input.trim().slice(0, maxLength);
+}
+
+/**
+ * Validate password requirements
+ * Returns { valid: boolean, error: string | null }
+ */
+function validatePassword(password) {
+  if (!password || typeof password !== 'string') {
+    return { valid: false, error: 'Password is required' };
+  }
+  if (password.length < 6) {
+    return { valid: false, error: 'Password must be at least 6 characters' };
+  }
+  if (password.length > 128) {
+    return { valid: false, error: 'Password is too long' };
+  }
+  return { valid: true, error: null };
+}
+
+/**
  * Remove sensitive fields from user object
  */
 function sanitizeUser(user) {
@@ -1617,11 +1678,12 @@ function sanitizeUser(user) {
 }
 
 /**
- * JSON response helper with dynamic CORS and rate limit headers
+ * JSON response helper with dynamic CORS, security headers, and rate limit headers
  */
 function jsonResponse(data, status = 200, request = null, rateLimitResult = null, extraHeaders = {}) {
   const headers = {
     'Content-Type': 'application/json',
+    ...getSecurityHeaders(),
     ...(request ? getCorsHeaders(request) : { 'Access-Control-Allow-Origin': ALLOWED_ORIGINS[0] }),
     ...extraHeaders,
   };
