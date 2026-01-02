@@ -11,10 +11,12 @@
 - ✅ **AI System:** Migrated from Local TFLite to **Gemini 2.0 Flash** (via Cloudflare Workers Proxy for Web).
 - ✅ **Bible Loading:** Migrated from `ATTACH DATABASE` (mobile) to **SQL Dump Loading** (Web).
 - ✅ **Assets:** Confirmed `bible_books.json` is present.
+- ✅ **Dependencies:** Updated `pubspec.yaml` to latest compatible versions.
+- ✅ **Web Build:** Validated release build with `--no-tree-shake-icons`.
 
 ### Pending / In-Progress
-- 🔄 **Dependency Updates:** Updating `pubspec.yaml` to latest compatible versions.
-- 🔄 **Verification:** Ensuring `GeminiAIService` initializes correctly on Web.
+- ⚠️ **Stripe Verification:** Infrastructure confirmed, but Live Mode Promo Code blocked by API permissions.
+- 🔄 **AI Chat Verification:** Blocked by Stripe Promo Code (requires premium).
 
 ---
 
@@ -36,7 +38,7 @@
 ---
 
 ## 📅 Next Milestones
-1. Clean up `pubspec.yaml`.
-2. Verify end-to-end AI chat flow on Web.
-3. Verify Bible reading functionality on Web.
+1. **ACTION:** Create "Free Forever" coupon in Stripe Live Dashboard.
+2. Verify AI chat flow on Web (Post-Coupon).
+3. Deploy PWA to Netlify/Vercel.
 
