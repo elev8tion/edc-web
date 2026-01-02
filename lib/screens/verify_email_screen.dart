@@ -66,8 +66,8 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     );
 
     if (mounted && isAuthenticated) {
-      // User is now verified, go to onboarding or home
-      NavigationService.pushReplacementNamed(AppRoutes.onboarding);
+      // User is now verified, go directly to home
+      NavigationService.pushReplacementNamed(AppRoutes.home);
     } else if (mounted) {
       AppSnackBar.showError(
         context,
