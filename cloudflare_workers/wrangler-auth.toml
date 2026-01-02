@@ -22,19 +22,6 @@ TOKEN_EXPIRES_IN = "86400"
 # App URLs for email links
 APP_URL_WEB = "https://app.everydaychristian.app"
 APP_URL_MOBILE = "everydaychristian://"
-# Security: Environment and token configuration
-ENVIRONMENT = "production"
-# PBKDF2 iterations (OWASP 2024 recommendation: 600000)
-PBKDF2_ITERATIONS = "600000"
-# Access token expiry in seconds (15 minutes)
-ACCESS_TOKEN_EXPIRY = "900"
-# Refresh token expiry in seconds (7 days)
-REFRESH_TOKEN_EXPIRY = "604800"
-
-# KV Namespace for token blacklist (persistent across worker instances)
-[[kv_namespaces]]
-binding = "TOKEN_BLACKLIST"
-id = "cd860eda70c64159bb49c456423e7a6b"
 
 # Secrets (set via: wrangler secret put SECRET_NAME -c wrangler-auth.toml)
 # Required secrets:
