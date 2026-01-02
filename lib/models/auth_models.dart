@@ -4,6 +4,7 @@
 /// - AuthUser: User data from auth API
 /// - AuthResult: Response wrapper for auth operations
 /// - AuthException: Custom exception for auth errors
+library;
 
 /// User data returned from authentication endpoints
 class AuthUser {
@@ -41,13 +42,14 @@ class AuthUser {
       firstName: json['first_name'] as String? ?? json['firstName'] as String?,
       locale: json['locale'] as String?,
       emailVerified: json['email_verified'] == 1 ||
-                     json['email_verified'] == true ||
-                     json['emailVerified'] == true,
+          json['email_verified'] == true ||
+          json['emailVerified'] == true,
       createdAt: _parseDateTime(json['created_at'] ?? json['createdAt']),
       lastLoginAt: _parseDateTime(json['last_login_at'] ?? json['lastLoginAt']),
       stripeCustomerId: json['stripe_customer_id'] as String?,
       subscriptionStatus: json['subscription_status'] as String?,
-      premiumExpires: _parseDateTime(json['premium_expires'] ?? json['premiumExpires']),
+      premiumExpires:
+          _parseDateTime(json['premium_expires'] ?? json['premiumExpires']),
       deviceId: json['device_id'] as String?,
     );
   }
@@ -188,14 +190,13 @@ class AuthResult {
 
     return AuthResult(
       accessToken: json['token'] as String? ??
-                   json['access_token'] as String? ??
-                   json['accessToken'] as String?,
-      refreshToken: json['refresh_token'] as String? ??
-                    json['refreshToken'] as String?,
+          json['access_token'] as String? ??
+          json['accessToken'] as String?,
+      refreshToken:
+          json['refresh_token'] as String? ?? json['refreshToken'] as String?,
       user: user,
       message: json['message'] as String?,
-      success: json['success'] as bool? ??
-               json['error'] == null,
+      success: json['success'] as bool? ?? json['error'] == null,
     );
   }
 
@@ -252,11 +253,11 @@ class AuthException implements Exception {
   factory AuthException.fromJson(Map<String, dynamic> json, {int? statusCode}) {
     return AuthException(
       code: json['code'] as String? ??
-            json['error'] as String? ??
-            'unknown_error',
+          json['error'] as String? ??
+          'unknown_error',
       message: json['message'] as String? ??
-               json['error_description'] as String? ??
-               'An unknown error occurred',
+          json['error_description'] as String? ??
+          'An unknown error occurred',
       statusCode: statusCode ?? json['status'] as int?,
       details: json['details'] as Map<String, dynamic>?,
     );
@@ -351,15 +352,15 @@ class AuthException implements Exception {
   /// Check if error requires re-authentication
   bool get requiresReauth {
     return code == 'token_expired' ||
-           code == 'invalid_token' ||
-           statusCode == 401;
+        code == 'invalid_token' ||
+        statusCode == 401;
   }
 
   /// Check if this is a validation error
   bool get isValidationError {
     return code == 'invalid_email' ||
-           code == 'weak_password' ||
-           code == 'validation_error';
+        code == 'weak_password' ||
+        code == 'validation_error';
   }
 
   @override

@@ -16,9 +16,64 @@
  *
  * Security Features:
  * - Rate limiting (IP-based for login/signup, email-based for forgot-password)
- * - Token blacklisting for logout
+ * - Token blacklisting for logout (KV-based for persistence)
  * - Dynamic CORS origin validation
+ * - Secure HttpOnly cookies with __Host- prefix
+ * - CSRF protection tokens
+ * - Comprehensive security headers (CSP, X-Frame-Options, etc.)
  */
+
+// ============================================
+// SECURITY: Cookie & CSRF Configuration
+// ============================================
+
+// Cookie configuration for secure tokens
+const COOKIE_CONFIG = {
+  access: {
+    name: '__Host-access_token',
+    maxAge: 900,  // 15 minutes
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+    path: '/'
+  },
+  refresh: {
+    name: '__Host-refresh_token',
+    maxAge: 604800,  // 7 days
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+    path: '/api/auth'
+  }
+};
+
+const CSRF_CONFIG = {
+  name: 'csrf_token',
+  maxAge: 604800,
+  httpOnly: false,
+  secure: true,
+  sameSite: 'Strict'
+};
+
+// ============================================
+// SECURITY: HTTP Security Headers
+// ============================================
+
+const SECURITY_HEADERS = {
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "script-src 'self' https://js.stripe.com",
+    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
+    "connect-src 'self' https://*.workers.dev https://api.stripe.com",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: https:",
+    "font-src 'self'"
+  ].join('; '),
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+};
 
 // ============================================
 // SECURITY: Rate Limiting (In-Memory)
@@ -125,7 +180,7 @@ function addRateLimitHeaders(headers, rateLimitResult) {
 }
 
 // ============================================
-// SECURITY: Token Blacklist (In-Memory)
+// SECURITY: Token Blacklist (In-Memory - Legacy)
 // ============================================
 
 // Token blacklist: Map<token, expirationTime>
@@ -150,17 +205,17 @@ function cleanupBlacklist() {
 }
 
 /**
- * Add token to blacklist
+ * Add token to blacklist (in-memory - legacy)
  */
-function blacklistToken(token, expirationTime) {
+function blacklistTokenInMemory(token, expirationTime) {
   cleanupBlacklist();
   tokenBlacklist.set(token, expirationTime);
 }
 
 /**
- * Check if token is blacklisted
+ * Check if token is blacklisted (in-memory - legacy)
  */
-function isTokenBlacklisted(token) {
+function isTokenBlacklistedInMemory(token) {
   cleanupBlacklist();
   const expirationTime = tokenBlacklist.get(token);
   if (!expirationTime) return false;
@@ -172,6 +227,62 @@ function isTokenBlacklisted(token) {
   }
 
   return true;
+}
+
+// ============================================
+// SECURITY: Token Blacklist (KV-Based - Persistent)
+// ============================================
+
+/**
+ * Add token to KV blacklist by JTI (JWT ID)
+ * Uses TTL to auto-expire when token would have expired anyway
+ */
+async function blacklistToken(env, jti, expiresAt) {
+  const ttl = Math.ceil((expiresAt - Date.now()) / 1000);
+  if (ttl > 0 && env.TOKEN_BLACKLIST) {
+    await env.TOKEN_BLACKLIST.put(
+      `blacklist:${jti}`,
+      'revoked',
+      { expirationTtl: ttl }
+    );
+  }
+}
+
+/**
+ * Check if token is blacklisted by JTI
+ */
+async function isTokenBlacklisted(env, jti) {
+  if (!env.TOKEN_BLACKLIST) return false;
+  const result = await env.TOKEN_BLACKLIST.get(`blacklist:${jti}`);
+  return result !== null;
+}
+
+// ============================================
+// SECURITY: Cookie & CSRF Helpers
+// ============================================
+
+/**
+ * Build a secure cookie string from configuration
+ */
+function setSecureCookie(name, value, config) {
+  const parts = [
+    `${name}=${value}`,
+    `Max-Age=${config.maxAge}`,
+    `Path=${config.path || '/'}`,
+    config.httpOnly ? 'HttpOnly' : '',
+    config.secure ? 'Secure' : '',
+    `SameSite=${config.sameSite || 'Strict'}`
+  ].filter(Boolean);
+  return parts.join('; ');
+}
+
+/**
+ * Generate a cryptographically secure CSRF token
+ */
+function generateCsrfToken() {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return btoa(String.fromCharCode(...array));
 }
 
 // ============================================
@@ -324,8 +435,8 @@ async function handleSignup(request, env) {
       return jsonResponse({ error: 'An account with this email already exists' }, 409, request, rateLimitResult);
     }
 
-    // Hash password
-    const passwordHash = await hashPassword(password);
+    // Hash password with OWASP 2024 recommended iterations
+    const passwordHash = await hashPassword(password, env);
 
     // Generate verification token
     const verificationToken = generateToken();
@@ -431,8 +542,8 @@ async function handleLogin(request, env) {
       return jsonResponse({ error: 'Account not found' }, 401, request, rateLimitResult);
     }
 
-    // Verify password
-    const passwordValid = await verifyPassword(password, user.password_hash);
+    // Verify password (supports both legacy 100k and new 600k iterations)
+    const passwordValid = await verifyPassword(password, user.password_hash, env);
     if (!passwordValid) {
       return jsonResponse({ error: 'Invalid email or password' }, 401, request, rateLimitResult);
     }
@@ -590,8 +701,8 @@ async function handleResetPassword(request, env) {
       return jsonResponse({ error: 'Reset token has expired' }, 400, request);
     }
 
-    // Hash new password
-    const passwordHash = await hashPassword(new_password);
+    // Hash new password with OWASP 2024 recommended iterations
+    const passwordHash = await hashPassword(new_password, env);
 
     // Update password and clear reset token (set to null to clear)
     await updateUser(user.id, {
@@ -919,7 +1030,7 @@ async function handleDeleteAccount(request, env) {
       return jsonResponse({ error: 'User not found' }, 404, request);
     }
 
-    const passwordValid = await verifyPassword(password, user.password_hash);
+    const passwordValid = await verifyPassword(password, user.password_hash, env);
     if (!passwordValid) {
       return jsonResponse({ error: 'Incorrect password' }, 401, request);
     }
@@ -1143,11 +1254,15 @@ async function deletePushSubscription(userId, env) {
 
 /**
  * Hash password using PBKDF2
+ * Uses 600,000 iterations per OWASP 2024 recommendations
  */
-async function hashPassword(password) {
+async function hashPassword(password, env = null) {
   const encoder = new TextEncoder();
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const passwordData = encoder.encode(password);
+
+  // Use env variable if available, otherwise default to 600000 (OWASP 2024)
+  const iterations = env?.PBKDF2_ITERATIONS ? parseInt(env.PBKDF2_ITERATIONS) : 600000;
 
   const key = await crypto.subtle.importKey(
     'raw',
@@ -1161,7 +1276,7 @@ async function hashPassword(password) {
     {
       name: 'PBKDF2',
       salt: salt,
-      iterations: 100000,
+      iterations: iterations,
       hash: 'SHA-256',
     },
     key,
@@ -1178,8 +1293,9 @@ async function hashPassword(password) {
 
 /**
  * Verify password against hash
+ * Supports both legacy (100k) and new (600k) iteration counts for migration
  */
-async function verifyPassword(password, storedHash) {
+async function verifyPassword(password, storedHash, env = null) {
   try {
     const combined = Uint8Array.from(atob(storedHash), c => c.charCodeAt(0));
     const salt = combined.slice(0, 16);
@@ -1196,7 +1312,33 @@ async function verifyPassword(password, storedHash) {
       ['deriveBits']
     );
 
-    const derivedBits = await crypto.subtle.deriveBits(
+    // Try with current iteration count first (600000)
+    const currentIterations = env?.PBKDF2_ITERATIONS ? parseInt(env.PBKDF2_ITERATIONS) : 600000;
+
+    let derivedBits = await crypto.subtle.deriveBits(
+      {
+        name: 'PBKDF2',
+        salt: salt,
+        iterations: currentIterations,
+        hash: 'SHA-256',
+      },
+      key,
+      256
+    );
+
+    let computedHash = new Uint8Array(derivedBits);
+
+    // Check if current iterations work
+    if (computedHash.length === storedHashBytes.length) {
+      let result = 0;
+      for (let i = 0; i < computedHash.length; i++) {
+        result |= computedHash[i] ^ storedHashBytes[i];
+      }
+      if (result === 0) return true;
+    }
+
+    // Fall back to legacy iteration count (100000) for existing passwords
+    derivedBits = await crypto.subtle.deriveBits(
       {
         name: 'PBKDF2',
         salt: salt,
@@ -1207,15 +1349,15 @@ async function verifyPassword(password, storedHash) {
       256
     );
 
-    const computedHash = new Uint8Array(derivedBits);
+    computedHash = new Uint8Array(derivedBits);
 
-    // Constant-time comparison
+    // Constant-time comparison for legacy hash
     if (computedHash.length !== storedHashBytes.length) return false;
-    let result = 0;
+    let legacyResult = 0;
     for (let i = 0; i < computedHash.length; i++) {
-      result |= computedHash[i] ^ storedHashBytes[i];
+      legacyResult |= computedHash[i] ^ storedHashBytes[i];
     }
-    return result === 0;
+    return legacyResult === 0;
   } catch (error) {
     console.error('[VerifyPassword] Error:', error);
     return false;
@@ -1617,12 +1759,16 @@ function sanitizeUser(user) {
 }
 
 /**
- * JSON response helper with dynamic CORS and rate limit headers
+ * JSON response helper with dynamic CORS, security headers, and rate limit headers
  */
 function jsonResponse(data, status = 200, request = null, rateLimitResult = null, extraHeaders = {}) {
   const headers = {
     'Content-Type': 'application/json',
+    // Security headers
+    ...SECURITY_HEADERS,
+    // CORS headers
     ...(request ? getCorsHeaders(request) : { 'Access-Control-Allow-Origin': ALLOWED_ORIGINS[0] }),
+    // Extra headers (can override defaults)
     ...extraHeaders,
   };
 

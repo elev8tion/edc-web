@@ -8,6 +8,7 @@
 /// - Subscribe button (redirects to Stripe Checkout)
 ///
 /// PWA-only: Uses Stripe Checkout for payments (no in-app purchase)
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,10 +36,10 @@ class PaywallScreen extends ConsumerStatefulWidget {
   final bool showMessageStats;
 
   const PaywallScreen({
-    Key? key,
+    super.key,
     this.showTrialInfo = true,
     this.showMessageStats = false,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<PaywallScreen> createState() => _PaywallScreenState();

@@ -2,6 +2,7 @@
 ///
 /// IMPORTANT: Only use these methods in debug/testing environments!
 /// These methods manipulate SharedPreferences to simulate different subscription states.
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +26,8 @@ class DebugSubscriptionHelpers {
   /// Hot restart the app to see the changes take effect.
   static Future<void> simulateTrialExpiration({int daysAgo = 4}) async {
     if (!kDebugMode) {
-      debugPrint('⚠️  simulateTrialExpiration() can only be called in debug mode!');
+      debugPrint(
+          '⚠️  simulateTrialExpiration() can only be called in debug mode!');
       return;
     }
 
@@ -37,7 +39,8 @@ class DebugSubscriptionHelpers {
     // Set trial start date to X days ago
     await prefs.setString('trial_start_date', expirationDate.toIso8601String());
 
-    debugPrint('✅ [DEBUG] Trial start date set to $daysAgo days ago: $expirationDate');
+    debugPrint(
+        '✅ [DEBUG] Trial start date set to $daysAgo days ago: $expirationDate');
     debugPrint('📊 [DEBUG] Current status:');
     debugPrint('   - Trial should now be EXPIRED (started $daysAgo days ago)');
     debugPrint('   - Chat should show paywall when attempting to send');
@@ -72,14 +75,17 @@ class DebugSubscriptionHelpers {
   /// [messagesUsed] - Number of messages to mark as used (0-15)
   ///
   /// Useful for testing the 15-message trial limit without sending 15 actual messages.
-  static Future<void> simulateTrialMessagesUsed({required int messagesUsed}) async {
+  static Future<void> simulateTrialMessagesUsed(
+      {required int messagesUsed}) async {
     if (!kDebugMode) {
-      debugPrint('⚠️  simulateTrialMessagesUsed() can only be called in debug mode!');
+      debugPrint(
+          '⚠️  simulateTrialMessagesUsed() can only be called in debug mode!');
       return;
     }
 
     if (messagesUsed < 0 || messagesUsed > 15) {
-      debugPrint('⚠️  Invalid messagesUsed value: $messagesUsed (must be 0-15)');
+      debugPrint(
+          '⚠️  Invalid messagesUsed value: $messagesUsed (must be 0-15)');
       return;
     }
 
@@ -130,7 +136,8 @@ class DebugSubscriptionHelpers {
     debugPrint('   - Messages Used: $messagesUsed / 15');
     debugPrint('   - Messages Remaining: $messagesRemaining');
     debugPrint('   - Expired by Time: ${isExpiredByTime ? "YES ⚠️" : "NO ✅"}');
-    debugPrint('   - Expired by Messages: ${isExpiredByMessages ? "YES ⚠️" : "NO ✅"}');
+    debugPrint(
+        '   - Expired by Messages: ${isExpiredByMessages ? "YES ⚠️" : "NO ✅"}');
     debugPrint('   - Overall Status: ${isExpired ? "❌ EXPIRED" : "✅ ACTIVE"}');
 
     if (isExpired) {
@@ -159,7 +166,8 @@ class DebugSubscriptionHelpers {
     debugPrint('   - User now appears as brand new (never started trial)');
     debugPrint('   - First AI message will start a fresh 3-day trial');
     debugPrint('\n⚠️  Hot restart app to see changes take effect');
-    debugPrint('\n⚠️  Note: Keychain trial marker still persists (use SubscriptionService.clearKeychainForTesting() to reset)');
+    debugPrint(
+        '\n⚠️  Note: Keychain trial marker still persists (use SubscriptionService.clearKeychainForTesting() to reset)');
   }
 
   /// Print all subscription-related SharedPreferences keys

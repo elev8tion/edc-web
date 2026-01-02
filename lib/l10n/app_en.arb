@@ -4535,6 +4535,10 @@
   "@pwaAlreadyInstalled": {
     "description": "Message when PWA is already installed"
   },
+  "pwaInstallSuccess": "App installed! Find it on your home screen.",
+  "@pwaInstallSuccess": {
+    "description": "Success message after PWA install completes"
+  },
   "pwaIOSInstructions": "To install on iPhone/iPad:",
   "@pwaIOSInstructions": {
     "description": "iOS install instructions header"

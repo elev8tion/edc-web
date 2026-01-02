@@ -1131,6 +1131,7 @@
   "pwaInstallButton": "Instalar",
   "pwaNotNow": "Ahora No",
   "pwaAlreadyInstalled": "La app puede estar ya instalada. ¡Revisa tu pantalla de inicio!",
+  "pwaInstallSuccess": "¡App instalada! Encuéntrala en tu pantalla de inicio.",
   "pwaIOSInstructions": "Para instalar en iPhone/iPad:",
   "pwaIOSAddToHomeScreen": "Añadir a Inicio",
   "pwaExitBrowserInstruction": "Luego cierra completamente este navegador y abre la app desde el icono en tu pantalla de inicio para continuar registrándote.",

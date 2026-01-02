@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:web/web.dart' as web;
 import 'package:shimmer/shimmer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_scalify/flutter_scalify.dart';
@@ -20,6 +19,7 @@ import '../core/providers/app_providers.dart';
 import '../core/navigation/navigation_service.dart';
 import '../core/services/preferences_service.dart';
 import '../core/services/navigation_debouncer.dart';
+import '../core/services/pwa_install_service.dart';
 import '../l10n/app_localizations.dart';
 import '../core/utils/simple_coach_mark.dart';
 import '../theme/app_theme_extensions.dart';
@@ -119,66 +119,80 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return;
     }
 
+    final pwaService = PwaInstallService();
+
     // Skip if already running as installed PWA (standalone mode)
-    if (_isRunningAsInstalledPwa()) {
+    if (pwaService.isInstalled) {
       debugPrint('[PWA] Already running as installed PWA, skipping install prompt');
       _showTrialWelcomeIfNeeded();
       return;
     }
 
-    // Minimal delay to let tutorial animation complete
-    await Future.delayed(const Duration(milliseconds: 100));
+    // Skip if already prompted this session
+    if (pwaService.hasPromptedThisSession) {
+      debugPrint('[PWA] Already prompted this session, skipping');
+      _showTrialWelcomeIfNeeded();
+      return;
+    }
+
+    // Check if we can prompt (handles dismissal tracking internally)
+    final canPrompt = pwaService.canPrompt;
+    final isIOS = pwaService.isIOS;
+
+    // On iOS, we always show the manual instructions dialog
+    // On other platforms, only show if we have a deferred prompt
+    if (!canPrompt && !isIOS) {
+      debugPrint('[PWA] Cannot prompt and not iOS, skipping install dialog');
+      _showTrialWelcomeIfNeeded();
+      return;
+    }
+
+    // Mark that we're showing the prompt this session
+    pwaService.markPromptShown();
+
+    // Delay prompt slightly for better UX (let tutorial animation complete)
+    await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
 
     try {
-      // Detect iOS for showing manual instructions vs native prompt
-      final isIOS = _detectIOS();
       debugPrint('[PWA] Showing install dialog (iOS: $isIOS)');
 
-      // Show custom install dialog (handles iOS instructions + Android native prompt)
-      await showPWAInstallDialog(context, isIOS: isIOS);
+      // Show the PWA install dialog using the new PwaInstallDialog widget
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        builder: (dialogContext) => PwaInstallDialog(
+          isIOS: isIOS,
+          onInstall: () async {
+            final installed = await pwaService.promptInstall();
+            if (dialogContext.mounted) {
+              Navigator.of(dialogContext).pop();
+            }
+            if (mounted && installed) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context).pwaInstallSuccess,
+                  ),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          },
+          onDismiss: () {
+            if (dialogContext.mounted) {
+              Navigator.of(dialogContext).pop();
+            }
+          },
+        ),
+      );
     } catch (e) {
       debugPrint('[PWA] Install dialog failed: $e');
     }
 
     // Show trial welcome dialog LAST (after all other dialogs cleared)
     _showTrialWelcomeIfNeeded();
-  }
-
-  /// Detect iOS for manual install instructions
-  bool _detectIOS() {
-    try {
-      final userAgent = web.window.navigator.userAgent.toLowerCase();
-      return userAgent.contains('iphone') ||
-          userAgent.contains('ipad') ||
-          userAgent.contains('ipod');
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /// Detect if running as installed PWA (standalone mode)
-  /// Returns true if opened from home screen icon, false if in browser tab
-  bool _isRunningAsInstalledPwa() {
-    try {
-      // Check display-mode: standalone (works on most browsers)
-      final standaloneQuery = web.window.matchMedia('(display-mode: standalone)');
-      if (standaloneQuery.matches) {
-        return true;
-      }
-
-      // Check display-mode: fullscreen (some PWAs use this)
-      final fullscreenQuery = web.window.matchMedia('(display-mode: fullscreen)');
-      if (fullscreenQuery.matches) {
-        return true;
-      }
-
-      return false;
-    } catch (e) {
-      debugPrint('[PWA] Error detecting standalone mode: $e');
-      return false;
-    }
   }
 
   @override

@@ -6021,6 +6021,12 @@ abstract class AppLocalizations {
   /// **'App may already be installed. Check your home screen!'**
   String get pwaAlreadyInstalled;
 
+  /// Success message after PWA install completes
+  ///
+  /// In en, this message translates to:
+  /// **'App installed! Find it on your home screen.'**
+  String get pwaInstallSuccess;
+
   /// iOS install instructions header
   ///
   /// In en, this message translates to:

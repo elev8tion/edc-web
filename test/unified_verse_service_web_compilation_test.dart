@@ -12,6 +12,8 @@
 /// 5. Validate FTS5 query syntax compatibility
 ///
 /// Run with: flutter test test/unified_verse_service_web_compilation_test.dart --platform chrome
+library;
+
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uuid/uuid.dart';

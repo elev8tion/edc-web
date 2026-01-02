@@ -79,6 +79,42 @@ class DarkPageRoute<T> extends PageRoute<T> {
   }
 }
 
+/// Secure page route that doesn't cache protected pages
+/// Used for authenticated routes to prevent sensitive data from being retained
+/// in the navigation stack after logout
+class SecurePageRoute<T> extends PageRouteBuilder<T> {
+  SecurePageRoute({
+    required WidgetBuilder builder,
+    super.settings,
+  }) : super(
+    pageBuilder: (context, animation, secondaryAnimation) => PopScope(
+      canPop: false,
+      child: builder(context),
+    ),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+    transitionDuration: const Duration(milliseconds: 300),
+    reverseTransitionDuration: const Duration(milliseconds: 200),
+  );
+
+  /// Don't cache protected pages - prevents sensitive data retention
+  @override
+  bool get maintainState => false;
+
+  @override
+  bool get fullscreenDialog => false;
+
+  @override
+  Color? get barrierColor => const Color(0xFF121212); // Dark background
+
+  @override
+  bool get opaque => true;
+}
+
 /// Custom page transitions for the app
 ///
 /// Following Animation Enhancement Rules:

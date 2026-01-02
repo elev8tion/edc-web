@@ -1,5 +1,6 @@
 /// Web implementation of Stripe service using Embedded Checkout
 /// This file is only loaded on web platforms via conditional import
+library;
 
 // ignore_for_file: avoid_web_libraries_in_flutter
 
@@ -14,10 +15,12 @@ import 'package:web/web.dart' as web;
 import '../core/services/subscription_service.dart';
 
 // Cloudflare Worker URL
-const String _workerUrl = 'https://edc-stripe-subscription.connect-2a2.workers.dev';
+const String _workerUrl =
+    'https://edc-stripe-subscription.connect-2a2.workers.dev';
 
 // Stripe publishable key (LIVE MODE)
-const String _publishableKey = 'pk_live_51SefudIFwav1xmJDf1gc1OHStb4tQvLet9jSx9w1KHzAcoByHPxJLsMP2k94PWXST4pbZiWTMAou9bS0sieDTmSh00uvK4jMmV';
+const String _publishableKey =
+    'pk_live_51SefudIFwav1xmJDf1gc1OHStb4tQvLet9jSx9w1KHzAcoByHPxJLsMP2k94PWXST4pbZiWTMAou9bS0sieDTmSh00uvK4jMmV';
 
 // Storage keys
 const _keyCustomerId = 'stripe_customer_id';
@@ -54,7 +57,8 @@ extension type EmbeddedCheckoutJS._(JSObject _) implements JSObject {
 
 /// Create Stripe instance
 StripeJS _createStripe(String publishableKey) {
-  return _stripeConstructor.callAsFunction(null, publishableKey.toJS) as StripeJS;
+  return _stripeConstructor.callAsFunction(null, publishableKey.toJS)
+      as StripeJS;
 }
 
 /// Register the view factory for Stripe checkout (must be called before using)
@@ -94,7 +98,8 @@ Future<void> initializeStripe() async {
   _deviceId = prefs.getString(_keyDeviceId);
 
   _isInitialized = true;
-  debugPrint('[StripeService] Web initialized (customerId: ${_customerId ?? "none"})');
+  debugPrint(
+      '[StripeService] Web initialized (customerId: ${_customerId ?? "none"})');
 }
 
 /// Check if Stripe is supported on this platform
@@ -131,40 +136,27 @@ Future<bool> startSubscription({
   final sessionId = sessionData['sessionId'] as String;
   final customerId = sessionData['customerId'] as String?;
 
-  // Show embedded checkout dialog
+  // Show embedded checkout dialog - verification happens inside dialog
   final result = await showDialog<bool>(
     context: context,
     barrierDismissible: false,
-    builder: (context) => StripeEmbeddedCheckoutDialog(
+    builder: (dialogContext) => StripeEmbeddedCheckoutDialog(
       clientSecret: clientSecret,
+      sessionId: sessionId,
+      customerId: customerId,
       isYearly: isYearly,
       isTrial: eligibleForTrial,
     ),
   );
 
-  if (result == true) {
-    // Verify checkout completion and save subscription
-    final status = await _verifyCheckoutSession(sessionId);
-
-    if (status != null && status['status'] == 'complete') {
-      await _saveSubscription(
-        customerId: customerId ?? status['customerId'],
-        subscriptionId: status['subscriptionId'],
-        trialEnd: eligibleForTrial ? status['trialEnd'] : null,
-        currentPeriodEnd: status['currentPeriodEnd'],
-        isYearly: isYearly,
-      );
-
-      if (context.mounted) {
-        final message = eligibleForTrial
-            ? 'Trial started! 3 days or 15 messages free.'
-            : 'Subscription activated! Welcome to Premium.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message), backgroundColor: Colors.green),
-        );
-      }
-      return true;
-    }
+  if (result == true && context.mounted) {
+    final message = eligibleForTrial
+        ? 'Trial started! 3 days or 15 messages free.'
+        : 'Subscription activated! Welcome to Premium.';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
+    );
+    return true;
   }
 
   return false;
@@ -173,21 +165,27 @@ Future<bool> startSubscription({
 /// Embedded Checkout Dialog Widget
 class StripeEmbeddedCheckoutDialog extends StatefulWidget {
   final String clientSecret;
+  final String sessionId;
+  final String? customerId;
   final bool isYearly;
   final bool isTrial;
 
   const StripeEmbeddedCheckoutDialog({
     super.key,
     required this.clientSecret,
+    required this.sessionId,
+    this.customerId,
     required this.isYearly,
     required this.isTrial,
   });
 
   @override
-  State<StripeEmbeddedCheckoutDialog> createState() => _StripeEmbeddedCheckoutDialogState();
+  State<StripeEmbeddedCheckoutDialog> createState() =>
+      _StripeEmbeddedCheckoutDialogState();
 }
 
-class _StripeEmbeddedCheckoutDialogState extends State<StripeEmbeddedCheckoutDialog> {
+class _StripeEmbeddedCheckoutDialogState
+    extends State<StripeEmbeddedCheckoutDialog> {
   EmbeddedCheckoutJS? _checkout;
   bool _isLoading = true;
   String? _error;
@@ -500,7 +498,8 @@ Future<String> _getOrCreateDeviceId() async {
   var deviceId = prefs.getString(_keyDeviceId);
 
   if (deviceId == null) {
-    deviceId = '${DateTime.now().millisecondsSinceEpoch}_${DateTime.now().microsecondsSinceEpoch.toString().substring(7)}';
+    deviceId =
+        '${DateTime.now().millisecondsSinceEpoch}_${DateTime.now().microsecondsSinceEpoch.toString().substring(7)}';
     await prefs.setString(_keyDeviceId, deviceId);
   }
 
@@ -593,5 +592,6 @@ Future<void> _saveSubscription({
     isYearly: isYearly,
   );
 
-  debugPrint('[StripeService] Subscription saved and premium activated (customerId: $customerId)');
+  debugPrint(
+      '[StripeService] Subscription saved and premium activated (customerId: $customerId)');
 }

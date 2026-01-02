@@ -2,6 +2,7 @@
 ///
 /// This file provides optimized image loading patterns and caching strategies
 /// to improve app performance and reduce memory usage.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -35,14 +36,21 @@ class OptimizedImage extends StatelessWidget {
         height: height,
         fit: fit,
         // Memory cache configuration
-        memCacheWidth: width != null ? (width! * MediaQuery.of(context).devicePixelRatio).round() : null,
-        memCacheHeight: height != null ? (height! * MediaQuery.of(context).devicePixelRatio).round() : null,
+        memCacheWidth: width != null
+            ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+            : null,
+        memCacheHeight: height != null
+            ? (height! * MediaQuery.of(context).devicePixelRatio).round()
+            : null,
         maxWidthDiskCache: 1024, // Max width in cache
         maxHeightDiskCache: 1024, // Max height in cache
-        placeholder: (context, url) => placeholder ?? const Center(
-          child: CircularProgressIndicator(),
-        ),
-        errorWidget: (context, url, error) => errorWidget ?? const Icon(Icons.error),
+        placeholder: (context, url) =>
+            placeholder ??
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        errorWidget: (context, url, error) =>
+            errorWidget ?? const Icon(Icons.error),
         // Enable fade animation
         fadeInDuration: const Duration(milliseconds: 300),
         fadeOutDuration: const Duration(milliseconds: 100),
@@ -56,9 +64,14 @@ class OptimizedImage extends StatelessWidget {
       height: height,
       fit: fit,
       // Cache local images
-      cacheWidth: width != null ? (width! * MediaQuery.of(context).devicePixelRatio).round() : null,
-      cacheHeight: height != null ? (height! * MediaQuery.of(context).devicePixelRatio).round() : null,
-      errorBuilder: (context, error, stackTrace) => errorWidget ?? const Icon(Icons.error),
+      cacheWidth: width != null
+          ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+          : null,
+      cacheHeight: height != null
+          ? (height! * MediaQuery.of(context).devicePixelRatio).round()
+          : null,
+      errorBuilder: (context, error, stackTrace) =>
+          errorWidget ?? const Icon(Icons.error),
     );
   }
 }

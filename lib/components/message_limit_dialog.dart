@@ -1,6 +1,7 @@
 /// Message Limit Dialog
 /// Shows when user hits their daily (trial) or monthly (premium) message limit
 /// Provides options to subscribe or continue later
+library;
 
 import 'package:flutter/material.dart';
 import '../components/frosted_glass_card.dart';
@@ -17,12 +18,12 @@ class MessageLimitDialog extends StatelessWidget {
   final VoidCallback onMaybeLaterPressed;
 
   const MessageLimitDialog({
-    Key? key,
+    super.key,
     required this.isPremium,
     required this.remainingMessages,
     required this.onSubscribePressed,
     required this.onMaybeLaterPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,8 @@ class MessageLimitDialog extends StatelessWidget {
                 Text(
                   isPremium ? 'Monthly Limit Reached' : 'Trial Limit Reached',
                   style: TextStyle(
-                    fontSize: ResponsiveUtils.fontSize(context, 24, minSize: 20, maxSize: 28),
+                    fontSize: ResponsiveUtils.fontSize(context, 24,
+                        minSize: 20, maxSize: 28),
                     fontWeight: FontWeight.bold,
                     color: AppColors.primaryText,
                   ),
@@ -85,7 +87,8 @@ class MessageLimitDialog extends StatelessWidget {
                       ? 'You\'ve used all 150 messages this month.\nUpgrade your plan or wait for the monthly reset.'
                       : 'You\'ve used all 15 trial messages.\nSubscribe now for 150 messages per month!',
                   style: TextStyle(
-                    fontSize: ResponsiveUtils.fontSize(context, 16, minSize: 14, maxSize: 18),
+                    fontSize: ResponsiveUtils.fontSize(context, 16,
+                        minSize: 14, maxSize: 18),
                     color: AppColors.secondaryText,
                     height: 1.4,
                   ),
@@ -111,7 +114,8 @@ class MessageLimitDialog extends StatelessWidget {
                     child: Text(
                       'Maybe Later',
                       style: TextStyle(
-                        fontSize: ResponsiveUtils.fontSize(context, 16, minSize: 14, maxSize: 18),
+                        fontSize: ResponsiveUtils.fontSize(context, 16,
+                            minSize: 14, maxSize: 18),
                         fontWeight: FontWeight.w600,
                         color: AppTheme.goldColor,
                       ),
@@ -139,7 +143,8 @@ class MessageLimitDialog extends StatelessWidget {
         isPremium: isPremium,
         remainingMessages: remainingMessages,
         onSubscribePressed: () {
-          Navigator.of(context).pop(true); // Return true = user wants to subscribe
+          Navigator.of(context)
+              .pop(true); // Return true = user wants to subscribe
         },
         onMaybeLaterPressed: () {
           Navigator.of(context).pop(false); // Return false = user declined

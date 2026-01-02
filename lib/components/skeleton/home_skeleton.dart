@@ -140,7 +140,7 @@ class HomeScreenSkeleton extends StatelessWidget {
             padding: EdgeInsets.all(8.s),
             child: Bone.circle(size: 20.s),
           ),
-          SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.sm),
           const Bone.text(words: 2, fontSize: 16),
           const SizedBox(height: 6),
           const Bone.multiText(lines: 2, fontSize: 12),
@@ -154,11 +154,11 @@ class HomeScreenSkeleton extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
+        const Padding(
           padding: AppSpacing.horizontalXl,
-          child: const Bone.text(words: 2, fontSize: 20),
+          child: Bone.text(words: 2, fontSize: 20),
         ),
-        SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.lg),
         SizedBox(
           height: baseHeight.clamp(88.0, 165.0),
           child: ListView(
@@ -203,7 +203,7 @@ class HomeScreenSkeleton extends StatelessWidget {
             ),
             child: Bone.circle(size: 24.s),
           ),
-          SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.sm),
           const Expanded(
             child: Bone.text(words: 2, fontSize: 11),
           ),
@@ -234,20 +234,20 @@ class HomeScreenSkeleton extends StatelessWidget {
                   ),
                   child: Bone.circle(size: 20.s),
                 ),
-                SizedBox(width: AppSpacing.lg),
+                const SizedBox(width: AppSpacing.lg),
                 const Expanded(
                   child: Bone.text(words: 3, fontSize: 18),
                 ),
               ],
             ),
-            SizedBox(height: AppSpacing.xl),
-            DarkGlassContainer(
+            const SizedBox(height: AppSpacing.xl),
+            const DarkGlassContainer(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Bone.text(words: 2, fontSize: 14),
+                  Bone.text(words: 2, fontSize: 14),
                   SizedBox(height: AppSpacing.md),
-                  const Bone.multiText(lines: 3, fontSize: 16),
+                  Bone.multiText(lines: 3, fontSize: 16),
                 ],
               ),
             ),

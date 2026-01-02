@@ -7,6 +7,7 @@ import 'package:everyday_christian/core/navigation/app_routes.dart';
 import 'package:everyday_christian/core/navigation/navigation_service.dart';
 import 'package:everyday_christian/core/navigation/page_transitions.dart';
 import 'package:everyday_christian/core/providers/app_providers.dart';
+import 'package:everyday_christian/core/providers/secure_auth_provider.dart';
 import 'package:everyday_christian/core/services/app_update_service.dart';
 import 'package:everyday_christian/core/services/subscription_service.dart';
 import 'package:everyday_christian/screens/bible_browser_screen.dart';
@@ -84,7 +85,8 @@ Future<void> main() async {
   if (kIsWeb) {
     FlutterPWAInstall.instance.setup(
       config: const PWAConfig(
-        delayPrompt: Duration.zero, // No auto-delay - we trigger manually after tutorial
+        delayPrompt:
+            Duration.zero, // No auto-delay - we trigger manually after tutorial
         maxDismissals: 2,
         dismissCooldown: Duration(days: 7),
         showIOSInstructions: true,
@@ -114,18 +116,109 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends ConsumerWidget {
-  const MyApp({Key? key}) : super(key: key);
+/// Navigator observer that prevents back navigation to protected routes after logout
+class SecureNavigatorObserver extends NavigatorObserver {
+  final WidgetRef ref;
+
+  SecureNavigatorObserver(this.ref);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (previousRoute?.settings.name != null) {
+      final isProtected = AppRoutes.isAuthRequired(previousRoute!.settings.name!);
+      final authState = ref.read(secureAuthProvider);
+
+      if (isProtected && authState != SecureAuthState.authenticated) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          NavigationService.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            AppRoutes.auth,
+            (route) => false,
+          );
+        });
+      }
+    }
+    super.didPop(route, previousRoute);
+  }
+}
+
+class MyApp extends ConsumerStatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize auth on app start
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(secureAuthProvider.notifier).initialize();
+    });
+  }
+
+  /// Handle auth state changes for navigation
+  void _handleAuthStateChange(SecureAuthState? previous, SecureAuthState current) {
+    final navigator = NavigationService.navigatorKey.currentState;
+    if (navigator == null) return;
+
+    switch (current) {
+      case SecureAuthState.authenticated:
+        // If coming from unauthenticated, navigate to home
+        if (previous == SecureAuthState.unauthenticated ||
+            previous == SecureAuthState.initial) {
+          // Check if there's an intended route to restore
+          final intendedRoute = NavigationService.consumeIntendedRoute();
+          navigator.pushNamedAndRemoveUntil(
+            intendedRoute ?? AppRoutes.home,
+            (route) => false,
+          );
+        }
+        break;
+
+      case SecureAuthState.unauthenticated:
+        // If was authenticated, force to auth screen
+        if (previous == SecureAuthState.authenticated) {
+          navigator.pushNamedAndRemoveUntil(
+            AppRoutes.auth,
+            (route) => false,
+          );
+        }
+        break;
+
+      case SecureAuthState.error:
+        // Show error notification
+        ScaffoldMessenger.of(navigator.context).showSnackBar(
+          const SnackBar(
+            content: Text('Authentication error. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final textSize = ref.watch(textSizeProvider);
     final locale = ref.watch(languageProvider);
+
+    // Listen to auth state changes
+    ref.listen<SecureAuthState>(secureAuthProvider, (previous, current) {
+      _handleAuthStateChange(previous, current);
+    });
 
     return MaterialApp(
       title: 'Everyday Christian',
       debugShowCheckedModeBanner: false,
       navigatorKey: NavigationService.navigatorKey,
+      navigatorObservers: [
+        SecureNavigatorObserver(ref),
+      ],
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: locale,
@@ -184,9 +277,11 @@ class MyApp extends ConsumerWidget {
         }
         switch (settings.name) {
           case AppRoutes.splash:
-            return DarkPageRoute(settings: settings, builder: (_) => const SplashScreen());
+            return DarkPageRoute(
+                settings: settings, builder: (_) => const SplashScreen());
           case AppRoutes.auth:
-            return DarkPageRoute(settings: settings, builder: (_) => const AuthScreen());
+            return DarkPageRoute(
+                settings: settings, builder: (_) => const AuthScreen());
           case AppRoutes.verifyEmail:
             // On web, use the handler screen to process verification token from URL
             if (kIsWeb) {
@@ -212,33 +307,51 @@ class MyApp extends ConsumerWidget {
               );
             }
             // On mobile, redirect to auth (mobile handles deep links differently)
-            return DarkPageRoute(settings: settings, builder: (_) => const AuthScreen());
+            return DarkPageRoute(
+                settings: settings, builder: (_) => const AuthScreen());
           case AppRoutes.onboarding:
             // Legacy: Onboarding moved to signup form. Redirect to home for backward compatibility.
-            return DarkPageRoute(settings: settings, builder: (_) => const HomeScreen());
+            return DarkPageRoute(
+                settings: settings, builder: (_) => const HomeScreen());
           case AppRoutes.waitForVerification:
-            return DarkPageRoute(settings: settings, builder: (_) => const WaitForVerificationScreen());
+            return DarkPageRoute(
+                settings: settings,
+                builder: (_) => const WaitForVerificationScreen());
+          // ================================================================
+          // PROTECTED ROUTES - Use SecurePageRoute (no caching)
+          // These routes require authentication and should not be cached
+          // ================================================================
           case AppRoutes.home:
-            return DarkPageRoute(settings: settings, builder: (_) => const HomeScreen());
+            return SecurePageRoute(
+                settings: settings, builder: (_) => const HomeScreen());
           case AppRoutes.chat:
-            return DarkPageRoute(settings: settings, builder: (_) => const ChatScreen());
+            return SecurePageRoute(
+                settings: settings, builder: (_) => const ChatScreen());
           case AppRoutes.settings:
-            return DarkPageRoute(settings: settings, builder: (_) => const SettingsScreen());
+            return SecurePageRoute(
+                settings: settings, builder: (_) => const SettingsScreen());
           case AppRoutes.prayerJournal:
-            return DarkPageRoute(settings: settings, builder: (_) => const PrayerJournalScreen());
+            return SecurePageRoute(
+                settings: settings,
+                builder: (_) => const PrayerJournalScreen());
           case AppRoutes.profile:
-            return DarkPageRoute(settings: settings, builder: (_) => const ProfileScreen());
+            return SecurePageRoute(
+                settings: settings, builder: (_) => const ProfileScreen());
           case AppRoutes.devotional:
-            return DarkPageRoute(settings: settings, builder: (_) => const DevotionalScreen());
+            return SecurePageRoute(
+                settings: settings, builder: (_) => const DevotionalScreen());
           case AppRoutes.readingPlan:
-            return DarkPageRoute(settings: settings, builder: (_) => const ReadingPlanScreen());
+            return SecurePageRoute(
+                settings: settings, builder: (_) => const ReadingPlanScreen());
           case AppRoutes.bibleBrowser:
-            return DarkPageRoute(settings: settings, builder: (_) => const BibleBrowserScreen());
+            return SecurePageRoute(
+                settings: settings, builder: (_) => const BibleBrowserScreen());
           case AppRoutes.verseLibrary:
-            return DarkPageRoute(settings: settings, builder: (_) => const VerseLibraryScreen());
+            return SecurePageRoute(
+                settings: settings, builder: (_) => const VerseLibraryScreen());
           case AppRoutes.chapterReading:
             final args = settings.arguments as Map<String, dynamic>?;
-            return DarkPageRoute(
+            return SecurePageRoute(
               settings: settings,
               builder: (_) => ChapterReadingScreen(
                 book: args?['book'] ?? '',
@@ -248,16 +361,21 @@ class MyApp extends ConsumerWidget {
               ),
             );
           case AppRoutes.checkoutComplete:
-            return DarkPageRoute(settings: settings, builder: (_) => const CheckoutCompleteScreen());
+            return DarkPageRoute(
+                settings: settings,
+                builder: (_) => const CheckoutCompleteScreen());
           case AppRoutes.accessibilityStatement:
-            return DarkPageRoute(settings: settings, builder: (_) => const AccessibilityStatementScreen());
+            return DarkPageRoute(
+                settings: settings,
+                builder: (_) => const AccessibilityStatementScreen());
           default:
             return null;
         }
       },
       // Handle unknown routes by redirecting to splash (prevents PWA crash on unknown URLs)
       onUnknownRoute: (settings) {
-        return DarkPageRoute(settings: settings, builder: (_) => const SplashScreen());
+        return DarkPageRoute(
+            settings: settings, builder: (_) => const SplashScreen());
       },
     );
   }

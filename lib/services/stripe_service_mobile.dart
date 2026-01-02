@@ -2,6 +2,7 @@
 /// Uses conditional import: dart.library.io only loads on iOS/Android
 ///
 /// For PWA, stripe_service_web.dart is used instead (Embedded Checkout)
+library;
 
 import 'package:flutter/material.dart';
 

@@ -1,6 +1,7 @@
 /// Account Lockout Service
 /// Implements 3-strike system for crisis detections
 /// After 3 crisis events, account is locked for 30 days then deleted
+library;
 
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -123,7 +124,9 @@ class AccountLockoutService {
         orElse: () => LockoutStatus.active,
       );
     } else {
-      status = count >= _maxCrisisCount ? LockoutStatus.locked : LockoutStatus.active;
+      status = count >= _maxCrisisCount
+          ? LockoutStatus.locked
+          : LockoutStatus.active;
     }
 
     DateTime? lockoutDate;
@@ -202,7 +205,8 @@ class AccountLockoutService {
 
     // This should cascade to all user-related data for GDPR compliance
 
-    await _prefs.setString(_keyStatus, LockoutStatus.pendingDeletion.toString());
+    await _prefs.setString(
+        _keyStatus, LockoutStatus.pendingDeletion.toString());
   }
 
   /// Check if account should be deleted (30 days passed)

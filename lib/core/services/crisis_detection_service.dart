@@ -6,6 +6,7 @@
 /// - Self-harm
 /// - Abuse (physical, sexual, emotional)
 /// - Severe mental health crises
+library;
 
 import 'package:flutter/foundation.dart';
 
@@ -34,7 +35,9 @@ class CrisisDetectionResult {
       case CrisisType.suicide:
         return '988';
       case CrisisType.selfHarm:
-        return language == 'es' ? 'Envía HOLA al 741741' : 'Text HOME to 741741';
+        return language == 'es'
+            ? 'Envía HOLA al 741741'
+            : 'Text HOME to 741741';
       case CrisisType.abuse:
         return '800-656-4673';
     }
@@ -429,7 +432,8 @@ class CrisisDetectionService {
     final normalized = _normalizeInput(userInput);
 
     // Check for suicide keywords (highest priority) - English + Spanish
-    final suicideMatches = _findMatches(normalized, [..._suicideKeywords, ..._spanishSuicideKeywords]);
+    final suicideMatches = _findMatches(
+        normalized, [..._suicideKeywords, ..._spanishSuicideKeywords]);
     if (suicideMatches.isNotEmpty) {
       return CrisisDetectionResult(
         type: CrisisType.suicide,
@@ -440,7 +444,8 @@ class CrisisDetectionService {
 
     // Check for abuse keywords (second priority) - English + Spanish
     // Abuse is prioritized over self-harm because it indicates immediate external danger
-    final abuseMatches = _findMatches(normalized, [..._abuseKeywords, ..._spanishAbuseKeywords]);
+    final abuseMatches =
+        _findMatches(normalized, [..._abuseKeywords, ..._spanishAbuseKeywords]);
     if (abuseMatches.isNotEmpty) {
       return CrisisDetectionResult(
         type: CrisisType.abuse,
@@ -450,7 +455,8 @@ class CrisisDetectionService {
     }
 
     // Check for self-harm keywords - English + Spanish
-    final selfHarmMatches = _findMatches(normalized, [..._selfHarmKeywords, ..._spanishSelfHarmKeywords]);
+    final selfHarmMatches = _findMatches(
+        normalized, [..._selfHarmKeywords, ..._spanishSelfHarmKeywords]);
     if (selfHarmMatches.isNotEmpty) {
       return CrisisDetectionResult(
         type: CrisisType.selfHarm,
@@ -496,23 +502,33 @@ class CrisisDetectionService {
     // Check for concerning patterns (case insensitive)
     // English patterns
     final concerningPatterns = [
-      RegExp(r"\b(no|don\s*t|dont)\s+(point|reason|want)\s+(to\s+)?(live|go\s+on)\b", caseSensitive: false),
-      RegExp(r"\b(can\s*t|cant)\s+(take\s+it|do\s+this)\s+(anymore|any\s+more)\b", caseSensitive: false),
+      RegExp(
+          r"\b(no|don\s*t|dont)\s+(point|reason|want)\s+(to\s+)?(live|go\s+on)\b",
+          caseSensitive: false),
+      RegExp(
+          r"\b(can\s*t|cant)\s+(take\s+it|do\s+this)\s+(anymore|any\s+more)\b",
+          caseSensitive: false),
       RegExp(r'\b(give|giving)\s+up\b', caseSensitive: false),
       RegExp(r'\b(hopeless|worthless)\b', caseSensitive: false),
       RegExp(r'\b(any|no)\s+reason\s+to\s+live\b', caseSensitive: false),
 
       // Spanish patterns
-      RegExp(r'\b(no\s+veo|ninguna)\s+(razón|razon)\s+para\s+vivir\b', caseSensitive: false), // No reason to live
-      RegExp(r'\bno\s+(puedo|aguanto)\s+más\b', caseSensitive: false), // Can't take it anymore
-      RegExp(r'\bno\s+(puedo|aguanto)\s+mas\b', caseSensitive: false), // Without accent
-      RegExp(r'\b(rendirse|rindiéndome|rindiendome|rindiendo|rindiéndose)\b', caseSensitive: false), // Giving up
+      RegExp(r'\b(no\s+veo|ninguna)\s+(razón|razon)\s+para\s+vivir\b',
+          caseSensitive: false), // No reason to live
+      RegExp(r'\bno\s+(puedo|aguanto)\s+más\b',
+          caseSensitive: false), // Can't take it anymore
+      RegExp(r'\bno\s+(puedo|aguanto)\s+mas\b',
+          caseSensitive: false), // Without accent
+      RegExp(r'\b(rendirse|rindiéndome|rindiendome|rindiendo|rindiéndose)\b',
+          caseSensitive: false), // Giving up
       RegExp(r'\bsin\s+esperanza\b', caseSensitive: false), // Hopeless
       RegExp(r'\binsoportable\b', caseSensitive: false), // Unbearable
       RegExp(r'\batrapado\b', caseSensitive: false), // Trapped
       RegExp(r'\batrapada\b', caseSensitive: false), // Trapped (feminine)
-      RegExp(r'\bnada\s+va\s+a\s+cambiar\b', caseSensitive: false), // Nothing will change
-      RegExp(r'\bnunca\s+va\s+a\s+mejorar\b', caseSensitive: false), // It will never get better
+      RegExp(r'\bnada\s+va\s+a\s+cambiar\b',
+          caseSensitive: false), // Nothing will change
+      RegExp(r'\bnunca\s+va\s+a\s+mejorar\b',
+          caseSensitive: false), // It will never get better
     ];
 
     for (final pattern in concerningPatterns) {
@@ -542,8 +558,7 @@ class CrisisDetectionService {
 
   /// Log crisis detection (for monitoring and improvement)
   void logCrisisDetection(CrisisDetectionResult result) {
-    if (kDebugMode) {
-    }
+    if (kDebugMode) {}
 
     // Do NOT log actual user input - privacy violation
   }

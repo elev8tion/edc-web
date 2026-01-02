@@ -9,6 +9,7 @@
 /// - Ensures HTTPS for production webhooks
 /// - Validates key rotation dates
 /// - Prevents production deployment with test keys
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -61,10 +62,16 @@ class EnvValidator {
       errors.add('❌ STRIPE_SECRET_KEY is required');
     } else if (secretKey.contains('YOUR_') || secretKey == 'sk_test_YOUR_KEY') {
       errors.add('❌ STRIPE_SECRET_KEY is using placeholder value');
-    } else if (env == 'production' && !secretKey.startsWith('sk_live_') && !secretKey.startsWith('rk_live_')) {
-      errors.add('❌ Production must use live Stripe keys (sk_live_* or rk_live_*)');
-    } else if (env == 'development' && !secretKey.startsWith('sk_test_') && !secretKey.startsWith('rk_test_')) {
-      errors.add('⚠️  Warning: Development should use test Stripe keys (sk_test_* or rk_test_*)');
+    } else if (env == 'production' &&
+        !secretKey.startsWith('sk_live_') &&
+        !secretKey.startsWith('rk_live_')) {
+      errors.add(
+          '❌ Production must use live Stripe keys (sk_live_* or rk_live_*)');
+    } else if (env == 'development' &&
+        !secretKey.startsWith('sk_test_') &&
+        !secretKey.startsWith('rk_test_')) {
+      errors.add(
+          '⚠️  Warning: Development should use test Stripe keys (sk_test_* or rk_test_*)');
     }
 
     // Validate publishable key
@@ -78,7 +85,8 @@ class EnvValidator {
 
     // Validate webhook secret
     if (webhookSecret.isEmpty) {
-      errors.add('⚠️  Warning: STRIPE_WEBHOOK_SECRET not set (required for webhooks)');
+      errors.add(
+          '⚠️  Warning: STRIPE_WEBHOOK_SECRET not set (required for webhooks)');
     } else if (webhookSecret.contains('YOUR_')) {
       errors.add('❌ STRIPE_WEBHOOK_SECRET is using placeholder value');
     } else if (!webhookSecret.startsWith('whsec_')) {
@@ -86,7 +94,8 @@ class EnvValidator {
     }
 
     // Validate product IDs
-    final monthlyProduct = dotenv.get('STRIPE_PRODUCT_MONTHLY_ID', fallback: '');
+    final monthlyProduct =
+        dotenv.get('STRIPE_PRODUCT_MONTHLY_ID', fallback: '');
     final yearlyProduct = dotenv.get('STRIPE_PRODUCT_YEARLY_ID', fallback: '');
 
     if (monthlyProduct.isEmpty || monthlyProduct.contains('YOUR_')) {
@@ -160,7 +169,8 @@ class EnvValidator {
       } else {
         final daysUntilRotation = next.difference(now).inDays;
         if (daysUntilRotation < 7) {
-          errors.add('⚠️  Warning: API keys need rotation in $daysUntilRotation days');
+          errors.add(
+              '⚠️  Warning: API keys need rotation in $daysUntilRotation days');
         }
       }
     } catch (e) {

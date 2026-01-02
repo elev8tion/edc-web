@@ -7,6 +7,7 @@
 /// - Toxic positivity
 /// - Hate speech
 /// - Medical overreach
+library;
 
 import 'package:flutter/foundation.dart';
 
@@ -153,7 +154,8 @@ class ContentFilterService {
     final normalized = _normalizeText(response);
 
     // Check prosperity gospel
-    final prosperityMatches = _findMatches(normalized, _prosperityGospelBlacklist);
+    final prosperityMatches =
+        _findMatches(normalized, _prosperityGospelBlacklist);
     if (prosperityMatches.isNotEmpty) {
       return FilterResult.rejected(
         'Prosperity gospel language detected',
@@ -162,7 +164,8 @@ class ContentFilterService {
     }
 
     // Check spiritual bypassing
-    final bypassingMatches = _findMatches(normalized, _spiritualBypassingBlacklist);
+    final bypassingMatches =
+        _findMatches(normalized, _spiritualBypassingBlacklist);
     if (bypassingMatches.isNotEmpty) {
       return FilterResult.rejected(
         'Spiritual bypassing detected (minimizes suffering)',
@@ -236,11 +239,16 @@ class ContentFilterService {
   String getFallbackResponse(String theme) {
     // Provide generic encouragement + scripture without harmful theology
     final fallbackResponses = {
-      'anxiety': 'I hear you\'re struggling with anxiety. Remember: "Don\'t be anxious about anything, but in everything by prayer and petition, with thanksgiving, present your requests to God." (Philippians 4:6, WEB). Consider speaking with a counselor who can provide personalized support.',
-      'depression': 'Depression is real and heavy. You don\'t have to carry this alone. "Yahweh is near to those who have a broken heart, and saves those who have a crushed spirit." (Psalm 34:18, WEB). Please reach out to a mental health professional.',
-      'fear': 'Fear can be overwhelming. "For God didn\'t give us a spirit of fear, but of power, love, and self-control." (2 Timothy 1:7, WEB). You\'re not alone in this.',
-      'doubt': 'Doubt is part of the journey. Bring your questions to God - He\'s not afraid of them. "Help my unbelief!" (Mark 9:24, WEB) is a prayer God honors.',
-      'default': 'I\'m here to support you. Remember that God meets us in our struggles. "Cast all your worries on him, because he cares for you." (1 Peter 5:7, WEB). Consider reaching out to a pastor or counselor for personalized guidance.',
+      'anxiety':
+          'I hear you\'re struggling with anxiety. Remember: "Don\'t be anxious about anything, but in everything by prayer and petition, with thanksgiving, present your requests to God." (Philippians 4:6, WEB). Consider speaking with a counselor who can provide personalized support.',
+      'depression':
+          'Depression is real and heavy. You don\'t have to carry this alone. "Yahweh is near to those who have a broken heart, and saves those who have a crushed spirit." (Psalm 34:18, WEB). Please reach out to a mental health professional.',
+      'fear':
+          'Fear can be overwhelming. "For God didn\'t give us a spirit of fear, but of power, love, and self-control." (2 Timothy 1:7, WEB). You\'re not alone in this.',
+      'doubt':
+          'Doubt is part of the journey. Bring your questions to God - He\'s not afraid of them. "Help my unbelief!" (Mark 9:24, WEB) is a prayer God honors.',
+      'default':
+          'I\'m here to support you. Remember that God meets us in our struggles. "Cast all your worries on him, because he cares for you." (1 Peter 5:7, WEB). Consider reaching out to a pastor or counselor for personalized guidance.',
     };
 
     return fallbackResponses[theme] ?? fallbackResponses['default']!;

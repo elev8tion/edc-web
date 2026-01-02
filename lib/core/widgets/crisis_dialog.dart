@@ -1,6 +1,7 @@
 /// Crisis Dialog Widget
 /// Non-dismissible dialog shown when crisis is detected
 /// Provides immediate access to crisis resources and hotlines
+library;
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,10 +19,10 @@ class CrisisDialog extends StatelessWidget {
   final VoidCallback onAcknowledge;
 
   const CrisisDialog({
-    Key? key,
+    super.key,
     required this.crisisResult,
     required this.onAcknowledge,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,8 @@ class CrisisDialog extends StatelessWidget {
                       child: Text(
                         l10n.crisisResources,
                         style: TextStyle(
-                          fontSize: ResponsiveUtils.fontSize(context, 20, minSize: 18, maxSize: 24),
+                          fontSize: ResponsiveUtils.fontSize(context, 20,
+                              minSize: 18, maxSize: 24),
                           fontWeight: FontWeight.w700,
                           color: AppColors.primaryText,
                         ),
@@ -91,7 +93,8 @@ class CrisisDialog extends StatelessWidget {
                         Text(
                           crisisResult.getMessage(language: currentLanguage),
                           style: TextStyle(
-                            fontSize: ResponsiveUtils.fontSize(context, 15, minSize: 13, maxSize: 17),
+                            fontSize: ResponsiveUtils.fontSize(context, 15,
+                                minSize: 13, maxSize: 17),
                             height: 1.5,
                             color: Colors.white.withValues(alpha: 0.95),
                           ),
@@ -131,7 +134,9 @@ class CrisisDialog extends StatelessWidget {
                                 child: Text(
                                   l10n.crisisImmediateDanger,
                                   style: TextStyle(
-                                    fontSize: ResponsiveUtils.fontSize(context, 13, minSize: 11, maxSize: 15),
+                                    fontSize: ResponsiveUtils.fontSize(
+                                        context, 13,
+                                        minSize: 11, maxSize: 15),
                                     color: Colors.orange,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -155,9 +160,11 @@ class CrisisDialog extends StatelessWidget {
                       onAcknowledge();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+                      backgroundColor:
+                          AppTheme.primaryColor.withValues(alpha: 0.2),
                       foregroundColor: AppColors.primaryText,
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                      padding:
+                          const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.sm),
                       ),
@@ -165,7 +172,8 @@ class CrisisDialog extends StatelessWidget {
                     child: Text(
                       l10n.crisisAcknowledge,
                       style: TextStyle(
-                        fontSize: ResponsiveUtils.fontSize(context, 15, minSize: 13, maxSize: 17),
+                        fontSize: ResponsiveUtils.fontSize(context, 15,
+                            minSize: 13, maxSize: 17),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -182,12 +190,14 @@ class CrisisDialog extends StatelessWidget {
   /// Build primary hotline call button
   Widget _buildHotlineButton(BuildContext context, String language) {
     final hotline = crisisResult.getHotline(language: language);
-    final isPhoneNumber = hotline.startsWith('988') || hotline.startsWith('800');
+    final isPhoneNumber =
+        hotline.startsWith('988') || hotline.startsWith('800');
 
     // Get localized button text
     String buttonText;
     if (isPhoneNumber) {
-      buttonText = language == 'es' ? 'Llamar al $hotline Ahora' : 'Call $hotline Now';
+      buttonText =
+          language == 'es' ? 'Llamar al $hotline Ahora' : 'Call $hotline Now';
     } else {
       buttonText = hotline;
     }
@@ -227,7 +237,8 @@ class CrisisDialog extends StatelessWidget {
           l10n.additionalResources,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
+            fontSize:
+                ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
             color: AppColors.primaryText,
           ),
         ),
@@ -298,7 +309,8 @@ class CrisisDialog extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
+                      fontSize: ResponsiveUtils.fontSize(context, 14,
+                          minSize: 12, maxSize: 16),
                       color: AppColors.primaryText,
                     ),
                   ),
@@ -306,7 +318,8 @@ class CrisisDialog extends StatelessWidget {
                   Text(
                     subtitle,
                     style: TextStyle(
-                      fontSize: ResponsiveUtils.fontSize(context, 12, minSize: 10, maxSize: 14),
+                      fontSize: ResponsiveUtils.fontSize(context, 12,
+                          minSize: 10, maxSize: 14),
                       color: Colors.white.withValues(alpha: 0.7),
                     ),
                   ),
@@ -346,7 +359,8 @@ class CrisisDialog extends StatelessWidget {
         await launchUrl(uri);
       } else {
         if (context.mounted) {
-          _showErrorSnackbar(context, 'Unable to make call. Please dial $hotline manually.');
+          _showErrorSnackbar(
+              context, 'Unable to make call. Please dial $hotline manually.');
         }
       }
     } catch (e) {

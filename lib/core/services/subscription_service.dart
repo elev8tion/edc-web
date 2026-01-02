@@ -6,6 +6,7 @@
 ///
 /// Uses SharedPreferences for local persistence (privacy-first design)
 /// Uses Stripe Checkout for web payments (PWA-only, no in-app purchase)
+library;
 
 import 'dart:async';
 import 'dart:convert';
@@ -182,7 +183,8 @@ class SubscriptionService {
       await _checkAndMarkTrialExpiry();
 
       _isInitialized = true;
-      debugPrint('📊 [SubscriptionService] SubscriptionService initialized (PWA mode)');
+      debugPrint(
+          '📊 [SubscriptionService] SubscriptionService initialized (PWA mode)');
     } catch (e) {
       debugPrint(
           '📊 [SubscriptionService] Failed to initialize SubscriptionService: $e');
@@ -649,15 +651,18 @@ class SubscriptionService {
     int? currentPeriodEnd,
     bool isYearly = true,
   }) async {
-    debugPrint('📊 [SubscriptionService] Activating premium from Stripe checkout');
+    debugPrint(
+        '📊 [SubscriptionService] Activating premium from Stripe checkout');
 
     // Set premium active
     await _prefs?.setBool(_keyPremiumActive, true);
 
     // Set expiry date from Stripe's current_period_end
     if (currentPeriodEnd != null) {
-      final expiryDate = DateTime.fromMillisecondsSinceEpoch(currentPeriodEnd * 1000);
-      await _prefs?.setString(_keyPremiumExpiryDate, expiryDate.toIso8601String());
+      final expiryDate =
+          DateTime.fromMillisecondsSinceEpoch(currentPeriodEnd * 1000);
+      await _prefs?.setString(
+          _keyPremiumExpiryDate, expiryDate.toIso8601String());
     }
 
     // Set product ID
@@ -682,7 +687,8 @@ class SubscriptionService {
       await _prefs?.setBool('trial_blocked', true);
     }
 
-    debugPrint('✅ [SubscriptionService] Premium activated from Stripe (subscriptionId: $subscriptionId)');
+    debugPrint(
+        '✅ [SubscriptionService] Premium activated from Stripe (subscriptionId: $subscriptionId)');
   }
 
   /// Sync subscription status with Stripe
@@ -714,7 +720,8 @@ class SubscriptionService {
 
       if (!found) {
         // No active subscription found in Stripe - deactivate locally
-        debugPrint('📊 [SubscriptionService] No active subscription in Stripe - deactivating');
+        debugPrint(
+            '📊 [SubscriptionService] No active subscription in Stripe - deactivating');
         await deactivatePremium();
         return;
       }
@@ -724,7 +731,8 @@ class SubscriptionService {
       final currentPeriodEnd = status['currentPeriodEnd'] as int?;
       final trialEnd = status['trialEnd'] as int?;
 
-      debugPrint('📊 [SubscriptionService] Stripe status: $stripeStatus, cancelAtPeriodEnd: $cancelAtPeriodEnd');
+      debugPrint(
+          '📊 [SubscriptionService] Stripe status: $stripeStatus, cancelAtPeriodEnd: $cancelAtPeriodEnd');
 
       // Handle different Stripe statuses
       if (stripeStatus == 'active' || stripeStatus == 'trialing') {
@@ -735,8 +743,10 @@ class SubscriptionService {
 
         // Update expiry date
         if (currentPeriodEnd != null) {
-          final expiryDate = DateTime.fromMillisecondsSinceEpoch(currentPeriodEnd * 1000);
-          await _prefs?.setString(_keyPremiumExpiryDate, expiryDate.toIso8601String());
+          final expiryDate =
+              DateTime.fromMillisecondsSinceEpoch(currentPeriodEnd * 1000);
+          await _prefs?.setString(
+              _keyPremiumExpiryDate, expiryDate.toIso8601String());
         }
 
         // Update auto-renew status
@@ -748,13 +758,17 @@ class SubscriptionService {
         }
 
         debugPrint('✅ [SubscriptionService] Synced - subscription active');
-      } else if (stripeStatus == 'canceled' || stripeStatus == 'unpaid' || stripeStatus == 'incomplete_expired') {
+      } else if (stripeStatus == 'canceled' ||
+          stripeStatus == 'unpaid' ||
+          stripeStatus == 'incomplete_expired') {
         // Subscription is cancelled/failed - deactivate
-        debugPrint('📊 [SubscriptionService] Subscription $stripeStatus - deactivating');
+        debugPrint(
+            '📊 [SubscriptionService] Subscription $stripeStatus - deactivating');
         await deactivatePremium();
       } else if (stripeStatus == 'past_due') {
         // Payment failed but still in grace period - keep active but mark
-        debugPrint('⚠️ [SubscriptionService] Subscription past_due - keeping active');
+        debugPrint(
+            '⚠️ [SubscriptionService] Subscription past_due - keeping active');
         await _prefs?.setBool(_keyAutoRenewStatus, false);
       }
     } catch (e) {
@@ -783,16 +797,19 @@ class SubscriptionService {
     String? customerId,
   }) async {
     try {
-      const workerUrl = 'https://edc-stripe-subscription.connect-2a2.workers.dev';
+      const workerUrl =
+          'https://edc-stripe-subscription.connect-2a2.workers.dev';
 
-      final response = await http.post(
-        Uri.parse('$workerUrl/get-subscription'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'subscriptionId': subscriptionId,
-          'customerId': customerId,
-        }),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(
+            Uri.parse('$workerUrl/get-subscription'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'subscriptionId': subscriptionId,
+              'customerId': customerId,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;

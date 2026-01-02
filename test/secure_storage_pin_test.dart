@@ -7,6 +7,7 @@
 ///
 /// NOTE: These tests use mocks because flutter_secure_storage requires
 /// platform-specific implementations.
+library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -48,8 +49,7 @@ void main() {
 
       test('returns false when PIN is empty string', () async {
         // Arrange
-        when(mockStorage.read(key: 'app_pin_hash'))
-            .thenAnswer((_) async => '');
+        when(mockStorage.read(key: 'app_pin_hash')).thenAnswer((_) async => '');
 
         // Act
         final result = await mockStorage.read(key: 'app_pin_hash');
@@ -169,8 +169,7 @@ void main() {
     group('clearAppPin()', () {
       test('deletes PIN from storage', () async {
         // Arrange
-        when(mockStorage.delete(key: 'app_pin_hash'))
-            .thenAnswer((_) async {});
+        when(mockStorage.delete(key: 'app_pin_hash')).thenAnswer((_) async {});
 
         // Act
         await mockStorage.delete(key: 'app_pin_hash');

@@ -7,6 +7,7 @@
 /// - Eating disorders (NEDA hotline)
 /// - Legal issues (attorney)
 /// - Medical issues (doctor)
+library;
 
 /// Professional referral information
 class ProfessionalReferral {
@@ -99,8 +100,7 @@ class ReferralService {
       case ReferralType.addiction:
         return const ProfessionalReferral(
           type: ReferralType.addiction,
-          message:
-              'Recovery is possible with professional support. Consider:\n'
+          message: 'Recovery is possible with professional support. Consider:\n'
               '• Celebrate Recovery (12-step Christian program)\n'
               '• SAMHSA National Helpline: 1-800-662-4357 (free, confidential, 24/7)\n'
               '• Licensed addiction counselor\n'

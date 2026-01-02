@@ -4,6 +4,7 @@
 /// 2. Trial has expired or premium subscription has ended
 /// 3. User is suspended for Terms of Service violations
 /// Prevents viewing chat history and sending messages
+library;
 
 import 'package:flutter/material.dart';
 import '../components/frosted_glass_card.dart';
@@ -14,27 +15,28 @@ import '../l10n/app_localizations.dart';
 import '../theme/app_theme_extensions.dart';
 
 enum LockoutReason {
-  noTrial,         // Never started trial - must sign up first
-  trialExpired,    // Trial period ended
-  premiumExpired,  // Subscription expired
-  suspended,       // Account suspended for violations
+  noTrial, // Never started trial - must sign up first
+  trialExpired, // Trial period ended
+  premiumExpired, // Subscription expired
+  suspended, // Account suspended for violations
 }
 
 class ChatScreenLockoutOverlay extends StatelessWidget {
   final VoidCallback onSubscribePressed;
   final VoidCallback? onHomePressed; // Navigate back to home
   final LockoutReason reason;
-  final String? suspensionMessage; // For suspension: custom message with end date
+  final String?
+      suspensionMessage; // For suspension: custom message with end date
   final Duration? remainingSuspension; // For suspension: remaining time
 
   const ChatScreenLockoutOverlay({
-    Key? key,
+    super.key,
     required this.onSubscribePressed,
     this.onHomePressed,
     this.reason = LockoutReason.trialExpired,
     this.suspensionMessage,
     this.remainingSuspension,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -108,32 +110,40 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                               : AppTheme.goldColor,
                         ),
                       ),
-                      SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.xl)),
+                      SizedBox(
+                          height:
+                              ResponsiveUtils.spacing(context, AppSpacing.xl)),
 
                       // Title
                       Text(
                         _getTitle(l10n),
                         style: TextStyle(
-                          fontSize: ResponsiveUtils.fontSize(context, 28, minSize: 24, maxSize: 32),
+                          fontSize: ResponsiveUtils.fontSize(context, 28,
+                              minSize: 24, maxSize: 32),
                           fontWeight: FontWeight.w600,
                           color: AppColors.primaryText,
                           height: 1.2,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.lg)),
+                      SizedBox(
+                          height:
+                              ResponsiveUtils.spacing(context, AppSpacing.lg)),
 
                       // Message
                       Text(
                         _getMessage(l10n),
                         style: TextStyle(
-                          fontSize: ResponsiveUtils.fontSize(context, 16, minSize: 14, maxSize: 18),
+                          fontSize: ResponsiveUtils.fontSize(context, 16,
+                              minSize: 14, maxSize: 18),
                           color: AppColors.secondaryText,
                           height: 1.5,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.xxl)),
+                      SizedBox(
+                          height:
+                              ResponsiveUtils.spacing(context, AppSpacing.xxl)),
 
                       // Conditional content based on lockout reason
                       if (reason == LockoutReason.suspended) ...[
@@ -153,31 +163,39 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              l10n.lockoutSuspensionTimeRemaining(_formatDuration(remainingSuspension!)),
+                              l10n.lockoutSuspensionTimeRemaining(
+                                  _formatDuration(remainingSuspension!)),
                               style: TextStyle(
-                                fontSize: ResponsiveUtils.fontSize(context, 16, minSize: 14, maxSize: 18),
+                                fontSize: ResponsiveUtils.fontSize(context, 16,
+                                    minSize: 14, maxSize: 18),
                                 color: Colors.orange.shade200,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                        SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.lg)),
+                        SizedBox(
+                            height: ResponsiveUtils.spacing(
+                                context, AppSpacing.lg)),
 
                         // Contact support text
                         Text(
                           l10n.lockoutSuspensionContactInfo,
                           style: TextStyle(
-                            fontSize: ResponsiveUtils.fontSize(context, 13, minSize: 11, maxSize: 15),
+                            fontSize: ResponsiveUtils.fontSize(context, 13,
+                                minSize: 11, maxSize: 15),
                             color: AppColors.tertiaryText,
                             fontStyle: FontStyle.italic,
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.xs)),
+                        SizedBox(
+                            height: ResponsiveUtils.spacing(
+                                context, AppSpacing.xs)),
                         Text(
                           'connect@everydaychristian.app',
                           style: TextStyle(
-                            fontSize: ResponsiveUtils.fontSize(context, 13, minSize: 11, maxSize: 15),
+                            fontSize: ResponsiveUtils.fontSize(context, 13,
+                                minSize: 11, maxSize: 15),
                             color: AppTheme.goldColor,
                             fontWeight: FontWeight.w600,
                           ),
@@ -190,19 +208,25 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                           icon: Icons.chat_bubble_outline,
                           text: l10n.lockoutBenefitMessages,
                         ),
-                        SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.md)),
+                        SizedBox(
+                            height: ResponsiveUtils.spacing(
+                                context, AppSpacing.md)),
                         _buildBenefitItem(
                           context,
                           icon: Icons.history,
                           text: l10n.lockoutBenefitHistory,
                         ),
-                        SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.md)),
+                        SizedBox(
+                            height: ResponsiveUtils.spacing(
+                                context, AppSpacing.md)),
                         _buildBenefitItem(
                           context,
                           icon: Icons.auto_awesome,
                           text: l10n.lockoutBenefitGuidance,
                         ),
-                        SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.xxl)),
+                        SizedBox(
+                            height: ResponsiveUtils.spacing(
+                                context, AppSpacing.xxl)),
 
                         // Subscribe/Trial button
                         GlassButton(
@@ -212,13 +236,16 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                           onPressed: onSubscribePressed,
                         ),
                       ],
-                      SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.lg)),
+                      SizedBox(
+                          height:
+                              ResponsiveUtils.spacing(context, AppSpacing.lg)),
 
                       // Info text
                       Text(
                         l10n.lockoutFreeFeatures,
                         style: TextStyle(
-                          fontSize: ResponsiveUtils.fontSize(context, 12, minSize: 10, maxSize: 14),
+                          fontSize: ResponsiveUtils.fontSize(context, 12,
+                              minSize: 10, maxSize: 14),
                           color: AppColors.tertiaryText,
                           fontStyle: FontStyle.italic,
                         ),
@@ -227,7 +254,9 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
 
                       // Home button - allows user to navigate back
                       if (onHomePressed != null) ...[
-                        SizedBox(height: ResponsiveUtils.spacing(context, AppSpacing.lg)),
+                        SizedBox(
+                            height: ResponsiveUtils.spacing(
+                                context, AppSpacing.lg)),
                         TextButton.icon(
                           onPressed: onHomePressed,
                           icon: Icon(
@@ -238,7 +267,8 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                           label: Text(
                             l10n.backToHome,
                             style: TextStyle(
-                              fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
+                              fontSize: ResponsiveUtils.fontSize(context, 14,
+                                  minSize: 12, maxSize: 16),
                               color: AppColors.secondaryText,
                               fontWeight: FontWeight.w500,
                             ),
@@ -295,7 +325,8 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
     }
   }
 
-  Widget _buildBenefitItem(BuildContext context, {required IconData icon, required String text}) {
+  Widget _buildBenefitItem(BuildContext context,
+      {required IconData icon, required String text}) {
     return Row(
       children: [
         Container(
@@ -319,7 +350,8 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-              fontSize: ResponsiveUtils.fontSize(context, 14, minSize: 12, maxSize: 16),
+              fontSize: ResponsiveUtils.fontSize(context, 14,
+                  minSize: 12, maxSize: 16),
               color: AppColors.primaryText,
               fontWeight: FontWeight.w500,
             ),

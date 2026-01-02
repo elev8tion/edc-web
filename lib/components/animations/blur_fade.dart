@@ -8,12 +8,12 @@ class BlurFade extends StatefulWidget {
   final bool? isVisible;
 
   const BlurFade({
-    Key? key,
+    super.key,
     required this.child,
     this.delay = Duration.zero,
     this.duration = const Duration(milliseconds: 800),
     this.isVisible,
-  }) : super(key: key);
+  });
 
   @override
   State<BlurFade> createState() => _BlurFadeState();

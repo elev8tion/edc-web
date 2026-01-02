@@ -4,6 +4,7 @@
 /// This helps the AI respond appropriately:
 /// - Guidance: Empathetic, supportive, counseling tone
 /// - Discussion: Conversational, educational, exploratory tone
+library;
 
 import 'package:flutter/foundation.dart';
 
@@ -426,9 +427,12 @@ class IntentDetectionService {
     final normalized = _normalizeText(userInput);
 
     // Select patterns based on language
-    final guidancePatterns = language == 'es' ? _spanishGuidancePatterns : _guidancePatterns;
-    final discussionPatterns = language == 'es' ? _spanishDiscussionPatterns : _discussionPatterns;
-    final casualPatterns = language == 'es' ? _spanishCasualPatterns : _casualPatterns;
+    final guidancePatterns =
+        language == 'es' ? _spanishGuidancePatterns : _guidancePatterns;
+    final discussionPatterns =
+        language == 'es' ? _spanishDiscussionPatterns : _discussionPatterns;
+    final casualPatterns =
+        language == 'es' ? _spanishCasualPatterns : _casualPatterns;
 
     // Count pattern matches for each intent
     int guidanceScore = 0;
@@ -446,7 +450,8 @@ class IntentDetectionService {
         // But keep "help me" for "help me understand" alone (support request)
         if (pattern == 'help me' && normalized.contains('help me understand')) {
           // Check if there's a topic after "understand"
-          final understandIndex = normalized.indexOf('help me understand') + 'help me understand'.length;
+          final understandIndex = normalized.indexOf('help me understand') +
+              'help me understand'.length;
           final wordsAfter = normalized.substring(understandIndex).trim();
           if (wordsAfter.isNotEmpty) {
             // Has topic like "help me understand Romans 8" - skip guidance pattern
@@ -454,7 +459,8 @@ class IntentDetectionService {
           }
         }
 
-        guidanceScore += 3; // Weight guidance higher (emotional needs prioritized)
+        guidanceScore +=
+            3; // Weight guidance higher (emotional needs prioritized)
         guidanceMatches.add(pattern);
       }
     }
@@ -514,29 +520,36 @@ class IntentDetectionService {
       detectedPatterns = [];
     } else if (guidanceScore > discussionScore && guidanceScore > casualScore) {
       intent = ConversationIntent.guidance;
-      confidence = _calculateConfidence(guidanceScore, discussionScore, casualScore);
+      confidence =
+          _calculateConfidence(guidanceScore, discussionScore, casualScore);
       detectedPatterns = guidanceMatches;
-    } else if (discussionScore >= guidanceScore && discussionScore > casualScore) {
+    } else if (discussionScore >= guidanceScore &&
+        discussionScore > casualScore) {
       // Discussion wins if it ties or beats guidance AND beats casual
       intent = ConversationIntent.discussion;
-      confidence = _calculateConfidence(discussionScore, guidanceScore, casualScore);
+      confidence =
+          _calculateConfidence(discussionScore, guidanceScore, casualScore);
       detectedPatterns = discussionMatches;
     } else if (guidanceScore >= casualScore) {
       // Guidance wins ties with casual (safety tie-breaker)
       intent = ConversationIntent.guidance;
-      confidence = _calculateConfidence(guidanceScore, discussionScore, casualScore);
+      confidence =
+          _calculateConfidence(guidanceScore, discussionScore, casualScore);
       detectedPatterns = guidanceMatches;
     } else {
       intent = ConversationIntent.casual;
-      confidence = _calculateConfidence(casualScore, guidanceScore, discussionScore);
+      confidence =
+          _calculateConfidence(casualScore, guidanceScore, discussionScore);
       detectedPatterns = casualMatches;
     }
 
     // Log detection
     if (kDebugMode) {
       debugPrint('💬 [IntentDetection] Input: "$userInput"');
-      debugPrint('   Intent: ${intent.name} (confidence: ${(confidence * 100).toStringAsFixed(0)}%)');
-      debugPrint('   Scores: guidance=$guidanceScore, discussion=$discussionScore, casual=$casualScore');
+      debugPrint(
+          '   Intent: ${intent.name} (confidence: ${(confidence * 100).toStringAsFixed(0)}%)');
+      debugPrint(
+          '   Scores: guidance=$guidanceScore, discussion=$discussionScore, casual=$casualScore');
       if (detectedPatterns.isNotEmpty) {
         debugPrint('   Patterns: ${detectedPatterns.take(3).join(", ")}');
       }
@@ -550,7 +563,8 @@ class IntentDetectionService {
   }
 
   /// Calculate confidence score (0.0 to 1.0)
-  double _calculateConfidence(int primaryScore, int secondaryScore, int tertiaryScore) {
+  double _calculateConfidence(
+      int primaryScore, int secondaryScore, int tertiaryScore) {
     if (primaryScore == 0) return 0.3; // Default low confidence
 
     final total = primaryScore + secondaryScore + tertiaryScore;

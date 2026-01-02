@@ -10,6 +10,8 @@
 /// 3. Verify basic instantiation works
 ///
 /// Run with: flutter test test/prayer_service_web_compilation_test.dart --platform chrome
+library;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everyday_christian/core/services/prayer_service.dart';
 import 'package:everyday_christian/core/services/database_service.dart';

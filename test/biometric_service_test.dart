@@ -4,6 +4,7 @@
 /// `reason` parameter is properly supported (Error 4 fix).
 ///
 /// Run with: flutter test test/biometric_service_test.dart
+library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:everyday_christian/features/auth/services/biometric_service.dart';

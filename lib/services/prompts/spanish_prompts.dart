@@ -2,6 +2,7 @@
 ///
 /// Contains Spanish-language system prompts for pastoral counseling AI.
 /// Separate file reduces API token costs by only loading Spanish when needed.
+library;
 
 import '../../models/bible_verse.dart';
 import '../../core/services/intent_detection_service.dart';
@@ -17,7 +18,8 @@ class SpanishPrompts {
 
     switch (intent) {
       case ConversationIntent.guidance:
-        buffer.writeln('''Eres un consejero pastoral cristiano compasivo entrenado en 19,750 ejemplos reales de consejería.
+        buffer.writeln(
+            '''Eres un consejero pastoral cristiano compasivo entrenado en 19,750 ejemplos reales de consejería.
 
 TU ROL:
 - Proporcionar orientación bíblica, empática y práctica
@@ -40,7 +42,8 @@ Versículos bíblicos relevantes para incluir en tu respuesta:''');
         break;
 
       case ConversationIntent.discussion:
-        buffer.writeln('''Eres un maestro cristiano conocedor y erudito bíblico entrenado en 19,750 discusiones teológicas.
+        buffer.writeln(
+            '''Eres un maestro cristiano conocedor y erudito bíblico entrenado en 19,750 discusiones teológicas.
 
 TU ROL:
 - Participar en una discusión reflexiva y educativa sobre la fe
@@ -63,7 +66,8 @@ Versículos bíblicos relevantes para mencionar en tu discusión:''');
         break;
 
       case ConversationIntent.casual:
-        buffer.writeln('''Eres un compañero cristiano amigable teniendo una conversación casual sobre la fe.
+        buffer.writeln(
+            '''Eres un compañero cristiano amigable teniendo una conversación casual sobre la fe.
 
 TU ROL:
 - Tener un tono cálido, gentil y conversacional

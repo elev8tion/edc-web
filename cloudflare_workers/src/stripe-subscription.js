@@ -10,10 +10,10 @@ const CORS_HEADERS = {
   'Content-Type': 'application/json',
 };
 
-// Price IDs from Stripe Dashboard (LIVE MODE)
-const YEARLY_TRIAL_PRICE_ID = 'price_1SiF65IFwav1xmJDUpzR9qJD';  // $35.99/year WITH 3-day trial
-const YEARLY_PRICE_ID = 'price_1SiF64IFwav1xmJDtExdlpSZ';         // $35.99/year NO trial
-const MONTHLY_PRICE_ID = 'price_1SiF64IFwav1xmJD04g0Vto2';        // $5.99/month NO trial
+// Price IDs are configured in wrangler-stripe.toml [vars] section:
+// - env.YEARLY_TRIAL_PRICE_ID: $35.99/year WITH 3-day trial
+// - env.YEARLY_PRICE_ID: $35.99/year NO trial
+// - env.MONTHLY_PRICE_ID: $5.99/month NO trial
 
 export default {
   async fetch(request, env) {
@@ -177,11 +177,11 @@ async function createSubscription(request, env) {
   const isTrial = isYearly && trialDays > 0;
 
   if (isTrial) {
-    priceId = YEARLY_TRIAL_PRICE_ID;  // $35.99/year with 3-day trial built-in
+    priceId = env.YEARLY_TRIAL_PRICE_ID;  // $35.99/year with 3-day trial built-in
   } else if (isYearly) {
-    priceId = YEARLY_PRICE_ID;         // $35.99/year, charges immediately
+    priceId = env.YEARLY_PRICE_ID;         // $35.99/year, charges immediately
   } else {
-    priceId = MONTHLY_PRICE_ID;        // $5.99/month, charges immediately
+    priceId = env.MONTHLY_PRICE_ID;        // $5.99/month, charges immediately
   }
 
   // Build subscription params
@@ -404,12 +404,12 @@ async function createEmbeddedCheckout(request, env) {
   let isTrial = false;
 
   if (isYearly && withTrial) {
-    priceId = YEARLY_TRIAL_PRICE_ID;  // $35.99/year with 3-day trial built-in
+    priceId = env.YEARLY_TRIAL_PRICE_ID;  // $35.99/year with 3-day trial built-in
     isTrial = true;
   } else if (isYearly) {
-    priceId = YEARLY_PRICE_ID;         // $35.99/year, charges immediately
+    priceId = env.YEARLY_PRICE_ID;         // $35.99/year, charges immediately
   } else {
-    priceId = MONTHLY_PRICE_ID;        // $5.99/month, charges immediately (no trial)
+    priceId = env.MONTHLY_PRICE_ID;        // $5.99/month, charges immediately (no trial)
   }
 
   // Build checkout session params for embedded mode

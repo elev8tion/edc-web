@@ -1,14 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_routes.dart';
 import '../../utils/blur_dialog_utils.dart';
 import '../../components/base_bottom_sheet.dart';
+import '../providers/secure_auth_provider.dart';
 
-class NavigationService {
+/// Mixin for route protection with secure authentication checks
+mixin RouteGuard {
+  /// Check if route requires authentication
+  bool shouldGuard(String routeName) {
+    return AppRoutes.isAuthRequired(routeName);
+  }
+
+  /// Validate access to protected route
+  Future<bool> canActivate(BuildContext context, String routeName) async {
+    if (!shouldGuard(routeName)) return true;
+
+    try {
+      final container = ProviderScope.containerOf(context);
+      final authState = container.read(secureAuthProvider);
+
+      if (authState != SecureAuthState.authenticated) {
+        // Store intended destination for post-login redirect
+        NavigationService._intendedRoute = routeName;
+        debugPrint('[RouteGuard] Access denied to $routeName - not authenticated');
+        return false;
+      }
+
+      debugPrint('[RouteGuard] Access granted to $routeName');
+      return true;
+    } catch (e) {
+      debugPrint('[RouteGuard] Error checking auth: $e');
+      return false;
+    }
+  }
+}
+
+class NavigationService with RouteGuard {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   static NavigatorState? get navigator => navigatorKey.currentState;
 
   static BuildContext? get context => navigator?.context;
+
+  // ============================================================================
+  // Intended route storage for post-auth navigation
+  // ============================================================================
+
+  /// Stores the route the user was trying to access before being redirected to auth
+  static String? _intendedRoute;
+
+  /// Set the intended route (call before redirecting to auth)
+  static void setIntendedRoute(String route) {
+    _intendedRoute = route;
+  }
+
+  /// Consume and return the intended route (returns null if none set)
+  /// This clears the stored route after returning it
+  static String? consumeIntendedRoute() {
+    final route = _intendedRoute;
+    _intendedRoute = null;
+    return route;
+  }
+
+  /// Check if there's a pending intended route
+  static bool get hasIntendedRoute => _intendedRoute != null;
 
   // ============================================================================
   // Debounce protection to prevent double-tap navigation issues
@@ -255,15 +311,42 @@ class NavigationService {
     _isShowingDialog = false;
     _isShowingBottomSheet = false;
   }
-}
 
-/// Route guard mixin for checking authentication
-mixin RouteGuard {
-  bool canAccess(String route, {bool isAuthenticated = false}) {
-    if (AppRoutes.isAuthRequired(route) && !isAuthenticated) {
-      NavigationService.goToAuth();
-      return false;
+  // ============================================================================
+  // Secure Navigation Methods (with route guard checks)
+  // ============================================================================
+
+  /// Navigate with guard check - verifies authentication before navigation
+  /// If not authenticated, redirects to auth screen and stores intended route
+  Future<void> navigateTo(BuildContext context, String routeName, {Object? arguments}) async {
+    if (await canActivate(context, routeName)) {
+      navigatorKey.currentState?.pushNamed(routeName, arguments: arguments);
+    } else {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        AppRoutes.auth,
+        (route) => false,
+      );
     }
-    return true;
+  }
+
+  /// Replace current route with guard check
+  /// If not authenticated, redirects to auth screen and stores intended route
+  Future<void> replaceTo(BuildContext context, String routeName, {Object? arguments}) async {
+    if (await canActivate(context, routeName)) {
+      navigatorKey.currentState?.pushReplacementNamed(routeName, arguments: arguments);
+    } else {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        AppRoutes.auth,
+        (route) => false,
+      );
+    }
+  }
+
+  /// Navigate and clear stack (no guard check - use for auth transitions)
+  void navigateAndClear(String routeName) {
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      routeName,
+      (route) => false,
+    );
   }
 }

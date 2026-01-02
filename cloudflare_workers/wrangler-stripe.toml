@@ -20,6 +20,9 @@ compatibility_date = "2024-01-01"
 # Environment variables (non-secret)
 [vars]
 ENVIRONMENT = "production"
+YEARLY_TRIAL_PRICE_ID = "price_1SiF65IFwav1xmJDUpzR9qJD"
+YEARLY_PRICE_ID = "price_1SiF64IFwav1xmJDtExdlpSZ"
+MONTHLY_PRICE_ID = "price_1SiF64IFwav1xmJD04g0Vto2"
 
 # Note: STRIPE_SECRET_KEY must be set via `wrangler secret put`
 # Never commit secret keys to version control

@@ -7,6 +7,7 @@
 /// - Unauthorized subscription changes
 ///
 /// Reference: https://stripe.com/docs/webhooks/signatures
+library;
 
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -42,7 +43,8 @@ class StripeWebhookVerifier {
     int toleranceSeconds = 300, // 5 minutes
   }) {
     // Get webhook secret from env if not provided
-    final secret = webhookSecret ?? dotenv.get('STRIPE_WEBHOOK_SECRET', fallback: '');
+    final secret =
+        webhookSecret ?? dotenv.get('STRIPE_WEBHOOK_SECRET', fallback: '');
 
     if (secret.isEmpty) {
       throw WebhookVerificationException(

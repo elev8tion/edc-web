@@ -7,6 +7,7 @@
 /// - Trial days remaining or renewal info
 /// - Upgrade button (if not premium)
 /// - Manage subscription link
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -28,7 +29,7 @@ import '../l10n/app_localizations.dart';
 import '../theme/app_theme_extensions.dart';
 
 class SubscriptionSettingsScreen extends ConsumerWidget {
-  const SubscriptionSettingsScreen({Key? key}) : super(key: key);
+  const SubscriptionSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -83,7 +84,9 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
 
                         // What You Get Section
                         GlassSectionHeader(
-                          title: isPremium ? l10n.subscriptionYourPremiumBenefits : l10n.subscriptionUpgradeToPremium,
+                          title: isPremium
+                              ? l10n.subscriptionYourPremiumBenefits
+                              : l10n.subscriptionUpgradeToPremium,
                           icon: Icons.workspace_premium,
                         ),
                         const SizedBox(height: AppSpacing.lg),
@@ -94,11 +97,14 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
                         if (!isPremium) ...[
                           GlassButton(
                             text: (hasTrialExpired || isTrialBlocked)
-                                ? l10n.subscriptionSubscribeNowButton(premiumPrice)
+                                ? l10n.subscriptionSubscribeNowButton(
+                                    premiumPrice)
                                 : l10n.subscriptionStartFreeTrialButton,
                             onPressed: () async {
                               // Generate a simple user ID for now
-                              final userId = DateTime.now().millisecondsSinceEpoch.toString();
+                              final userId = DateTime.now()
+                                  .millisecondsSinceEpoch
+                                  .toString();
 
                               await startSubscription(
                                 context: context,
@@ -111,7 +117,8 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
                         ] else ...[
                           GlassButton(
                             text: l10n.subscriptionManageButton,
-                            onPressed: () => _openManageSubscription(context, l10n),
+                            onPressed: () =>
+                                _openManageSubscription(context, l10n),
                           ),
                           const SizedBox(height: AppSpacing.lg),
                         ],
@@ -130,8 +137,10 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
                               const SizedBox(height: AppSpacing.sm),
                               AutoSizeText(
                                 isPremium
-                                    ? l10n.subscriptionRenewalInfoPremium(premiumPrice)
-                                    : l10n.subscriptionRenewalInfoTrial(premiumPrice),
+                                    ? l10n.subscriptionRenewalInfoPremium(
+                                        premiumPrice)
+                                    : l10n.subscriptionRenewalInfoTrial(
+                                        premiumPrice),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: AppColors.secondaryText,
@@ -206,7 +215,8 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
         AutoSizeText(
           status,
           style: TextStyle(
-            fontSize: ResponsiveUtils.fontSize(context, 24, minSize: 20, maxSize: 28),
+            fontSize:
+                ResponsiveUtils.fontSize(context, 24, minSize: 20, maxSize: 28),
             fontWeight: FontWeight.bold,
             color: AppColors.primaryText,
           ),
@@ -257,7 +267,9 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
           child: _buildStatCard(
             context: context,
             value: '$messagesUsed',
-            label: isPremium ? l10n.subscriptionUsedThisMonth : l10n.subscriptionUsedToday,
+            label: isPremium
+                ? l10n.subscriptionUsedThisMonth
+                : l10n.subscriptionUsedToday,
             icon: Icons.check_circle_outline,
             color: Colors.green,
             delay: 500,
@@ -268,7 +280,9 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
           child: _buildStatCard(
             context: context,
             value: isPremium ? '150' : '$trialDaysRemaining',
-            label: isPremium ? l10n.subscriptionMonthlyLimit : l10n.subscriptionTrialDaysLeft,
+            label: isPremium
+                ? l10n.subscriptionMonthlyLimit
+                : l10n.subscriptionTrialDaysLeft,
             icon: isPremium ? Icons.all_inclusive : Icons.schedule,
             color: isPremium ? AppTheme.goldColor : Colors.blue,
             delay: 600,
@@ -313,13 +327,15 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
               color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(AppRadius.sm),
             ),
-            child: Icon(icon, size: ResponsiveUtils.iconSize(context, 24), color: color),
+            child: Icon(icon,
+                size: ResponsiveUtils.iconSize(context, 24), color: color),
           ),
           const SizedBox(height: AppSpacing.sm),
           AutoSizeText(
             value,
             style: TextStyle(
-              fontSize: ResponsiveUtils.fontSize(context, 20, minSize: 16, maxSize: 24),
+              fontSize: ResponsiveUtils.fontSize(context, 20,
+                  minSize: 16, maxSize: 24),
               fontWeight: FontWeight.bold,
               color: AppColors.primaryText,
               shadows: AppTheme.textShadowStrong,
@@ -332,7 +348,8 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
           AutoSizeText(
             label,
             style: TextStyle(
-              fontSize: ResponsiveUtils.fontSize(context, 11, minSize: 9, maxSize: 13),
+              fontSize: ResponsiveUtils.fontSize(context, 11,
+                  minSize: 9, maxSize: 13),
               fontWeight: FontWeight.w600,
               color: Colors.white.withValues(alpha: 0.9),
               shadows: AppTheme.textShadowSubtle,
@@ -344,11 +361,15 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
           ),
         ],
       ),
-    ).animate().fadeIn(delay: Duration(milliseconds: delay)).scale(delay: Duration(milliseconds: delay));
+    )
+        .animate()
+        .fadeIn(delay: Duration(milliseconds: delay))
+        .scale(delay: Duration(milliseconds: delay));
   }
 
   /// Build benefits list
-  Widget _buildBenefitsList(AppLocalizations l10n, bool isPremium, String premiumPrice) {
+  Widget _buildBenefitsList(
+      AppLocalizations l10n, bool isPremium, String premiumPrice) {
     final benefits = [
       {
         'icon': Icons.chat_bubble_outline,
@@ -444,17 +465,25 @@ class SubscriptionSettingsScreen extends ConsumerWidget {
                         ),
                     ],
                   ),
-                ).animate().fadeIn(delay: Duration(milliseconds: 700 + (entry.key * 100))).slideX(begin: 0.3, delay: Duration(milliseconds: 700 + (entry.key * 100))),
+                )
+                    .animate()
+                    .fadeIn(
+                        delay: Duration(milliseconds: 700 + (entry.key * 100)))
+                    .slideX(
+                        begin: 0.3,
+                        delay: Duration(milliseconds: 700 + (entry.key * 100))),
               ))
           .toList(),
     );
   }
 
   /// Open manage subscription via Stripe Customer Portal (PWA)
-  Future<void> _openManageSubscription(BuildContext context, AppLocalizations l10n) async {
+  Future<void> _openManageSubscription(
+      BuildContext context, AppLocalizations l10n) async {
     // For PWA, use Stripe Customer Portal
     // The customer portal URL is generated by the Cloudflare Worker
-    final customerPortalUrl = dotenv.get('STRIPE_CUSTOMER_PORTAL_URL', fallback: '');
+    final customerPortalUrl =
+        dotenv.get('STRIPE_CUSTOMER_PORTAL_URL', fallback: '');
 
     if (customerPortalUrl.isEmpty) {
       // Fallback: Show info message about managing subscription via email link

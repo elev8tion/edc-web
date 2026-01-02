@@ -11,6 +11,7 @@
 /// - Profanity and offensive language
 /// - Excessively long messages (token abuse)
 /// - Rapid message spamming (rate limiting)
+library;
 
 import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
@@ -388,7 +389,8 @@ class InputSecurityService {
   }
 
   /// Check for jailbreak/prompt injection patterns
-  SecurityResult _checkJailbreakPatterns(String normalizedInput, String language) {
+  SecurityResult _checkJailbreakPatterns(
+      String normalizedInput, String language) {
     final detectedPatterns = <String>[];
 
     // Check English instruction override attempts

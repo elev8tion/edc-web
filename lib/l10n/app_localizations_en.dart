@@ -3379,6 +3379,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'App may already be installed. Check your home screen!';
 
   @override
+  String get pwaInstallSuccess => 'App installed! Find it on your home screen.';
+
+  @override
   String get pwaIOSInstructions => 'To install on iPhone/iPad:';
 
   @override

@@ -15,6 +15,7 @@
 /// // Start subscription flow
 /// await startSubscription(context: context, userId: userId);
 /// ```
+library;
 
 export 'stripe_service_stub.dart'
     if (dart.library.io) 'stripe_service_mobile.dart'
