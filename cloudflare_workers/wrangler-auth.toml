@@ -34,9 +34,7 @@ REFRESH_TOKEN_EXPIRY = "604800"
 # KV Namespace for token blacklist (persistent across worker instances)
 [[kv_namespaces]]
 binding = "TOKEN_BLACKLIST"
-id = "placeholder-create-via-wrangler"
-# Create with: wrangler kv:namespace create "TOKEN_BLACKLIST" -c wrangler-auth.toml
-# Then update the id above with the returned namespace ID
+id = "cd860eda70c64159bb49c456423e7a6b"
 
 # Secrets (set via: wrangler secret put SECRET_NAME -c wrangler-auth.toml)
 # Required secrets:
