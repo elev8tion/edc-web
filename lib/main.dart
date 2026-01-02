@@ -7,7 +7,7 @@ import 'package:everyday_christian/core/navigation/app_routes.dart';
 import 'package:everyday_christian/core/navigation/navigation_service.dart';
 import 'package:everyday_christian/core/navigation/page_transitions.dart';
 import 'package:everyday_christian/core/providers/app_providers.dart';
-import 'package:everyday_christian/core/providers/secure_auth_provider.dart';
+import 'package:everyday_christian/features/auth/services/auth_service.dart';
 import 'package:everyday_christian/core/services/app_update_service.dart';
 import 'package:everyday_christian/core/services/pwa_install_service.dart';
 import 'package:everyday_christian/core/services/subscription_service.dart';
@@ -131,9 +131,9 @@ class SecureNavigatorObserver extends NavigatorObserver {
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     if (previousRoute?.settings.name != null) {
       final isProtected = AppRoutes.isAuthRequired(previousRoute!.settings.name!);
-      final authState = ref.read(secureAuthProvider);
+      final isAuthenticated = ref.read(isAuthenticatedProvider);
 
-      if (isProtected && authState != SecureAuthState.authenticated) {
+      if (isProtected && !isAuthenticated) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           NavigationService.navigatorKey.currentState?.pushNamedAndRemoveUntil(
             AppRoutes.auth,
@@ -159,52 +159,8 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.initState();
     // Initialize auth on app start
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(secureAuthProvider.notifier).initialize();
+      ref.read(authServiceProvider.notifier).initialize();
     });
-  }
-
-  /// Handle auth state changes for navigation
-  void _handleAuthStateChange(SecureAuthState? previous, SecureAuthState current) {
-    final navigator = NavigationService.navigatorKey.currentState;
-    if (navigator == null) return;
-
-    switch (current) {
-      case SecureAuthState.authenticated:
-        // If coming from unauthenticated, navigate to home
-        if (previous == SecureAuthState.unauthenticated ||
-            previous == SecureAuthState.initial) {
-          // Check if there's an intended route to restore
-          final intendedRoute = NavigationService.consumeIntendedRoute();
-          navigator.pushNamedAndRemoveUntil(
-            intendedRoute ?? AppRoutes.home,
-            (route) => false,
-          );
-        }
-        break;
-
-      case SecureAuthState.unauthenticated:
-        // If was authenticated, force to auth screen
-        if (previous == SecureAuthState.authenticated) {
-          navigator.pushNamedAndRemoveUntil(
-            AppRoutes.auth,
-            (route) => false,
-          );
-        }
-        break;
-
-      case SecureAuthState.error:
-        // Show error notification
-        ScaffoldMessenger.of(navigator.context).showSnackBar(
-          const SnackBar(
-            content: Text('Authentication error. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        break;
-
-      default:
-        break;
-    }
   }
 
   @override
@@ -212,10 +168,8 @@ class _MyAppState extends ConsumerState<MyApp> {
     final textSize = ref.watch(textSizeProvider);
     final locale = ref.watch(languageProvider);
 
-    // Listen to auth state changes
-    ref.listen<SecureAuthState>(secureAuthProvider, (previous, current) {
-      _handleAuthStateChange(previous, current);
-    });
+    // Auth state changes are handled by auth_screen.dart listener
+    // No duplicate listener needed here
 
     return MaterialApp(
       title: 'Everyday Christian',

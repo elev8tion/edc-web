@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_routes.dart';
 import '../../utils/blur_dialog_utils.dart';
 import '../../components/base_bottom_sheet.dart';
-import '../providers/secure_auth_provider.dart';
+import '../../features/auth/services/auth_service.dart';
 
-/// Mixin for route protection with secure authentication checks
+/// Mixin for route protection with authentication checks
 mixin RouteGuard {
   /// Check if route requires authentication
   bool shouldGuard(String routeName) {
@@ -18,9 +18,9 @@ mixin RouteGuard {
 
     try {
       final container = ProviderScope.containerOf(context);
-      final authState = container.read(secureAuthProvider);
+      final isAuthenticated = container.read(isAuthenticatedProvider);
 
-      if (authState != SecureAuthState.authenticated) {
+      if (!isAuthenticated) {
         // Store intended destination for post-login redirect
         NavigationService._intendedRoute = routeName;
         debugPrint('[RouteGuard] Access denied to $routeName - not authenticated');
