@@ -52,15 +52,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         initial: () {},
         loading: () {},
         authenticated: (user) async {
-          // Check the user's state to determine navigation
-          if (user.isNewUser && !user.isEmailVerified) {
-            // New signup - wait for email verification
-            NavigationService.pushAndRemoveUntil(AppRoutes.waitForVerification);
-            return;
-          }
-
-          // User is authenticated and verified - go directly to home
-          // (Legal agreements are now handled in signup form)
+          // User is authenticated - go directly to home
+          // Email verification disabled for free PWA - users can use app immediately
+          // (Legal agreements are handled in signup form)
           NavigationService.pushAndRemoveUntil(AppRoutes.home);
         },
         unauthenticated: () {},

@@ -125,6 +125,7 @@ class AuthService extends StateNotifier<AuthState> {
       }
 
       // Create local user from API response
+      // Skip email verification - free PWA, go straight to app
       final user = User(
         id: response.user?.id.toString() ?? _generateUserId(),
         email: email,
@@ -134,8 +135,8 @@ class AuthService extends StateNotifier<AuthState> {
         dateJoined: DateTime.now(),
         profile: const UserProfile(),
         isAnonymous: false,
-        isNewUser: true,
-        isEmailVerified: false,
+        isNewUser: false,  // Skip verification flow
+        isEmailVerified: true,  // Skip verification requirement
       );
 
       // Store user data locally
