@@ -152,9 +152,19 @@ Future<bool> startSubscription({
   bool isYearly = true,
   bool forceNoTrial = false,
 }) async {
+  debugPrint('[StripeService] startSubscription called');
+  debugPrint('[StripeService] context.mounted: ${context.mounted}');
+
+  if (!context.mounted) {
+    debugPrint('[StripeService] ERROR: Context not mounted at start!');
+    return false;
+  }
+
   final eligibleForTrial = canGetTrial() && !forceNoTrial;
+  debugPrint('[StripeService] eligibleForTrial: $eligibleForTrial');
 
   // Create checkout session
+  debugPrint('[StripeService] Creating checkout session...');
   final sessionData = await _createEmbeddedCheckoutSession(
     userId: userId,
     email: email,
@@ -162,7 +172,11 @@ Future<bool> startSubscription({
     withTrial: eligibleForTrial,
   );
 
+  debugPrint('[StripeService] Session data received: ${sessionData != null}');
+  debugPrint('[StripeService] context.mounted after API: ${context.mounted}');
+
   if (sessionData == null) {
+    debugPrint('[StripeService] ERROR: Session data is null');
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to initialize checkout')),
@@ -171,22 +185,58 @@ Future<bool> startSubscription({
     return false;
   }
 
-  final clientSecret = sessionData['clientSecret'] as String;
-  final sessionId = sessionData['sessionId'] as String;
-  final customerId = sessionData['customerId'] as String?;
+  // Safely extract data with null checks
+  final clientSecret = sessionData['clientSecret'];
+  final sessionId = sessionData['sessionId'];
+  final customerId = sessionData['customerId'];
+
+  debugPrint('[StripeService] clientSecret present: ${clientSecret != null}');
+  debugPrint('[StripeService] sessionId present: ${sessionId != null}');
+
+  if (clientSecret == null || sessionId == null) {
+    debugPrint('[StripeService] ERROR: Missing required fields in session data');
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid checkout session data')),
+      );
+    }
+    return false;
+  }
+
+  if (!context.mounted) {
+    debugPrint('[StripeService] ERROR: Context not mounted before showDialog!');
+    return false;
+  }
 
   // Show embedded checkout dialog - verification happens inside dialog
-  final result = await showDialog<bool>(
-    context: context,
-    barrierDismissible: false,
-    builder: (dialogContext) => StripeEmbeddedCheckoutDialog(
-      clientSecret: clientSecret,
-      sessionId: sessionId,
-      customerId: customerId,
-      isYearly: isYearly,
-      isTrial: eligibleForTrial,
-    ),
-  );
+  debugPrint('[StripeService] Showing dialog...');
+
+  // CRITICAL FIX: Wrap showDialog in try-catch to handle any dialog errors
+  bool? result;
+  try {
+    result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        debugPrint('[StripeService] Dialog builder called');
+        return StripeEmbeddedCheckoutDialog(
+          clientSecret: clientSecret as String,
+          sessionId: sessionId as String,
+          customerId: customerId as String?,
+          isYearly: isYearly,
+          isTrial: eligibleForTrial,
+        );
+      },
+    );
+  } catch (e, stackTrace) {
+    debugPrint('[StripeService] ERROR showing dialog: $e');
+    debugPrint('[StripeService] Stack trace: $stackTrace');
+    // Don't rethrow - just return false to prevent unexpected behavior
+    return false;
+  }
+
+  debugPrint('[StripeService] Dialog result: $result');
+  debugPrint('[StripeService] context.mounted after dialog: ${context.mounted}');
 
   if (result == true && context.mounted) {
     final message = eligibleForTrial
@@ -198,6 +248,7 @@ Future<bool> startSubscription({
     return true;
   }
 
+  debugPrint('[StripeService] startSubscription returning false');
   return false;
 }
 
@@ -237,45 +288,67 @@ class _StripeEmbeddedCheckoutDialogState
   @override
   void initState() {
     super.initState();
+    debugPrint('[StripeDialog] initState called');
 
     // Generate unique instance ID for this dialog
     _instanceId = '${DateTime.now().millisecondsSinceEpoch}_${identityHashCode(this)}';
+    debugPrint('[StripeDialog] Generated instanceId: $_instanceId');
 
     // Register a unique view factory for this instance
     _viewType = _registerUniqueViewFactory(_instanceId);
+    debugPrint('[StripeDialog] Registered viewType: $_viewType');
 
     // Delay initialization to allow HtmlElementView to mount
+    debugPrint('[StripeDialog] Scheduling postFrameCallback for _initCheckout');
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('[StripeDialog] postFrameCallback fired, mounted: $mounted');
       if (mounted) {
         _initCheckout();
+      } else {
+        debugPrint('[StripeDialog] WARNING: Not mounted in postFrameCallback!');
       }
     });
   }
 
   Future<void> _initCheckout() async {
-    if (!mounted) return;
+    debugPrint('[StripeDialog] _initCheckout started');
+    if (!mounted) {
+      debugPrint('[StripeDialog] _initCheckout: Not mounted, returning early');
+      return;
+    }
 
     try {
       // Wait for the view factory to create the element
+      debugPrint('[StripeDialog] Getting completer for viewType: $_viewType');
       final completer = _viewReadyCompleters[_viewType];
+      debugPrint('[StripeDialog] Completer exists: ${completer != null}');
+
       if (completer != null) {
         if (!completer.isCompleted) {
+          debugPrint('[StripeDialog] Waiting for view factory with 5s timeout...');
           // First attempt: wait with timeout for view factory callback
           _viewId = await completer.future.timeout(
             const Duration(seconds: 5),
             onTimeout: () {
-              debugPrint('[StripeService] Timeout waiting for view factory');
+              debugPrint('[StripeDialog] TIMEOUT waiting for view factory');
               return -1;
             },
           );
+          debugPrint('[StripeDialog] View factory returned viewId: $_viewId');
         } else {
           // Retry attempt: completer already completed, get the value
-          // This handles the case where first attempt timed out but view factory completed later
+          debugPrint('[StripeDialog] Completer already completed, getting value...');
           _viewId = await completer.future;
+          debugPrint('[StripeDialog] Got viewId from completed completer: $_viewId');
         }
+      } else {
+        debugPrint('[StripeDialog] WARNING: No completer found for viewType!');
       }
 
-      if (!mounted) return;
+      if (!mounted) {
+        debugPrint('[StripeDialog] Not mounted after completer wait, returning');
+        return;
+      }
 
       if (_viewId == null || _viewId == -1) {
         throw Exception('View factory did not create element in time');
@@ -283,21 +356,29 @@ class _StripeEmbeddedCheckoutDialogState
 
       // Construct the element ID that was created by the view factory
       final elementId = 'stripe-element-$_instanceId-$_viewId';
+      debugPrint('[StripeDialog] Looking for DOM element: #$elementId');
 
       // Poll the DOM to verify the element exists
       final foundElement = await _waitForElement(elementId);
       if (foundElement == null) {
         throw Exception('DOM element not found: #$elementId');
       }
+      debugPrint('[StripeDialog] DOM element found');
 
-      if (!mounted) return;
+      if (!mounted) {
+        debugPrint('[StripeDialog] Not mounted after DOM poll, returning');
+        return;
+      }
 
+      debugPrint('[StripeDialog] Creating Stripe instance...');
       final stripe = _createStripe(_publishableKey);
+      debugPrint('[StripeDialog] Stripe instance created');
 
       // Create options object with onComplete callback
       final checkoutCompleter = Completer<void>();
 
       final onComplete = () {
+        debugPrint('[StripeDialog] Stripe onComplete callback fired');
         if (!checkoutCompleter.isCompleted) {
           checkoutCompleter.complete();
         }
@@ -308,28 +389,39 @@ class _StripeEmbeddedCheckoutDialogState
         'onComplete': onComplete,
       }.jsify() as JSObject;
 
+      debugPrint('[StripeDialog] Initializing embedded checkout...');
       final checkoutPromise = stripe.initEmbeddedCheckout(options);
       _checkout = await checkoutPromise.toDart;
+      debugPrint('[StripeDialog] Embedded checkout initialized');
 
-      if (!mounted) return;
+      if (!mounted) {
+        debugPrint('[StripeDialog] Not mounted after checkout init, returning');
+        return;
+      }
 
       // Mount to the checkout div using the verified element ID
       final selector = '#$elementId';
-      debugPrint('[StripeService] Mounting Stripe checkout to: $selector');
+      debugPrint('[StripeDialog] Mounting Stripe checkout to: $selector');
       _checkout!.mount(selector.toJS);
+      debugPrint('[StripeDialog] Stripe checkout mounted successfully');
 
       if (mounted) {
         setState(() => _isLoading = false);
+        debugPrint('[StripeDialog] Set isLoading to false');
       }
 
       // Wait for checkout completion
+      debugPrint('[StripeDialog] Waiting for checkout completion...');
       await checkoutCompleter.future;
+      debugPrint('[StripeDialog] Checkout completed!');
 
       if (mounted) {
+        debugPrint('[StripeDialog] Popping dialog with success');
         Navigator.of(context).pop(true);
       }
-    } catch (e) {
-      debugPrint('[StripeService] Error initializing checkout: $e');
+    } catch (e, stackTrace) {
+      debugPrint('[StripeDialog] ERROR in _initCheckout: $e');
+      debugPrint('[StripeDialog] Stack trace: $stackTrace');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -341,15 +433,18 @@ class _StripeEmbeddedCheckoutDialogState
 
   @override
   void dispose() {
+    debugPrint('[StripeDialog] dispose called - dialog is being destroyed');
     // Clean up Stripe checkout
     try {
       _checkout?.destroy();
+      debugPrint('[StripeDialog] Stripe checkout destroyed');
     } catch (e) {
-      // Ignore errors on destroy
+      debugPrint('[StripeDialog] Error destroying checkout: $e');
     }
 
     // Clean up view factory resources
     _cleanupViewFactory(_viewType);
+    debugPrint('[StripeDialog] View factory cleaned up');
 
     super.dispose();
   }

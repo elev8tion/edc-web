@@ -1516,13 +1516,51 @@ class ChatScreen extends HookConsumerWidget {
             ChatScreenLockoutOverlay(
               reason: LockoutReason.noTrial,
               onSubscribePressed: () async {
-                // Launch Stripe checkout for free trial
-                final userId = DateTime.now().millisecondsSinceEpoch.toString();
-                await startSubscription(
-                  context: context,
-                  userId: userId,
-                  isYearly: true,
-                );
+                // CRITICAL FIX: Capture scaffoldMessenger before async operations
+                // This avoids stale context issues for showing error messages
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                debugPrint('[ChatScreen] onSubscribePressed: Starting checkout flow');
+
+                try {
+                  // Check context is still valid before starting
+                  if (!context.mounted) {
+                    debugPrint('[ChatScreen] ERROR: Context not mounted at start');
+                    return;
+                  }
+
+                  // Launch Stripe checkout for free trial
+                  final userId = DateTime.now().millisecondsSinceEpoch.toString();
+                  debugPrint('[ChatScreen] Calling startSubscription with userId: $userId');
+
+                  final success = await startSubscription(
+                    context: context,
+                    userId: userId,
+                    isYearly: true,
+                  );
+
+                  debugPrint('[ChatScreen] startSubscription returned: $success');
+
+                  // Refresh subscription state if successful
+                  if (success && context.mounted) {
+                    debugPrint('[ChatScreen] Refreshing subscription state...');
+                    ref.invalidate(subscriptionSnapshotProvider);
+                  }
+                } catch (e, stackTrace) {
+                  // Catch and log any errors to prevent navigation issues
+                  debugPrint('[ChatScreen] ERROR in onSubscribePressed: $e');
+                  debugPrint('[ChatScreen] Stack trace: $stackTrace');
+
+                  // Show error snackbar if context is still valid
+                  if (context.mounted) {
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to open checkout: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
               onHomePressed: () {
                 NavigationService.pushReplacementNamed(AppRoutes.home);
