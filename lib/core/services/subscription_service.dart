@@ -870,6 +870,90 @@ class SubscriptionService {
     debugPrint('📊 [SubscriptionService] Premium activated for testing');
   }
 
+  // ============================================================================
+  // PROMO CODE REDEMPTION (No Stripe, no payment info required)
+  // ============================================================================
+
+  /// Valid promo codes for free yearly subscription
+  /// Each code grants 1 year of premium access with no auto-renewal
+  static const Set<String> _validPromoCodes = {
+    'FREEYEAR2025',
+    'BLESSED2025',
+    'FAITHFREE',
+    'GRACEGIFT',
+    'BELIEVER25',
+  };
+
+  /// Key for storing redeemed promo code
+  static const String _keyRedeemedPromoCode = 'redeemed_promo_code';
+  static const String _keyPromoActivationDate = 'promo_activation_date';
+
+  /// Check if a promo code is valid
+  bool isValidPromoCode(String code) {
+    return _validPromoCodes.contains(code.toUpperCase().trim());
+  }
+
+  /// Check if user has already redeemed a promo code
+  bool get hasRedeemedPromoCode {
+    return _prefs?.getString(_keyRedeemedPromoCode) != null;
+  }
+
+  /// Get the redeemed promo code (if any)
+  String? get redeemedPromoCode {
+    return _prefs?.getString(_keyRedeemedPromoCode);
+  }
+
+  /// Redeem a promo code for free yearly premium access
+  /// Returns true if successful, false if invalid or already redeemed
+  Future<bool> redeemPromoCode(String code) async {
+    final normalizedCode = code.toUpperCase().trim();
+
+    // Check if code is valid
+    if (!isValidPromoCode(normalizedCode)) {
+      debugPrint('📊 [SubscriptionService] Invalid promo code: $normalizedCode');
+      return false;
+    }
+
+    // Check if already redeemed a promo code
+    if (hasRedeemedPromoCode) {
+      debugPrint('📊 [SubscriptionService] Already redeemed a promo code: $redeemedPromoCode');
+      return false;
+    }
+
+    // Check if already premium (can't stack promo on existing subscription)
+    if (isPremium) {
+      debugPrint('📊 [SubscriptionService] Already premium - cannot redeem promo code');
+      return false;
+    }
+
+    // Activate premium for 1 year
+    final now = DateTime.now();
+    final expiryDate = DateTime(now.year + 1, now.month, now.day);
+
+    await _prefs?.setBool(_keyPremiumActive, true);
+    await _prefs?.setString(_keyPremiumExpiryDate, expiryDate.toIso8601String());
+    await _prefs?.setString(_keyRedeemedPromoCode, normalizedCode);
+    await _prefs?.setString(_keyPromoActivationDate, now.toIso8601String());
+    await _prefs?.setString(_keyPurchasedProductId, 'promo_yearly_free');
+    await _prefs?.setBool(_keyAutoRenewStatus, false); // No auto-renewal
+    await _prefs?.setInt(_keyPremiumMessagesUsed, 0);
+    await _prefs?.setString(_keyPremiumLastResetDate, now.toIso8601String().substring(0, 7));
+
+    // Block trial since user now has premium
+    await _prefs?.setBool('trial_blocked', true);
+
+    debugPrint('✅ [SubscriptionService] Promo code redeemed: $normalizedCode');
+    debugPrint('✅ [SubscriptionService] Premium active until: $expiryDate');
+
+    return true;
+  }
+
+  /// Get promo subscription expiry date
+  DateTime? get promoExpiryDate {
+    if (redeemedPromoCode == null) return null;
+    return _getExpiryDate();
+  }
+
   /// Get debug info
   Map<String, dynamic> get debugInfo {
     return {

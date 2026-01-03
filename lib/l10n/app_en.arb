@@ -4981,5 +4981,49 @@
   "accessibilityStatementDesc": "View our accessibility commitment",
   "@accessibilityStatementDesc": {
     "description": "Description for accessibility statement link"
+  },
+  "redeemPromoCode": "Redeem Promo Code",
+  "@redeemPromoCode": {
+    "description": "Promo code redemption title"
+  },
+  "redeemPromoCodeDesc": "Enter a promo code for free premium",
+  "@redeemPromoCodeDesc": {
+    "description": "Promo code redemption description"
+  },
+  "promoCodeDialogMessage": "Enter your promo code to unlock one year of premium access at no cost.",
+  "@promoCodeDialogMessage": {
+    "description": "Promo code dialog explanation"
+  },
+  "enterPromoCode": "Enter promo code",
+  "@enterPromoCode": {
+    "description": "Promo code input placeholder"
+  },
+  "redeem": "Redeem",
+  "@redeem": {
+    "description": "Redeem button text"
+  },
+  "redeeming": "Redeeming...",
+  "@redeeming": {
+    "description": "Redeeming in progress text"
+  },
+  "pleaseEnterPromoCode": "Please enter a promo code",
+  "@pleaseEnterPromoCode": {
+    "description": "Validation error for empty promo code"
+  },
+  "promoCodeSuccess": "🎉 Promo code redeemed! You now have 1 year of premium access.",
+  "@promoCodeSuccess": {
+    "description": "Success message when promo code is redeemed"
+  },
+  "promoCodeInvalid": "Invalid promo code. Please check and try again.",
+  "@promoCodeInvalid": {
+    "description": "Error for invalid promo code"
+  },
+  "promoCodeAlreadyRedeemed": "You have already redeemed a promo code.",
+  "@promoCodeAlreadyRedeemed": {
+    "description": "Error when user already redeemed a code"
+  },
+  "promoCodeAlreadyPremium": "You already have an active premium subscription.",
+  "@promoCodeAlreadyPremium": {
+    "description": "Error when user is already premium"
   }
 }

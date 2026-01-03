@@ -125,6 +125,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   );
                 },
               ),
+              _buildActionTile(
+                l10n.redeemPromoCode,
+                l10n.redeemPromoCodeDesc,
+                Icons.card_giftcard,
+                () => _showPromoCodeDialog(),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.xxl),
@@ -908,6 +914,192 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         AppSnackBar.showError(context, message: l10n.appInstallFailed);
       }
     }
+  }
+
+  void _showPromoCodeDialog() {
+    final l10n = AppLocalizations.of(context);
+    final promoController = TextEditingController();
+    bool isLoading = false;
+
+    showBlurredDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: ResponsiveUtils.maxContentWidth(context),
+            ),
+            child: FrostedGlassCard(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(AppSpacing.sm),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.goldColor.withValues(alpha: 0.3),
+                              AppTheme.goldColor.withValues(alpha: 0.1),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(AppRadius.xs + 2),
+                        ),
+                        child: Icon(
+                          Icons.card_giftcard,
+                          color: AppTheme.goldColor,
+                          size: ResponsiveUtils.iconSize(context, 20),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Text(
+                          l10n.redeemPromoCode,
+                          style: TextStyle(
+                            fontSize: ResponsiveUtils.fontSize(context, 20,
+                                minSize: 18, maxSize: 24),
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primaryText,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    l10n.promoCodeDialogMessage,
+                    style: TextStyle(
+                      fontSize: ResponsiveUtils.fontSize(context, 13,
+                          minSize: 11, maxSize: 15),
+                      color: Colors.white.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+
+                  // Promo code input
+                  TextField(
+                    controller: promoController,
+                    textCapitalization: TextCapitalization.characters,
+                    style: const TextStyle(
+                      color: AppColors.primaryText,
+                      fontSize: 16,
+                      letterSpacing: 2,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: l10n.enterPromoCode,
+                      hintStyle: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.4),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withValues(alpha: 0.1),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        borderSide: BorderSide(
+                          color: AppTheme.goldColor.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        borderSide: BorderSide(
+                          color: AppTheme.goldColor.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        borderSide: const BorderSide(
+                          color: AppTheme.goldColor,
+                        ),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.confirmation_number,
+                        color: AppTheme.goldColor.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  // Actions
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GlassButton(
+                          text: l10n.cancel,
+                          height: 48,
+                          onPressed: () => NavigationService.pop(),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: GlassButton(
+                          text: isLoading ? l10n.redeeming : l10n.redeem,
+                          height: 48,
+                          isLoading: isLoading,
+                          borderColor: AppTheme.goldColor,
+                          onPressed: isLoading
+                              ? null
+                              : () async {
+                                  final code = promoController.text.trim();
+                                  if (code.isEmpty) {
+                                    AppSnackBar.showError(
+                                      context,
+                                      message: l10n.pleaseEnterPromoCode,
+                                    );
+                                    return;
+                                  }
+
+                                  setDialogState(() => isLoading = true);
+
+                                  final subscriptionService =
+                                      ref.read(subscriptionServiceProvider);
+                                  final success =
+                                      await subscriptionService.redeemPromoCode(code);
+
+                                  setDialogState(() => isLoading = false);
+
+                                  if (success) {
+                                    NavigationService.pop();
+                                    if (mounted) {
+                                      AppSnackBar.show(
+                                        // ignore: use_build_context_synchronously
+                                        context,
+                                        message: l10n.promoCodeSuccess,
+                                      );
+                                    }
+                                  } else {
+                                    if (subscriptionService.hasRedeemedPromoCode) {
+                                      AppSnackBar.showError(
+                                        context,
+                                        message: l10n.promoCodeAlreadyRedeemed,
+                                      );
+                                    } else if (subscriptionService.isPremium) {
+                                      AppSnackBar.showError(
+                                        context,
+                                        message: l10n.promoCodeAlreadyPremium,
+                                      );
+                                    } else {
+                                      AppSnackBar.showError(
+                                        context,
+                                        message: l10n.promoCodeInvalid,
+                                      );
+                                    }
+                                  }
+                                },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _showClearCacheDialog() {

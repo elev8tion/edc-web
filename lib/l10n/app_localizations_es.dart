@@ -3791,4 +3791,42 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get accessibilityStatementDesc =>
       'Ver nuestro compromiso de accesibilidad';
+
+  @override
+  String get redeemPromoCode => 'Redeem Promo Code';
+
+  @override
+  String get redeemPromoCodeDesc => 'Enter a promo code for free premium';
+
+  @override
+  String get promoCodeDialogMessage =>
+      'Enter your promo code to unlock one year of premium access at no cost.';
+
+  @override
+  String get enterPromoCode => 'Enter promo code';
+
+  @override
+  String get redeem => 'Redeem';
+
+  @override
+  String get redeeming => 'Redeeming...';
+
+  @override
+  String get pleaseEnterPromoCode => 'Please enter a promo code';
+
+  @override
+  String get promoCodeSuccess =>
+      '🎉 Promo code redeemed! You now have 1 year of premium access.';
+
+  @override
+  String get promoCodeInvalid =>
+      'Invalid promo code. Please check and try again.';
+
+  @override
+  String get promoCodeAlreadyRedeemed =>
+      'You have already redeemed a promo code.';
+
+  @override
+  String get promoCodeAlreadyPremium =>
+      'You already have an active premium subscription.';
 }

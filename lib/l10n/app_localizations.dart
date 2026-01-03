@@ -6662,6 +6662,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View our accessibility commitment'**
   String get accessibilityStatementDesc;
+
+  /// Promo code redemption title
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem Promo Code'**
+  String get redeemPromoCode;
+
+  /// Promo code redemption description
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a promo code for free premium'**
+  String get redeemPromoCodeDesc;
+
+  /// Promo code dialog explanation
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your promo code to unlock one year of premium access at no cost.'**
+  String get promoCodeDialogMessage;
+
+  /// Promo code input placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Enter promo code'**
+  String get enterPromoCode;
+
+  /// Redeem button text
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get redeem;
+
+  /// Redeeming in progress text
+  ///
+  /// In en, this message translates to:
+  /// **'Redeeming...'**
+  String get redeeming;
+
+  /// Validation error for empty promo code
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a promo code'**
+  String get pleaseEnterPromoCode;
+
+  /// Success message when promo code is redeemed
+  ///
+  /// In en, this message translates to:
+  /// **'🎉 Promo code redeemed! You now have 1 year of premium access.'**
+  String get promoCodeSuccess;
+
+  /// Error for invalid promo code
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid promo code. Please check and try again.'**
+  String get promoCodeInvalid;
+
+  /// Error when user already redeemed a code
+  ///
+  /// In en, this message translates to:
+  /// **'You have already redeemed a promo code.'**
+  String get promoCodeAlreadyRedeemed;
+
+  /// Error when user is already premium
+  ///
+  /// In en, this message translates to:
+  /// **'You already have an active premium subscription.'**
+  String get promoCodeAlreadyPremium;
 }
 
 class _AppLocalizationsDelegate
