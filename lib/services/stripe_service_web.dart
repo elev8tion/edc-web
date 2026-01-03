@@ -41,6 +41,9 @@ final Set<String> _registeredViewTypes = {};
 // Completer map to signal when view factory has created the element
 final Map<String, Completer<int>> _viewReadyCompleters = {};
 
+// Flag to track if platform view system has been pre-warmed
+bool _platformViewsWarmed = false;
+
 // JS Interop for Stripe
 @JS('Stripe')
 external JSFunction get _stripeConstructor;
@@ -122,12 +125,37 @@ void _cleanupViewFactory(String viewType) {
   // Note: Cannot unregister view factories, but we track them to avoid re-registration
 }
 
+/// Pre-warm the platform view system to avoid first-render glitches
+/// This registers a dummy view factory to trigger Flutter's platform view initialization
+void _prewarmPlatformViews() {
+  if (_platformViewsWarmed) return;
+
+  const warmupViewType = 'stripe-checkout-warmup';
+  if (!_registeredViewTypes.contains(warmupViewType)) {
+    ui_web.platformViewRegistry.registerViewFactory(
+      warmupViewType,
+      (int viewId, {Object? params}) {
+        // Create a minimal invisible div to trigger platform view system initialization
+        final div = web.document.createElement('div') as web.HTMLDivElement;
+        div.style.width = '0';
+        div.style.height = '0';
+        div.style.overflow = 'hidden';
+        return div;
+      },
+    );
+    _registeredViewTypes.add(warmupViewType);
+    debugPrint('[StripeService] Platform views pre-warmed');
+  }
+  _platformViewsWarmed = true;
+}
+
 /// Initialize Stripe (call on app start)
 Future<void> initializeStripe() async {
   if (_isInitialized) return;
 
-  // View factories are now registered per-dialog instance
-  // No global registration needed here
+  // CRITICAL: Pre-warm platform view system to avoid first-render glitches
+  // This must happen BEFORE any HtmlElementView is rendered
+  _prewarmPlatformViews();
 
   // Load saved state
   final prefs = await SharedPreferences.getInstance();
@@ -159,6 +187,13 @@ Future<bool> startSubscription({
     debugPrint('[StripeService] ERROR: Context not mounted at start!');
     return false;
   }
+
+  // CRITICAL FIX: Ensure platform views are pre-warmed before showing dialog
+  // This prevents first-render glitches caused by lazy initialization
+  _prewarmPlatformViews();
+
+  // Capture navigator BEFORE async operations to prevent context invalidation
+  final navigator = Navigator.of(context, rootNavigator: true);
 
   final eligibleForTrial = canGetTrial() && !forceNoTrial;
   debugPrint('[StripeService] eligibleForTrial: $eligibleForTrial');
@@ -203,20 +238,20 @@ Future<bool> startSubscription({
     return false;
   }
 
-  if (!context.mounted) {
-    debugPrint('[StripeService] ERROR: Context not mounted before showDialog!');
-    return false;
-  }
-
   // Show embedded checkout dialog - verification happens inside dialog
   debugPrint('[StripeService] Showing dialog...');
 
-  // CRITICAL FIX: Wrap showDialog in try-catch to handle any dialog errors
+  // CRITICAL FIX: Use the pre-captured navigator with rootNavigator: true
+  // This isolates the dialog from widget tree rebuilds that could cause the glitch
   bool? result;
   try {
+    // Add a microtask delay to allow platform views to fully initialize
+    await Future.microtask(() {});
+
     result = await showDialog<bool>(
-      context: context,
+      context: navigator.context,
       barrierDismissible: false,
+      useRootNavigator: true, // CRITICAL: Prevents interference from widget tree rebuilds
       builder: (dialogContext) {
         debugPrint('[StripeService] Dialog builder called');
         return StripeEmbeddedCheckoutDialog(
@@ -298,15 +333,24 @@ class _StripeEmbeddedCheckoutDialogState
     _viewType = _registerUniqueViewFactory(_instanceId);
     debugPrint('[StripeDialog] Registered viewType: $_viewType');
 
-    // Delay initialization to allow HtmlElementView to mount
-    debugPrint('[StripeDialog] Scheduling postFrameCallback for _initCheckout');
+    // CRITICAL FIX: Wait for 2 frames to ensure platform view is fully initialized
+    // The first frame builds the widget tree, the second frame renders the HtmlElementView
+    debugPrint('[StripeDialog] Scheduling delayed initialization');
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint('[StripeDialog] postFrameCallback fired, mounted: $mounted');
-      if (mounted) {
-        _initCheckout();
-      } else {
-        debugPrint('[StripeDialog] WARNING: Not mounted in postFrameCallback!');
+      debugPrint('[StripeDialog] First frame completed, mounted: $mounted');
+      if (!mounted) {
+        debugPrint('[StripeDialog] WARNING: Not mounted after first frame!');
+        return;
       }
+      // Wait one more frame to ensure HtmlElementView is rendered
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        debugPrint('[StripeDialog] Second frame completed, mounted: $mounted');
+        if (mounted) {
+          _initCheckout();
+        } else {
+          debugPrint('[StripeDialog] WARNING: Not mounted after second frame!');
+        }
+      });
     });
   }
 
