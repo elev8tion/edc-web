@@ -34,10 +34,12 @@ String? _subscriptionId;
 int? _trialEnd;
 String? _deviceId;
 bool _isInitialized = false;
-bool _viewFactoryRegistered = false;
 
-// Current checkout element ID (for mounting Stripe)
-int _checkoutViewId = 0;
+// Track registered view factories by their unique type name
+final Set<String> _registeredViewTypes = {};
+
+// Completer map to signal when view factory has created the element
+final Map<String, Completer<int>> _viewReadyCompleters = {};
 
 // JS Interop for Stripe
 @JS('Stripe')
@@ -61,34 +63,71 @@ StripeJS _createStripe(String publishableKey) {
       as StripeJS;
 }
 
-/// Register the view factory for Stripe checkout (must be called before using)
-void _registerViewFactory() {
-  if (_viewFactoryRegistered) return;
+/// Register a unique view factory for each dialog instance
+/// Returns the unique viewType name to use with HtmlElementView
+String _registerUniqueViewFactory(String instanceId) {
+  final viewType = 'stripe-checkout-$instanceId';
+
+  // Skip if already registered (shouldn't happen with unique IDs)
+  if (_registeredViewTypes.contains(viewType)) {
+    return viewType;
+  }
+
+  // Create a completer for this view instance
+  _viewReadyCompleters[viewType] = Completer<int>();
 
   ui_web.platformViewRegistry.registerViewFactory(
-    'stripe-checkout-element',
+    viewType,
     (int viewId, {Object? params}) {
-      _checkoutViewId = viewId;
       final div = web.document.createElement('div') as web.HTMLDivElement;
-      div.id = 'stripe-checkout-$viewId';
+      div.id = 'stripe-element-$instanceId-$viewId';
       div.style.width = '100%';
       div.style.height = '100%';
       div.style.minHeight = '500px';
       div.style.overflow = 'auto';
       div.style.setProperty('-webkit-overflow-scrolling', 'touch');
+
+      // Signal that the view factory has created the element
+      final completer = _viewReadyCompleters[viewType];
+      if (completer != null && !completer.isCompleted) {
+        completer.complete(viewId);
+      }
+
       return div;
     },
   );
 
-  _viewFactoryRegistered = true;
+  _registeredViewTypes.add(viewType);
+  debugPrint('[StripeService] Registered view factory: $viewType');
+  return viewType;
+}
+
+/// Wait for the DOM element to be ready with polling
+Future<String?> _waitForElement(String elementId, {int maxAttempts = 20, int delayMs = 100}) async {
+  for (int i = 0; i < maxAttempts; i++) {
+    final element = web.document.getElementById(elementId);
+    if (element != null) {
+      debugPrint('[StripeService] Element found after ${i * delayMs}ms: #$elementId');
+      return elementId;
+    }
+    await Future.delayed(Duration(milliseconds: delayMs));
+  }
+  debugPrint('[StripeService] Element not found after ${maxAttempts * delayMs}ms: #$elementId');
+  return null;
+}
+
+/// Clean up view factory resources for an instance
+void _cleanupViewFactory(String viewType) {
+  _viewReadyCompleters.remove(viewType);
+  // Note: Cannot unregister view factories, but we track them to avoid re-registration
 }
 
 /// Initialize Stripe (call on app start)
 Future<void> initializeStripe() async {
   if (_isInitialized) return;
 
-  // Register the view factory
-  _registerViewFactory();
+  // View factories are now registered per-dialog instance
+  // No global registration needed here
 
   // Load saved state
   final prefs = await SharedPreferences.getInstance();
@@ -190,28 +229,77 @@ class _StripeEmbeddedCheckoutDialogState
   bool _isLoading = true;
   String? _error;
 
+  // Per-instance state for view factory
+  late final String _instanceId;
+  late final String _viewType;
+  int? _viewId;
+
   @override
   void initState() {
     super.initState();
+
+    // Generate unique instance ID for this dialog
+    _instanceId = '${DateTime.now().millisecondsSinceEpoch}_${identityHashCode(this)}';
+
+    // Register a unique view factory for this instance
+    _viewType = _registerUniqueViewFactory(_instanceId);
+
     // Delay initialization to allow HtmlElementView to mount
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initCheckout();
+      if (mounted) {
+        _initCheckout();
+      }
     });
   }
 
   Future<void> _initCheckout() async {
-    // Wait a bit for the HTML element to be ready in the DOM
-    await Future.delayed(const Duration(milliseconds: 300));
+    if (!mounted) return;
 
     try {
+      // Wait for the view factory to create the element
+      final completer = _viewReadyCompleters[_viewType];
+      if (completer != null) {
+        if (!completer.isCompleted) {
+          // First attempt: wait with timeout for view factory callback
+          _viewId = await completer.future.timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              debugPrint('[StripeService] Timeout waiting for view factory');
+              return -1;
+            },
+          );
+        } else {
+          // Retry attempt: completer already completed, get the value
+          // This handles the case where first attempt timed out but view factory completed later
+          _viewId = await completer.future;
+        }
+      }
+
+      if (!mounted) return;
+
+      if (_viewId == null || _viewId == -1) {
+        throw Exception('View factory did not create element in time');
+      }
+
+      // Construct the element ID that was created by the view factory
+      final elementId = 'stripe-element-$_instanceId-$_viewId';
+
+      // Poll the DOM to verify the element exists
+      final foundElement = await _waitForElement(elementId);
+      if (foundElement == null) {
+        throw Exception('DOM element not found: #$elementId');
+      }
+
+      if (!mounted) return;
+
       final stripe = _createStripe(_publishableKey);
 
       // Create options object with onComplete callback
-      final completer = Completer<void>();
+      final checkoutCompleter = Completer<void>();
 
       final onComplete = () {
-        if (!completer.isCompleted) {
-          completer.complete();
+        if (!checkoutCompleter.isCompleted) {
+          checkoutCompleter.complete();
         }
       }.toJS;
 
@@ -223,16 +311,19 @@ class _StripeEmbeddedCheckoutDialogState
       final checkoutPromise = stripe.initEmbeddedCheckout(options);
       _checkout = await checkoutPromise.toDart;
 
-      // Mount to the checkout div
-      final selector = '#stripe-checkout-$_checkoutViewId';
+      if (!mounted) return;
+
+      // Mount to the checkout div using the verified element ID
+      final selector = '#$elementId';
+      debugPrint('[StripeService] Mounting Stripe checkout to: $selector');
       _checkout!.mount(selector.toJS);
 
       if (mounted) {
         setState(() => _isLoading = false);
       }
 
-      // Wait for completion
-      await completer.future;
+      // Wait for checkout completion
+      await checkoutCompleter.future;
 
       if (mounted) {
         Navigator.of(context).pop(true);
@@ -250,11 +341,16 @@ class _StripeEmbeddedCheckoutDialogState
 
   @override
   void dispose() {
+    // Clean up Stripe checkout
     try {
       _checkout?.destroy();
     } catch (e) {
       // Ignore errors on destroy
     }
+
+    // Clean up view factory resources
+    _cleanupViewFactory(_viewType);
+
     super.dispose();
   }
 
@@ -359,7 +455,7 @@ class _StripeEmbeddedCheckoutDialogState
             borderRadius: BorderRadius.circular(8),
           ),
           clipBehavior: Clip.antiAlias,
-          child: const HtmlElementView(viewType: 'stripe-checkout-element'),
+          child: HtmlElementView(viewType: _viewType),
         ),
 
         // Loading overlay
