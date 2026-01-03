@@ -1503,8 +1503,9 @@ class ChatScreen extends HookConsumerWidget {
     // ============================================================================
 
     // Check subscription status for chat lockout
-    final subscriptionService = ref.watch(subscriptionServiceProvider);
-    final subscriptionStatus = subscriptionService.getSubscriptionStatus();
+    // Use snapshot provider so invalidation triggers rebuild after promo code redemption
+    final subscriptionSnapshot = ref.watch(subscriptionSnapshotProvider);
+    final subscriptionStatus = subscriptionSnapshot.status;
 
     // If user never started trial, require them to sign up first
     if (subscriptionStatus == SubscriptionStatus.neverStarted) {

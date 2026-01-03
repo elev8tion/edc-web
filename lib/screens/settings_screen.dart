@@ -1063,6 +1063,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                                   if (success) {
                                     NavigationService.pop();
+                                    // Refresh subscription state so UI updates
+                                    ref.invalidate(subscriptionSnapshotProvider);
                                     if (mounted) {
                                       AppSnackBar.show(
                                         // ignore: use_build_context_synchronously
