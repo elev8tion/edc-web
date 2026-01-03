@@ -6728,6 +6728,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You already have an active premium subscription.'**
   String get promoCodeAlreadyPremium;
+
+  /// Link text to redeem promo code on lockout screen
+  ///
+  /// In en, this message translates to:
+  /// **'Have a Promo Code?'**
+  String get havePromoCode;
 }
 
 class _AppLocalizationsDelegate

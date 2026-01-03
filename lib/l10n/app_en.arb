@@ -5025,5 +5025,9 @@
   "promoCodeAlreadyPremium": "You already have an active premium subscription.",
   "@promoCodeAlreadyPremium": {
     "description": "Error when user is already premium"
+  },
+  "havePromoCode": "Have a Promo Code?",
+  "@havePromoCode": {
+    "description": "Link text to redeem promo code on lockout screen"
   }
 }

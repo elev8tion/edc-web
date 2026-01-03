@@ -1526,6 +1526,9 @@ class ChatScreen extends HookConsumerWidget {
               onHomePressed: () {
                 NavigationService.pushReplacementNamed(AppRoutes.home);
               },
+              onPromoCodePressed: () {
+                _showPromoCodeDialog(context, ref, l10n);
+              },
             ),
           ],
         ),
@@ -1556,6 +1559,9 @@ class ChatScreen extends HookConsumerWidget {
               },
               onHomePressed: () {
                 NavigationService.pushReplacementNamed(AppRoutes.home);
+              },
+              onPromoCodePressed: () {
+                _showPromoCodeDialog(context, ref, l10n);
               },
             ),
           ],

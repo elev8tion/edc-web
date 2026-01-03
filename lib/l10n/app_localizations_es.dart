@@ -3829,4 +3829,7 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get promoCodeAlreadyPremium =>
       'You already have an active premium subscription.';
+
+  @override
+  String get havePromoCode => 'Have a Promo Code?';
 }

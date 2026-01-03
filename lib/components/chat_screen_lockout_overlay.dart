@@ -24,6 +24,7 @@ enum LockoutReason {
 class ChatScreenLockoutOverlay extends StatelessWidget {
   final VoidCallback onSubscribePressed;
   final VoidCallback? onHomePressed; // Navigate back to home
+  final VoidCallback? onPromoCodePressed; // Redeem promo code for free access
   final LockoutReason reason;
   final String?
       suspensionMessage; // For suspension: custom message with end date
@@ -33,6 +34,7 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
     super.key,
     required this.onSubscribePressed,
     this.onHomePressed,
+    this.onPromoCodePressed,
     this.reason = LockoutReason.trialExpired,
     this.suspensionMessage,
     this.remainingSuspension,
@@ -235,6 +237,30 @@ class ChatScreenLockoutOverlay extends StatelessWidget {
                               : l10n.lockoutSubscribeNow,
                           onPressed: onSubscribePressed,
                         ),
+
+                        // Promo code option
+                        if (onPromoCodePressed != null) ...[
+                          SizedBox(
+                              height: ResponsiveUtils.spacing(
+                                  context, AppSpacing.md)),
+                          TextButton.icon(
+                            onPressed: onPromoCodePressed,
+                            icon: Icon(
+                              Icons.card_giftcard,
+                              color: Colors.green,
+                              size: ResponsiveUtils.iconSize(context, 18),
+                            ),
+                            label: Text(
+                              l10n.havePromoCode,
+                              style: TextStyle(
+                                fontSize: ResponsiveUtils.fontSize(context, 14,
+                                    minSize: 12, maxSize: 16),
+                                color: Colors.green,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                       SizedBox(
                           height:
