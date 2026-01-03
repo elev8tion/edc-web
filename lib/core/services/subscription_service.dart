@@ -11,6 +11,7 @@ library;
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -874,23 +875,113 @@ class SubscriptionService {
   // PROMO CODE REDEMPTION (No Stripe, no payment info required)
   // ============================================================================
 
-  /// Valid promo codes for free yearly subscription
-  /// Each code grants 1 year of premium access with no auto-renewal
-  static const Set<String> _validPromoCodes = {
-    'FREEYEAR2025',
-    'BLESSED2025',
-    'FAITHFREE',
-    'GRACEGIFT',
-    'BELIEVER25',
-  };
+  /// NocodeBackend API configuration for promo codes
+  static const String _nocodeBackendBaseUrl = 'https://openapi.nocodebackend.com';
+  static const String _nocodeBackendInstance = '36905_activation_codes';
 
   /// Key for storing redeemed promo code
   static const String _keyRedeemedPromoCode = 'redeemed_promo_code';
   static const String _keyPromoActivationDate = 'promo_activation_date';
 
-  /// Check if a promo code is valid
-  bool isValidPromoCode(String code) {
-    return _validPromoCodes.contains(code.toUpperCase().trim());
+  /// Validate a promo code via NocodeBackend API
+  /// Returns promo code data if valid, null if invalid or already used
+  Future<Map<String, dynamic>?> _validatePromoCodeViaApi(String code) async {
+    try {
+      final apiKey = dotenv.get('NOCODEBACKEND_API_KEY', fallback: '');
+      if (apiKey.isEmpty) {
+        debugPrint('❌ [SubscriptionService] NOCODEBACKEND_API_KEY not configured');
+        return null;
+      }
+
+      final normalizedCode = code.toUpperCase().trim();
+      final url = Uri.parse(
+        '$_nocodeBackendBaseUrl/read/promo_codes?Instance=$_nocodeBackendInstance&code=$normalizedCode',
+      );
+
+      final response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $apiKey'},
+      );
+
+      if (response.statusCode != 200) {
+        debugPrint('❌ [SubscriptionService] API error: ${response.statusCode}');
+        return null;
+      }
+
+      final responseData = json.decode(response.body);
+
+      // API returns {"status":"success","data":[...]}
+      if (responseData is! Map<String, dynamic>) {
+        debugPrint('📊 [SubscriptionService] Unexpected API response format');
+        return null;
+      }
+
+      final data = responseData['data'];
+      if (data is! List || data.isEmpty) {
+        debugPrint('📊 [SubscriptionService] Promo code not found: $normalizedCode');
+        return null;
+      }
+
+      final promoCode = data.first as Map<String, dynamic>;
+
+      // Check if code is already used
+      final isUsed = promoCode['is_used'] == 1 || promoCode['is_used'] == true;
+      if (isUsed) {
+        debugPrint('📊 [SubscriptionService] Promo code already used: $normalizedCode');
+        return null;
+      }
+
+      return promoCode;
+    } catch (e) {
+      debugPrint('❌ [SubscriptionService] Error validating promo code: $e');
+      return null;
+    }
+  }
+
+  /// Mark a promo code as used in NocodeBackend
+  Future<bool> _markPromoCodeAsUsed(int codeId, String userEmail) async {
+    try {
+      final apiKey = dotenv.get('NOCODEBACKEND_API_KEY', fallback: '');
+      if (apiKey.isEmpty) return false;
+
+      final now = DateTime.now();
+      final usedAt = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} '
+          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+
+      final url = Uri.parse(
+        '$_nocodeBackendBaseUrl/update/promo_codes/$codeId?Instance=$_nocodeBackendInstance',
+      );
+
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $apiKey',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'is_used': 1,
+          'used_by_email': userEmail,
+          'used_at': usedAt,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('✅ [SubscriptionService] Promo code marked as used');
+        return true;
+      } else {
+        debugPrint('❌ [SubscriptionService] Failed to mark code as used: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ [SubscriptionService] Error marking promo code as used: $e');
+      return false;
+    }
+  }
+
+  /// Check if a promo code is valid (async API check)
+  Future<bool> isValidPromoCode(String code) async {
+    final result = await _validatePromoCodeViaApi(code);
+    return result != null;
   }
 
   /// Check if user has already redeemed a promo code
@@ -903,14 +994,16 @@ class SubscriptionService {
     return _prefs?.getString(_keyRedeemedPromoCode);
   }
 
-  /// Redeem a promo code for free yearly premium access
+  /// Redeem a promo code for free premium access
+  /// Duration depends on code type: monthly (30 days) or yearly (365 days)
   /// Returns true if successful, false if invalid or already redeemed
-  Future<bool> redeemPromoCode(String code) async {
+  Future<bool> redeemPromoCode(String code, {String? userEmail}) async {
     final normalizedCode = code.toUpperCase().trim();
 
-    // Check if code is valid
-    if (!isValidPromoCode(normalizedCode)) {
-      debugPrint('📊 [SubscriptionService] Invalid promo code: $normalizedCode');
+    // Validate code via API
+    final promoData = await _validatePromoCodeViaApi(normalizedCode);
+    if (promoData == null) {
+      debugPrint('📊 [SubscriptionService] Invalid or used promo code: $normalizedCode');
       return false;
     }
 
@@ -926,15 +1019,20 @@ class SubscriptionService {
       return false;
     }
 
-    // Activate premium for 1 year
+    // Get duration from the promo code data
+    final durationDays = promoData['duration_days'] as int? ?? 365;
+    final codeType = promoData['type'] as String? ?? 'yearly';
+    final codeId = promoData['id'] as int;
+
+    // Calculate expiry date based on duration
     final now = DateTime.now();
-    final expiryDate = DateTime(now.year + 1, now.month, now.day);
+    final expiryDate = now.add(Duration(days: durationDays));
 
     await _prefs?.setBool(_keyPremiumActive, true);
     await _prefs?.setString(_keyPremiumExpiryDate, expiryDate.toIso8601String());
     await _prefs?.setString(_keyRedeemedPromoCode, normalizedCode);
     await _prefs?.setString(_keyPromoActivationDate, now.toIso8601String());
-    await _prefs?.setString(_keyPurchasedProductId, 'promo_yearly_free');
+    await _prefs?.setString(_keyPurchasedProductId, 'promo_${codeType}_free');
     await _prefs?.setBool(_keyAutoRenewStatus, false); // No auto-renewal
     await _prefs?.setInt(_keyPremiumMessagesUsed, 0);
     await _prefs?.setString(_keyPremiumLastResetDate, now.toIso8601String().substring(0, 7));
@@ -942,7 +1040,12 @@ class SubscriptionService {
     // Block trial since user now has premium
     await _prefs?.setBool('trial_blocked', true);
 
+    // Mark code as used in the database
+    final email = userEmail ?? 'unknown@user.com';
+    await _markPromoCodeAsUsed(codeId, email);
+
     debugPrint('✅ [SubscriptionService] Promo code redeemed: $normalizedCode');
+    debugPrint('✅ [SubscriptionService] Type: $codeType, Duration: $durationDays days');
     debugPrint('✅ [SubscriptionService] Premium active until: $expiryDate');
 
     return true;
