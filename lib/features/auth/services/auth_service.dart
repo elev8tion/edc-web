@@ -48,15 +48,16 @@ class AuthService extends StateNotifier<AuthState> {
         _currentToken = token;
 
         // Load local user data and update with API response
+        // Skip email verification - free PWA, users can access app immediately
         final userData = await _secureStorage.getUserData();
         final user = userData != null
             ? User.fromJson(userData).copyWith(
                 isNewUser: false,
-                isEmailVerified: response.user?.emailVerified ?? false,
+                isEmailVerified: true,  // Skip verification requirement
               )
             : _authUserToUser(response.user!).copyWith(
                 isNewUser: false,
-                isEmailVerified: response.user?.emailVerified ?? false,
+                isEmailVerified: true,  // Skip verification requirement
               );
 
         state = AuthState.authenticated(user);
@@ -184,9 +185,10 @@ class AuthService extends StateNotifier<AuthState> {
       }
 
       // Create/update local user
+      // Skip email verification - free PWA, users can access app immediately
       final user = _authUserToUser(response.user!).copyWith(
         isNewUser: false,
-        isEmailVerified: response.user?.emailVerified ?? false,
+        isEmailVerified: true,  // Skip verification requirement for sign-in too
       );
       await _secureStorage.storeUserData(user.toJson());
       await _secureStorage.setLastLogin();
@@ -541,16 +543,17 @@ class AuthService extends StateNotifier<AuthState> {
       final response = await _api.validateToken(token: currentToken);
       if (response.success && response.user != null) {
         // Preserve existing local user data while updating from backend
+        // Skip email verification - free PWA, users can access app immediately
         final existingUser = currentUser;
         final updatedUser = existingUser?.copyWith(
           // Update from backend response
           email: response.user!.email,
           name: response.user!.firstName ?? existingUser.name,
-          isEmailVerified: response.user?.emailVerified ?? false,
+          isEmailVerified: true,  // Skip verification requirement
           // Preserve local-only fields
           isNewUser: existingUser.isNewUser,
         ) ?? _authUserToUser(response.user!).copyWith(
-          isEmailVerified: response.user?.emailVerified ?? false,
+          isEmailVerified: true,  // Skip verification requirement
         );
 
         await _secureStorage.storeUserData(updatedUser.toJson());
