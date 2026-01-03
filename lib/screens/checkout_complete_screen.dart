@@ -1,20 +1,20 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/app_theme.dart';
 import '../components/gradient_background.dart';
 import '../core/navigation/app_routes.dart';
 import '../theme/app_theme_extensions.dart';
-import '../core/services/subscription_service.dart';
+import '../services/stripe_service.dart';
+import '../core/providers/subscription_providers.dart';
 
-class CheckoutCompleteScreen extends StatefulWidget {
+class CheckoutCompleteScreen extends ConsumerStatefulWidget {
   const CheckoutCompleteScreen({super.key});
 
   @override
-  State<CheckoutCompleteScreen> createState() => _CheckoutCompleteScreenState();
+  ConsumerState<CheckoutCompleteScreen> createState() => _CheckoutCompleteScreenState();
 }
 
-class _CheckoutCompleteScreenState extends State<CheckoutCompleteScreen> {
+class _CheckoutCompleteScreenState extends ConsumerState<CheckoutCompleteScreen> {
   String _statusMessage = 'Verifying checkout...';
   bool _isVerifying = true;
 
@@ -26,12 +26,16 @@ class _CheckoutCompleteScreenState extends State<CheckoutCompleteScreen> {
 
   Future<void> _handleCheckoutComplete() async {
     try {
-      // Get session_id from URL parameters
+      // CRITICAL: Get session_id from URL query parameters
+      // Stripe redirects to: /#/checkout-complete?session_id=cs_xxx
       final uri = Uri.base;
       final sessionId = uri.queryParameters['session_id'];
 
+      debugPrint('[CheckoutComplete] Full URL: ${uri.toString()}');
+      debugPrint('[CheckoutComplete] Query parameters: ${uri.queryParameters}');
+
       if (sessionId == null || sessionId.isEmpty) {
-        debugPrint('[CheckoutComplete] No session_id in URL');
+        debugPrint('[CheckoutComplete] ERROR: No session_id in URL');
         _navigateHome(success: false, message: 'No checkout session found');
         return;
       }
@@ -44,49 +48,47 @@ class _CheckoutCompleteScreenState extends State<CheckoutCompleteScreen> {
         });
       }
 
-      // Verify the checkout session
-      const workerUrl =
-          'https://edc-stripe-subscription.connect-2a2.workers.dev';
-      final response = await http.post(
-        Uri.parse('$workerUrl/verify-checkout'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'sessionId': sessionId}),
-      );
+      // Use stripe_service to verify checkout session
+      // This handles ALL the verification and activation logic
+      final verificationResult = await verifyCheckoutSession(sessionId);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        if (data['status'] == 'complete') {
-          if (mounted) {
-            setState(() {
-              _statusMessage = 'Activating subscription...';
-            });
-          }
-
-          // Activate premium
-          final subscriptionService = SubscriptionService.instance;
-          await subscriptionService.activateFromStripe(
-            subscriptionId: data['subscriptionId'] ?? '',
-            customerId: data['customerId'] ?? '',
-            trialEnd: data['trialEnd'],
-            currentPeriodEnd: data['currentPeriodEnd'],
-            isYearly: true, // Default to yearly
-          );
-
-          debugPrint('[CheckoutComplete] Premium activated successfully');
-          _navigateHome(
-              success: true, message: 'Subscription activated! Welcome to Premium.');
-        } else {
-          debugPrint('[CheckoutComplete] Session not complete: ${data['status']}');
-          _navigateHome(success: false, message: 'Checkout was not completed');
-        }
-      } else {
-        debugPrint('[CheckoutComplete] Verify failed: ${response.statusCode}');
+      if (verificationResult == null) {
+        debugPrint('[CheckoutComplete] ERROR: Verification returned null');
         _navigateHome(success: false, message: 'Could not verify checkout');
+        return;
       }
-    } catch (e) {
-      debugPrint('[CheckoutComplete] Error: $e');
-      _navigateHome(success: false, message: 'An error occurred');
+
+      debugPrint('[CheckoutComplete] Verification result: $verificationResult');
+
+      // Check if checkout was completed successfully
+      if (verificationResult['status'] == 'complete') {
+        // Check if it's a trial or paid subscription
+        final trialEnd = verificationResult['trialEnd'];
+        final isTrial = trialEnd != null && trialEnd > (DateTime.now().millisecondsSinceEpoch ~/ 1000);
+
+        if (mounted) {
+          setState(() {
+            _statusMessage = isTrial ? 'Trial activated!' : 'Premium activated!';
+          });
+        }
+
+        // Give user a moment to see the success message
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        final message = isTrial
+            ? 'Free trial started! 3 days or 15 messages.'
+            : 'Subscription activated! Welcome to Premium.';
+
+        debugPrint('[CheckoutComplete] SUCCESS: $message');
+        _navigateHome(success: true, message: message);
+      } else {
+        debugPrint('[CheckoutComplete] Session not complete: ${verificationResult['status']}');
+        _navigateHome(success: false, message: 'Checkout was not completed');
+      }
+    } catch (e, stackTrace) {
+      debugPrint('[CheckoutComplete] ERROR: $e');
+      debugPrint('[CheckoutComplete] Stack trace: $stackTrace');
+      _navigateHome(success: false, message: 'An error occurred during verification');
     }
   }
 
@@ -97,6 +99,13 @@ class _CheckoutCompleteScreenState extends State<CheckoutCompleteScreen> {
       _isVerifying = false;
       _statusMessage = success ? 'Success!' : 'Error';
     });
+
+    // CRITICAL: Refresh subscription providers BEFORE navigating
+    // This ensures the home screen shows the correct premium state
+    if (success) {
+      ref.invalidate(subscriptionSnapshotProvider);
+      debugPrint('[CheckoutComplete] Invalidated subscription providers');
+    }
 
     Navigator.of(context).pushNamedAndRemoveUntil(
       AppRoutes.home,
@@ -109,7 +118,7 @@ class _CheckoutCompleteScreenState extends State<CheckoutCompleteScreen> {
           SnackBar(
             content: Text(message),
             backgroundColor: success ? Colors.green : Colors.red,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
           ),
         );
       }

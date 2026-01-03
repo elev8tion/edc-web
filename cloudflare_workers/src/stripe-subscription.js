@@ -30,6 +30,8 @@ export default {
           return await createSetupIntent(request, env);
         case '/create-subscription':
           return await createSubscription(request, env);
+        case '/create-checkout-session':
+          return await createCheckoutSession(request, env);
         case '/create-embedded-checkout':
           return await createEmbeddedCheckout(request, env);
         case '/verify-checkout':
@@ -359,6 +361,107 @@ async function getSubscription(request, env) {
     trialEnd: subscription.trial_end,
     currentPeriodEnd: subscription.current_period_end,
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
+  }), { headers: CORS_HEADERS });
+}
+
+// ============================================================================
+// WEB: Create Hosted Checkout Session (URL Redirect)
+// ============================================================================
+// For PWA/web platform using Stripe hosted checkout page
+// Returns checkout URL for redirect - NO platform views needed!
+async function createCheckoutSession(request, env) {
+  const { userId, email, customerId, deviceId, isYearly, withTrial, success_url, cancel_url } = await request.json();
+
+  let customer = customerId;
+
+  // Create customer if needed
+  if (!customer) {
+    const custResponse = await fetch('https://api.stripe.com/v1/customers', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        email: email || '',
+        'metadata[user_id]': userId || '',
+        'metadata[device_id]': deviceId || '',
+        'metadata[created_at]': new Date().toISOString(),
+        'metadata[source]': 'edc_pwa_web',
+      }),
+    });
+
+    if (!custResponse.ok) {
+      const error = await custResponse.json();
+      throw new Error(`Failed to create customer: ${error.error?.message || 'Unknown error'}`);
+    }
+
+    const custData = await custResponse.json();
+    customer = custData.id;
+    console.log(`Created new Stripe customer: ${customer}`);
+  }
+
+  // Select price based on plan and trial eligibility
+  let priceId;
+  let isTrial = false;
+
+  if (isYearly && withTrial) {
+    priceId = env.YEARLY_TRIAL_PRICE_ID;  // $35.99/year with 3-day trial built-in
+    isTrial = true;
+  } else if (isYearly) {
+    priceId = env.YEARLY_PRICE_ID;         // $35.99/year, charges immediately
+  } else {
+    priceId = env.MONTHLY_PRICE_ID;        // $5.99/month, charges immediately
+  }
+
+  // Build checkout session params for HOSTED mode (redirect)
+  const params = new URLSearchParams({
+    'mode': 'subscription',
+    'customer': customer,
+    'line_items[0][price]': priceId,
+    'line_items[0][quantity]': '1',
+    'success_url': success_url || 'https://app.everydaychristian.app/#/checkout-complete?session_id={CHECKOUT_SESSION_ID}',
+    'cancel_url': cancel_url || 'https://app.everydaychristian.app/#/paywall',
+    // Enable promo codes
+    'allow_promotion_codes': 'true',
+    // Skip card collection if total is $0
+    'payment_method_collection': 'if_required',
+    // Metadata for tracking
+    'metadata[user_id]': userId || '',
+    'metadata[device_id]': deviceId || '',
+    'metadata[plan_type]': isYearly ? 'yearly' : 'monthly',
+    'metadata[is_trial]': isTrial ? 'true' : 'false',
+    'metadata[source]': 'edc_pwa_web',
+    // Subscription data
+    'subscription_data[metadata][user_id]': userId || '',
+    'subscription_data[metadata][device_id]': deviceId || '',
+    'subscription_data[metadata][plan_type]': isYearly ? 'yearly' : 'monthly',
+    'subscription_data[metadata][is_trial]': isTrial ? 'true' : 'false',
+    'subscription_data[metadata][source]': 'edc_pwa_web',
+  });
+
+  // Create checkout session (hosted mode - returns URL)
+  const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: params,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`Failed to create checkout session: ${error.error?.message || 'Unknown error'}`);
+  }
+
+  const session = await response.json();
+  console.log(`Created hosted checkout session: ${session.id} for customer: ${customer}`);
+
+  return new Response(JSON.stringify({
+    url: session.url,              // Stripe hosted checkout URL
+    sessionId: session.id,         // Session ID for verification
+    customerId: customer,          // Customer ID
   }), { headers: CORS_HEADERS });
 }
 

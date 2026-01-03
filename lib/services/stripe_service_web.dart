@@ -1,26 +1,19 @@
-/// Web implementation of Stripe service using Embedded Checkout
+/// Web implementation of Stripe service using Hosted Checkout (URL Redirect)
 /// This file is only loaded on web platforms via conditional import
 library;
 
-// ignore_for_file: avoid_web_libraries_in_flutter
-
 import 'dart:convert';
-import 'dart:async';
-import 'dart:js_interop';
-import 'dart:ui_web' as ui_web;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web/web.dart' as web;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../core/services/subscription_service.dart';
 
 // Cloudflare Worker URL
 const String _workerUrl =
     'https://edc-stripe-subscription.connect-2a2.workers.dev';
-
-// Stripe publishable key (LIVE MODE)
-const String _publishableKey =
-    'pk_live_51SefudIFwav1xmJDf1gc1OHStb4tQvLet9jSx9w1KHzAcoByHPxJLsMP2k94PWXST4pbZiWTMAou9bS0sieDTmSh00uvK4jMmV';
 
 // Storage keys
 const _keyCustomerId = 'stripe_customer_id';
@@ -35,127 +28,9 @@ int? _trialEnd;
 String? _deviceId;
 bool _isInitialized = false;
 
-// Track registered view factories by their unique type name
-final Set<String> _registeredViewTypes = {};
-
-// Completer map to signal when view factory has created the element
-final Map<String, Completer<int>> _viewReadyCompleters = {};
-
-// Flag to track if platform view system has been pre-warmed
-bool _platformViewsWarmed = false;
-
-// JS Interop for Stripe
-@JS('Stripe')
-external JSFunction get _stripeConstructor;
-
-/// Stripe JS object
-extension type StripeJS._(JSObject _) implements JSObject {
-  external JSPromise<EmbeddedCheckoutJS> initEmbeddedCheckout(JSObject options);
-}
-
-/// Embedded Checkout JS object
-extension type EmbeddedCheckoutJS._(JSObject _) implements JSObject {
-  external void mount(JSString selector);
-  external void unmount();
-  external void destroy();
-}
-
-/// Create Stripe instance
-StripeJS _createStripe(String publishableKey) {
-  return _stripeConstructor.callAsFunction(null, publishableKey.toJS)
-      as StripeJS;
-}
-
-/// Register a unique view factory for each dialog instance
-/// Returns the unique viewType name to use with HtmlElementView
-String _registerUniqueViewFactory(String instanceId) {
-  final viewType = 'stripe-checkout-$instanceId';
-
-  // Skip if already registered (shouldn't happen with unique IDs)
-  if (_registeredViewTypes.contains(viewType)) {
-    return viewType;
-  }
-
-  // Create a completer for this view instance
-  _viewReadyCompleters[viewType] = Completer<int>();
-
-  ui_web.platformViewRegistry.registerViewFactory(
-    viewType,
-    (int viewId, {Object? params}) {
-      final div = web.document.createElement('div') as web.HTMLDivElement;
-      div.id = 'stripe-element-$instanceId-$viewId';
-      div.style.width = '100%';
-      div.style.height = '100%';
-      div.style.minHeight = '500px';
-      div.style.overflow = 'auto';
-      div.style.setProperty('-webkit-overflow-scrolling', 'touch');
-
-      // Signal that the view factory has created the element
-      final completer = _viewReadyCompleters[viewType];
-      if (completer != null && !completer.isCompleted) {
-        completer.complete(viewId);
-      }
-
-      return div;
-    },
-  );
-
-  _registeredViewTypes.add(viewType);
-  debugPrint('[StripeService] Registered view factory: $viewType');
-  return viewType;
-}
-
-/// Wait for the DOM element to be ready with polling
-Future<String?> _waitForElement(String elementId, {int maxAttempts = 20, int delayMs = 100}) async {
-  for (int i = 0; i < maxAttempts; i++) {
-    final element = web.document.getElementById(elementId);
-    if (element != null) {
-      debugPrint('[StripeService] Element found after ${i * delayMs}ms: #$elementId');
-      return elementId;
-    }
-    await Future.delayed(Duration(milliseconds: delayMs));
-  }
-  debugPrint('[StripeService] Element not found after ${maxAttempts * delayMs}ms: #$elementId');
-  return null;
-}
-
-/// Clean up view factory resources for an instance
-void _cleanupViewFactory(String viewType) {
-  _viewReadyCompleters.remove(viewType);
-  // Note: Cannot unregister view factories, but we track them to avoid re-registration
-}
-
-/// Pre-warm the platform view system to avoid first-render glitches
-/// This registers a dummy view factory to trigger Flutter's platform view initialization
-void _prewarmPlatformViews() {
-  if (_platformViewsWarmed) return;
-
-  const warmupViewType = 'stripe-checkout-warmup';
-  if (!_registeredViewTypes.contains(warmupViewType)) {
-    ui_web.platformViewRegistry.registerViewFactory(
-      warmupViewType,
-      (int viewId, {Object? params}) {
-        // Create a minimal invisible div to trigger platform view system initialization
-        final div = web.document.createElement('div') as web.HTMLDivElement;
-        div.style.width = '0';
-        div.style.height = '0';
-        div.style.overflow = 'hidden';
-        return div;
-      },
-    );
-    _registeredViewTypes.add(warmupViewType);
-    debugPrint('[StripeService] Platform views pre-warmed');
-  }
-  _platformViewsWarmed = true;
-}
-
 /// Initialize Stripe (call on app start)
 Future<void> initializeStripe() async {
   if (_isInitialized) return;
-
-  // CRITICAL: Pre-warm platform view system to avoid first-render glitches
-  // This must happen BEFORE any HtmlElementView is rendered
-  _prewarmPlatformViews();
 
   // Load saved state
   final prefs = await SharedPreferences.getInstance();
@@ -172,7 +47,8 @@ Future<void> initializeStripe() async {
 /// Check if Stripe is supported on this platform
 bool isStripeSupported() => true;
 
-/// Start a subscription flow using Embedded Checkout
+/// Start a subscription flow using Hosted Checkout (URL Redirect)
+/// This is the RECOMMENDED approach for Flutter web - no platform views!
 Future<bool> startSubscription({
   required BuildContext context,
   required String userId,
@@ -181,26 +57,13 @@ Future<bool> startSubscription({
   bool forceNoTrial = false,
 }) async {
   debugPrint('[StripeService] startSubscription called');
-  debugPrint('[StripeService] context.mounted: ${context.mounted}');
-
-  if (!context.mounted) {
-    debugPrint('[StripeService] ERROR: Context not mounted at start!');
-    return false;
-  }
-
-  // CRITICAL FIX: Ensure platform views are pre-warmed before showing dialog
-  // This prevents first-render glitches caused by lazy initialization
-  _prewarmPlatformViews();
-
-  // Capture navigator BEFORE async operations to prevent context invalidation
-  final navigator = Navigator.of(context, rootNavigator: true);
 
   final eligibleForTrial = canGetTrial() && !forceNoTrial;
   debugPrint('[StripeService] eligibleForTrial: $eligibleForTrial');
 
   // Create checkout session
   debugPrint('[StripeService] Creating checkout session...');
-  final sessionData = await _createEmbeddedCheckoutSession(
+  final sessionData = await _createCheckoutSession(
     userId: userId,
     email: email,
     isYearly: isYearly,
@@ -208,10 +71,9 @@ Future<bool> startSubscription({
   );
 
   debugPrint('[StripeService] Session data received: ${sessionData != null}');
-  debugPrint('[StripeService] context.mounted after API: ${context.mounted}');
 
-  if (sessionData == null) {
-    debugPrint('[StripeService] ERROR: Session data is null');
+  if (sessionData == null || sessionData['url'] == null) {
+    debugPrint('[StripeService] ERROR: Session data is null or missing URL');
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to initialize checkout')),
@@ -220,452 +82,47 @@ Future<bool> startSubscription({
     return false;
   }
 
-  // Safely extract data with null checks
-  final clientSecret = sessionData['clientSecret'];
-  final sessionId = sessionData['sessionId'];
-  final customerId = sessionData['customerId'];
+  // Extract checkout URL
+  final checkoutUrl = sessionData['url'] as String;
+  final sessionId = sessionData['sessionId'] as String?;
+  final customerId = sessionData['customerId'] as String?;
 
-  debugPrint('[StripeService] clientSecret present: ${clientSecret != null}');
-  debugPrint('[StripeService] sessionId present: ${sessionId != null}');
+  debugPrint('[StripeService] Checkout URL: $checkoutUrl');
+  debugPrint('[StripeService] Session ID: $sessionId');
 
-  if (clientSecret == null || sessionId == null) {
-    debugPrint('[StripeService] ERROR: Missing required fields in session data');
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid checkout session data')),
-      );
-    }
-    return false;
+  // Save customer ID for future use
+  if (customerId != null) {
+    _customerId = customerId;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyCustomerId, customerId);
   }
 
-  // Show embedded checkout dialog - verification happens inside dialog
-  debugPrint('[StripeService] Showing dialog...');
-
-  // CRITICAL FIX: Use the pre-captured navigator with rootNavigator: true
-  // This isolates the dialog from widget tree rebuilds that could cause the glitch
-  bool? result;
   try {
-    // Add a microtask delay to allow platform views to fully initialize
-    await Future.microtask(() {});
+    // CRITICAL: Redirect to Stripe hosted checkout page
+    // For web, use _self to redirect in the same tab
+    // Stripe will redirect back to our success_url after completion
+    final uri = Uri.parse(checkoutUrl);
 
-    result = await showDialog<bool>(
-      context: navigator.context,
-      barrierDismissible: false,
-      useRootNavigator: true, // CRITICAL: Prevents interference from widget tree rebuilds
-      builder: (dialogContext) {
-        debugPrint('[StripeService] Dialog builder called');
-        return WillPopScope(
-          // CRITICAL: Prevent back button/escape from closing dialog during initialization
-          // This prevents the glitch from causing navigation back to home
-          onWillPop: () async {
-            debugPrint('[StripeService] WillPopScope: Preventing accidental dialog dismissal');
-            return true; // Allow user to close via the X button only
-          },
-          child: StripeEmbeddedCheckoutDialog(
-            clientSecret: clientSecret as String,
-            sessionId: sessionId as String,
-            customerId: customerId as String?,
-            isYearly: isYearly,
-            isTrial: eligibleForTrial,
-          ),
-        );
-      },
-    );
+    if (kIsWeb) {
+      // Web: Redirect in same tab (best UX for checkout flow)
+      await launchUrl(uri, webOnlyWindowName: "_self");
+    } else {
+      // Mobile: Open in external browser (fallback, shouldn't happen)
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+
+    debugPrint('[StripeService] Redirected to Stripe checkout');
+    return true;
   } catch (e, stackTrace) {
-    debugPrint('[StripeService] ERROR showing dialog: $e');
+    debugPrint('[StripeService] ERROR launching checkout URL: $e');
     debugPrint('[StripeService] Stack trace: $stackTrace');
 
-    // CRITICAL FIX: Show error message but DON'T navigate away
-    // Keep user on current page so they can retry
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Checkout failed to load. Please try again.'),
-          backgroundColor: Colors.orange,
-          duration: Duration(seconds: 4),
-          action: SnackBarAction(
-            label: 'Retry',
-            textColor: Colors.white,
-            onPressed: () {
-              // User can click the subscribe button again
-              debugPrint('[StripeService] User requested retry');
-            },
-          ),
-        ),
+        SnackBar(content: Text('Failed to open checkout: $e')),
       );
     }
-
-    // Return false but DON'T throw or cause navigation
     return false;
-  }
-
-  debugPrint('[StripeService] Dialog result: $result');
-  debugPrint('[StripeService] context.mounted after dialog: ${context.mounted}');
-
-  if (result == true && context.mounted) {
-    final message = eligibleForTrial
-        ? 'Trial started! 3 days or 15 messages free.'
-        : 'Subscription activated! Welcome to Premium.';
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.green),
-    );
-    return true;
-  }
-
-  debugPrint('[StripeService] startSubscription returning false');
-  return false;
-}
-
-/// Embedded Checkout Dialog Widget
-class StripeEmbeddedCheckoutDialog extends StatefulWidget {
-  final String clientSecret;
-  final String sessionId;
-  final String? customerId;
-  final bool isYearly;
-  final bool isTrial;
-
-  const StripeEmbeddedCheckoutDialog({
-    super.key,
-    required this.clientSecret,
-    required this.sessionId,
-    this.customerId,
-    required this.isYearly,
-    required this.isTrial,
-  });
-
-  @override
-  State<StripeEmbeddedCheckoutDialog> createState() =>
-      _StripeEmbeddedCheckoutDialogState();
-}
-
-class _StripeEmbeddedCheckoutDialogState
-    extends State<StripeEmbeddedCheckoutDialog> {
-  EmbeddedCheckoutJS? _checkout;
-  bool _isLoading = true;
-  String? _error;
-
-  // Per-instance state for view factory
-  late final String _instanceId;
-  late final String _viewType;
-  int? _viewId;
-
-  @override
-  void initState() {
-    super.initState();
-    debugPrint('[StripeDialog] initState called');
-
-    // Generate unique instance ID for this dialog
-    _instanceId = '${DateTime.now().millisecondsSinceEpoch}_${identityHashCode(this)}';
-    debugPrint('[StripeDialog] Generated instanceId: $_instanceId');
-
-    // Register a unique view factory for this instance
-    _viewType = _registerUniqueViewFactory(_instanceId);
-    debugPrint('[StripeDialog] Registered viewType: $_viewType');
-
-    // CRITICAL FIX: Wait for 2 frames to ensure platform view is fully initialized
-    // The first frame builds the widget tree, the second frame renders the HtmlElementView
-    debugPrint('[StripeDialog] Scheduling delayed initialization');
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint('[StripeDialog] First frame completed, mounted: $mounted');
-      if (!mounted) {
-        debugPrint('[StripeDialog] WARNING: Not mounted after first frame!');
-        return;
-      }
-      // Wait one more frame to ensure HtmlElementView is rendered
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        debugPrint('[StripeDialog] Second frame completed, mounted: $mounted');
-        if (mounted) {
-          _initCheckout();
-        } else {
-          debugPrint('[StripeDialog] WARNING: Not mounted after second frame!');
-        }
-      });
-    });
-  }
-
-  Future<void> _initCheckout() async {
-    debugPrint('[StripeDialog] _initCheckout started');
-    if (!mounted) {
-      debugPrint('[StripeDialog] _initCheckout: Not mounted, returning early');
-      return;
-    }
-
-    try {
-      // Wait for the view factory to create the element
-      debugPrint('[StripeDialog] Getting completer for viewType: $_viewType');
-      final completer = _viewReadyCompleters[_viewType];
-      debugPrint('[StripeDialog] Completer exists: ${completer != null}');
-
-      if (completer != null) {
-        if (!completer.isCompleted) {
-          debugPrint('[StripeDialog] Waiting for view factory with 5s timeout...');
-          // First attempt: wait with timeout for view factory callback
-          _viewId = await completer.future.timeout(
-            const Duration(seconds: 5),
-            onTimeout: () {
-              debugPrint('[StripeDialog] TIMEOUT waiting for view factory');
-              return -1;
-            },
-          );
-          debugPrint('[StripeDialog] View factory returned viewId: $_viewId');
-        } else {
-          // Retry attempt: completer already completed, get the value
-          debugPrint('[StripeDialog] Completer already completed, getting value...');
-          _viewId = await completer.future;
-          debugPrint('[StripeDialog] Got viewId from completed completer: $_viewId');
-        }
-      } else {
-        debugPrint('[StripeDialog] WARNING: No completer found for viewType!');
-      }
-
-      if (!mounted) {
-        debugPrint('[StripeDialog] Not mounted after completer wait, returning');
-        return;
-      }
-
-      if (_viewId == null || _viewId == -1) {
-        throw Exception('View factory did not create element in time');
-      }
-
-      // Construct the element ID that was created by the view factory
-      final elementId = 'stripe-element-$_instanceId-$_viewId';
-      debugPrint('[StripeDialog] Looking for DOM element: #$elementId');
-
-      // Poll the DOM to verify the element exists
-      final foundElement = await _waitForElement(elementId);
-      if (foundElement == null) {
-        throw Exception('DOM element not found: #$elementId');
-      }
-      debugPrint('[StripeDialog] DOM element found');
-
-      if (!mounted) {
-        debugPrint('[StripeDialog] Not mounted after DOM poll, returning');
-        return;
-      }
-
-      debugPrint('[StripeDialog] Creating Stripe instance...');
-      final stripe = _createStripe(_publishableKey);
-      debugPrint('[StripeDialog] Stripe instance created');
-
-      // Create options object with onComplete callback
-      final checkoutCompleter = Completer<void>();
-
-      final onComplete = () {
-        debugPrint('[StripeDialog] Stripe onComplete callback fired');
-        if (!checkoutCompleter.isCompleted) {
-          checkoutCompleter.complete();
-        }
-      }.toJS;
-
-      final options = <String, dynamic>{
-        'clientSecret': widget.clientSecret,
-        'onComplete': onComplete,
-      }.jsify() as JSObject;
-
-      debugPrint('[StripeDialog] Initializing embedded checkout...');
-      final checkoutPromise = stripe.initEmbeddedCheckout(options);
-      _checkout = await checkoutPromise.toDart;
-      debugPrint('[StripeDialog] Embedded checkout initialized');
-
-      if (!mounted) {
-        debugPrint('[StripeDialog] Not mounted after checkout init, returning');
-        return;
-      }
-
-      // Mount to the checkout div using the verified element ID
-      final selector = '#$elementId';
-      debugPrint('[StripeDialog] Mounting Stripe checkout to: $selector');
-      _checkout!.mount(selector.toJS);
-      debugPrint('[StripeDialog] Stripe checkout mounted successfully');
-
-      if (mounted) {
-        setState(() => _isLoading = false);
-        debugPrint('[StripeDialog] Set isLoading to false');
-      }
-
-      // Wait for checkout completion
-      debugPrint('[StripeDialog] Waiting for checkout completion...');
-      await checkoutCompleter.future;
-      debugPrint('[StripeDialog] Checkout completed!');
-
-      if (mounted) {
-        debugPrint('[StripeDialog] Popping dialog with success');
-        Navigator.of(context).pop(true);
-      }
-    } catch (e, stackTrace) {
-      debugPrint('[StripeDialog] ERROR in _initCheckout: $e');
-      debugPrint('[StripeDialog] Stack trace: $stackTrace');
-
-      // CRITICAL FIX: Set error state but DON'T close the dialog
-      // This keeps the user on the current page and allows retry
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _error = e.toString();
-        });
-
-        // Log the error but DON'T call Navigator.pop()
-        // User can manually close with X button or retry
-        debugPrint('[StripeDialog] Showing error UI, dialog remains open for retry');
-      } else {
-        debugPrint('[StripeDialog] Widget unmounted during error handling');
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    debugPrint('[StripeDialog] dispose called - dialog is being destroyed');
-
-    // CRITICAL FIX: Clean up resources WITHOUT triggering navigation
-    // Wrap all cleanup in try-catch to prevent errors from causing redirects
-    try {
-      _checkout?.destroy();
-      debugPrint('[StripeDialog] Stripe checkout destroyed');
-    } catch (e) {
-      debugPrint('[StripeDialog] Error destroying checkout: $e');
-      // Don't rethrow - just log it
-    }
-
-    try {
-      // Clean up view factory resources
-      _cleanupViewFactory(_viewType);
-      debugPrint('[StripeDialog] View factory cleaned up');
-    } catch (e) {
-      debugPrint('[StripeDialog] Error cleaning up view factory: $e');
-      // Don't rethrow - just log it
-    }
-
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final priceText = widget.isYearly ? r'$35.99/year' : r'$5.99/month';
-    final title = widget.isTrial ? 'Start Free Trial' : 'Subscribe Now';
-    final subtitle = widget.isTrial
-        ? "Add payment method. You won't be charged until trial ends."
-        : "You'll be charged $priceText today.";
-
-    return Dialog(
-      backgroundColor: const Color(0xFF1E293B),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      child: Container(
-        width: 500,
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.85,
-          minHeight: 600,
-        ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white54),
-                  onPressed: () => Navigator.of(context).pop(false),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: const TextStyle(fontSize: 14, color: Colors.white70),
-            ),
-            const SizedBox(height: 24),
-
-            // Checkout container
-            Expanded(
-              child: _buildCheckoutContent(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCheckoutContent() {
-    if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 48),
-            const SizedBox(height: 16),
-            const Text(
-              'Failed to load checkout',
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _error!,
-              style: const TextStyle(color: Colors.white54, fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _isLoading = true;
-                  _error = null;
-                });
-                _initCheckout();
-              },
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    // Show loading overlay while checkout is initializing
-    return Stack(
-      children: [
-        // The actual Stripe checkout will be mounted here
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: HtmlElementView(viewType: _viewType),
-        ),
-
-        // Loading overlay
-        if (_isLoading)
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text(
-                    'Loading secure checkout...',
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
   }
 }
 
@@ -788,7 +245,8 @@ Future<String> _getOrCreateDeviceId() async {
   return deviceId;
 }
 
-Future<Map<String, dynamic>?> _createEmbeddedCheckoutSession({
+/// Create a hosted checkout session (returns URL for redirect)
+Future<Map<String, dynamic>?> _createCheckoutSession({
   required String userId,
   String? email,
   required bool isYearly,
@@ -796,10 +254,18 @@ Future<Map<String, dynamic>?> _createEmbeddedCheckoutSession({
 }) async {
   try {
     final deviceId = await _getOrCreateDeviceId();
-    final returnUrl = '${web.window.location.origin}/checkout-complete';
+
+    // CRITICAL: Use hash routing for success/cancel URLs
+    // This works better with Flutter web's navigation system
+    final origin = web.window.location.origin;
+    final successUrl = '$origin/#/checkout-complete?session_id={CHECKOUT_SESSION_ID}';
+    final cancelUrl = '$origin/#/paywall';
+
+    debugPrint('[StripeService] Success URL: $successUrl');
+    debugPrint('[StripeService] Cancel URL: $cancelUrl');
 
     final response = await http.post(
-      Uri.parse('$_workerUrl/create-embedded-checkout'),
+      Uri.parse('$_workerUrl/create-checkout-session'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'userId': userId,
@@ -808,12 +274,16 @@ Future<Map<String, dynamic>?> _createEmbeddedCheckoutSession({
         'deviceId': deviceId,
         'isYearly': isYearly,
         'withTrial': withTrial,
-        'returnUrl': returnUrl,
+        'success_url': successUrl,
+        'cancel_url': cancelUrl,
       }),
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+      debugPrint('[StripeService] Checkout session created successfully');
+      debugPrint('[StripeService] URL: ${data['url']}');
+      return data;
     }
     debugPrint('[StripeService] Checkout session failed: ${response.body}');
     return null;
@@ -823,8 +293,12 @@ Future<Map<String, dynamic>?> _createEmbeddedCheckoutSession({
   }
 }
 
-Future<Map<String, dynamic>?> _verifyCheckoutSession(String sessionId) async {
+/// Verify checkout session and activate subscription
+/// Called by checkout_complete_screen.dart when user returns from Stripe
+Future<Map<String, dynamic>?> verifyCheckoutSession(String sessionId) async {
   try {
+    debugPrint('[StripeService] Verifying checkout session: $sessionId');
+
     final response = await http.post(
       Uri.parse('$_workerUrl/verify-checkout'),
       headers: {'Content-Type': 'application/json'},
@@ -832,7 +306,21 @@ Future<Map<String, dynamic>?> _verifyCheckoutSession(String sessionId) async {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+      debugPrint('[StripeService] Verification response: $data');
+
+      // Save subscription details
+      if (data['status'] == 'complete' && data['subscriptionId'] != null) {
+        await _saveSubscription(
+          customerId: data['customerId'],
+          subscriptionId: data['subscriptionId'],
+          trialEnd: data['trialEnd'],
+          currentPeriodEnd: data['currentPeriodEnd'],
+          isYearly: true, // TODO: Get from metadata if needed
+        );
+      }
+
+      return data;
     }
     return null;
   } catch (e) {
