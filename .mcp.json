@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "t0ggles": {
+      "url": "https://t0ggles.com/mcp",
+      "headers": {
+        "Authorization": "Bearer t0mcp_sibKNDhm5blVbKC7TXf3zanOaQVEiiOtASESP89dLahtVaK"
+      }
+    },
+    "memvid": {
+      "command": "/Users/kcdacre8tor/memvid-projects/memvid-mcp"
+    }
+  }
+}

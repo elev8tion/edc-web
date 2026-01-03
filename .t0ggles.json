@@ -1,0 +1,29 @@
+{
+  "board": {
+    "id": "zYNu2RAw0LJ66ICu4fkw",
+    "title": "edcEdits",
+    "url": "https://t0ggles.com/edcedits"
+  },
+  "project": {
+    "id": "CY6fjhSOMPkNH6Z4BKlJ",
+    "key": "EDCEDITS",
+    "title": "edcEdits"
+  },
+  "statuses": {
+    "todo": {
+      "id": "IE9jtAipbguvEyF6i9Vo",
+      "title": "To-Do"
+    },
+    "inProgress": {
+      "id": "iVlGTLIKksPNcTjt8kiE",
+      "title": "In Progress"
+    },
+    "done": {
+      "id": "8wrsFK7XHdER5VVlIG06",
+      "title": "Done"
+    }
+  },
+  "localPath": "/Users/kcdacre8tor/edc_web",
+  "createdAt": "2026-01-03T00:00:00.000Z",
+  "notes": "Config for Claude Code t0ggles MCP integration with edc_web Flutter project"
+}
