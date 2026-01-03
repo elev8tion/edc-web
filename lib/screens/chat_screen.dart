@@ -3125,6 +3125,8 @@ void _showPromoCodeDialog(BuildContext context, WidgetRef ref, AppLocalizations 
 
                                 if (success) {
                                   NavigationService.pop();
+                                  // Refresh subscription state so overlay disappears
+                                  ref.invalidate(subscriptionSnapshotProvider);
                                   AppSnackBar.show(
                                     context,
                                     message: l10n.promoCodeSuccess,
