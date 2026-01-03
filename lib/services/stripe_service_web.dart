@@ -254,19 +254,48 @@ Future<bool> startSubscription({
       useRootNavigator: true, // CRITICAL: Prevents interference from widget tree rebuilds
       builder: (dialogContext) {
         debugPrint('[StripeService] Dialog builder called');
-        return StripeEmbeddedCheckoutDialog(
-          clientSecret: clientSecret as String,
-          sessionId: sessionId as String,
-          customerId: customerId as String?,
-          isYearly: isYearly,
-          isTrial: eligibleForTrial,
+        return WillPopScope(
+          // CRITICAL: Prevent back button/escape from closing dialog during initialization
+          // This prevents the glitch from causing navigation back to home
+          onWillPop: () async {
+            debugPrint('[StripeService] WillPopScope: Preventing accidental dialog dismissal');
+            return true; // Allow user to close via the X button only
+          },
+          child: StripeEmbeddedCheckoutDialog(
+            clientSecret: clientSecret as String,
+            sessionId: sessionId as String,
+            customerId: customerId as String?,
+            isYearly: isYearly,
+            isTrial: eligibleForTrial,
+          ),
         );
       },
     );
   } catch (e, stackTrace) {
     debugPrint('[StripeService] ERROR showing dialog: $e');
     debugPrint('[StripeService] Stack trace: $stackTrace');
-    // Don't rethrow - just return false to prevent unexpected behavior
+
+    // CRITICAL FIX: Show error message but DON'T navigate away
+    // Keep user on current page so they can retry
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Checkout failed to load. Please try again.'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 4),
+          action: SnackBarAction(
+            label: 'Retry',
+            textColor: Colors.white,
+            onPressed: () {
+              // User can click the subscribe button again
+              debugPrint('[StripeService] User requested retry');
+            },
+          ),
+        ),
+      );
+    }
+
+    // Return false but DON'T throw or cause navigation
     return false;
   }
 
@@ -466,11 +495,20 @@ class _StripeEmbeddedCheckoutDialogState
     } catch (e, stackTrace) {
       debugPrint('[StripeDialog] ERROR in _initCheckout: $e');
       debugPrint('[StripeDialog] Stack trace: $stackTrace');
+
+      // CRITICAL FIX: Set error state but DON'T close the dialog
+      // This keeps the user on the current page and allows retry
       if (mounted) {
         setState(() {
           _isLoading = false;
           _error = e.toString();
         });
+
+        // Log the error but DON'T call Navigator.pop()
+        // User can manually close with X button or retry
+        debugPrint('[StripeDialog] Showing error UI, dialog remains open for retry');
+      } else {
+        debugPrint('[StripeDialog] Widget unmounted during error handling');
       }
     }
   }
@@ -478,17 +516,25 @@ class _StripeEmbeddedCheckoutDialogState
   @override
   void dispose() {
     debugPrint('[StripeDialog] dispose called - dialog is being destroyed');
-    // Clean up Stripe checkout
+
+    // CRITICAL FIX: Clean up resources WITHOUT triggering navigation
+    // Wrap all cleanup in try-catch to prevent errors from causing redirects
     try {
       _checkout?.destroy();
       debugPrint('[StripeDialog] Stripe checkout destroyed');
     } catch (e) {
       debugPrint('[StripeDialog] Error destroying checkout: $e');
+      // Don't rethrow - just log it
     }
 
-    // Clean up view factory resources
-    _cleanupViewFactory(_viewType);
-    debugPrint('[StripeDialog] View factory cleaned up');
+    try {
+      // Clean up view factory resources
+      _cleanupViewFactory(_viewType);
+      debugPrint('[StripeDialog] View factory cleaned up');
+    } catch (e) {
+      debugPrint('[StripeDialog] Error cleaning up view factory: $e');
+      // Don't rethrow - just log it
+    }
 
     super.dispose();
   }

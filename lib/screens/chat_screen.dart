@@ -1545,21 +1545,34 @@ class ChatScreen extends HookConsumerWidget {
                   if (success && context.mounted) {
                     debugPrint('[ChatScreen] Refreshing subscription state...');
                     ref.invalidate(subscriptionSnapshotProvider);
+                  } else if (!success) {
+                    // CRITICAL FIX: Don't navigate on failure - just log it
+                    // The stripe_service already shows a retry message
+                    debugPrint('[ChatScreen] Checkout not completed. User can retry by clicking Subscribe again.');
                   }
                 } catch (e, stackTrace) {
-                  // Catch and log any errors to prevent navigation issues
+                  // CRITICAL FIX: Catch and log errors WITHOUT causing navigation
+                  // Keep user on current page so they can retry
                   debugPrint('[ChatScreen] ERROR in onSubscribePressed: $e');
                   debugPrint('[ChatScreen] Stack trace: $stackTrace');
 
-                  // Show error snackbar if context is still valid
+                  // Show friendly error message but DON'T navigate away
                   if (context.mounted) {
                     scaffoldMessenger.showSnackBar(
                       SnackBar(
-                        content: Text('Failed to open checkout: ${e.toString()}'),
-                        backgroundColor: Colors.red,
+                        content: Text('Checkout failed to load. Please try tapping Subscribe again.'),
+                        backgroundColor: Colors.orange,
+                        duration: Duration(seconds: 5),
+                        action: SnackBarAction(
+                          label: 'Dismiss',
+                          textColor: Colors.white,
+                          onPressed: () {},
+                        ),
                       ),
                     );
                   }
+
+                  // DON'T rethrow - just return to keep user on current page
                 }
               },
               onHomePressed: () {
