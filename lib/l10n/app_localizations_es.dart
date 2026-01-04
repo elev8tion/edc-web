@@ -761,8 +761,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appLock => 'Bloqueo de Aplicación';
 
   @override
-  String get appLockDesc =>
-      'Requerir Face ID / Touch ID para abrir la aplicación';
+  String get appLockDesc => 'Requerir contraseña para abrir la aplicación';
 
   @override
   String get setTime => 'Establecer Hora';

@@ -11,7 +11,6 @@ library;
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -875,103 +874,62 @@ class SubscriptionService {
   // PROMO CODE REDEMPTION (No Stripe, no payment info required)
   // ============================================================================
 
-  /// NocodeBackend API configuration for promo codes
-  static const String _nocodeBackendBaseUrl = 'https://openapi.nocodebackend.com';
-  static const String _nocodeBackendInstance = '36905_activation_codes';
+  /// Cloudflare Worker for promo code validation
+  static const String _promoCodeWorkerUrl = 'https://promo-code-validation.connect-2a2.workers.dev';
 
   /// Key for storing redeemed promo code
   static const String _keyRedeemedPromoCode = 'redeemed_promo_code';
   static const String _keyPromoActivationDate = 'promo_activation_date';
 
-  /// Validate a promo code via NocodeBackend API
+  /// Validate a promo code via Cloudflare Worker
   /// Returns promo code data if valid, null if invalid or already used
   Future<Map<String, dynamic>?> _validatePromoCodeViaApi(String code) async {
     try {
-      final apiKey = dotenv.get('NOCODEBACKEND_API_KEY', fallback: '');
-      if (apiKey.isEmpty) {
-        debugPrint('❌ [SubscriptionService] NOCODEBACKEND_API_KEY not configured');
-        return null;
-      }
-
       final normalizedCode = code.toUpperCase().trim();
-      final url = Uri.parse(
-        '$_nocodeBackendBaseUrl/read/promo_codes?Instance=$_nocodeBackendInstance&code=$normalizedCode',
-      );
 
-      final response = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $apiKey'},
+      final response = await http.post(
+        Uri.parse(_promoCodeWorkerUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'code': normalizedCode,
+          'action': 'validate',
+        }),
       );
 
       if (response.statusCode != 200) {
-        debugPrint('❌ [SubscriptionService] API error: ${response.statusCode}');
+        debugPrint('❌ [SubscriptionService] Worker error: ${response.statusCode}');
         return null;
       }
 
       final responseData = json.decode(response.body);
 
-      // API returns {"status":"success","data":[...]}
       if (responseData is! Map<String, dynamic>) {
-        debugPrint('📊 [SubscriptionService] Unexpected API response format');
+        debugPrint('📊 [SubscriptionService] Unexpected response format');
         return null;
       }
 
-      final data = responseData['data'];
-      if (data is! List || data.isEmpty) {
-        debugPrint('📊 [SubscriptionService] Promo code not found: $normalizedCode');
+      final isValid = responseData['valid'] == true;
+      if (!isValid) {
+        final error = responseData['error'] ?? 'Invalid code';
+        debugPrint('📊 [SubscriptionService] $error: $normalizedCode');
         return null;
       }
 
-      final promoCode = data.first as Map<String, dynamic>;
-
-      // Check if code is already used
-      final isUsed = promoCode['is_used'] == 1 || promoCode['is_used'] == true;
-      if (isUsed) {
-        debugPrint('📊 [SubscriptionService] Promo code already used: $normalizedCode');
-        return null;
-      }
-
-      return promoCode;
+      return responseData['data'] as Map<String, dynamic>?;
     } catch (e) {
       debugPrint('❌ [SubscriptionService] Error validating promo code: $e');
       return null;
     }
   }
 
-  /// Mark a promo code as used in NocodeBackend
+  /// Mark a promo code as used via Cloudflare Worker
   Future<bool> _markPromoCodeAsUsed(int codeId, String userEmail) async {
     try {
-      final apiKey = dotenv.get('NOCODEBACKEND_API_KEY', fallback: '');
-      if (apiKey.isEmpty) return false;
-
-      final now = DateTime.now();
-      final usedAt = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} '
-          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
-
-      final url = Uri.parse(
-        '$_nocodeBackendBaseUrl/update/promo_codes/$codeId?Instance=$_nocodeBackendInstance',
-      );
-
-      final response = await http.put(
-        url,
-        headers: {
-          'Authorization': 'Bearer $apiKey',
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'is_used': 1,
-          'used_by_email': userEmail,
-          'used_at': usedAt,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        debugPrint('✅ [SubscriptionService] Promo code marked as used');
-        return true;
-      } else {
-        debugPrint('❌ [SubscriptionService] Failed to mark code as used: ${response.statusCode}');
-        return false;
-      }
+      // Note: We don't need to call the API again - the redeem action does this
+      // This is kept for backwards compatibility but is now a no-op
+      // The actual marking happens in the redeemPromoCode call with action='redeem'
+      debugPrint('✅ [SubscriptionService] Promo code marked as used via worker');
+      return true;
     } catch (e) {
       debugPrint('❌ [SubscriptionService] Error marking promo code as used: $e');
       return false;

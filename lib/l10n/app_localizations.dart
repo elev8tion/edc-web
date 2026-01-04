@@ -1481,7 +1481,7 @@ abstract class AppLocalizations {
   /// App lock description
   ///
   /// In en, this message translates to:
-  /// **'Require Face ID / Touch ID to open app'**
+  /// **'Require password to open app'**
   String get appLockDesc;
 
   /// Set time button text
