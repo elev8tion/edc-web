@@ -31,6 +31,7 @@ import 'package:everyday_christian/screens/wait_for_verification_screen.dart';
 import 'package:everyday_christian/screens/email_verification_handler_screen.dart';
 import 'package:everyday_christian/screens/reset_password_screen.dart';
 import 'package:everyday_christian/screens/accessibility_statement_screen.dart';
+import 'package:everyday_christian/screens/app_lock_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
@@ -274,6 +275,10 @@ class _MyAppState extends ConsumerState<MyApp> {
             return DarkPageRoute(
                 settings: settings,
                 builder: (_) => const WaitForVerificationScreen());
+          case AppRoutes.appLock:
+            return DarkPageRoute(
+                settings: settings,
+                builder: (_) => const AppLockScreen());
           // ================================================================
           // PROTECTED ROUTES - Use SecurePageRoute (no caching)
           // These routes require authentication and should not be cached

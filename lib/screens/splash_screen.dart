@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -93,20 +92,17 @@ class SplashScreen extends HookConsumerWidget {
             return;
           }
 
-          // User is authenticated - check if app lock is enabled (skip on web)
+          // User is authenticated - check if app lock is enabled
           // Note: Legal agreements are now handled during signup in auth_form.dart
-          if (!kIsWeb) {
-            final prefsService = await PreferencesService.getInstance();
-            final isAppLockEnabled = prefsService.isAppLockEnabled();
+          final prefsService = await PreferencesService.getInstance();
+          final isAppLockEnabled = prefsService.isAppLockEnabled();
 
-            if (isAppLockEnabled) {
-              // App lock is enabled - show custom app lock screen (mobile only)
-              if (_hasNavigated) return;
-              _hasNavigated = true;
-              // App lock not available on web - go to home instead
-              NavigationService.pushReplacementNamed(AppRoutes.home);
-              return;
-            }
+          if (isAppLockEnabled) {
+            // App lock is enabled - show app lock screen (works on all platforms)
+            if (_hasNavigated) return;
+            _hasNavigated = true;
+            NavigationService.pushReplacementNamed(AppRoutes.appLock);
+            return;
           }
 
           // Go directly to home

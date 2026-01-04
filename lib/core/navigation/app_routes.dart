@@ -6,6 +6,7 @@ class AppRoutes {
   static const String verifyEmail = '/verify-email';
   static const String resetPassword = '/reset-password';
   static const String waitForVerification = '/wait-for-verification';
+  static const String appLock = '/app-lock';
   static const String home = '/home';
   static const String chat = '/chat';
   static const String settings = '/settings';
@@ -39,6 +40,7 @@ class AppRoutes {
     verifyEmail,
     resetPassword,
     waitForVerification,
+    appLock,
     checkoutComplete,
   ];
 
