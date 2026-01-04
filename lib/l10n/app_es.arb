@@ -665,7 +665,7 @@
   "deleteAllData": "Eliminar Todos los Datos",
   "deleteAllDataDesc": "⚠️ Eliminar permanentemente todos tus datos",
   "appLock": "Bloqueo de Aplicación",
-  "appLockDesc": "Requerir Face ID / Touch ID para abrir la aplicación",
+  "appLockDesc": "Requerir contraseña para abrir la aplicación",
   "notificationTime": "Hora Alerta",
   "setTime": "Establecer Hora",
   "biometricNotAvailable": "La autenticación biométrica no está disponible en este dispositivo",

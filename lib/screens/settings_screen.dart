@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_pwa_install/flutter_pwa_install.dart';
@@ -7,12 +8,12 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:local_auth/local_auth.dart';
 import '../core/services/database_service.dart';
 import '../core/services/preferences_service.dart';
 import '../core/services/bible_config.dart';
 import '../components/pin_setup_dialog.dart';
 import '../services/conversation_service.dart';
+import '../features/auth/services/secure_storage_service.dart';
 import '../theme/app_theme.dart';
 import '../components/gradient_background.dart';
 import '../components/frosted_glass_card.dart';
@@ -469,31 +470,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _toggleAppLock(bool enabled) async {
     final l10n = AppLocalizations.of(context);
-    final localAuth = LocalAuthentication();
 
     try {
-      // Check if device supports biometrics
-      final canCheckBiometrics = await localAuth.canCheckBiometrics;
-      final isDeviceSupported = await localAuth.isDeviceSupported();
-
-      if (!canCheckBiometrics || !isDeviceSupported) {
-        if (!mounted) return;
-        AppSnackBar.showError(context, message: l10n.biometricNotAvailable);
-        return;
-      }
-
       if (enabled) {
-        // Verify user can authenticate before enabling
-        final authenticated = await localAuth.authenticate(
-          localizedReason: l10n.verifyIdentityAppLock,
-          options: const AuthenticationOptions(
-            useErrorDialogs: true,
-            stickyAuth: true,
-            biometricOnly: false,
-          ),
-        );
+        // Verify user's password before enabling app lock
+        final passwordVerified = await _showPasswordVerificationDialog();
 
-        if (authenticated) {
+        if (passwordVerified) {
           final prefs = await PreferencesService.getInstance();
           await prefs.setAppLockEnabled(true);
           setState(() {
@@ -526,7 +509,180 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
     } catch (e) {
       debugPrint('App lock toggle error: $e');
+      if (!mounted) return;
+      AppSnackBar.showError(
+        context,
+        message: 'Failed to update app lock setting',
+      );
     }
+  }
+
+  /// Show dialog to verify user's password before enabling app lock
+  Future<bool> _showPasswordVerificationDialog() async {
+    final passwordController = TextEditingController();
+    bool obscurePassword = true;
+    String? errorText;
+    const secureStorage = SecureStorageService();
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: Colors.black.withValues(alpha: 0.9),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: AppTheme.goldColor.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          title: const Text(
+            'Verify Password',
+            style: TextStyle(
+              color: AppTheme.goldColor,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Enter your password to enable app lock',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: passwordController,
+                autofocus: true,
+                obscureText: obscurePassword,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  hintStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.3),
+                  ),
+                  errorText: errorText,
+                  errorStyle: TextStyle(
+                    color: Colors.red.shade300,
+                    fontSize: 12,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscurePassword ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.white.withValues(alpha: 0.7),
+                    ),
+                    onPressed: () {
+                      setDialogState(() {
+                        obscurePassword = !obscurePassword;
+                      });
+                    },
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppTheme.goldColor.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppTheme.goldColor,
+                      width: 2,
+                    ),
+                  ),
+                  errorBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.red.withValues(alpha: 0.8),
+                      width: 2,
+                    ),
+                  ),
+                  focusedErrorBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.red,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                onSubmitted: (password) async {
+                  if (password.isEmpty) {
+                    setDialogState(() {
+                      errorText = 'Please enter your password';
+                    });
+                    HapticFeedback.heavyImpact();
+                    return;
+                  }
+
+                  final isValid = await secureStorage.verifyAppLockPassword(password);
+                  if (!context.mounted) return;
+                  if (isValid) {
+                    Navigator.of(context).pop(true);
+                  } else {
+                    setDialogState(() {
+                      errorText = 'Incorrect password. Please try again.';
+                    });
+                    passwordController.clear();
+                    HapticFeedback.heavyImpact();
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final password = passwordController.text;
+
+                if (password.isEmpty) {
+                  setDialogState(() {
+                    errorText = 'Please enter your password';
+                  });
+                  HapticFeedback.heavyImpact();
+                  return;
+                }
+
+                final isValid = await secureStorage.verifyAppLockPassword(password);
+                if (!context.mounted) return;
+                if (isValid) {
+                  Navigator.of(context).pop(true);
+                } else {
+                  setDialogState(() {
+                    errorText = 'Incorrect password. Please try again.';
+                  });
+                  passwordController.clear();
+                  HapticFeedback.heavyImpact();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.goldColor,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('Verify'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    passwordController.dispose();
+    return result ?? false;
   }
 
   /// Build PIN management tile (mobile only)

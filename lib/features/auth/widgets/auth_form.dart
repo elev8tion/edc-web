@@ -377,64 +377,6 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
             const SizedBox(height: 16),
 
-            // Biometric sign in (only for sign in mode)
-            if (!_isSignUp) ...[
-              Consumer(
-                builder: (context, ref, child) {
-                  return FutureBuilder<bool>(
-                    future: ref.read(authServiceProvider.notifier).isBiometricEnabled(),
-                    builder: (context, snapshot) {
-                      if (snapshot.data == true) {
-                        return Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: Text(
-                                    l10n.or,
-                                    style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.5),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            OutlinedButton.icon(
-                              onPressed: () async {
-                                await ref.read(authServiceProvider.notifier).signIn(
-                                  email: '',
-                                  password: '',
-                                  useBiometric: true,
-                                );
-                              },
-                              icon: const Icon(Icons.fingerprint, color: AppTheme.primaryColor),
-                              label: Text(
-                                l10n.useBiometric,
-                                style: const TextStyle(color: AppTheme.primaryColor),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: AppTheme.primaryColor.withValues(alpha: 0.5)),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: AppRadius.buttonRadius,
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  );
-                },
-              ),
-            ],
-
           ],
         ),
       ),

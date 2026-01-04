@@ -5,7 +5,6 @@ import 'package:uuid/uuid.dart';
 import '../models/user_model.dart';
 import 'auth_api_service.dart';
 import 'secure_storage_service.dart';
-import 'biometric_service.dart';
 import '../../../core/database/database_helper.dart';
 import '../../../core/services/preferences_service.dart';
 
@@ -13,7 +12,6 @@ import '../../../core/services/preferences_service.dart';
 /// Handles authentication state, token management, and user sessions
 class AuthService extends StateNotifier<AuthState> {
   final SecureStorageService _secureStorage;
-  final BiometricService _biometric;
   final DatabaseHelper _database;
   final AuthApiService _api;
 
@@ -23,7 +21,7 @@ class AuthService extends StateNotifier<AuthState> {
   // Device ID for this device
   String? _deviceId;
 
-  AuthService(this._secureStorage, this._biometric, this._database)
+  AuthService(this._secureStorage, this._database)
       : _api = AuthApiService(),
         super(const AuthState.initial());
 
@@ -144,6 +142,9 @@ class AuthService extends StateNotifier<AuthState> {
       await _secureStorage.storeUserData(user.toJson());
       await _updateUserSettings(user);
 
+      // Store password hash for app lock feature
+      await _secureStorage.setAppLockPasswordHash(password);
+
       state = AuthState.authenticated(user);
       return true;
     } catch (e) {
@@ -157,15 +158,10 @@ class AuthService extends StateNotifier<AuthState> {
   Future<bool> signIn({
     required String email,
     required String password,
-    bool useBiometric = false,
   }) async {
     state = const AuthState.loading();
 
     try {
-      if (useBiometric) {
-        return await _signInWithBiometric();
-      }
-
       // Call API
       final response = await _api.signIn(
         email: email,
@@ -194,55 +190,14 @@ class AuthService extends StateNotifier<AuthState> {
       await _secureStorage.setLastLogin();
       await _updateUserSettings(user);
 
+      // Store password hash for app lock feature
+      await _secureStorage.setAppLockPasswordHash(password);
+
       state = AuthState.authenticated(user);
       return true;
     } catch (e) {
       debugPrint('Sign in error: $e');
       state = AuthState.error('Sign in failed: $e');
-      return false;
-    }
-  }
-
-  /// Sign in with biometric authentication (uses cached credentials)
-  Future<bool> _signInWithBiometric() async {
-    try {
-      final canUseBiometric = await _biometric.canCheckBiometrics();
-      if (!canUseBiometric) {
-        state = const AuthState.error('Biometric authentication not available');
-        return false;
-      }
-
-      final authenticated = await _biometric.authenticate();
-      if (!authenticated) {
-        state = const AuthState.error('Biometric authentication failed');
-        return false;
-      }
-
-      // Load cached user data after successful biometric auth
-      final userData = await _secureStorage.getUserData();
-      if (userData == null) {
-        state = const AuthState.error('No saved session found');
-        return false;
-      }
-
-      // Validate token is still valid
-      final token = await _secureStorage.getSessionToken();
-      if (token != null) {
-        final response = await _api.validateToken(token: token);
-        if (!response.success) {
-          state = const AuthState.error('Session expired. Please sign in again.');
-          return false;
-        }
-        _currentToken = token;
-      }
-
-      final user = User.fromJson(userData);
-      await _secureStorage.setLastLogin();
-      state = AuthState.authenticated(user);
-      return true;
-    } catch (e) {
-      debugPrint('Biometric sign in error: $e');
-      state = AuthState.error('Biometric sign in failed: $e');
       return false;
     }
   }
@@ -260,6 +215,7 @@ class AuthService extends StateNotifier<AuthState> {
       // Clear local session
       _currentToken = null;
       await _secureStorage.clearUserData();
+      await _secureStorage.clearAppLockPassword();
 
       state = const AuthState.unauthenticated();
     } catch (e) {
@@ -267,6 +223,7 @@ class AuthService extends StateNotifier<AuthState> {
       // Even on error, clear local session
       _currentToken = null;
       await _secureStorage.clearUserData();
+      await _secureStorage.clearAppLockPassword();
       state = const AuthState.unauthenticated();
     }
   }
@@ -360,47 +317,6 @@ class AuthService extends StateNotifier<AuthState> {
     } catch (e) {
       debugPrint('Update profile error: $e');
       state = AuthState.error('Failed to update profile: $e');
-      return false;
-    }
-  }
-
-  /// Enable biometric authentication
-  Future<bool> enableBiometric() async {
-    try {
-      final canUseBiometric = await _biometric.canCheckBiometrics();
-      if (!canUseBiometric) {
-        state = const AuthState.error('Biometric authentication not available on this device');
-        return false;
-      }
-
-      final authenticated = await _biometric.authenticate();
-      if (authenticated) {
-        await _database.setSetting('biometric_enabled', true);
-        return true;
-      }
-      return false;
-    } catch (e) {
-      debugPrint('Enable biometric error: $e');
-      state = AuthState.error('Failed to enable biometric: $e');
-      return false;
-    }
-  }
-
-  /// Disable biometric authentication
-  Future<void> disableBiometric() async {
-    try {
-      await _database.setSetting('biometric_enabled', false);
-    } catch (e) {
-      debugPrint('Disable biometric error: $e');
-      state = AuthState.error('Failed to disable biometric: $e');
-    }
-  }
-
-  /// Check if biometric is enabled
-  Future<bool> isBiometricEnabled() async {
-    try {
-      return await _database.getSetting<bool>('biometric_enabled', defaultValue: false) ?? false;
-    } catch (e) {
       return false;
     }
   }
@@ -659,16 +575,11 @@ final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
   return const SecureStorageService();
 });
 
-final biometricServiceProvider = Provider<BiometricService>((ref) {
-  return BiometricService();
-});
-
 final authServiceProvider = StateNotifierProvider<AuthService, AuthState>((ref) {
   final secureStorage = ref.watch(secureStorageServiceProvider);
-  final biometric = ref.watch(biometricServiceProvider);
   final database = DatabaseHelper.instance;
 
-  return AuthService(secureStorage, biometric, database);
+  return AuthService(secureStorage, database);
 });
 
 /// Helper provider for current user

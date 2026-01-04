@@ -987,7 +987,7 @@
   "@appLock": {
     "description": "App lock setting"
   },
-  "appLockDesc": "Require Face ID / Touch ID to open app",
+  "appLockDesc": "Require password to open app",
   "@appLockDesc": {
     "description": "App lock description"
   },
