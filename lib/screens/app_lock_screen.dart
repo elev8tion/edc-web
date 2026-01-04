@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../components/frosted_glass_card.dart';
 import '../components/glass_button.dart';
+import '../components/gradient_background.dart';
 import '../features/auth/services/secure_storage_service.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
@@ -111,33 +112,16 @@ class _AppLockScreenState extends State<AppLockScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final isSpanish = l10n.localeName == 'es';
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    const Color(0xFF1a1a2e),
-                    const Color(0xFF16213e),
-                    const Color(0xFF0f3460),
-                  ]
-                : [
-                    const Color(0xFF667eea),
-                    const Color(0xFF764ba2),
-                    const Color(0xFFf093fb),
-                  ],
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
+      body: Stack(
+        children: [
+          // Use actual app gradient background
+          const GradientBackground(),
+          SafeArea(
+            child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
@@ -379,6 +363,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
             ),
           ),
         ),
+        ],
       ),
     );
   }

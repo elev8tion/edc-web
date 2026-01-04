@@ -249,12 +249,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Icons.description,
                 () => _showTermsOfService(),
               ),
-              _buildActionTile(
-                l10n.accessibilityStatement,
-                l10n.accessibilityStatementDesc,
-                Icons.accessibility_new,
-                () => NavigationService.goToAccessibilityStatement(),
-              ),
             ],
           ),
           const SizedBox(height: 40),
